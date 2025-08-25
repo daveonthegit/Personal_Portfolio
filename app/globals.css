@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Dark mode support via media query only */
+  @media (prefers-color-scheme: dark) {
+    body {
+      @apply bg-gray-900 text-white;
+    }
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-500;
+  }
+
+  /* Skip link for screen readers */
+  .skip-link {
+    @apply absolute -top-10 left-4 z-50 bg-blue-600 text-white px-4 py-2 rounded;
+    @apply focus:top-4;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .btn-secondary {
+      @apply border-gray-600 text-gray-300 bg-gray-800 hover:bg-gray-700;
+    }
+  }
+
+  .card {
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .card {
+      @apply bg-gray-800 border-gray-700;
+    }
+  }
+
+  .prose {
+    @apply max-w-none text-gray-900;
+  }
+
+  .prose h1 {
+    @apply text-3xl font-bold mb-4;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-semibold mb-3 mt-8;
+  }
+
+  .prose h3 {
+    @apply text-xl font-medium mb-2 mt-6;
+  }
+
+  .prose p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .prose ul {
+    @apply list-disc list-inside mb-4 space-y-1;
+  }
+
+  .prose ol {
+    @apply list-decimal list-inside mb-4 space-y-1;
+  }
+
+  .prose code {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm;
+  }
+
+  .prose pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 mb-4;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .prose {
+      @apply text-gray-100;
+    }
+
+    .prose code {
+      @apply bg-gray-800 text-gray-200;
+    }
+
+    .prose blockquote {
+      @apply text-gray-400;
+    }
+  }
+}

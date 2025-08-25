@@ -1,0 +1,43 @@
+# Images Directory
+
+This directory contains images for the portfolio including:
+
+- Hero images for projects
+- Profile photos
+- Screenshots and mockups
+- OpenGraph images
+- Favicons and icons
+
+## Recommended Structure
+
+```
+images/
+├── hero/
+│   ├── project-name-hero.jpg
+│   └── ...
+├── screenshots/
+│   ├── project-name-1.png
+│   └── ...
+├── profile/
+│   ├── profile-photo.jpg
+│   └── ...
+└── og/
+    ├── og-image.jpg
+    ├── project-name-og.jpg
+    └── ...
+```
+
+## Image Optimization
+
+- Use WebP format when possible
+- Keep hero images under 200KB
+- Use responsive images with Next.js Image component
+- Provide alt text for accessibility
+
+## Required Images
+
+- og-image.jpg (1200x630 for OpenGraph)
+- favicon.ico
+- apple-touch-icon.png (180x180)
+- android-chrome-192x192.png
+- android-chrome-512x512.png

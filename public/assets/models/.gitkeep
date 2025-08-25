@@ -1,0 +1,30 @@
+# 3D Models Directory
+
+This directory contains GLB/glTF model files for the portfolio.
+
+## Adding Models
+
+1. Export your model from Blender as GLB with these settings:
+   - Format: glTF Binary (.glb)
+   - Include: Selected Objects only
+   - Transform: +Y Up
+   - Geometry: Apply Modifiers, UVs, Normals, Tangents
+   - Materials: Export Materials
+   - Compression: Use Draco compression
+   - Texture: Keep original or resize to 1K-2K
+
+2. Optimize file size:
+   - Use texture atlasing when possible
+   - Compress textures to WebP or KTX2
+   - Keep triangle count reasonable (under 50K for web)
+   - Remove unnecessary vertices and faces
+
+3. Test in gltf-viewer before deployment
+
+## Current Models
+
+- sample-chair.glb (placeholder)
+- architectural-scene.glb (placeholder)
+- product-showcase.glb (placeholder)
+
+Add your actual GLB files here and update the MODEL_REGISTRY in app/models/[slug]/page.tsx
