@@ -20,7 +20,6 @@
     "lucide-react": "^0.294.0",
     "next": "14.0.4",
     "next-contentlayer": "^0.3.4",
-    "next-seo": "^6.4.0",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.0.0",

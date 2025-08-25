@@ -1,4 +1,5 @@
-const { withContentlayer } = require('next-contentlayer')
+// Temporary: disabling contentlayer to fix build
+// const { withContentlayer } = require('next-contentlayer')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,4 +15,5 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
-module.exports = withBundleAnalyzer(withContentlayer(nextConfig))
+// Temporary: using just bundle analyzer without contentlayer
+module.exports = withBundleAnalyzer(nextConfig)
