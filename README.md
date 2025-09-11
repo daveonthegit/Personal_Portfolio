@@ -2,7 +2,7 @@
 
 A modern personal portfolio built with **Go** backend and **TypeScript** frontend, featuring LaTeX resume integration.
 
-## 🚀 Features
+## Features
 
 - **Go Web Server** with clean routing and template rendering
 - **TypeScript Frontend** with modern build system (esbuild + Tailwind CSS)
@@ -11,7 +11,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 - **Interactive Components**: Contact form, project filtering, smooth animations
 - **Resume Serving**: Multiple formats (HTML, PDF, LaTeX source)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Backend:**
 - Go 1.21+ with Gorilla Mux
@@ -28,7 +28,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 - Automated PDF generation
 - Multiple format serving
 
-## 📋 Prerequisites
+## Prerequisites
 
 1. **Go 1.21+** - [Download here](https://golang.org/dl/)
 2. **Node.js 18+** - [Download here](https://nodejs.org/)
@@ -39,7 +39,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
    
    **Note**: The portfolio works without LaTeX. You can manually compile your resume or use online LaTeX editors.
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone and setup:**
    ```bash
@@ -75,7 +75,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 5. **Visit your portfolio:**
    Open http://localhost:8080
 
-## 📝 Development Workflow
+## Development Workflow
 
 ### For Development with Auto-reload:
 ```bash
@@ -99,7 +99,7 @@ npm run build:css
 npm run build:resume
 ```
 
-## 📄 Resume Management
+## Resume Management
 
 Your resume is managed via LaTeX for professional typesetting:
 
@@ -125,7 +125,7 @@ If you don't want to install LaTeX locally, you can:
 - Use [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) in VS Code
 - Manually compile and place the PDF in `static/assets/resume.pdf`
 
-## 🎨 Customization
+## Customization
 
 ### Personal Information:
 Edit `config/personal.go` to update:
@@ -147,7 +147,7 @@ Update the `loadProjects()` function in `main.go` or create a separate data file
 ### Templates:
 HTML templates will be in `templates/` directory (to be created).
 
-## 🌐 Deployment
+## Deployment
 
 ### Heroku Deployment (Recommended):
 See `DEPLOYMENT.md` for detailed Heroku deployment instructions using your student account.
@@ -172,7 +172,7 @@ docker run -p 8080:8080 david-portfolio
 ### Environment Variables:
 - `PORT`: Server port (default: 8080)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Personal_Portfolio/
@@ -199,7 +199,7 @@ Personal_Portfolio/
 └── README.md                # This file
 ```
 
-## 🔧 Available Scripts
+## Available Scripts
 
 - `npm run build` - Build everything (TS, CSS, Resume)
 - `npm run dev` - Development mode with auto-reload
@@ -208,20 +208,8 @@ Personal_Portfolio/
 - `npm run build:resume` - Build resume PDF only
 - `npm run type-check` - TypeScript type checking
 
-## 🎯 Next Steps
-
-1. **Customize Personal Info**: Update `config/personal.go`
-2. **Edit Resume**: Modify `static/assets/resume.tex`
-3. **Create Templates**: Add HTML templates in `templates/`
-4. **Add Images**: Place project images in `static/images/`
-5. **Deploy**: Set up hosting (Vercel, Netlify, Docker, etc.)
-
-## 📞 Contact
+## Contact
 
 - **Email**: dxiao3043@gmail.com
 - **LinkedIn**: [david-on-linked](https://linkedin.com/in/david-on-linked)
 - **GitHub**: [daveonthegit](https://github.com/daveonthegit)
-
----
-
-Built with ❤️ using Go, TypeScript, and LaTeX
