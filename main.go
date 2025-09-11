@@ -8,8 +8,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/daveonthegit/Personal_Portfolio/config"
+
 	"github.com/gorilla/mux"
-	"personal-portfolio/config"
 )
 
 type Server struct {
@@ -18,14 +19,14 @@ type Server struct {
 }
 
 type Project struct {
-	ID          string    `json:"id" yaml:"id"`
-	Title       string    `json:"title" yaml:"title"`
-	Description string    `json:"description" yaml:"description"`
-	Image       string    `json:"image" yaml:"image"`
-	Technologies []string `json:"technologies" yaml:"technologies"`
-	GitHubURL   string    `json:"github_url" yaml:"github_url"`
-	LiveURL     string    `json:"live_url" yaml:"live_url"`
-	Date        time.Time `json:"date" yaml:"date"`
+	ID           string    `json:"id" yaml:"id"`
+	Title        string    `json:"title" yaml:"title"`
+	Description  string    `json:"description" yaml:"description"`
+	Image        string    `json:"image" yaml:"image"`
+	Technologies []string  `json:"technologies" yaml:"technologies"`
+	GitHubURL    string    `json:"github_url" yaml:"github_url"`
+	LiveURL      string    `json:"live_url" yaml:"live_url"`
+	Date         time.Time `json:"date" yaml:"date"`
 }
 
 type ContactForm struct {
@@ -112,7 +113,7 @@ func (s *Server) projectsHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
 	personal := config.GetPersonalInfo()
-	
+
 	if r.Method == "GET" {
 		data := PageData{
 			Title:        "Contact Me - " + personal.Name,
@@ -155,7 +156,7 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
 	pdfPath := "./static/assets/resume.pdf"
-	
+
 	// Check if PDF exists
 	if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
 		http.Error(w, "Resume PDF not found. Please build the resume first.", http.StatusNotFound)
@@ -165,14 +166,13 @@ func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
 	// Set headers for PDF download
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
-	
+
 	http.ServeFile(w, r, pdfPath)
 }
 
-
 func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
 	var form ContactForm
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
 		http.Error(w, "Invalid form data", http.StatusBadRequest)
 		return
@@ -193,64 +193,64 @@ func loadProjects() []Project {
 	// Projects from David's actual GitHub profile
 	return []Project{
 		{
-			ID:          "personal-portfolio",
-			Title:       "Personal Portfolio Website",
-			Description: "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
-			Image:       "/static/images/portfolio-project.jpg",
+			ID:           "personal-portfolio",
+			Title:        "Personal Portfolio Website",
+			Description:  "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
+			Image:        "/static/images/portfolio-project.jpg",
 			Technologies: []string{"Go", "TypeScript", "HTML/CSS", "Tailwind CSS", "LaTeX", "Docker", "Heroku"},
-			GitHubURL:   "https://github.com/daveonthegit/Personal_Portfolio",
-			LiveURL:     "",
-			Date:        time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "https://github.com/daveonthegit/Personal_Portfolio",
+			LiveURL:      "",
+			Date:         time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:          "forgearena",
-			Title:       "ForgeArena",
-			Description: "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
-			Image:       "/static/images/forgearena-project.jpg",
+			ID:           "forgearena",
+			Title:        "ForgeArena",
+			Description:  "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
+			Image:        "/static/images/forgearena-project.jpg",
 			Technologies: []string{"TypeScript", "Go", "React", "PostgreSQL"},
-			GitHubURL:   "",
-			LiveURL:     "",
-			Date:        time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "",
+			LiveURL:      "",
+			Date:         time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:          "randcompile-extension",
-			Title:       "RandCompile: Kernel Hardening Extension Research",
-			Description: "Academic research paper extending existing RandCompile work with our own secured kernel implementation. Developed compile-time kernel hardening techniques with ABI randomization and data structure obfuscation, maintaining less than 5% performance overhead while enhancing security against malicious hypervisor threat models.",
-			Image:       "/static/images/randcompile-research.jpg",
+			ID:           "randcompile-extension",
+			Title:        "RandCompile: Kernel Hardening Extension Research",
+			Description:  "Academic research paper extending existing RandCompile work with our own secured kernel implementation. Developed compile-time kernel hardening techniques with ABI randomization and data structure obfuscation, maintaining less than 5% performance overhead while enhancing security against malicious hypervisor threat models.",
+			Image:        "/static/images/randcompile-research.jpg",
 			Technologies: []string{"Python", "C", "GCC", "Shell", "Docker", "Research"},
-			GitHubURL:   "https://github.com/daveonthegit/Randcompile-Extension-Paper",
-			LiveURL:     "",
-			Date:        time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "https://github.com/daveonthegit/Randcompile-Extension-Paper",
+			LiveURL:      "",
+			Date:         time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:          "rsa-factorization-tls-decryption",
-			Title:       "RSA Factorization & TLS Decryption",
-			Description: "Automated RSA key recovery and TLS decryption by scripting modulus analysis and key extraction. Factored 1024-bit RSA keys using GCD-based methods and analyzed decrypted TLS session data with Wireshark for security research.",
-			Image:       "/static/images/cryptography-project.jpg",
+			ID:           "rsa-factorization-tls-decryption",
+			Title:        "RSA Factorization & TLS Decryption",
+			Description:  "Automated RSA key recovery and TLS decryption by scripting modulus analysis and key extraction. Factored 1024-bit RSA keys using GCD-based methods and analyzed decrypted TLS session data with Wireshark for security research.",
+			Image:        "/static/images/cryptography-project.jpg",
 			Technologies: []string{"C", "Python", "Cado-NFS", "MSieve", "Wireshark"},
-			GitHubURL:   "https://github.com/daveonthegit/RSA-Factorization-TLS-Decryption-",
-			LiveURL:     "",
-			Date:        time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "https://github.com/daveonthegit/RSA-Factorization-TLS-Decryption-",
+			LiveURL:      "",
+			Date:         time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:          "hs-projects",
-			Title:       "High School Projects Collection",
-			Description: "A collection of Java projects from my high school computer science coursework, showcasing fundamental programming concepts and problem-solving skills in object-oriented programming.",
-			Image:       "/static/images/hs-projects.jpg",
+			ID:           "hs-projects",
+			Title:        "High School Projects Collection",
+			Description:  "A collection of Java projects from my high school computer science coursework, showcasing fundamental programming concepts and problem-solving skills in object-oriented programming.",
+			Image:        "/static/images/hs-projects.jpg",
 			Technologies: []string{"Java"},
-			GitHubURL:   "https://github.com/daveonthegit/HS-Projects",
-			LiveURL:     "",
-			Date:        time.Date(2022, 6, 1, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "https://github.com/daveonthegit/HS-Projects",
+			LiveURL:      "",
+			Date:         time.Date(2022, 6, 1, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:          "hunter-cs-work",
-			Title:       "Hunter College CS Coursework",
-			Description: "Academic projects and assignments from CSCI 12700 at Hunter College, demonstrating proficiency in computer science fundamentals and coursework requirements.",
-			Image:       "/static/images/hunter-cs-project.jpg",
+			ID:           "hunter-cs-work",
+			Title:        "Hunter College CS Coursework",
+			Description:  "Academic projects and assignments from CSCI 12700 at Hunter College, demonstrating proficiency in computer science fundamentals and coursework requirements.",
+			Image:        "/static/images/hunter-cs-project.jpg",
 			Technologies: []string{"Various", "Academic Projects"},
-			GitHubURL:   "https://github.com/daveonthegit/HUNTER-CS-WORK",
-			LiveURL:     "",
-			Date:        time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+			GitHubURL:    "https://github.com/daveonthegit/HUNTER-CS-WORK",
+			LiveURL:      "",
+			Date:         time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 		},
 	}
 }

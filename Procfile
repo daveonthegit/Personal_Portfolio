@@ -1,1 +1,1 @@
-web: ./personal-portfolio
+web: ./Personal_Portfolio
