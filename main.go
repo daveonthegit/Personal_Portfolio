@@ -193,6 +193,16 @@ func loadProjects() []Project {
 	// Projects from David's actual GitHub profile
 	return []Project{
 		{
+			ID:          "personal-portfolio",
+			Title:       "Personal Portfolio Website",
+			Description: "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
+			Image:       "/static/images/portfolio-project.jpg",
+			Technologies: []string{"Go", "TypeScript", "HTML/CSS", "Tailwind CSS", "LaTeX", "Docker", "Heroku"},
+			GitHubURL:   "https://github.com/daveonthegit/Personal_Portfolio",
+			LiveURL:     "",
+			Date:        time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
+		},
+		{
 			ID:          "forgearena",
 			Title:       "ForgeArena",
 			Description: "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",

@@ -149,6 +149,17 @@ HTML templates will be in `templates/` directory (to be created).
 
 ## 🌐 Deployment
 
+### Heroku Deployment (Recommended):
+See `DEPLOYMENT.md` for detailed Heroku deployment instructions using your student account.
+
+Quick setup:
+```bash
+heroku create your-portfolio-name
+heroku buildpacks:add heroku/nodejs
+heroku buildpacks:add heroku/go
+git push heroku main
+```
+
 ### Docker Deployment:
 ```bash
 # Build Docker image
