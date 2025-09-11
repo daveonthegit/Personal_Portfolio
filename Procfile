@@ -1,1 +1,1 @@
-web: ./Personal_Portfolio
+web: ./bin/Personal_Portfolio
