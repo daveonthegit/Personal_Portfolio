@@ -1,41 +1,32 @@
 {
-  "name": "developer-portfolio",
-  "version": "0.1.0",
-  "private": true,
+  "name": "personal-portfolio-frontend",
+  "version": "1.0.0",
+  "description": "Frontend TypeScript assets for Go-based personal portfolio",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
-    "analyze": "ANALYZE=true next build"
-  },
-  "dependencies": {
-    "@next/bundle-analyzer": "^14.0.4",
-    "@react-three/drei": "^9.88.17",
-    "@react-three/fiber": "^8.15.11",
-    "clsx": "^2.0.0",
-    "contentlayer": "^0.3.4",
-    "lucide-react": "^0.294.0",
-    "next": "14.0.4",
-    "next-contentlayer": "^0.3.4",
-    "react": "^18",
-    "react-dom": "^18",
-    "tailwind-merge": "^2.0.0",
-    "three": "^0.158.0"
+    "build": "npm run build:ts && npm run build:css",
+    "build:ts": "tsc && esbuild src/main.ts --bundle --outfile=static/js/main.js --minify --sourcemap",
+    "build:css": "postcss src/styles/main.css -o static/css/main.css --map",
+    "build:resume": "node -e \"require('child_process').execSync(process.platform === 'win32' ? 'scripts\\\\build-resume.bat' : 'bash scripts/build-resume.sh', {stdio: 'inherit'})\"",
+    "watch": "concurrently \"npm run watch:ts\" \"npm run watch:css\"",
+    "watch:ts": "esbuild src/main.ts --bundle --outfile=static/js/main.js --watch --sourcemap",
+    "watch:css": "postcss src/styles/main.css -o static/css/main.css --watch --map",
+    "dev": "concurrently \"npm run watch\" \"go run main.go\"",
+    "build:full": "npm run build:ts && npm run build:css && npm run build:resume",
+    "type-check": "tsc --noEmit",
+    "heroku-prebuild": "echo 'Installing dependencies...'",
+    "heroku-postbuild": "npm run build"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "@types/three": "^0.158.3",
-    "autoprefixer": "^10.0.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.4",
-    "postcss": "^8",
-    "prettier": "^3.1.0",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
-  }
+    "@types/node": "^20.8.0",
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^8.2.2",
+    "cssnano": "^6.0.1",
+    "esbuild": "^0.19.5",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^10.1.0",
+    "postcss-import": "^15.1.0",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {}
 }

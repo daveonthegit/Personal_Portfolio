@@ -1,0 +1,1 @@
+{"version":3,"file":"animationObserver.d.ts","sourceRoot":"","sources":["../../src/utils/animationObserver.ts"],"names":[],"mappings":"AAAA,qBAAa,iBAAiB;IAC5B,OAAO,CAAC,MAAM,CAAC,QAAQ,CAAuB;IAE9C,MAAM,CAAC,IAAI;IA2BX,MAAM,CAAC,eAAe;IAOtB,MAAM,CAAC,qBAAqB;IA4B5B,MAAM,CAAC,UAAU;CAKlB"}

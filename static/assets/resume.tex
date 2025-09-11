@@ -1,0 +1,234 @@
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
+%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
+% \end{tabular*}
+
+\begin{center}
+    \textbf{\Huge \scshape David Xiao} \\ \vspace{1pt}
+    \small 917-946-7086 $|$ \href{mailto:dxiao3043@gmail.com}{\underline{dxiao3043@gmail.com}} $|$ 
+    \href{https://linkedin.com/in/david-on-linked}{\underline{linkedin.com/in/david-on-linked}} $|$
+    \href{https://github.com/daveonthegit}{\underline{github.com/daveonthegit}}
+\end{center}
+
+%-----------Summary-----------
+\section{Summary}
+\small
+      Computer Science student and software engineer with hands-on experience in full-stack development, system architecture modernization, and security-focused programming. Skilled in JavaScript, PHP, API development, and Agile methodologies, with proven ability to transform legacy monolithic systems into scalable, modular applications for B2C and B2B environments. Experienced in developing task management platforms with role-based access controls, real-time functionality, and cross-organizational support. 
+      
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {CUNY Hunter College}{New York, NY}
+      {Bachelor of Arts in Computer Science}{Aug. 2022 -- Present}
+  \resumeSubHeadingListEnd
+
+% -----------INTERNSHIPS-----------
+\section{Work Experience}
+\resumeSubHeadingListStart
+
+  \resumeSubheading
+    {Software Engineer Intern}{June 2025 -- August 2025}
+    {Unadat}{New York, NY}
+    \resumeItemListStart
+      \resumeItem{Re-architected legacy JS/PHP into modular components, cutting feature development time by 25\% and enabling B2C/B2B scalability}
+      \resumeItem{Added 6+ new features to legacy chores system, increasing usability and adoption across B2C/B2B users}
+      \resumeItem{Converted core components into reusable modals, improving UI consistency and cutting frontend development effort by 20\%}
+    \resumeItem{Refactored 10+ API endpoints with REST + automated tests, reducing response times by 15\% and supporting faster rollouts}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+% -----------PROJECTS-----------
+\section{Technical Projects}
+\resumeSubHeadingListStart
+  \resumeProjectHeading
+    {\textbf{B2B Task Management Platform} $|$ \emph{PHP, JavaScript, jQuery, MySQL, CSS, GCP}}{June 2025 - August 2025}
+    \resumeItemListStart
+        \resumeItem{Built a mobile-optimized task system for 100+ concurrent users with escalation logic and multi-round negotiation, cutting delays by 30\%}
+      \resumeItem{Implemented role-based access across multi-tier hierarchies, strengthening security and enabling efficient delegation}
+      \resumeItem{Unified B2C + B2B flows in one platform, reducing development overhead by 40\% while maintaining feature continuity}
+    \resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+
+\section{Personal Projects}
+\resumeSubHeadingListStart
+
+  \resumeProjectHeading
+    {\textbf{RandCompile: Kernel Hardening via Compile-Time Forensic Resistance} $|$ \emph{Python, C, GCC, UNIX}}{Feb 2025}
+    \resumeItemListStart
+      \resumeItem{Built a GCC plugin to add compile-time kernel hardening with ABI randomization and data structure obfuscation}
+      \resumeItem{Automated pointer encryption and modular ABI handling while ensuring compatibility with kernel modules}
+      \resumeItem{Maintained less than 5\% performance overhead while enhancing kernel security under malicious hypervisor threat models}
+    \resumeItemListEnd
+
+  \resumeProjectHeading
+    {\textbf{RSA Factorization \& TLS Decryption} $|$ \emph{Python, Cado-NFS, MSieve, Wireshark}}{Feb 2025}
+    \resumeItemListStart
+      \resumeItem{Automated RSA key recovery and TLS decryption by scripting modulus analysis and key extraction in Python}
+      \resumeItem{Factored 1024-bit RSA keys using GCD-based methods and verified with MSieve and Cado-NFS}
+      \resumeItem{Analyzed decrypted TLS session data with Wireshark to evaluate cryptographic weaknesses}
+    \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+
+
+%
+%-----------EXPERIENCE-----------
+\section{Other Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Barista}{May 2024 -- Present}
+      {Blank Street Coffee}{New York, NY}
+      \resumeItemListStart
+          \resumeItem{Handled \$4K+ in daily POS transactions with accuracy while maintaining quality in a fast-paced environment}
+        \resumeItem{Trained new staff and streamlined workflows, improving team efficiency during peak hours by 15\%}
+      \resumeItemListEnd
+      
+% -----------Multiple Positions Heading-----------
+%    \resumeSubSubheading
+%     {Software Engineer I}{Oct 2014 - Sep 2016}
+%     \resumeItemListStart
+%        \resumeItem{Apache Beam}
+%          {Apache Beam is a unified model for defining both batch and streaming data-parallel processing pipelines}
+%     \resumeItemListEnd
+%    \resumeSubHeadingListEnd
+%-------------------------------------------
+
+    %\resumeSubheading
+     % {Counselor}{Sept. 2022 -- May 2023}
+      %{Angel Advantage Center}{Brooklyn, NY}
+    %  \resumeItemListStart
+   %     \resumeItem{Led classroom instruction for 15+ students, refining skills in explaining complex topics and providing structured feedback}
+  %      \resumeItem{Assisted in developing lesson plans and grading assignments, ensuring optimal student engagement}
+ %     \resumeItemListEnd
+%
+ % \resumeSubHeadingListEnd
+%
+
+%-----------PROGRAMMING SKILLS-----------
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Programming Languages}{: Java, Python, C/C++, JavaScript, PHP, SQL, MIPS Assembly, BASH} \\
+     \textbf{Web Technologies \& Frameworks}{: React, Node.js, Express.js, HTML/CSS, jQuery, RESTful APIs, PERN Stack} \\
+     \textbf{Databases \& Cloud}{: PostgreSQL, MySQL, GCP} \\
+     \textbf{Tools \& Methodologies}{: Git, VS Code, UNIX, Agile Scrum, Automated Testing} \\
+    }}
+ \end{itemize}
+
+
+%-------------------------------------------
+\end{document}

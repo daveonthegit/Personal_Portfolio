@@ -1,0 +1,191 @@
+{{define "about-content"}}
+<!-- About Header -->
+<section class="section-padding bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800">
+    <div class="container-max text-center animate-on-scroll">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">About Me</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Get to know more about my background, experience, and what drives my passion for technology.
+        </p>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="section-padding">
+    <div class="container-max">
+        <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
+            <!-- Bio Section -->
+            <div class="animate-on-scroll">
+                <h2 class="text-3xl font-bold mb-6">Hello, I'm {{.Personal.Name}}</h2>
+                <div class="prose prose-lg dark:prose-invert max-w-none">
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {{.Personal.Bio}}
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Currently studying at {{range .Personal.Education}}{{.Institution}}{{end}}, 
+                        I'm passionate about building secure, scalable applications and exploring the intersection 
+                        of systems programming and web development.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        When I'm not coding, you can find me diving deep into {{range $i, $interest := .Personal.Interests}}{{if $i}}, {{end}}{{$interest}}{{end}}.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Profile Image -->
+            <div class="animate-on-scroll">
+                <div class="relative">
+                    <div class="w-80 h-80 mx-auto bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl flex items-center justify-center">
+                        <div class="text-8xl text-white">👨‍💻</div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg">
+                        <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{len .Personal.Experience}}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Work Experiences</div>
+                    </div>
+                    
+                    <div class="absolute -top-6 -right-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg">
+                        <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{len .Projects}}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Projects Built</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Experience Section -->
+<section class="section-padding bg-gray-50 dark:bg-gray-800">
+    <div class="container-max">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Experience</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400">My professional journey</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            {{range $i, $exp := .Personal.Experience}}
+            <div class="relative animate-on-scroll">
+                {{if ne $i 0}}
+                <!-- Timeline line -->
+                <div class="absolute left-6 top-0 w-0.5 h-8 bg-gray-300 dark:bg-gray-600"></div>
+                {{end}}
+                
+                <div class="flex items-start space-x-6 mb-12">
+                    <!-- Timeline dot -->
+                    <div class="flex-shrink-0 w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
+                        <div class="w-6 h-6 bg-white rounded-full"></div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="flex-grow card p-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl font-semibold">{{.Position}}</h3>
+                                <p class="text-primary-600 dark:text-primary-400 font-medium">{{.Company}}</p>
+                            </div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
+                                {{.StartDate.Format "Jan 2006"}} - 
+                                {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}Present{{end}}
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 dark:text-gray-400 mb-4">{{.Location}}</p>
+                        
+                        <ul class="space-y-2 mb-4">
+                            {{range .Description}}
+                            <li class="text-gray-600 dark:text-gray-400 flex items-start">
+                                <span class="text-primary-600 dark:text-primary-400 mr-2">•</span>
+                                {{.}}
+                            </li>
+                            {{end}}
+                        </ul>
+                        
+                        {{if .Technologies}}
+                        <div class="flex flex-wrap gap-2">
+                            {{range .Technologies}}
+                            <span class="tech-tag">{{.}}</span>
+                            {{end}}
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<!-- Education Section -->
+<section class="section-padding">
+    <div class="container-max">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Education</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Academic background</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            {{range .Personal.Education}}
+            <div class="card p-8 animate-on-scroll">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                    <div>
+                        <h3 class="text-2xl font-semibold">{{.Institution}}</h3>
+                        <p class="text-xl text-primary-600 dark:text-primary-400">{{.Degree}} in {{.Field}}</p>
+                    </div>
+                    <div class="text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
+                        {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400">{{.Location}}</p>
+                {{if .GPA}}
+                <p class="text-gray-600 dark:text-gray-400 mt-2">GPA: {{.GPA}}</p>
+                {{end}}
+            </div>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="section-padding bg-gray-50 dark:bg-gray-800">
+    <div class="container-max">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Technical Skills</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Technologies I work with</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            {{range .Personal.Skills}}
+            <div class="card p-8 animate-on-scroll">
+                <h3 class="text-xl font-semibold mb-6 text-primary-600 dark:text-primary-400">{{.Category}}</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    {{range .Items}}
+                    <div class="flex items-center space-x-3">
+                        <div class="w-2 h-2 bg-primary-600 rounded-full"></div>
+                        <span class="text-gray-700 dark:text-gray-300">{{.}}</span>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<!-- Interests Section -->
+<section class="section-padding">
+    <div class="container-max text-center animate-on-scroll">
+        <h2 class="text-3xl md:text-4xl font-bold mb-8">Beyond Code</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+            When I'm not building software, I enjoy exploring these interests
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
+            {{range .Personal.Interests}}
+            <span class="bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-6 py-3 rounded-full text-lg font-medium">
+                {{.}}
+            </span>
+            {{end}}
+        </div>
+    </div>
+</section>
+{{end}}

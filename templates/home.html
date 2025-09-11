@@ -1,0 +1,136 @@
+{{define "home-content"}}
+<!-- Hero Section -->
+<section class="hero-gradient text-white">
+    <div class="container-max section-padding">
+        <div class="flex flex-col lg:flex-row items-center justify-between py-20">
+            <div class="lg:w-1/2 mb-12 lg:mb-0 animate-on-scroll">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    Hi, I'm <span class="text-yellow-300">{{.Personal.Name}}</span>
+                </h1>
+                <h2 class="text-xl md:text-2xl mb-8 text-gray-200">
+                    {{.Personal.Title}}
+                </h2>
+                <p class="text-lg mb-8 text-gray-200 leading-relaxed">
+                    {{.Personal.Bio}}
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/projects" class="btn-primary text-center">
+                        View My Work
+                    </a>
+                    <a href="/contact" class="btn-secondary text-center">
+                        Get In Touch
+                    </a>
+                </div>
+            </div>
+            
+            <div class="lg:w-1/2 lg:pl-12 animate-on-scroll">
+                <div class="relative">
+                    <!-- Profile Image Placeholder -->
+                    <div class="w-80 h-80 mx-auto bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div class="text-6xl">👨‍💻</div>
+                    </div>
+                    
+                    <!-- Floating Skills -->
+                    <div class="absolute -top-4 -left-4 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in">
+                        <span class="text-sm font-medium">Go</span>
+                    </div>
+                    <div class="absolute top-8 -right-8 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in" style="animation-delay: 0.2s">
+                        <span class="text-sm font-medium">TypeScript</span>
+                    </div>
+                    <div class="absolute -bottom-8 left-8 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in" style="animation-delay: 0.4s">
+                        <span class="text-sm font-medium">Python</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section class="section-padding bg-gray-50 dark:bg-gray-800">
+    <div class="container-max">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Technical Skills</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Technologies I work with</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {{range .Personal.Skills}}
+            <div class="card p-6 animate-on-scroll">
+                <h3 class="text-xl font-semibold mb-4 text-primary-600 dark:text-primary-400">{{.Category}}</h3>
+                <div class="flex flex-wrap gap-2">
+                    {{range .Items}}
+                    <span class="tech-tag">{{.}}</span>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Projects Section -->
+<section class="section-padding">
+    <div class="container-max">
+        <div class="text-center mb-16 animate-on-scroll">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Featured Projects</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Some of my recent work</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {{range .Projects}}
+            <div class="card hover:shadow-2xl transition-all duration-300 animate-on-scroll">
+                <div class="aspect-video bg-gradient-to-br from-primary-400 to-primary-600 rounded-t-lg flex items-center justify-center">
+                    <div class="text-white text-4xl">🚀</div>
+                </div>
+                
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold mb-3">{{.Title}}</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">{{.Description}}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {{range .Technologies}}
+                        <span class="tech-tag">{{.}}</span>
+                        {{end}}
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        {{if .GitHubURL}}
+                        <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" 
+                           class="text-primary-600 dark:text-primary-400 hover:underline">
+                            GitHub
+                        </a>
+                        {{end}}
+                        {{if .LiveURL}}
+                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" 
+                           class="text-primary-600 dark:text-primary-400 hover:underline">
+                            Live Demo
+                        </a>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        
+        <div class="text-center animate-on-scroll">
+            <a href="/projects" class="btn-primary">
+                View All Projects
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA Section -->
+<section class="section-padding bg-primary-600 text-white">
+    <div class="container-max text-center animate-on-scroll">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Let's Work Together</h2>
+        <p class="text-xl mb-8 text-primary-100">
+            I'm always interested in new opportunities and collaborations
+        </p>
+        <a href="/contact" class="btn-secondary">
+            Get In Touch
+        </a>
+    </div>
+</section>
+{{end}}

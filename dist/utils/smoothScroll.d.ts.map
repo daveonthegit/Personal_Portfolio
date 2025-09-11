@@ -1,0 +1,1 @@
+{"version":3,"file":"smoothScroll.d.ts","sourceRoot":"","sources":["../../src/utils/smoothScroll.ts"],"names":[],"mappings":"AAAA,qBAAa,YAAY;IACvB,MAAM,CAAC,IAAI;IAkBX,MAAM,CAAC,eAAe,CAAC,OAAO,EAAE,WAAW,EAAE,MAAM,GAAE,MAAW;IAUhE,MAAM,CAAC,WAAW;CAMnB"}

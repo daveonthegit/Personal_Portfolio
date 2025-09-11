@@ -1,0 +1,26 @@
+{
+  "name": "David Xiao Portfolio",
+  "description": "Personal portfolio showcasing projects, experience, and resume",
+  "repository": "https://github.com/daveonthegit/personal-portfolio",
+  "keywords": ["go", "portfolio", "typescript", "tailwind"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/go"
+    }
+  ],
+  "env": {
+    "PORT": {
+      "description": "Port for the web server",
+      "value": "8080"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+}

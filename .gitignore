@@ -1,70 +1,60 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+main
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+# Test binary, built with `go test -c`
+*.test
 
-# testing
-/coverage
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-# next.js
-/.next/
-/out/
+# Go workspace file
+go.work
 
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# Node.js dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# Environment variables
 .env
-.env.development
+.env.local
 .env.production
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# contentlayer
-.contentlayer
-
-# IDE
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
 
 # OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Temporary files
-.tmp/
-temp/
+# Built assets (these get built during deployment)
+static/css/main.css
+static/css/main.css.map
+static/js/main.js
+static/js/main.js.map
 
-# Large 3D model files (if you want to exclude them from git)
-# public/assets/models/*.glb
-# public/assets/models/*.gltf
-
-# Analytics and logs
-/logs
+# LaTeX auxiliary files
+*.aux
 *.log
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
 
-# Bundle analyzer
-/.next/analyze
-
-# Backup files
-*.backup
-*.bak
+# Temporary files
+*.tmp
+*.temp
