@@ -1,46 +1,114 @@
 {{define "home-content"}}
-<!-- Hero Section -->
-<section class="hero-gradient text-white">
-    <div class="container-max section-padding">
-        <div class="flex flex-col lg:flex-row items-center justify-between py-20">
+<!-- CTOS Hero Section -->
+<section class="ctos-hero-gradient text-ctos-text relative overflow-hidden">
+    <!-- CTOS HUD Overlay -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-4 left-4 font-mono text-xs text-primary-400">
+            <div>SYSTEM: ONLINE</div>
+            <div>USER: {{.Personal.Name}}</div>
+            <div>ACCESS: AUTHORIZED</div>
+        </div>
+        <div class="absolute top-4 right-4 font-mono text-xs text-secondary-400">
+            <div>NET: CONNECTED</div>
+            <div>SEC: MAXIMUM</div>
+            <div>STATUS: ACTIVE</div>
+        </div>
+        <div class="absolute bottom-4 left-4 font-mono text-xs text-ctos-green animate-flicker">
+            <div>CTOS_PORTFOLIO_V2.1</div>
+        </div>
+    </div>
+
+    <div class="ctos-container ctos-section-padding relative z-10">
+        <div class="flex flex-col lg:flex-row items-center justify-between">
+            <!-- CTOS Terminal Interface -->
             <div class="lg:w-1/2 mb-12 lg:mb-0 animate-on-scroll">
-                <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                    Hi, I'm <span class="text-yellow-300">{{.Personal.Name}}</span>
+                <!-- Terminal Header -->
+                <div class="ctos-panel p-1 mb-6">
+                    <div class="bg-ctos-darker p-4 font-mono">
+                        <div class="flex items-center justify-between text-xs text-primary-400 mb-2">
+                            <span>[TERMINAL_001]</span>
+                            <span>SECURE_CONNECTION</span>
+                        </div>
+                        <div class="text-ctos-green">
+                            <div class="mb-1">&gt; initialize_portfolio.exe</div>
+                            <div class="mb-1">&gt; loading_user_profile...</div>
+                            <div class="text-primary-400">&gt; ACCESS_GRANTED</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <h1 class="font-tech text-4xl md:text-6xl font-bold mb-6 leading-tight ctos-text-glow">
+                    <span class="text-secondary-500">[</span>HELLO<span class="text-secondary-500">]</span>
+                    <br>
+                    I'M <span class="text-primary-400 animate-pulse-glow">{{.Personal.Name}}</span>
                 </h1>
-                <h2 class="text-xl md:text-2xl mb-8 text-gray-200">
-                    {{.Personal.Title}}
-                </h2>
-                <p class="text-lg mb-8 text-gray-200 leading-relaxed">
-                    {{.Personal.Bio}}
-                </p>
+                
+                <div class="ctos-panel p-4 mb-6">
+                    <div class="font-mono text-primary-400 text-sm mb-2">ROLE_DESIGNATION:</div>
+                    <h2 class="text-xl md:text-2xl font-tech text-ctos-text-dim">
+                        {{.Personal.Title}}
+                    </h2>
+                </div>
+
+                <div class="ctos-panel p-4 mb-8">
+                    <div class="font-mono text-primary-400 text-sm mb-2">BIO_DATA:</div>
+                    <p class="text-base text-ctos-text-dim leading-relaxed font-mono">
+                        {{.Personal.Bio}}
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="/projects" class="btn-primary text-center">
-                        View My Work
+                    <a href="/projects" class="ctos-btn-primary text-center">
+                        <span class="text-secondary-500">&gt;</span> VIEW_PROJECTS
                     </a>
-                    <a href="/contact" class="btn-secondary text-center">
-                        Get In Touch
+                    <a href="/contact" class="ctos-btn-secondary text-center">
+                        <span class="text-primary-500">&gt;</span> ESTABLISH_CONTACT
                     </a>
                 </div>
             </div>
             
+            <!-- CTOS Profile Display -->
             <div class="lg:w-1/2 lg:pl-12 animate-on-scroll">
                 <div class="relative">
-                    <!-- Profile Image -->
-                    <div class="w-80 h-80 mx-auto bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border-4 border-white/20">
-                        <img src="/static/images/Profile_Picture.jpeg" 
-                             alt="{{.Personal.Name}} - Profile Picture" 
-                             class="w-full h-full object-cover">
-                    </div>
-                    
-                    <!-- Floating Skills -->
-                    <div class="absolute -top-4 -left-4 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in">
-                        <span class="text-sm font-medium">Go</span>
-                    </div>
-                    <div class="absolute top-8 -right-8 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in" style="animation-delay: 0.2s">
-                        <span class="text-sm font-medium">TypeScript</span>
-                    </div>
-                    <div class="absolute -bottom-8 left-8 bg-white/20 backdrop-blur-sm rounded-lg p-3 animate-bounce-in" style="animation-delay: 0.4s">
-                        <span class="text-sm font-medium">Python</span>
+                    <!-- Profile Image with CTOS Frame -->
+                    <div class="w-80 h-80 mx-auto relative">
+                        <!-- Outer Frame -->
+                        <div class="absolute inset-0 border-2 border-primary-400 animate-pulse-glow">
+                            <div class="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-primary-400"></div>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-primary-400"></div>
+                            <div class="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-primary-400"></div>
+                            <div class="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-primary-400"></div>
+                        </div>
+                        
+                        <!-- Profile Image -->
+                        <div class="w-full h-full overflow-hidden bg-ctos-panel border border-primary-500/50">
+                            <img src="/static/images/Profile_Picture.jpeg" 
+                                 alt="{{.Personal.Name}} - Profile Picture" 
+                                 class="w-full h-full object-cover opacity-90">
+                        </div>
+
+                        <!-- HUD Elements -->
+                        <div class="absolute -top-8 -left-8 ctos-panel p-2 text-xs font-mono animate-bounce-in">
+                            <div class="text-primary-400">ID: {{.Personal.Name}}</div>
+                            <div class="text-ctos-green">STATUS: ONLINE</div>
+                        </div>
+                        
+                        <div class="absolute -top-8 -right-8 ctos-panel p-2 text-xs font-mono animate-bounce-in" style="animation-delay: 0.2s">
+                            <div class="text-secondary-400">SKILL_SET:</div>
+                            <div class="text-primary-400">FULL_STACK</div>
+                        </div>
+                        
+                        <div class="absolute -bottom-8 -left-8 ctos-panel p-2 text-xs font-mono animate-bounce-in" style="animation-delay: 0.4s">
+                            <div class="text-primary-400">LOCATION:</div>
+                            <div class="text-ctos-text-dim">{{.Personal.Location}}</div>
+                        </div>
+                        
+                        <div class="absolute -bottom-8 -right-8 ctos-panel p-2 text-xs font-mono animate-bounce-in" style="animation-delay: 0.6s">
+                            <div class="text-secondary-400">CLEARANCE:</div>
+                            <div class="text-ctos-green animate-flicker">MAXIMUM</div>
+                        </div>
                     </div>
                 </div>
             </div>

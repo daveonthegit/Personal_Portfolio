@@ -23,37 +23,64 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     
+    <!-- Google Fonts for CTOS Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
     <!-- Styles -->
     <link href="/static/css/main.css" rel="stylesheet">
 </head>
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-        <div class="container-max px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-3">
-                <a href="/" class="text-lg font-bold text-primary-600 dark:text-primary-400">
-                    {{.Personal.Name}}
+<body class="bg-ctos-black text-ctos-text font-mono overflow-x-hidden">
+    <!-- CTOS Scan Line Effect -->
+    <div class="fixed top-0 left-0 w-1 h-full bg-primary-400 opacity-30 animate-scan-line z-50 pointer-events-none"></div>
+    
+    <!-- CTOS Grid Overlay -->
+    <div class="fixed inset-0 opacity-5 pointer-events-none z-10">
+        <div class="absolute inset-0" style="background-image: linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
+    </div>
+    <!-- CTOS Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-40 bg-ctos-dark/95 backdrop-blur-md border-b border-primary-500/30 shadow-neon">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <!-- CTOS Logo/Brand -->
+                <a href="/" class="font-tech text-xl font-bold text-primary-400 hover:text-primary-300 transition-all duration-300 hover:shadow-glow animate-pulse-glow">
+                    <span class="text-secondary-500">[</span>{{.Personal.Name}}<span class="text-secondary-500">]</span>
+                    <div class="text-xs text-primary-600 font-mono">SYSTEM_ONLINE</div>
                 </a>
                 
-                <div class="hidden md:flex space-x-6">
-                    <a href="/" class="nav-link">Home</a>
-                    <a href="/about" class="nav-link">About</a>
-                    <a href="/projects" class="nav-link">Projects</a>
-                    <a href="/resume" class="nav-link">Resume</a>
-                    <a href="/contact" class="nav-link">Contact</a>
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="ctos-nav-link group">
+                        <span class="text-secondary-500">&gt;</span> HOME
+                        <div class="ctos-nav-underline"></div>
+                    </a>
+                    <a href="/about" class="ctos-nav-link group">
+                        <span class="text-secondary-500">&gt;</span> ABOUT
+                        <div class="ctos-nav-underline"></div>
+                    </a>
+                    <a href="/projects" class="ctos-nav-link group">
+                        <span class="text-secondary-500">&gt;</span> PROJECTS
+                        <div class="ctos-nav-underline"></div>
+                    </a>
+                    <a href="/resume" class="ctos-nav-link group">
+                        <span class="text-secondary-500">&gt;</span> RESUME
+                        <div class="ctos-nav-underline"></div>
+                    </a>
+                    <a href="/contact" class="ctos-nav-link group">
+                        <span class="text-secondary-500">&gt;</span> CONTACT
+                        <div class="ctos-nav-underline"></div>
+                    </a>
                 </div>
 
-                <div class="flex items-center space-x-4">
-                    <!-- Theme Toggle -->
-                    <button id="theme-toggle" 
-                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                            aria-label="Toggle theme">
-                        🌙
-                    </button>
+                <!-- CTOS System Status -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="text-xs font-mono text-ctos-green animate-flicker">
+                        <div>SYS: ONLINE</div>
+                        <div>NET: CONNECTED</div>
+                    </div>
                     
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Mobile Menu Toggle -->
+                    <button id="mobile-menu-toggle" class="md:hidden p-2 border border-primary-500/50 hover:border-primary-400 bg-ctos-panel hover:bg-ctos-border transition-all duration-300 hover:shadow-glow">
+                        <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
@@ -61,20 +88,20 @@
             </div>
 
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden pb-4">
-                <div class="flex flex-col space-y-2">
-                    <a href="/" class="nav-link-mobile">Home</a>
-                    <a href="/about" class="nav-link-mobile">About</a>
-                    <a href="/projects" class="nav-link-mobile">Projects</a>
-                    <a href="/resume" class="nav-link-mobile">Resume</a>
-                    <a href="/contact" class="nav-link-mobile">Contact</a>
+            <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-primary-500/30 mt-4">
+                <div class="flex flex-col space-y-3 pt-4">
+                    <a href="/" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> HOME</a>
+                    <a href="/about" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> ABOUT</a>
+                    <a href="/projects" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> PROJECTS</a>
+                    <a href="/resume" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> RESUME</a>
+                    <a href="/contact" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> CONTACT</a>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-16">
+    <main class="pt-24 relative z-20">
         {{if eq .TemplateName "home"}}
             {{template "home-content" .}}
         {{else if eq .TemplateName "about"}}
@@ -90,35 +117,49 @@
         {{end}}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <div class="container-max section-padding">
+    <!-- CTOS Footer -->
+    <footer class="bg-ctos-darker border-t border-primary-500/30 relative z-20">
+        <div class="container mx-auto px-6 py-8">
             <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <p class="text-gray-600 dark:text-gray-400">
-                        © {{.Year}} {{.Personal.Name}}. All rights reserved.
+                <div class="mb-4 md:mb-0 font-mono">
+                    <p class="text-ctos-text-dim text-sm">
+                        <span class="text-secondary-500">[</span>© {{.Year}} {{.Personal.Name}}<span class="text-secondary-500">]</span> 
+                        <span class="text-primary-400">SYSTEM_SECURE</span>
                     </p>
+                    <p class="text-xs text-ctos-text-muted">All rights reserved. Unauthorized access prohibited.</p>
                 </div>
                 
-                <div class="flex space-x-6">
+                <div class="flex space-x-6 font-mono text-sm">
                     {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                        Email
+                    <a href="mailto:{{.Personal.Email}}" class="ctos-footer-link">
+                        <span class="text-secondary-500">&gt;</span> EMAIL
                     </a>
                     {{end}}
                     {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                        LinkedIn
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="ctos-footer-link">
+                        <span class="text-secondary-500">&gt;</span> LINKEDIN
                     </a>
                     {{end}}
                     {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                        GitHub
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="ctos-footer-link">
+                        <span class="text-secondary-500">&gt;</span> GITHUB
                     </a>
                     {{end}}
-                    <a href="/resume" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                        Resume
+                    <a href="/resume" class="ctos-footer-link">
+                        <span class="text-secondary-500">&gt;</span> RESUME
                     </a>
+                </div>
+            </div>
+            
+            <!-- CTOS Status Bar -->
+            <div class="mt-6 pt-4 border-t border-primary-500/20 flex justify-between items-center text-xs font-mono">
+                <div class="flex space-x-4">
+                    <span class="text-ctos-green animate-flicker">STATUS: OPERATIONAL</span>
+                    <span class="text-primary-400">UPTIME: 99.9%</span>
+                    <span class="text-secondary-400">SECURITY: MAXIMUM</span>
+                </div>
+                <div class="text-ctos-text-muted">
+                    CTOS_V2.1_PORTFOLIO_BUILD
                 </div>
             </div>
         </div>

@@ -2,60 +2,170 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Custom base styles */
+/* CTOS Base Styles */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+    @apply bg-ctos-black text-ctos-text font-mono overflow-x-hidden;
+    background-image: 
+      radial-gradient(circle at 25px 25px, rgba(0, 255, 255, 0.03) 2px, transparent 0),
+      radial-gradient(circle at 75px 75px, rgba(255, 102, 0, 0.02) 1px, transparent 0);
+    background-size: 100px 100px;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-gray-900 dark:text-white;
+    @apply font-tech font-bold text-ctos-text;
+    text-shadow: 0 0 10px currentColor;
   }
 
   a {
-    @apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-200;
+    @apply text-primary-400 hover:text-primary-300 transition-all duration-300;
   }
 }
 
-/* Custom component styles */
+/* CTOS Component Styles */
 @layer components {
-  .nav-link {
-    @apply text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium;
+  /* CTOS Navigation */
+  .ctos-nav-link {
+    @apply text-ctos-text-dim hover:text-primary-400 transition-all duration-300 font-mono text-sm relative;
   }
 
-  .nav-link-mobile {
-    @apply block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 font-medium;
-  }
-  .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  .ctos-nav-link:hover {
+    text-shadow: 0 0 5px currentColor;
   }
 
-  .btn-secondary {
-    @apply bg-secondary-200 hover:bg-secondary-300 dark:bg-secondary-700 dark:hover:bg-secondary-600 text-secondary-900 dark:text-secondary-100 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  .ctos-nav-underline {
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400 transition-all duration-300 group-hover:w-full;
+    box-shadow: 0 0 5px currentColor;
   }
 
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:border-gray-700;
+  .ctos-nav-link-mobile {
+    @apply block py-3 text-ctos-text-dim hover:text-primary-400 transition-all duration-300 font-mono text-sm border-l-2 border-transparent hover:border-primary-400 pl-4;
   }
 
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white transition-colors duration-200;
+  .ctos-nav-link-mobile:hover {
+    text-shadow: 0 0 5px currentColor;
+    box-shadow: inset 5px 0 10px rgba(0, 255, 255, 0.1);
   }
 
-  .section-padding {
-    @apply py-16 px-4 sm:px-6 lg:px-8;
+  .ctos-footer-link {
+    @apply text-ctos-text-muted hover:text-primary-400 transition-all duration-300;
   }
 
-  .container-max {
+  .ctos-footer-link:hover {
+    text-shadow: 0 0 5px currentColor;
+  }
+
+  /* CTOS Buttons */
+  .ctos-btn-primary {
+    @apply bg-ctos-panel hover:bg-primary-600 text-primary-400 hover:text-ctos-black font-mono py-3 px-6 border border-primary-500 hover:border-primary-400 transition-all duration-300 uppercase tracking-wider text-sm;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  }
+
+  .ctos-btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 0 20px rgba(0, 255, 255, 0.1);
+  }
+
+  .ctos-btn-secondary {
+    @apply bg-ctos-panel hover:bg-secondary-600 text-secondary-400 hover:text-ctos-black font-mono py-3 px-6 border border-secondary-500 hover:border-secondary-400 transition-all duration-300 uppercase tracking-wider text-sm;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
+  }
+
+  .ctos-btn-secondary:hover {
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.6), inset 0 0 20px rgba(255, 102, 0, 0.1);
+  }
+
+  /* CTOS Panels */
+  .ctos-panel {
+    @apply bg-ctos-panel border border-primary-500/30 relative overflow-hidden;
+    box-shadow: 
+      0 0 20px rgba(0, 255, 255, 0.1),
+      inset 0 0 20px rgba(0, 255, 255, 0.05);
+  }
+
+  .ctos-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
+    animation: scanLine 3s linear infinite;
+  }
+
+  .ctos-card {
+    @apply ctos-panel p-6 hover:border-primary-400/50 transition-all duration-300 group;
+  }
+
+  .ctos-card:hover {
+    box-shadow: 
+      0 0 30px rgba(0, 255, 255, 0.2),
+      inset 0 0 30px rgba(0, 255, 255, 0.1);
+  }
+
+  /* CTOS Form Elements */
+  .ctos-input {
+    @apply w-full px-4 py-3 bg-ctos-darker border border-primary-500/30 text-ctos-text font-mono placeholder-ctos-text-muted focus:outline-none focus:border-primary-400 transition-all duration-300;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .ctos-input:focus {
+    box-shadow: 
+      inset 0 0 10px rgba(0, 0, 0, 0.5),
+      0 0 10px rgba(0, 255, 255, 0.3);
+  }
+
+  .ctos-textarea {
+    @apply ctos-input resize-none min-h-32;
+  }
+
+  /* CTOS Utilities */
+  .ctos-section-padding {
+    @apply py-20 px-6;
+  }
+
+  .ctos-container {
     @apply max-w-7xl mx-auto;
   }
+
+  .ctos-tech-tag {
+    @apply inline-block bg-ctos-darker text-primary-400 text-xs font-mono px-3 py-1 border border-primary-500/30 mr-2 mb-2 hover:border-primary-400/50 transition-all duration-300;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+  }
+
+  .ctos-tech-tag:hover {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    text-shadow: 0 0 5px currentColor;
+  }
+
+  /* CTOS Terminal Effects */
+  .ctos-terminal {
+    @apply bg-ctos-black border border-ctos-green font-mono text-ctos-green p-4;
+    text-shadow: 0 0 5px currentColor;
+    box-shadow: 
+      0 0 20px rgba(0, 255, 0, 0.3),
+      inset 0 0 20px rgba(0, 255, 0, 0.1);
+  }
+
+  .ctos-terminal::before {
+    content: '> ';
+    color: #00ff00;
+  }
+
+  .ctos-glitch {
+    @apply animate-glitch;
+  }
+
+  .ctos-glow {
+    @apply animate-glow;
+  }
 }
 
-/* Animation utilities */
+/* CTOS Animation Utilities */
 @layer utilities {
   .animate-on-scroll {
     @apply opacity-0 transform translate-y-8 transition-all duration-700 ease-out;
@@ -73,62 +183,91 @@
     @apply opacity-50 transition-opacity duration-300;
   }
 
-  .tech-tag {
-    @apply inline-block bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 text-xs font-medium px-2.5 py-0.5 rounded-full mr-2 mb-2;
+  .ctos-hero-gradient {
+    background: 
+      linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 102, 204, 0.2) 100%),
+      linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
   }
 
-  .hero-gradient {
-    background: linear-gradient(135deg, theme('colors.primary.600') 0%, theme('colors.primary.800') 100%);
+  .ctos-text-glow {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
   }
 
-  .dark .hero-gradient {
-    background: linear-gradient(135deg, theme('colors.primary.700') 0%, theme('colors.primary.900') 100%);
+  .ctos-border-glow {
+    box-shadow: 0 0 10px currentColor, inset 0 0 10px rgba(0, 255, 255, 0.1);
   }
 }
 
-/* Custom scrollbar */
+/* CTOS Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
+  @apply bg-ctos-darker;
+  border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  @apply bg-primary-600;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500 dark:bg-gray-500;
+  @apply bg-primary-500;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
-/* Loading states */
-.loading {
-  @apply opacity-50 pointer-events-none;
+/* CTOS Loading States */
+.ctos-loading {
+  @apply opacity-50 pointer-events-none animate-pulse;
 }
 
-.spinner {
-  @apply animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600;
+.ctos-spinner {
+  @apply animate-spin h-6 w-6 border-2 border-primary-500 border-t-transparent;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
-/* Form validation */
-.form-error {
-  @apply text-red-600 dark:text-red-400 text-sm mt-1;
+/* CTOS Form Validation */
+.ctos-form-error {
+  @apply text-ctos-red font-mono text-sm mt-2;
+  text-shadow: 0 0 5px currentColor;
 }
 
-.form-success {
-  @apply text-green-600 dark:text-green-400 text-sm mt-1;
+.ctos-form-success {
+  @apply text-ctos-green font-mono text-sm mt-2;
+  text-shadow: 0 0 5px currentColor;
 }
 
-.form-message {
-  @apply p-3 rounded-lg text-sm font-medium;
+.ctos-form-message {
+  @apply p-4 font-mono text-sm border;
 }
 
-.form-message.form-success {
-  @apply bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-700;
+.ctos-form-message.ctos-form-success {
+  @apply bg-ctos-darker text-ctos-green border-ctos-green/30;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
 }
 
-.form-message.form-error {
-  @apply bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-700;
+.ctos-form-message.ctos-form-error {
+  @apply bg-ctos-darker text-ctos-red border-ctos-red/30;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+}
+
+/* CTOS Selection */
+::selection {
+  background: rgba(0, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: rgba(0, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* CTOS Focus States */
+*:focus {
+  outline: 2px solid rgba(0, 255, 255, 0.5);
+  outline-offset: 2px;
 }
