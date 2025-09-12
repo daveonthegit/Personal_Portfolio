@@ -5,6 +5,41 @@ module.exports = {
     "./src/**/*.{js,ts}",
     "./static/**/*.html"
   ],
+  safelist: [
+    // Background colors
+    'bg-black', 'bg-gray-900', 'bg-gray-800', 'bg-gray-700', 'bg-black/95',
+    'bg-white', 'bg-cyan-400', 'bg-orange-500', 'bg-green-400', 'bg-red-900', 'bg-green-900',
+    // Text colors
+    'text-white', 'text-black', 'text-gray-300', 'text-gray-400', 'text-gray-500',
+    'text-cyan-400', 'text-green-400', 'text-orange-400', 'text-red-400',
+    'text-green-300', 'text-red-300',
+    // Border colors
+    'border-cyan-400', 'border-gray-600', 'border-gray-700', 'border-cyan-400/30',
+    'border-green-400', 'border-red-400', 'border-black', 'border-2', 'border-b', 'border-t',
+    'border-b-2', 'border-l-2', 'border-r-2', 'border-t-2',
+    // Hover states
+    'hover:bg-cyan-400', 'hover:bg-cyan-300', 'hover:bg-orange-400',
+    'hover:text-black', 'hover:text-cyan-400', 'hover:text-cyan-300', 'hover:text-white',
+    'hover:text-orange-300', 'hover:border-cyan-300', 'hover:border-cyan-400', 'hover:border-l-2',
+    // Animations
+    'animate-pulse', 'animate-scan-line',
+    // Layout & spacing
+    'fixed', 'absolute', 'relative', 'top-0', 'left-0', 'right-0', 'z-40', 'z-50', 'z-20', 'z-10',
+    'container', 'mx-auto', 'px-6', 'py-4', 'p-6', 'p-8', 'px-3', 'py-1', 'px-2', 'py-2',
+    'flex', 'hidden', 'md:flex', 'md:hidden', 'grid', 'grid-cols-2', 'md:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4',
+    'items-center', 'justify-between', 'space-x-8', 'space-y-3', 'gap-4', 'gap-6', 'gap-8',
+    // Typography
+    'font-bold', 'text-xl', 'text-sm', 'text-lg', 'text-xs', 'uppercase', 'tracking-wider',
+    'leading-relaxed', 'line-clamp-3',
+    // Sizing
+    'w-full', 'w-32', 'w-48', 'w-4', 'w-6', 'w-2', 'h-full', 'h-40', 'h-64', 'h-4', 'h-6', 'h-2',
+    'min-h-screen', 'max-w-2xl', 'max-w-4xl', 'aspect-video',
+    // Effects
+    'backdrop-blur-md', 'transition-colors', 'transition-all', 'duration-300',
+    'overflow-hidden', 'grayscale', 'object-cover', 'opacity-10', 'opacity-30', 'opacity-5',
+    // Positioning
+    'inset-0', '-top-1', '-left-1', '-right-1', '-bottom-1', 'pointer-events-none'
+  ],
   darkMode: 'class',
   theme: {
     extend: {
@@ -35,20 +70,23 @@ module.exports = {
           800: '#b36000',
           900: '#994d00',
         },
-        // CTOS Dark Theme
-        ctos: {
-          'black': '#000000',
-          'dark': '#0a0a0a',
-          'darker': '#111111',
-          'panel': '#1a1a1a',
-          'border': '#333333',
-          'text': '#ffffff',
-          'text-dim': '#cccccc',
-          'text-muted': '#999999',
-          'green': '#00ff00',
-          'red': '#ff0000',
-          'cyan': '#00ffff',
-          'orange': '#ff6600',
+        // Standard colors that we're using
+        cyan: {
+          300: '#67e8f9',
+          400: '#22d3ee',
+          500: '#06b6d4',
+        },
+        orange: {
+          400: '#fb923c',
+          500: '#f97316',
+        },
+        green: {
+          400: '#4ade80',
+          500: '#22c55e',
+        },
+        red: {
+          400: '#f87171',
+          500: '#ef4444',
         }
       },
       animation: {

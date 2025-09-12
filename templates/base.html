@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,85 +23,40 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     
-    <!-- Google Fonts for CTOS Typography -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="/static/css/main.css" rel="stylesheet">
+    <link href="/static/css/main.css?v=3" rel="stylesheet">
 </head>
-<body class="bg-ctos-black text-ctos-text font-mono overflow-x-hidden">
-    <!-- CTOS Scan Line Effect -->
-    <div class="fixed top-0 left-0 w-1 h-full bg-primary-400 opacity-30 animate-scan-line z-50 pointer-events-none"></div>
+<body>
+    <!-- Background Grid -->
+    <div class="ctos-grid-bg"></div>
     
-    <!-- CTOS Grid Overlay -->
-    <div class="fixed inset-0 opacity-5 pointer-events-none z-10">
-        <div class="absolute inset-0" style="background-image: linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px); background-size: 50px 50px;"></div>
-    </div>
-    <!-- CTOS Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-40 bg-ctos-dark/95 backdrop-blur-md border-b border-primary-500/30 shadow-neon">
-        <div class="container mx-auto px-6">
-            <div class="flex justify-between items-center py-4">
-                <!-- CTOS Logo/Brand -->
-                <a href="/" class="font-tech text-xl font-bold text-primary-400 hover:text-primary-300 transition-all duration-300 hover:shadow-glow animate-pulse-glow">
-                    <span class="text-secondary-500">[</span>{{.Personal.Name}}<span class="text-secondary-500">]</span>
-                    <div class="text-xs text-primary-600 font-mono">SYSTEM_ONLINE</div>
-                </a>
-                
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="ctos-nav-link group">
-                        <span class="text-secondary-500">&gt;</span> HOME
-                        <div class="ctos-nav-underline"></div>
-                    </a>
-                    <a href="/about" class="ctos-nav-link group">
-                        <span class="text-secondary-500">&gt;</span> ABOUT
-                        <div class="ctos-nav-underline"></div>
-                    </a>
-                    <a href="/projects" class="ctos-nav-link group">
-                        <span class="text-secondary-500">&gt;</span> PROJECTS
-                        <div class="ctos-nav-underline"></div>
-                    </a>
-                    <a href="/resume" class="ctos-nav-link group">
-                        <span class="text-secondary-500">&gt;</span> RESUME
-                        <div class="ctos-nav-underline"></div>
-                    </a>
-                    <a href="/contact" class="ctos-nav-link group">
-                        <span class="text-secondary-500">&gt;</span> CONTACT
-                        <div class="ctos-nav-underline"></div>
-                    </a>
-                </div>
-
-                <!-- CTOS System Status -->
-                <div class="hidden md:flex items-center space-x-4">
-                    <div class="text-xs font-mono text-ctos-green animate-flicker">
-                        <div>SYS: ONLINE</div>
-                        <div>NET: CONNECTED</div>
-                    </div>
-                    
-                    <!-- Mobile Menu Toggle -->
-                    <button id="mobile-menu-toggle" class="md:hidden p-2 border border-primary-500/50 hover:border-primary-400 bg-ctos-panel hover:bg-ctos-border transition-all duration-300 hover:shadow-glow">
-                        <svg class="w-6 h-6 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden pb-4 border-t border-primary-500/30 mt-4">
-                <div class="flex flex-col space-y-3 pt-4">
-                    <a href="/" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> HOME</a>
-                    <a href="/about" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> ABOUT</a>
-                    <a href="/projects" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> PROJECTS</a>
-                    <a href="/resume" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> RESUME</a>
-                    <a href="/contact" class="ctos-nav-link-mobile"><span class="text-secondary-500">&gt;</span> CONTACT</a>
-                </div>
-            </div>
+    <!-- Navigation -->
+    <nav class="ctos-nav">
+        <div class="ctos-nav-container">
+            <a href="/" class="ctos-logo">
+                <span class="ctos-logo-ct">ct</span><span class="ctos-logo-os">OS</span>
+            </a>
+            
+            <ul class="ctos-nav-links">
+                <li><a href="/" class="ctos-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+                <li><a href="/about" class="ctos-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
+                <li><a href="/projects" class="ctos-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
+                <li><a href="/contact" class="ctos-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
+            </ul>
+            
+            <button class="ctos-mobile-toggle" id="mobile-toggle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-24 relative z-20">
+    <main class="ctos-main">
         {{if eq .TemplateName "home"}}
             {{template "home-content" .}}
         {{else if eq .TemplateName "about"}}
@@ -117,48 +72,47 @@
         {{end}}
     </main>
 
-    <!-- CTOS Footer -->
-    <footer class="bg-ctos-darker border-t border-primary-500/30 relative z-20">
-        <div class="container mx-auto px-6 py-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0 font-mono">
-                    <p class="text-ctos-text-dim text-sm">
-                        <span class="text-secondary-500">[</span>© {{.Year}} {{.Personal.Name}}<span class="text-secondary-500">]</span> 
-                        <span class="text-primary-400">SYSTEM_SECURE</span>
+    <!-- Footer -->
+    <footer class="ctos-footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="footer-info">
+                    <p style="color: #cccccc; font-size: 14px;">
+                        © {{.Year}} {{.Personal.Name}} - <span style="color: #00ffff;">SYSTEM SECURE</span>
                     </p>
-                    <p class="text-xs text-ctos-text-muted">All rights reserved. Unauthorized access prohibited.</p>
+                    <p style="font-size: 12px; color: #666666;">All rights reserved. Unauthorized access prohibited.</p>
                 </div>
                 
-                <div class="flex space-x-6 font-mono text-sm">
+                <div class="footer-links">
                     {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="ctos-footer-link">
-                        <span class="text-secondary-500">&gt;</span> EMAIL
+                    <a href="mailto:{{.Personal.Email}}" class="footer-link">
+                        EMAIL
                     </a>
                     {{end}}
                     {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="ctos-footer-link">
-                        <span class="text-secondary-500">&gt;</span> LINKEDIN
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        LINKEDIN
                     </a>
                     {{end}}
                     {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="ctos-footer-link">
-                        <span class="text-secondary-500">&gt;</span> GITHUB
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        GITHUB
                     </a>
                     {{end}}
-                    <a href="/resume" class="ctos-footer-link">
-                        <span class="text-secondary-500">&gt;</span> RESUME
+                    <a href="/resume" class="footer-link">
+                        RESUME
                     </a>
                 </div>
             </div>
             
             <!-- CTOS Status Bar -->
-            <div class="mt-6 pt-4 border-t border-primary-500/20 flex justify-between items-center text-xs font-mono">
-                <div class="flex space-x-4">
-                    <span class="text-ctos-green animate-flicker">STATUS: OPERATIONAL</span>
-                    <span class="text-primary-400">UPTIME: 99.9%</span>
-                    <span class="text-secondary-400">SECURITY: MAXIMUM</span>
+            <div class="footer-status">
+                <div class="status-indicators">
+                    <span class="status-online" style="font-weight: bold;">STATUS: OPERATIONAL</span>
+                    <span style="color: #00ffff; font-weight: bold;">UPTIME: 99.9%</span>
+                    <span class="status-warning" style="font-weight: bold;">SECURITY: MAXIMUM</span>
                 </div>
-                <div class="text-ctos-text-muted">
+                <div style="color: #666666;">
                     CTOS_V2.1_PORTFOLIO_BUILD
                 </div>
             </div>
@@ -167,14 +121,10 @@
 
     <!-- Scripts -->
     <script src="/static/js/main.js"></script>
-    
-    <!-- Mobile Menu Toggle Script -->
     <script>
-        document.getElementById('mobile-menu-toggle')?.addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (mobileMenu) {
-                mobileMenu.classList.toggle('hidden');
-            }
+        // Mobile menu toggle
+        document.getElementById('mobile-toggle')?.addEventListener('click', function() {
+            alert('Mobile menu - implement as needed');
         });
     </script>
 </body>

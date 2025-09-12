@@ -1,145 +1,171 @@
 {{define "projects-content"}}
-<!-- Projects Header -->
-<section class="section-padding bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800">
-    <div class="container-max text-center animate-on-scroll">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">My Projects</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            A showcase of my work in software development, system security, and web technologies.
-        </p>
-    </div>
-</section>
+<section class="section">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="section-header">
+            <div class="ctos-header" style="margin-bottom: 32px;">PROJECT DATABASE</div>
+            <h1 class="section-title">
+                DEVELOPMENT <span class="highlight">ARCHIVE</span>
+            </h1>
+            <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Classified development records and project documentation
+            </p>
+        </div>
 
-<!-- Projects Grid -->
-<section class="section-padding">
-    <div class="container-max">
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Database Stats -->
+        <div class="status-grid" style="margin-bottom: 64px;">
+            <div class="status-item">
+                <div style="font-size: 32px; font-weight: bold; color: #00ffff; margin-bottom: 8px;">{{len .Projects}}</div>
+                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Total Projects</div>
+            </div>
+            
+            <div class="status-item">
+                <div style="font-size: 32px; font-weight: bold; color: #ff6600; margin-bottom: 8px;">6</div>
+                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Technologies</div>
+            </div>
+            
+            <div class="status-item">
+                <div style="font-size: 32px; font-weight: bold; color: #00ff00; margin-bottom: 8px;">100%</div>
+                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Success Rate</div>
+            </div>
+            
+            <div class="status-item">
+                <div style="font-size: 32px; font-weight: bold; color: #ffffff; margin-bottom: 8px;">2024</div>
+                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Latest Build</div>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="ctos-panel" style="margin-bottom: 48px;">
+            <div class="panel-header">FILTER CONTROLS</div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+                <button class="ctos-btn ctos-btn-secondary filter-btn active" data-filter="all">ALL PROJECTS</button>
+                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="web">WEB DEVELOPMENT</button>
+                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="mobile">MOBILE</button>
+                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="ai">AI/ML</button>
+                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="security">SECURITY</button>
+            </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="ctos-terminal" style="margin-bottom: 48px;">
+            <div class="terminal-line">
+                <span style="color: #00ffff;">root@ctos:~$</span> query_project_database --status=active
+            </div>
+            <div class="terminal-line">
+                Scanning project archives...
+            </div>
+            <div class="terminal-line">
+                <span style="color: #00ff00;">✓</span> Found {{len .Projects}} active projects
+            </div>
+            <div class="terminal-line">
+                <span style="color: #00ff00;">✓</span> Security clearance verified
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-highlight">></span> Displaying results <span class="terminal-pulse">█</span>
+            </div>
+        </div>
+
+        <!-- Projects Grid -->
+        <div class="projects-grid">
             {{range .Projects}}
-            <div class="card hover:shadow-2xl transition-all duration-300 animate-on-scroll group">
-                <!-- Project Image/Icon -->
-                <div class="aspect-video bg-gradient-to-br from-primary-400 to-primary-600 rounded-t-lg flex items-center justify-center relative overflow-hidden">
-                    <div class="text-white text-5xl transform group-hover:scale-110 transition-transform duration-300">
-                        {{if eq .ID "personal-portfolio"}}🌐
-                        {{else if eq .ID "forgearena"}}💪
-                        {{else if eq .ID "randcompile-extension"}}🛡️
-                        {{else if eq .ID "rsa-factorization-tls-decryption"}}🔐
-                        {{else if eq .ID "hs-projects"}}🎓
-                        {{else if eq .ID "leetcode-solutions"}}🧩
-                        {{else if eq .ID "hunter-cs-work"}}🏫
-                        {{else}}🚀{{end}}
-                    </div>
-                    
-                    <!-- Overlay on hover -->
-                    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div class="flex space-x-4">
-                            {{if .GitHubURL}}
-                            <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" 
-                               class="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
-                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                </svg>
-                            </a>
-                            {{end}}
-                            {{if .LiveURL}}
-                            <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" 
-                               class="bg-white/20 backdrop-blur-sm rounded-full p-3 hover:bg-white/30 transition-colors">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                </svg>
-                            </a>
-                            {{end}}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Project Content -->
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-xl font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                            {{.Title}}
-                        </h3>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">
-                            {{.Date.Format "Jan 2006"}}
-                        </span>
-                    </div>
-                    
-                    <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
-                        {{.Description}}
-                    </p>
-                    
-                    <!-- Technologies -->
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        {{range .Technologies}}
-                        <span class="tech-tag">{{.}}</span>
+            <div class="project-card" data-category="{{.ID}}">
+                <div class="ctos-header">PROJECT {{.ID}}</div>
+                <div class="project-content">
+                    <!-- Project Visual -->
+                    <div class="project-visual">
+                        {{if .Image}}
+                        <img src="{{.Image}}" alt="{{.Title}}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {{else}}
+                        <div style="color: #666666; font-size: 24px;">📁</div>
                         {{end}}
                     </div>
                     
-                    <!-- Links -->
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
-                        <div class="flex space-x-4">
-                            {{if .GitHubURL}}
-                            <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" 
-                               class="text-primary-600 dark:text-primary-400 hover:underline text-sm font-medium">
-                                View Code
-                            </a>
-                            {{end}}
-                            {{if .LiveURL}}
-                            <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" 
-                               class="text-primary-600 dark:text-primary-400 hover:underline text-sm font-medium">
-                                Live Demo
-                            </a>
+                    <!-- Project Info -->
+                    <div class="project-title">{{.Title}}</div>
+                    <div class="project-description">{{.Description}}</div>
+                    
+                    <!-- Tech Stack -->
+                    <div class="tech-stack">
+                        <div class="tech-label">TECHNOLOGIES</div>
+                        <div class="tech-tags">
+                            {{range .Technologies}}
+                            <span class="tech-tag">{{.}}</span>
                             {{end}}
                         </div>
-                        
-                        <!-- Project status indicator -->
-                        <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Completed</span>
+                    </div>
+                    
+                    <!-- Project Links -->
+                    <div class="project-links">
+                        {{if .GitHubURL}}
+                        <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="project-link">
+                            SOURCE CODE
+                        </a>
+                        {{end}}
+                        {{if .LiveURL}}
+                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo">
+                            LIVE DEMO
+                        </a>
+                        {{end}}
+                    </div>
+                    
+                    <!-- Project Status -->
+                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333333; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 12px;">
+                            <span style="color: #ffffff;">STATUS:</span>
+                            <span class="status-online">DEPLOYED</span>
+                        </div>
+                        <div style="font-size: 12px; color: #cccccc;">
+                            {{.Date.Format "2006-01-02"}}
                         </div>
                     </div>
                 </div>
             </div>
             {{end}}
         </div>
-    </div>
-</section>
 
-<!-- Project Stats -->
-<section class="section-padding bg-gray-50 dark:bg-gray-800">
-    <div class="container-max">
-        <div class="grid md:grid-cols-3 gap-8 text-center">
-            <div class="animate-on-scroll">
-                <div class="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">{{len .Projects}}</div>
-                <div class="text-gray-600 dark:text-gray-400">Projects Completed</div>
+        <!-- Database Footer -->
+        <div style="text-align: center; margin-top: 64px; padding: 32px; border-top: 1px solid #333333;">
+            <div style="color: #cccccc; font-size: 14px; margin-bottom: 8px;">
+                PROJECT DATABASE ACCESS LOG
             </div>
-            <div class="animate-on-scroll">
-                <div class="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">15+</div>
-                <div class="text-gray-600 dark:text-gray-400">Technologies Used</div>
-            </div>
-            <div class="animate-on-scroll">
-                <div class="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">2025</div>
-                <div class="text-gray-600 dark:text-gray-400">Latest Project Year</div>
+            <div style="color: #666666; font-size: 12px;">
+                Last Updated: {{.Year}}-09-12 | Access Level: <span class="status-online">AUTHORIZED</span>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="section-padding">
-    <div class="container-max text-center animate-on-scroll">
-        <div class="max-w-2xl mx-auto">
-            <h2 class="text-3xl font-bold mb-4">Interested in Working Together?</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
-                I'm always excited to take on new challenges and collaborate on innovative projects.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="/contact" class="btn-primary">
-                    Start a Conversation
-                </a>
-                <a href="/resume/pdf" class="btn-secondary">
-                    Download Resume
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
+<script>
+// Project Filter Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter projects
+            projectCards.forEach(card => {
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const category = card.getAttribute('data-category');
+                    if (category && category.toLowerCase().includes(filter)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
+});
+</script>
 {{end}}

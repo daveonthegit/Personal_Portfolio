@@ -1,192 +1,192 @@
 {{define "about-content"}}
-<!-- About Header -->
-<section class="section-padding bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800">
-    <div class="container-max text-center animate-on-scroll">
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">About Me</h1>
-        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Get to know more about my background, experience, and what drives my passion for technology.
-        </p>
-    </div>
-</section>
-
-<!-- About Content -->
-<section class="section-padding">
-    <div class="container-max">
-        <div class="grid lg:grid-cols-2 gap-16 items-center mb-16">
-            <!-- Bio Section -->
-            <div class="animate-on-scroll">
-                <h2 class="text-3xl font-bold mb-6">Hello, I'm {{.Personal.Name}}</h2>
-                <div class="prose prose-lg dark:prose-invert max-w-none">
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        {{.Personal.Bio}}
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Currently studying at {{range .Personal.Education}}{{.Institution}}{{end}}, 
-                        I'm passionate about building secure, scalable applications and exploring the intersection 
-                        of systems programming and web development.
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        When I'm not coding, you can find me diving deep into {{range $i, $interest := .Personal.Interests}}{{if $i}}, {{end}}{{$interest}}{{end}}.
-                    </p>
-                </div>
-            </div>
-            
-            <!-- Profile Image -->
-            <div class="animate-on-scroll">
-                <div class="relative">
-                    <div class="w-80 h-80 mx-auto bg-gradient-to-br from-primary-400 to-primary-600 rounded-full overflow-hidden p-2">
-                        <img src="/static/images/Profile_Picture.jpeg" 
-                             alt="{{.Personal.Name}} - Profile Picture" 
-                             class="w-full h-full object-cover rounded-full">
-                    </div>
-                    
-                    <!-- Stats -->
-                    <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg">
-                        <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{len .Personal.Experience}}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Work Experiences</div>
-                    </div>
-                    
-                    <div class="absolute -top-6 -right-6 bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg">
-                        <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{len .Projects}}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Projects Built</div>
-                    </div>
-                </div>
-            </div>
+<section class="section">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="section-header">
+            <div class="ctos-header" style="margin-bottom: 32px;">PERSONNEL FILE</div>
+            <h1 class="section-title">
+                SUBJECT <span class="highlight">DOSSIER</span>
+            </h1>
         </div>
-    </div>
-</section>
 
-<!-- Experience Section -->
-<section class="section-padding bg-gray-50 dark:bg-gray-800">
-    <div class="container-max">
-        <div class="text-center mb-16 animate-on-scroll">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Experience</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-400">My professional journey</p>
-        </div>
-        
-        <div class="max-w-4xl mx-auto">
-            {{range $i, $exp := .Personal.Experience}}
-            <div class="relative animate-on-scroll">
-                {{if ne $i 0}}
-                <!-- Timeline line -->
-                <div class="absolute left-6 top-0 w-0.5 h-8 bg-gray-300 dark:bg-gray-600"></div>
-                {{end}}
-                
-                <div class="flex items-start space-x-6 mb-12">
-                    <!-- Timeline dot -->
-                    <div class="flex-shrink-0 w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center">
-                        <div class="w-6 h-6 bg-white rounded-full"></div>
-                    </div>
-                    
-                    <!-- Content -->
-                    <div class="flex-grow card p-6">
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <div class="hero-grid">
+            <!-- Left Column - Profile Data -->
+            <div>
+                <!-- Extended Profile Card -->
+                <div class="ctos-profile-card" style="margin-bottom: 32px;">
+                    <div class="ctos-header">DETAILED PROFILE</div>
+                    <div class="profile-content">
+                        <!-- Profile Image -->
+                        <div class="profile-image">
+                            <img src="/static/images/Profile_Picture.jpeg" alt="{{.Personal.Name}}">
+                        </div>
+                        
+                        <!-- Extended Profile Data -->
+                        <div class="data-grid">
                             <div>
-                                <h3 class="text-xl font-semibold">{{.Position}}</h3>
-                                <p class="text-primary-600 dark:text-primary-400 font-medium">{{.Company}}</p>
+                                <div class="data-label">FULL NAME</div>
+                                <div class="data-value">{{.Personal.Name}}</div>
                             </div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
-                                {{.StartDate.Format "Jan 2006"}} - 
-                                {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}Present{{end}}
+                            <div>
+                                <div class="data-label">PROFESSION</div>
+                                <div class="data-value">{{.Personal.Title}}</div>
+                            </div>
+                            <div>
+                                <div class="data-label">LOCATION</div>
+                                <div class="data-value">{{.Personal.Location}}</div>
+                            </div>
+                            {{if .Personal.Email}}
+                            <div>
+                                <div class="data-label">CONTACT</div>
+                                <div class="data-value">{{.Personal.Email}}</div>
+                            </div>
+                            {{end}}
+                            <div>
+                                <div class="data-label">CLEARANCE</div>
+                                <div class="data-value status-online">AUTHORIZED</div>
+                            </div>
+                            <div>
+                                <div class="data-label">STATUS</div>
+                                <div class="data-value status-online">ACTIVE</div>
                             </div>
                         </div>
                         
-                        <p class="text-gray-600 dark:text-gray-400 mb-4">{{.Location}}</p>
-                        
-                        <ul class="space-y-2 mb-4">
-                            {{range .Description}}
-                            <li class="text-gray-600 dark:text-gray-400 flex items-start">
-                                <span class="text-primary-600 dark:text-primary-400 mr-2">•</span>
-                                {{.}}
-                            </li>
-                            {{end}}
-                        </ul>
-                        
-                        {{if .Technologies}}
-                        <div class="flex flex-wrap gap-2">
-                            {{range .Technologies}}
-                            <span class="tech-tag">{{.}}</span>
+                        <!-- Statistics -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+                            <div class="status-item">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ffff;">{{len .Personal.Experience}}</div>
+                                <div style="font-size: 12px; color: #cccccc;">WORK EXPERIENCE</div>
+                            </div>
+                            <div class="status-item">
+                                <div style="font-size: 24px; font-weight: bold; color: #ff6600;">{{len .Projects}}</div>
+                                <div style="font-size: 12px; color: #cccccc;">PROJECTS</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Detailed Information -->
+            <div>
+                <!-- Biography Panel -->
+                <div class="ctos-panel" style="margin-bottom: 32px;">
+                    <div class="panel-header">BIOGRAPHICAL DATA</div>
+                    <p class="bio-text">{{.Personal.Bio}}</p>
+                </div>
+
+                <!-- Experience Records -->
+                <div class="ctos-panel" style="margin-bottom: 32px;">
+                    <div class="panel-header">EMPLOYMENT HISTORY</div>
+                    
+                    <div style="margin-top: 24px;">
+                        {{range .Personal.Experience}}
+                        <div style="border-left: 2px solid #00ffff; padding-left: 24px; position: relative; margin-bottom: 24px;">
+                            <!-- Timeline Dot -->
+                            <div style="position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; background-color: #00ffff;"></div>
+                            
+                            <div style="background-color: #222222; padding: 16px; border: 1px solid #666666;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap;">
+                                    <div>
+                                        <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Position}}</h3>
+                                        <p style="color: #ff6600; font-weight: bold;">{{.Company}}</p>
+                                    </div>
+                                    <div style="color: #cccccc; font-size: 14px;">
+                                        {{.StartDate.Format "Jan 2006"}} - 
+                                        {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}CURRENT{{end}}
+                                    </div>
+                                </div>
+                                
+                                <p style="color: #cccccc; margin-bottom: 12px;">{{.Location}}</p>
+                                
+                                <ul style="margin-bottom: 16px;">
+                                    {{range .Description}}
+                                    <li style="color: #cccccc; margin-bottom: 8px; padding-left: 16px; position: relative;">
+                                        <span style="color: #00ffff; position: absolute; left: 0;">•</span>
+                                        {{.}}
+                                    </li>
+                                    {{end}}
+                                </ul>
+                                
+                                {{if .Technologies}}
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                    {{range .Technologies}}
+                                    <span class="tech-tag">{{.}}</span>
+                                    {{end}}
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+
+                <!-- Education Records -->
+                <div class="ctos-panel" style="margin-bottom: 32px;">
+                    <div class="panel-header">EDUCATION RECORDS</div>
+                    
+                    <div style="margin-top: 24px;">
+                        {{range .Personal.Education}}
+                        <div style="background-color: #222222; padding: 16px; border: 1px solid #666666; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap;">
+                                <div>
+                                    <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Institution}}</h3>
+                                    <p style="color: #ff6600;">{{.Degree}} in {{.Field}}</p>
+                                </div>
+                                <div style="color: #cccccc; font-size: 14px;">
+                                    {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
+                                </div>
+                            </div>
+                            <p style="color: #cccccc;">{{.Location}}</p>
+                            {{if .GPA}}
+                            <p style="color: #cccccc; margin-top: 8px;">GPA: {{.GPA}}</p>
                             {{end}}
                         </div>
                         {{end}}
                     </div>
                 </div>
-            </div>
-            {{end}}
-        </div>
-    </div>
-</section>
 
-<!-- Education Section -->
-<section class="section-padding">
-    <div class="container-max">
-        <div class="text-center mb-16 animate-on-scroll">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Education</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-400">Academic background</p>
-        </div>
-        
-        <div class="max-w-4xl mx-auto">
-            {{range .Personal.Education}}
-            <div class="card p-8 animate-on-scroll">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <div>
-                        <h3 class="text-2xl font-semibold">{{.Institution}}</h3>
-                        <p class="text-xl text-primary-600 dark:text-primary-400">{{.Degree}} in {{.Field}}</p>
-                    </div>
-                    <div class="text-gray-500 dark:text-gray-400 mt-2 md:mt-0">
-                        {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
+                <!-- Skills Matrix -->
+                <div class="ctos-panel" style="margin-bottom: 32px;">
+                    <div class="panel-header">TECHNICAL COMPETENCIES</div>
+                    
+                    <div class="skills-grid" style="margin-top: 24px;">
+                        {{range .Personal.Skills}}
+                        <div class="skill-card">
+                            <div class="ctos-header">{{.Category}}</div>
+                            <div class="skill-content">
+                                {{range .Items}}
+                                <div class="skill-item">
+                                    <span>{{.}}</span>
+                                    <div class="skill-level">
+                                        <div class="skill-dot"></div>
+                                        <div class="skill-dot"></div>
+                                        <div class="skill-dot"></div>
+                                    </div>
+                                </div>
+                                {{end}}
+                                <div class="skill-item" style="border-bottom: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #333333;">
+                                    <span>STATUS:</span>
+                                    <span class="status-online">OPERATIONAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        {{end}}
                     </div>
                 </div>
-                <p class="text-gray-600 dark:text-gray-400">{{.Location}}</p>
-                {{if .GPA}}
-                <p class="text-gray-600 dark:text-gray-400 mt-2">GPA: {{.GPA}}</p>
+
+                <!-- Interests -->
+                {{if .Personal.Interests}}
+                <div class="ctos-panel">
+                    <div class="panel-header">PERSONAL INTERESTS</div>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px;">
+                        {{range .Personal.Interests}}
+                        <span class="tech-tag">{{.}}</span>
+                        {{end}}
+                    </div>
+                </div>
                 {{end}}
             </div>
-            {{end}}
-        </div>
-    </div>
-</section>
-
-<!-- Skills Section -->
-<section class="section-padding bg-gray-50 dark:bg-gray-800">
-    <div class="container-max">
-        <div class="text-center mb-16 animate-on-scroll">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Technical Skills</h2>
-            <p class="text-xl text-gray-600 dark:text-gray-400">Technologies I work with</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-8">
-            {{range .Personal.Skills}}
-            <div class="card p-8 animate-on-scroll">
-                <h3 class="text-xl font-semibold mb-6 text-primary-600 dark:text-primary-400">{{.Category}}</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    {{range .Items}}
-                    <div class="flex items-center space-x-3">
-                        <div class="w-2 h-2 bg-primary-600 rounded-full"></div>
-                        <span class="text-gray-700 dark:text-gray-300">{{.}}</span>
-                    </div>
-                    {{end}}
-                </div>
-            </div>
-            {{end}}
-        </div>
-    </div>
-</section>
-
-<!-- Interests Section -->
-<section class="section-padding">
-    <div class="container-max text-center animate-on-scroll">
-        <h2 class="text-3xl md:text-4xl font-bold mb-8">Beyond Code</h2>
-        <p class="text-xl text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
-            When I'm not building software, I enjoy exploring these interests
-        </p>
-        
-        <div class="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
-            {{range .Personal.Interests}}
-            <span class="bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-6 py-3 rounded-full text-lg font-medium">
-                {{.}}
-            </span>
-            {{end}}
         </div>
     </div>
 </section>
