@@ -75,9 +75,10 @@
         </div>
 
         <!-- Projects Grid -->
-        <div class="projects-grid">
-            {{range .Projects}}
-            <div class="project-card" data-category="{{.ID}}">
+        <div class="projects-container">
+            <div class="projects-grid">
+                {{range .Projects}}
+                <div class="project-card" data-category="{{.ID}}">
                 <div class="nexus-header">PROJECT {{.ID}}</div>
                 <div class="project-content">
                     <!-- Project Visual -->
@@ -130,6 +131,7 @@
                 </div>
             </div>
             {{end}}
+            </div>
         </div>
 
         <!-- Database Footer -->

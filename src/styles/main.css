@@ -1096,6 +1096,50 @@
     border-bottom: 2px solid #000000;
     border-right: 2px solid #000000;
   }
+
+  .light-mode .status-item {
+    @apply bg-white border-black text-black;
+  }
+
+  .light-mode .nexus-terminal {
+    @apply bg-white border-black text-black;
+  }
+
+  /* Projects Container */
+  .projects-container {
+    @apply max-h-[600px] overflow-y-auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .projects-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .projects-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .projects-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .projects-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  .light-mode .projects-container {
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+
+  .light-mode .projects-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .light-mode .projects-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
   
   /* Connection Lines */
   .connection-line {
