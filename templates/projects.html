@@ -3,18 +3,18 @@
     <div class="container">
         <!-- Page Header -->
         <div class="section-header relative">
-            <!-- CTOS Status Bar -->
+            <!-- xiaoOS Status Bar -->
             <div class="absolute top-0 right-0">
-                <div class="ctos-status-bar">
+                <div class="nexus-status-bar">
                     DATABASE_ACCESS: AUTHORIZED | CLEARANCE_LEVEL: 3
                 </div>
             </div>
             
-            <div class="ctos-header" style="margin-bottom: 32px;">PROJECT DATABASE</div>
+            <div class="nexus-header" style="margin-bottom: 32px;">PROJECT DATABASE</div>
             <h1 class="section-title" data-text="DEVELOPMENT ARCHIVE">
                 DEVELOPMENT <span class="highlight">ARCHIVE</span>
             </h1>
-            <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <p class="section-description">
                 Classified development records and project documentation
             </p>
         </div>
@@ -22,52 +22,52 @@
         <!-- Database Stats -->
         <div class="status-grid" style="margin-bottom: 64px;">
             <div class="status-item">
-                <div style="font-size: 32px; font-weight: bold; color: #00ffff; margin-bottom: 8px;">{{len .Projects}}</div>
-                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Total Projects</div>
+                <div class="data-stat text-cyan-400">{{len .Projects}}</div>
+                <div class="data-stat-label">Total Projects</div>
             </div>
             
             <div class="status-item">
-                <div style="font-size: 32px; font-weight: bold; color: #ff6600; margin-bottom: 8px;">6</div>
-                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Technologies</div>
+                <div class="data-stat text-orange-500">6</div>
+                <div class="data-stat-label">Technologies</div>
             </div>
             
             <div class="status-item">
-                <div style="font-size: 32px; font-weight: bold; color: #00ff00; margin-bottom: 8px;">100%</div>
-                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Success Rate</div>
+                <div class="data-stat text-green-400">100%</div>
+                <div class="data-stat-label">Success Rate</div>
             </div>
             
             <div class="status-item">
-                <div style="font-size: 32px; font-weight: bold; color: #ffffff; margin-bottom: 8px;">2024</div>
-                <div style="font-size: 12px; color: #cccccc; text-transform: uppercase;">Latest Build</div>
+                <div class="data-stat text-white">2024</div>
+                <div class="data-stat-label">Latest Build</div>
             </div>
         </div>
 
         <!-- Filter Controls -->
-        <div class="ctos-panel" style="margin-bottom: 48px;">
+        <div class="nexus-panel" style="margin-bottom: 48px;">
             <div class="panel-header">FILTER CONTROLS</div>
             
-            <div class="ctos-actions" style="margin-top: 16px; justify-content: center;">
-                <button class="ctos-btn ctos-btn-secondary filter-btn active" data-filter="all">ALL PROJECTS</button>
-                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="web">WEB DEV</button>
-                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="mobile">MOBILE</button>
-                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="ai">AI/ML</button>
-                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="security">SECURITY</button>
+            <div class="nexus-actions" style="margin-top: 16px; justify-content: center;">
+                <button class="nexus-btn nexus-btn-secondary filter-btn active" data-filter="all">ALL PROJECTS</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="web">WEB DEV</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="mobile">MOBILE</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="ai">AI/ML</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="security">SECURITY</button>
             </div>
         </div>
 
         <!-- Terminal Output -->
-        <div class="ctos-terminal" style="margin-bottom: 48px;">
+        <div class="nexus-terminal" style="margin-bottom: 48px;">
             <div class="terminal-line">
-                <span style="color: #00ffff;">root@ctos:~$</span> query_project_database --status=active
+                <span class="terminal-prompt">root@xiaoos:~$</span> query_project_database --status=active
             </div>
             <div class="terminal-line">
                 Scanning project archives<span class="terminal-pulse">...</span>
             </div>
             <div class="terminal-line">
-                <span style="color: #00ff00;">✓</span> Found {{len .Projects}} active projects
+                <span class="terminal-success">✓</span> Found {{len .Projects}} active projects
             </div>
             <div class="terminal-line">
-                <span style="color: #00ff00;">✓</span> Security clearance verified
+                <span class="terminal-success">✓</span> Security clearance verified
             </div>
             <div class="terminal-line">
                 <span class="terminal-highlight">></span> Displaying results <span class="terminal-pulse">█</span>
@@ -78,7 +78,7 @@
         <div class="projects-grid">
             {{range .Projects}}
             <div class="project-card" data-category="{{.ID}}">
-                <div class="ctos-header">PROJECT {{.ID}}</div>
+                <div class="nexus-header">PROJECT {{.ID}}</div>
                 <div class="project-content">
                     <!-- Project Visual -->
                     <div class="project-visual">

@@ -3,7 +3,7 @@
     <div class="container">
         <!-- Page Header -->
         <div class="section-header">
-            <div class="ctos-header" style="margin-bottom: 32px;">PERSONNEL FILE</div>
+            <div class="nexus-header" style="margin-bottom: 32px;">PERSONNEL FILE</div>
             <h1 class="section-title" data-text="SUBJECT DOSSIER">
                 SUBJECT <span class="highlight">DOSSIER</span>
             </h1>
@@ -13,8 +13,8 @@
             <!-- Left Column - Profile Data -->
             <div>
                 <!-- Extended Profile Card -->
-                <div class="ctos-profile-card" style="margin-bottom: 32px;">
-                    <div class="ctos-header">DETAILED PROFILE</div>
+                <div class="nexus-profile-card" style="margin-bottom: 32px;">
+                    <div class="nexus-header">DETAILED PROFILE</div>
                     <div class="profile-content">
                         <!-- Profile Image -->
                         <div class="profile-image">
@@ -52,14 +52,14 @@
                         </div>
                         
                         <!-- Statistics -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
-                            <div class="status-item">
-                                <div style="font-size: 24px; font-weight: bold; color: #00ffff;">{{len .Personal.Experience}}</div>
-                                <div style="font-size: 12px; color: #cccccc;">WORK EXPERIENCE</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value stat-experience">{{len .Personal.Experience}}</div>
+                                <div class="stat-label">WORK EXPERIENCE</div>
                             </div>
-                            <div class="status-item">
-                                <div style="font-size: 24px; font-weight: bold; color: #ff6600;">{{len .Projects}}</div>
-                                <div style="font-size: 12px; color: #cccccc;">PROJECTS</div>
+                            <div class="stat-item">
+                                <div class="stat-value stat-projects">{{len .Projects}}</div>
+                                <div class="stat-label">PROJECTS</div>
                             </div>
                         </div>
                     </div>
@@ -69,46 +69,44 @@
             <!-- Right Column - Detailed Information -->
             <div>
                 <!-- Biography Panel -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">BIOGRAPHICAL DATA</div>
                     <p class="bio-text">{{.Personal.Bio}}</p>
                 </div>
 
                 <!-- Experience Records -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">EMPLOYMENT HISTORY</div>
                     
-                    <div style="margin-top: 24px;">
+                    <div class="experience-container">
                         {{range .Personal.Experience}}
-                        <div style="border-left: 2px solid #00ffff; padding-left: 24px; position: relative; margin-bottom: 24px;">
-                            <!-- Timeline Dot -->
-                            <div style="position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; background-color: #00ffff;"></div>
+                        <div class="experience-item">
+                            <div class="experience-timeline">
+                                <div class="timeline-dot"></div>
+                            </div>
                             
-                            <div style="background-color: #222222; padding: 16px; border: 1px solid #666666;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap;">
-                                    <div>
-                                        <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Position}}</h3>
-                                        <p style="color: #ff6600; font-weight: bold;">{{.Company}}</p>
+                            <div class="experience-card">
+                                <div class="experience-header">
+                                    <div class="experience-title-section">
+                                        <h3 class="experience-position">{{.Position}}</h3>
+                                        <p class="experience-company">{{.Company}}</p>
                                     </div>
-                                    <div style="color: #cccccc; font-size: 14px;">
+                                    <div class="experience-dates">
                                         {{.StartDate.Format "Jan 2006"}} - 
                                         {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}CURRENT{{end}}
                                     </div>
                                 </div>
                                 
-                                <p style="color: #cccccc; margin-bottom: 12px;">{{.Location}}</p>
+                                <p class="experience-location">{{.Location}}</p>
                                 
-                                <ul style="margin-bottom: 16px;">
+                                <ul class="experience-description">
                                     {{range .Description}}
-                                    <li style="color: #cccccc; margin-bottom: 8px; padding-left: 16px; position: relative;">
-                                        <span style="color: #00ffff; position: absolute; left: 0;">•</span>
-                                        {{.}}
-                                    </li>
+                                    <li class="experience-bullet">{{.}}</li>
                                     {{end}}
                                 </ul>
                                 
                                 {{if .Technologies}}
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <div class="experience-tech">
                                     {{range .Technologies}}
                                     <span class="tech-tag">{{.}}</span>
                                     {{end}}
@@ -121,38 +119,40 @@
                 </div>
 
                 <!-- Education Records -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">EDUCATION RECORDS</div>
                     
-                    <div style="margin-top: 24px;">
+                    <div class="education-container">
                         {{range .Personal.Education}}
-                        <div style="background-color: #222222; padding: 16px; border: 1px solid #666666; margin-bottom: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap;">
-                                <div>
-                                    <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Institution}}</h3>
-                                    <p style="color: #ff6600;">{{.Degree}} in {{.Field}}</p>
+                        <div class="education-item">
+                            <div class="education-card">
+                                <div class="education-header">
+                                    <div class="education-title-section">
+                                        <h3 class="education-institution">{{.Institution}}</h3>
+                                        <p class="education-degree">{{.Degree}} in {{.Field}}</p>
+                                    </div>
+                                    <div class="education-dates">
+                                        {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
+                                    </div>
                                 </div>
-                                <div style="color: #cccccc; font-size: 14px;">
-                                    {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
-                                </div>
+                                <p class="education-location">{{.Location}}</p>
+                                {{if .GPA}}
+                                <p class="education-gpa">GPA: {{.GPA}}</p>
+                                {{end}}
                             </div>
-                            <p style="color: #cccccc;">{{.Location}}</p>
-                            {{if .GPA}}
-                            <p style="color: #cccccc; margin-top: 8px;">GPA: {{.GPA}}</p>
-                            {{end}}
                         </div>
                         {{end}}
                     </div>
                 </div>
 
                 <!-- Skills Matrix -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">TECHNICAL COMPETENCIES</div>
                     
                     <div class="skills-grid" style="margin-top: 24px;">
                         {{range .Personal.Skills}}
                         <div class="skill-card">
-                            <div class="ctos-header">{{.Category}}</div>
+                            <div class="nexus-header">{{.Category}}</div>
                             <div class="skill-content">
                                 {{range .Items}}
                                 <div class="skill-item">
@@ -176,7 +176,7 @@
 
                 <!-- Interests -->
                 {{if .Personal.Interests}}
-                <div class="ctos-panel">
+                <div class="nexus-panel">
                     <div class="panel-header">PERSONAL INTERESTS</div>
                     
                     <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px;">

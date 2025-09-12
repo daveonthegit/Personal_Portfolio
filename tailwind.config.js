@@ -151,8 +151,8 @@ module.exports = {
       },
       fontFamily: {
         'mono': ['Courier New', 'monospace'],
-        'ctos': ['Inter', 'Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        'ctos-display': ['Orbitron', 'Exo 2', 'Rajdhani', 'sans-serif'],
+        'nexus': ['Inter', 'Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        'nexus-display': ['Orbitron', 'Exo 2', 'Rajdhani', 'sans-serif'],
         'cyber': ['Share Tech Mono', 'monospace'],
       },
       boxShadow: {

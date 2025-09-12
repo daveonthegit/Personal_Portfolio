@@ -9,17 +9,11 @@
   }
   
   body {
-    @apply bg-black text-white font-ctos;
-    background: 
-      radial-gradient(circle at 20% 50%, rgba(0, 150, 255, 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(0, 200, 255, 0.03) 0%, transparent 50%),
-      linear-gradient(45deg, transparent 49%, rgba(0, 150, 255, 0.01) 50%, transparent 51%),
-      linear-gradient(-45deg, transparent 49%, rgba(0, 150, 255, 0.01) 50%, transparent 51%);
-    background-size: 800px 800px, 600px 600px, 40px 40px, 40px 40px;
+    @apply bg-black text-white font-nexus;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-ctos font-bold text-white;
+    @apply font-nexus font-bold text-white;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
   }
 }
@@ -27,59 +21,59 @@
 /* CTOS Components */
 @layer components {
   /* Navigation */
-  .ctos-nav {
+  .nexus-nav {
     @apply fixed top-0 left-0 right-0 z-50 bg-white/95 border-b border-gray-200;
     backdrop-filter: blur(20px);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
-  .ctos-nav-container {
+  .nexus-nav-container {
     @apply max-w-7xl mx-auto px-6 flex justify-between items-center h-16;
   }
   
-  .ctos-logo {
-    @apply text-black text-xl font-ctos-display font-normal hover:text-black transition-all duration-300;
+  .nexus-logo {
+    @apply text-black text-xl font-nexus-display font-normal hover:text-black transition-all duration-300;
     letter-spacing: 0;
   }
   
-  .ctos-logo-ct {
+  .nexus-logo-ct {
     @apply bg-black text-white px-2 py-1 mr-0 font-bold;
     border-radius: 0;
   }
   
-  .ctos-logo-os {
+  .nexus-logo-os {
     @apply text-black font-normal;
   }
   
-  .ctos-nav-links {
+  .nexus-nav-links {
     @apply flex gap-8 list-none m-0 p-0;
   }
   
-  .ctos-nav-link {
-    @apply text-gray-700 no-underline font-medium text-sm transition-all relative font-ctos;
+  .nexus-nav-link {
+    @apply text-gray-700 no-underline font-medium text-sm transition-all relative font-nexus;
     letter-spacing: 0.5px;
   }
   
-  .ctos-nav-link:hover {
+  .nexus-nav-link:hover {
     @apply text-black;
   }
   
-  .ctos-nav-link.active {
+  .nexus-nav-link.active {
     @apply text-black;
   }
   
-  .ctos-nav-link.active::after {
+  .nexus-nav-link.active::after {
     @apply absolute -bottom-2 left-0 right-0 h-0.5 bg-black;
     content: '';
   }
   
   /* Main Content */
-  .ctos-main {
+  .nexus-main {
     @apply mt-16 min-h-screen;
   }
   
   /* Grid Background */
-  .ctos-grid-bg {
+  .nexus-grid-bg {
     @apply fixed inset-0 opacity-5 pointer-events-none -z-10;
     background-image: 
       linear-gradient(rgba(0, 150, 255, 0.15) 1px, transparent 1px),
@@ -90,7 +84,7 @@
   }
   
   /* Network Connection Lines */
-  .ctos-grid-bg::before {
+  .nexus-grid-bg::before {
     content: '';
     position: absolute;
     top: 0;
@@ -105,7 +99,7 @@
   }
   
   /* CTOS Network Pattern Overlay */
-  .ctos-grid-bg::after {
+  .nexus-grid-bg::after {
     content: '';
     position: absolute;
     top: 0;
@@ -132,50 +126,63 @@
   }
   
   .hero-grid {
-    @apply grid grid-cols-1 lg:grid-cols-4 gap-10 items-start max-w-6xl mx-auto;
+    @apply grid grid-cols-1 lg:grid-cols-4 gap-10 items-start max-w-6xl mx-auto relative z-10;
+    min-width: 0; /* Prevent grid from shrinking */
+    width: 100%; /* Ensure full width */
+  }
+
+  /* Ensure desktop grid works properly */
+  @media (min-width: 1024px) {
+    .hero-grid {
+      @apply grid-cols-4;
+    }
   }
   
   .hero-grid > div:first-child {
     @apply lg:col-span-1;
+    min-width: 0;
+    overflow: hidden;
   }
   
   .hero-grid > div:last-child {
     @apply lg:col-span-3;
+    min-width: 0;
+    overflow: hidden;
   }
   
   /* Profile Card - CTOS Style */
-  .ctos-profile-card {
-    @apply bg-black relative p-0 z-20;
-    border: 1px solid rgba(0, 150, 255, 0.4);
-    box-shadow: 0 0 20px rgba(0, 150, 255, 0.1);
+  .nexus-profile-card {
+    @apply bg-black relative p-0 z-10;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
   
-  .ctos-profile-card::before {
+  .nexus-profile-card::before {
     content: '';
     position: absolute;
     top: -1px;
     left: -1px;
     width: 12px;
     height: 12px;
-    border-top: 2px solid #3b82f6;
-    border-left: 2px solid #3b82f6;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
   }
   
-  .ctos-profile-card::after {
+  .nexus-profile-card::after {
     content: '';
     position: absolute;
     bottom: -1px;
     right: -1px;
     width: 12px;
     height: 12px;
-    border-bottom: 2px solid #3b82f6;
-    border-right: 2px solid #3b82f6;
+    border-bottom: 2px solid #ffffff;
+    border-right: 2px solid #ffffff;
   }
   
-  .ctos-header {
-    @apply bg-black text-blue-400 px-4 py-2 font-medium text-xs uppercase tracking-wider font-ctos;
+  .nexus-header {
+    @apply bg-black text-white px-4 py-2 font-medium text-xs uppercase tracking-wider font-nexus;
     letter-spacing: 1.5px;
-    border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .profile-content {
@@ -192,15 +199,80 @@
   
   /* Data Grid */
   .data-grid {
-    @apply grid grid-cols-2 gap-3 text-sm mb-6;
+    @apply grid grid-cols-2 gap-6 text-sm mb-6;
   }
   
   .data-label {
-    @apply text-white font-bold mb-1 uppercase text-xs;
+    @apply text-white font-bold mb-2 uppercase text-xs font-nexus;
+    letter-spacing: 0.5px;
   }
   
   .data-value {
-    @apply bg-black border border-blue-400 px-2 py-1.5 text-blue-200 text-xs;
+    @apply bg-black border border-white px-4 py-3 text-white text-sm font-mono;
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+
+  .data-link {
+    @apply text-white hover:text-blue-400 transition-colors;
+  }
+
+  /* Form Input Styles */
+  .form-input {
+    @apply w-full p-3 text-sm font-mono;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+  }
+  
+  .form-textarea {
+    @apply w-full p-3 text-sm min-h-[100px] font-mono;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #ffffff !important;
+    resize: vertical;
+  }
+
+  /* Form Container within Grid */
+  .form-container {
+    @apply w-full bg-black p-6 mb-8;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+    min-width: 0; /* Prevent grid shrinking */
+    overflow: hidden; /* Prevent content from expanding grid */
+  }
+
+  .contact-form {
+    @apply w-full;
+    min-width: 0; /* Prevent form from expanding grid */
+  }
+
+  /* Ensure form inputs don't cause grid to shrink */
+  .form-container .form-input,
+  .form-container .form-textarea {
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Prevent form interaction from affecting grid */
+  .form-container .form-input:focus,
+  .form-container .form-textarea:focus {
+    min-width: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    outline: none;
+  }
+
+  /* Ensure hero-grid children don't shrink */
+  .hero-grid > div {
+    min-width: 0;
+    overflow: hidden;
   }
   
   .threat-level {
@@ -209,11 +281,11 @@
   
   /* Main Content */
   .main-content {
-    @apply lg:pl-8;
+    @apply lg:pl-8 relative z-10;
   }
   
-  .ctos-title {
-    @apply font-ctos-display text-5xl font-bold mb-4 text-white uppercase;
+  .nexus-title {
+    @apply font-nexus-display text-5xl font-bold mb-4 text-white uppercase;
     text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     letter-spacing: 0.1em;
     background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
@@ -222,51 +294,50 @@
     background-clip: text;
   }
   
-  .ctos-title .highlight {
+  .nexus-title .highlight {
     background: linear-gradient(135deg, #60a5fa 0%, #06b6d4 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
-  .ctos-subtitle {
-    @apply text-xl text-blue-200 mb-8 font-light font-ctos;
+  .nexus-subtitle {
+    @apply text-xl text-blue-200 mb-8 font-light font-nexus;
     letter-spacing: 0.05em;
   }
   
   /* Panel - CTOS Style */
-  .ctos-panel {
-    @apply bg-black p-6 mb-8 relative z-20;
-    border: 1px solid rgba(0, 150, 255, 0.3);
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 30, 60, 0.1) 100%);
-    box-shadow: 0 4px 20px rgba(0, 150, 255, 0.1);
+  .nexus-panel {
+    @apply bg-black p-6 mb-8 relative z-10;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
   }
   
-  .ctos-panel::before {
+  .nexus-panel::before {
     content: '';
     position: absolute;
     top: -1px;
     left: -1px;
     width: 8px;
     height: 8px;
-    border-top: 1px solid #3b82f6;
-    border-left: 1px solid #3b82f6;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
   }
   
-  .ctos-panel::after {
+  .nexus-panel::after {
     content: '';
     position: absolute;
     bottom: -1px;
     right: -1px;
     width: 8px;
     height: 8px;
-    border-bottom: 1px solid #3b82f6;
-    border-right: 1px solid #3b82f6;
+    border-bottom: 1px solid #ffffff;
+    border-right: 1px solid #ffffff;
   }
   
   .panel-header {
-    @apply bg-black text-blue-400 px-3 py-1.5 font-bold text-xs uppercase -mx-6 -mt-6 mb-4 inline-block;
-    border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+    @apply bg-black text-white px-3 py-1.5 font-bold text-xs uppercase -mx-6 -mt-6 mb-4 inline-block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .bio-text {
@@ -274,27 +345,27 @@
   }
   
   /* Buttons */
-  .ctos-actions {
+  .nexus-actions {
     @apply flex gap-5 mt-8;
   }
   
-  .ctos-btn {
-    @apply px-6 py-3 font-ctos font-bold uppercase tracking-wide no-underline transition-all border-2 text-sm inline-block text-center;
+  .nexus-btn {
+    @apply px-6 py-3 font-nexus font-bold uppercase tracking-wide no-underline transition-all border-2 text-sm inline-block text-center;
   }
   
-  .ctos-btn-primary {
+  .nexus-btn-primary {
     @apply bg-white text-black border-white hover:bg-transparent hover:text-white;
   }
   
-  .ctos-btn-primary:hover {
+  .nexus-btn-primary:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
   
-  .ctos-btn-secondary {
+  .nexus-btn-secondary {
     @apply bg-transparent text-white border-white hover:bg-white hover:text-black;
   }
   
-  .ctos-btn-secondary:hover {
+  .nexus-btn-secondary:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
   
@@ -316,7 +387,7 @@
   }
   
   .section-title {
-    @apply font-ctos text-4xl font-bold text-white m-0 uppercase;
+    @apply font-nexus text-4xl font-bold text-white m-0 uppercase;
     letter-spacing: 0.05em;
   }
   
@@ -330,9 +401,9 @@
   }
   
   .skill-card {
-    @apply bg-black relative z-20;
-    border: 1px solid rgba(0, 150, 255, 0.3);
-    box-shadow: 0 2px 10px rgba(0, 150, 255, 0.1);
+    @apply bg-black relative z-10;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
   }
   
   .skill-card::before {
@@ -342,8 +413,8 @@
     left: -1px;
     width: 6px;
     height: 6px;
-    border-top: 1px solid #3b82f6;
-    border-left: 1px solid #3b82f6;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
   }
   
   .skill-card::after {
@@ -353,8 +424,8 @@
     right: -1px;
     width: 6px;
     height: 6px;
-    border-bottom: 1px solid #3b82f6;
-    border-right: 1px solid #3b82f6;
+    border-bottom: 1px solid #ffffff;
+    border-right: 1px solid #ffffff;
   }
   
   .skill-content {
@@ -383,13 +454,13 @@
   }
   
   .project-card {
-    @apply bg-black relative z-20 transition-colors;
-    border: 1px solid rgba(0, 150, 255, 0.3);
-    box-shadow: 0 2px 10px rgba(0, 150, 255, 0.1);
+    @apply bg-black relative z-10 transition-colors;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
   }
   
   .project-card:hover {
-    border-color: rgba(0, 150, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
   }
   
   .project-card::before {
@@ -399,8 +470,8 @@
     left: -1px;
     width: 6px;
     height: 6px;
-    border-top: 1px solid #3b82f6;
-    border-left: 1px solid #3b82f6;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
   }
   
   .project-card::after {
@@ -410,8 +481,8 @@
     right: -1px;
     width: 6px;
     height: 6px;
-    border-bottom: 1px solid #3b82f6;
-    border-right: 1px solid #3b82f6;
+    border-bottom: 1px solid #ffffff;
+    border-right: 1px solid #ffffff;
   }
   
   .project-content {
@@ -471,7 +542,7 @@
   }
   
   /* Terminal */
-  .ctos-terminal {
+  .nexus-terminal {
     @apply bg-black border-2 border-white p-6 mb-8 font-mono text-sm max-w-2xl mx-auto;
   }
   
@@ -537,13 +608,455 @@
   }
   
   .data-value-large {
-    @apply text-3xl font-bold text-blue-400 font-ctos-display;
+    @apply text-3xl font-bold text-blue-400 font-nexus-display;
     text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
   }
   
   .data-label-small {
-    @apply text-xs text-gray-400 uppercase tracking-wide font-ctos;
+    @apply text-xs text-gray-400 uppercase tracking-wide font-nexus;
     letter-spacing: 1px;
+  }
+
+  /* Statistics Grid */
+  .stats-grid {
+    @apply grid grid-cols-2 gap-4 mt-6;
+  }
+
+  .stat-item {
+    @apply bg-black border border-white p-4 text-center;
+  }
+
+  .stat-value {
+    @apply text-2xl font-bold mb-2;
+  }
+
+  .stat-experience {
+    @apply text-cyan-400;
+  }
+
+  .stat-projects {
+    @apply text-orange-400;
+  }
+
+  .stat-label {
+    @apply text-xs text-gray-300 font-mono;
+  }
+
+  /* Experience Section */
+  .experience-container {
+    @apply mt-6 max-h-96 overflow-y-auto pr-2;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .experience-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .experience-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .experience-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .experience-item {
+    @apply relative mb-6 pl-6;
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .experience-timeline {
+    @apply absolute -left-1 top-2;
+  }
+
+  .timeline-dot {
+    @apply w-3 h-3 bg-white rounded-full;
+  }
+
+  .experience-card {
+    @apply bg-gray-900 p-4 border border-white/20;
+  }
+
+  .experience-header {
+    @apply flex justify-between items-start mb-3 flex-wrap;
+  }
+
+  .experience-title-section {
+    @apply flex-1;
+  }
+
+  .experience-position {
+    @apply text-lg font-bold text-white mb-1;
+  }
+
+  .experience-company {
+    @apply text-white font-medium;
+  }
+
+  .experience-dates {
+    @apply text-gray-300 text-sm;
+  }
+
+  .experience-location {
+    @apply text-gray-300 mb-3;
+  }
+
+  .experience-description {
+    @apply mb-4;
+  }
+
+  .experience-bullet {
+    @apply text-gray-300 mb-2 pl-4 relative;
+  }
+
+  .experience-bullet::before {
+    content: '•';
+    @apply absolute left-0 text-white;
+  }
+
+  .experience-tech {
+    @apply flex flex-wrap gap-2;
+  }
+
+  /* Education Section */
+  .education-container {
+    @apply mt-6 max-h-96 overflow-y-auto pr-2;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .education-container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .education-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .education-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .education-item {
+    @apply mb-4;
+  }
+
+  .education-card {
+    @apply bg-gray-900 p-4 border border-white/20;
+  }
+
+  .education-header {
+    @apply flex justify-between items-start mb-3 flex-wrap;
+  }
+
+  .education-title-section {
+    @apply flex-1;
+  }
+
+  .education-institution {
+    @apply text-lg font-bold text-white mb-1;
+  }
+
+  .education-degree {
+    @apply text-white font-medium;
+  }
+
+  .education-dates {
+    @apply text-gray-300 text-sm;
+  }
+
+  .education-location {
+    @apply text-gray-300 mb-2;
+  }
+
+  .education-gpa {
+    @apply text-gray-300 text-sm;
+  }
+
+  /* Security Notice */
+  .security-notice {
+    @apply bg-black border border-orange-500 p-4;
+  }
+
+  .security-notice-header {
+    @apply bg-orange-500 text-white px-2 py-1 font-bold text-xs uppercase mb-3 inline-block;
+  }
+
+  .security-notice-text {
+    @apply text-gray-300 text-sm leading-relaxed;
+  }
+
+  /* Theme Toggle */
+  .nav-controls {
+    @apply flex items-center gap-4;
+  }
+
+  .theme-toggle {
+    @apply p-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center;
+    background: transparent;
+    width: 40px;
+    height: 40px;
+  }
+
+  .theme-icon {
+    @apply transition-opacity duration-200 w-5 h-5;
+  }
+
+  .theme-icon-dark {
+    @apply text-black opacity-100;
+  }
+
+  .theme-icon-light {
+    @apply text-white opacity-0;
+  }
+
+  .mobile-theme-toggle {
+    @apply mt-4 pt-4 border-t border-gray-200;
+  }
+
+  .mobile-theme-toggle .theme-toggle {
+    @apply w-full justify-center;
+  }
+
+  /* Light Mode Styles */
+  .light-mode {
+    @apply bg-white text-black;
+  }
+
+  .light-mode .section {
+    @apply bg-white;
+  }
+
+  .light-mode .hero-section {
+    @apply bg-white;
+  }
+
+  .light-mode .nexus-nav {
+    @apply bg-black/95 border-gray-800;
+  }
+
+  .light-mode .nexus-logo {
+    @apply text-white;
+  }
+
+  .light-mode .nexus-logo-ct {
+    @apply bg-white text-black;
+  }
+
+  .light-mode .nexus-logo-os {
+    @apply text-white;
+  }
+
+  .light-mode .nexus-nav-link {
+    @apply text-gray-300;
+  }
+
+  .light-mode .nexus-nav-link:hover,
+  .light-mode .nexus-nav-link.active {
+    @apply text-white;
+  }
+
+  .light-mode .nexus-nav-link.active::after {
+    @apply bg-white;
+  }
+
+  .light-mode .nexus-mobile-toggle {
+    @apply text-white;
+  }
+
+  .light-mode .nexus-mobile-menu {
+    @apply bg-black/95 border-gray-800;
+  }
+
+  .light-mode .nexus-mobile-menu .nexus-nav-link {
+    @apply text-gray-300;
+  }
+
+  .light-mode .nexus-mobile-menu .nexus-nav-link:hover,
+  .light-mode .nexus-mobile-menu .nexus-nav-link.active {
+    @apply border-white bg-gray-800 text-white;
+  }
+
+  .light-mode .nexus-profile-card,
+  .light-mode .nexus-panel,
+  .light-mode .skill-card,
+  .light-mode .project-card {
+    @apply bg-white border-gray-300;
+  }
+
+  .light-mode .nexus-header,
+  .light-mode .panel-header {
+    @apply bg-gray-100 text-black border-gray-300;
+  }
+
+  .light-mode .data-value {
+    @apply bg-white border-gray-300 text-black;
+  }
+
+  .light-mode .data-label {
+    @apply text-black;
+  }
+
+  .light-mode .data-link {
+    @apply text-black hover:text-blue-600;
+  }
+
+  .light-mode .nexus-title {
+    @apply text-black;
+  }
+
+  .light-mode .nexus-subtitle {
+    @apply text-gray-600;
+  }
+
+  .light-mode .bio-text {
+    @apply text-gray-700;
+  }
+
+  .light-mode .experience-card,
+  .light-mode .education-card {
+    @apply bg-gray-50 border-gray-300;
+  }
+
+  .light-mode .experience-position,
+  .light-mode .experience-company,
+  .light-mode .education-institution,
+  .light-mode .education-degree {
+    @apply text-black;
+  }
+
+  .light-mode .experience-dates,
+  .light-mode .experience-location,
+  .light-mode .education-dates,
+  .light-mode .education-location,
+  .light-mode .education-gpa {
+    @apply text-gray-600;
+  }
+
+  .light-mode .experience-bullet {
+    @apply text-gray-700;
+  }
+
+  .light-mode .stat-item {
+    @apply bg-white border-gray-300;
+  }
+
+  .light-mode .stat-label {
+    @apply text-gray-600;
+  }
+
+  .light-mode .tech-tag {
+    @apply bg-white text-gray-700 border-gray-300;
+  }
+
+  /* Form inputs stay the same in both modes */
+  
+  .light-mode .form-container {
+    @apply bg-white;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .light-mode .data-label {
+    @apply text-black;
+  }
+
+  /* Terminal and Status Styles */
+  .terminal-prompt {
+    @apply text-cyan-400;
+  }
+
+  .terminal-success {
+    @apply text-green-400;
+  }
+
+  .status-text {
+    @apply text-gray-400;
+  }
+
+  .status-value {
+    @apply text-white font-bold;
+  }
+
+  .section-description {
+    @apply text-gray-300 text-lg mb-8 leading-relaxed max-w-2xl mx-auto;
+  }
+
+  .data-stat {
+    @apply text-3xl font-bold mb-2;
+  }
+
+  .data-stat-label {
+    @apply text-xs text-gray-300 uppercase;
+  }
+
+  .project-icon {
+    @apply text-2xl;
+  }
+
+  .light-mode .terminal-prompt {
+    @apply text-blue-600;
+  }
+
+  .light-mode .terminal-success {
+    @apply text-green-600;
+  }
+
+  .light-mode .status-text {
+    @apply text-gray-600;
+  }
+
+  .light-mode .status-value {
+    @apply text-black font-bold;
+  }
+
+  .light-mode .section-description {
+    @apply text-gray-600;
+  }
+
+  .light-mode .data-stat-label {
+    @apply text-gray-600;
+  }
+
+  /* Button Light Mode */
+  .light-mode .nexus-btn-primary {
+    @apply bg-black text-white border-black hover:bg-transparent hover:text-black;
+  }
+
+  .light-mode .nexus-btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .light-mode .nexus-btn-secondary {
+    @apply bg-transparent text-black border-black hover:bg-black hover:text-white;
+  }
+
+  .light-mode .nexus-btn-secondary:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Section Title Light Mode */
+  .light-mode .section-title {
+    @apply text-black;
+  }
+
+  .light-mode .section-title .highlight {
+    @apply text-black;
+  }
+
+  .light-mode .theme-toggle {
+    @apply border-gray-300 hover:bg-gray-100;
+  }
+
+  .light-mode .theme-icon-dark {
+    @apply opacity-0;
+  }
+
+  .light-mode .theme-icon-light {
+    @apply opacity-100 text-black;
   }
   
   /* Connection Lines */
@@ -583,25 +1096,26 @@
     }
   }
   
-  /* CTOS Network Visualization */
-  .ctos-network {
+  /* NEXUS Network Visualization */
+  .nexus-network {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
+    overflow: hidden;
   }
   
   /* CTOS Interface Elements */
-  .ctos-status-bar {
+  .nexus-status-bar {
     @apply bg-black/80 text-blue-400 px-3 py-1 font-mono text-xs;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 150, 255, 0.3);
   }
   
-  .ctos-data-stream {
+  .nexus-data-stream {
     position: absolute;
     font-family: 'Courier New', monospace;
     font-size: 10px;
@@ -657,7 +1171,7 @@
   }
   
   /* Footer */
-  .ctos-footer {
+  .nexus-footer {
     @apply bg-black border-t-2 border-white py-8 text-center text-gray-300;
   }
   
@@ -691,37 +1205,37 @@
 }
 
 /* Mobile Menu */
-.ctos-mobile-toggle {
+.nexus-mobile-toggle {
   @apply md:hidden block text-black bg-transparent border-none cursor-pointer p-2;
 }
 
-.ctos-mobile-menu {
+.nexus-mobile-menu {
   @apply fixed top-16 left-0 right-0 bg-white/95 border-b border-gray-200 transform transition-transform duration-300 ease-in-out z-40;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.ctos-mobile-menu.hidden {
+.nexus-mobile-menu.hidden {
   @apply -translate-y-full;
 }
 
-.ctos-mobile-menu.show {
+.nexus-mobile-menu.show {
   @apply translate-y-0;
 }
 
-.ctos-mobile-menu ul {
+.nexus-mobile-menu ul {
   @apply flex flex-col p-5 gap-2;
 }
 
-.ctos-mobile-menu .ctos-nav-link {
+.nexus-mobile-menu .nexus-nav-link {
   @apply text-base py-3 px-4 border-l-2 border-transparent transition-all text-gray-700;
 }
 
-.ctos-mobile-menu .ctos-nav-link:hover {
+.nexus-mobile-menu .nexus-nav-link:hover {
   @apply border-black bg-gray-50 text-black;
 }
 
-.ctos-mobile-menu .ctos-nav-link.active {
+.nexus-mobile-menu .nexus-nav-link.active {
   @apply border-black bg-gray-50 text-black;
 }
 
@@ -738,18 +1252,18 @@
       @apply px-6;
     }
     
-    .ctos-mobile-toggle {
+    .nexus-mobile-toggle {
       @apply hidden;
     }
     
-    .ctos-nav-links {
+    .nexus-nav-links {
       @apply flex;
     }
   }
   
   /* Mobile styles */
-  @media (max-width: 767px) {
-    .ctos-nav-links {
+  @media (max-width: 1023px) {
+    .nexus-nav-links {
       @apply hidden;
     }
     
@@ -761,19 +1275,19 @@
       @apply pl-0 mt-8;
     }
     
-    .ctos-title {
+    .nexus-title {
       @apply text-2xl leading-tight;
     }
     
-    .ctos-subtitle {
+    .nexus-subtitle {
       @apply text-base;
     }
     
-    .ctos-actions {
+    .nexus-actions {
       @apply flex-col gap-3;
     }
     
-    .ctos-btn {
+    .nexus-btn {
       @apply w-full text-center;
     }
     
@@ -812,7 +1326,7 @@
     }
     
     /* Panel adjustments */
-    .ctos-panel {
+    .nexus-panel {
       @apply p-4 mb-6;
     }
     
@@ -839,15 +1353,41 @@
     }
     
     .form-input {
-      @apply w-full p-3 text-sm;
+      @apply w-full p-3 text-sm font-mono;
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #ffffff !important;
     }
     
     .form-textarea {
-      @apply w-full p-3 text-sm min-h-[100px];
+      @apply w-full p-3 text-sm min-h-[100px] font-mono;
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #ffffff !important;
+      resize: vertical;
+    }
+
+    /* Form container */
+    .contact-form {
+      @apply w-full mt-6;
+      width: 100% !important;
+    }
+
+    /* Ensure form inputs span full width beyond panel padding */
+    .nexus-panel .form-input,
+    .nexus-panel .form-textarea {
+      width: calc(100% + 48px) !important;
+      max-width: none !important;
+      margin-left: -24px !important;
+      margin-right: -24px !important;
+    }
+
+    .form-label {
+      @apply block mb-2;
     }
     
     /* Terminal adjustments */
-    .ctos-terminal {
+    .nexus-terminal {
       @apply p-4 text-xs;
     }
     
@@ -875,7 +1415,7 @@
   
   /* Small mobile styles */
   @media (max-width: 480px) {
-    .ctos-title {
+    .nexus-title {
       @apply text-xl;
     }
     
@@ -883,7 +1423,7 @@
       @apply text-xl;
     }
     
-    .ctos-subtitle {
+    .nexus-subtitle {
       @apply text-sm;
     }
     
@@ -908,12 +1448,12 @@
     }
     
     /* Smaller buttons on very small screens */
-    .ctos-btn {
+    .nexus-btn {
       @apply px-4 py-2 text-xs;
     }
     
     /* Adjust terminal for small screens */
-    .ctos-terminal {
+    .nexus-terminal {
       @apply p-3 text-xs;
     }
     
@@ -1024,7 +1564,7 @@
 }
 
 /* Subtle Loading States */
-.ctos-load {
+.nexus-load {
   animation: ctosLoad 0.8s ease-out forwards;
 }
 
@@ -1033,7 +1573,7 @@
 }
 
 /* Hover Effects - Very Subtle */
-.ctos-hover:hover {
+.nexus-hover:hover {
   transition: all 0.3s ease;
   border-color: rgba(0, 150, 255, 0.6);
   box-shadow: 0 0 15px rgba(0, 150, 255, 0.2);
@@ -1042,7 +1582,7 @@
 /* Clean hover effects */
 .skill-card:hover,
 .project-card:hover,
-.ctos-panel:hover {
+.nexus-panel:hover {
   border-color: rgba(0, 150, 255, 0.4);
   transition: border-color 0.3s ease;
 }

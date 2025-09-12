@@ -3,11 +3,11 @@
     <div class="container">
         <!-- Page Header -->
         <div class="section-header">
-            <div class="ctos-header" style="margin-bottom: 32px;">COMMUNICATION PROTOCOL</div>
+            <div class="nexus-header" style="margin-bottom: 32px;">COMMUNICATION PROTOCOL</div>
             <h1 class="section-title" data-text="ESTABLISH CONNECTION">
                 ESTABLISH <span class="highlight">CONNECTION</span>
             </h1>
-            <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <p class="section-description">
                 Secure communication channel for project inquiries and collaboration requests
             </p>
         </div>
@@ -16,7 +16,7 @@
             <!-- Left Column - System Status -->
             <div>
                 <!-- Communication Status -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">SYSTEM STATUS</div>
                     
                     <div style="margin-top: 16px;">
@@ -40,7 +40,7 @@
                 </div>
 
                 <!-- Contact Information -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
+                <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">DIRECT CHANNELS</div>
                     
                     <div style="margin-top: 16px;">
@@ -48,7 +48,7 @@
                         <div style="margin-bottom: 16px;">
                             <div class="data-label">EMAIL</div>
                             <div class="data-value">
-                                <a href="mailto:{{.Personal.Email}}" style="color: #ffffff;">{{.Personal.Email}}</a>
+                                <a href="mailto:{{.Personal.Email}}" class="data-link">{{.Personal.Email}}</a>
                             </div>
                         </div>
                         {{end}}
@@ -57,7 +57,7 @@
                         <div style="margin-bottom: 16px;">
                             <div class="data-label">LINKEDIN</div>
                             <div class="data-value">
-                                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" style="color: #ffffff;">Professional Network</a>
+                                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="data-link">Professional Network</a>
                             </div>
                         </div>
                         {{end}}
@@ -66,7 +66,7 @@
                         <div style="margin-bottom: 16px;">
                             <div class="data-label">GITHUB</div>
                             <div class="data-value">
-                                <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" style="color: #ffffff;">Code Repository</a>
+                                <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="data-link">Code Repository</a>
                             </div>
                         </div>
                         {{end}}
@@ -79,11 +79,9 @@
                 </div>
 
                 <!-- Security Notice -->
-                <div style="background-color: #222222; border: 1px solid #ff6600; padding: 16px;">
-                    <div style="background-color: #ff6600; color: #000000; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
-                        SECURITY NOTICE
-                    </div>
-                    <p style="color: #cccccc; font-size: 14px; line-height: 1.5;">
+                <div class="security-notice">
+                    <div class="security-notice-header">SECURITY NOTICE</div>
+                    <p class="security-notice-text">
                         All communications are monitored and encrypted. Response times may vary based on project complexity and current workload.
                     </p>
                 </div>
@@ -92,18 +90,18 @@
             <!-- Right Column - Contact Form -->
             <div>
                 <!-- Terminal Interface -->
-                <div class="ctos-terminal" style="margin-bottom: 32px;">
+                <div class="nexus-terminal" style="margin-bottom: 32px;">
                     <div class="terminal-line">
-                        <span style="color: #00ffff;">root@ctos:~$</span> initialize_secure_channel
+                        <span class="terminal-prompt">root@xiaoos:~$</span> initialize_secure_channel
                     </div>
                     <div class="terminal-line">
                         Establishing encrypted connection...
                     </div>
                     <div class="terminal-line">
-                        <span style="color: #00ff00;">✓</span> SSL/TLS handshake complete
+                        <span class="terminal-success">✓</span> SSL/TLS handshake complete
                     </div>
                     <div class="terminal-line">
-                        <span style="color: #00ff00;">✓</span> Authentication verified
+                        <span class="terminal-success">✓</span> Authentication verified
                     </div>
                     <div class="terminal-line">
                         <span class="terminal-highlight">></span> Ready for secure transmission <span class="terminal-pulse">█</span>
@@ -111,63 +109,60 @@
                 </div>
 
                 <!-- Contact Form -->
-                <div class="ctos-panel">
+                <div class="nexus-panel">
+                    <!-- Full Width Form Container -->
+                <div class="form-container">
                     <div class="panel-header">SECURE MESSAGE FORM</div>
-                    
-                    <form id="contact-form" style="margin-top: 24px;">
+                    <form id="contact-form" class="contact-form">
                         <div class="form-group">
-                            <label class="data-label" style="display: block; margin-bottom: 8px;">
+                            <label class="data-label form-label">
                                 SENDER NAME
                             </label>
                             <input type="text" 
                                    id="name" 
                                    name="name" 
                                    required
-                                   class="form-input"
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
+                                   class="form-input">
                         </div>
                         
                         <div class="form-group">
-                            <label class="data-label" style="display: block; margin-bottom: 8px;">
+                            <label class="data-label form-label">
                                 EMAIL ADDRESS
                             </label>
                             <input type="email" 
                                    id="email" 
                                    name="email" 
                                    required
-                                   class="form-input"
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
+                                   class="form-input">
                         </div>
                         
                         <div class="form-group">
-                            <label class="data-label" style="display: block; margin-bottom: 8px;">
+                            <label class="data-label form-label">
                                 SUBJECT LINE
                             </label>
                             <input type="text" 
                                    id="subject" 
                                    name="subject" 
                                    required
-                                   class="form-input"
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
+                                   class="form-input">
                         </div>
                         
                         <div class="form-group">
-                            <label class="data-label" style="display: block; margin-bottom: 8px;">
+                            <label class="data-label form-label">
                                 MESSAGE CONTENT
                             </label>
                             <textarea id="message" 
                                       name="message" 
                                       rows="6" 
                                       required
-                                      class="form-textarea"
-                                      style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; resize: vertical; min-height: 120px;"></textarea>
+                                      class="form-textarea"></textarea>
                         </div>
                         
-                        <div class="ctos-actions" style="margin-bottom: 20px;">
-                            <button type="submit" class="ctos-btn ctos-btn-primary">
+                        <div class="nexus-actions" style="margin-bottom: 20px;">
+                            <button type="submit" class="nexus-btn nexus-btn-primary">
                                 TRANSMIT MESSAGE
                             </button>
-                            <button type="reset" class="ctos-btn ctos-btn-secondary">
+                            <button type="reset" class="nexus-btn nexus-btn-secondary">
                                 CLEAR FORM
                             </button>
                         </div>
@@ -177,6 +172,9 @@
                         </div>
                     </form>
                 </div>
+                </div>
+                
+                
 
                 <!-- Response Status -->
                 <div id="form-status" style="margin-top: 24px; display: none;">
@@ -194,22 +192,22 @@
 
         <!-- Quick Actions -->
         <div style="text-align: center; margin-top: 64px;">
-            <div class="ctos-header" style="margin-bottom: 24px;">QUICK ACTIONS</div>
-            <div class="ctos-actions" style="justify-content: center; max-width: 600px; margin: 0 auto;">
+            <div class="nexus-header" style="margin-bottom: 24px;">QUICK ACTIONS</div>
+            <div class="nexus-actions" style="justify-content: center; max-width: 600px; margin: 0 auto;">
                 {{if .Personal.Email}}
-                <a href="mailto:{{.Personal.Email}}" class="ctos-btn ctos-btn-secondary">
+                <a href="mailto:{{.Personal.Email}}" class="nexus-btn nexus-btn-secondary">
                     DIRECT EMAIL
                 </a>
                 {{end}}
                 {{if .Personal.LinkedIn}}
-                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="ctos-btn ctos-btn-secondary">
+                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="nexus-btn nexus-btn-secondary">
                     LINKEDIN
                 </a>
                 {{end}}
-                <a href="/resume" class="ctos-btn ctos-btn-secondary">
+                <a href="/resume" class="nexus-btn nexus-btn-secondary">
                     RESUME
                 </a>
-                <a href="/projects" class="ctos-btn ctos-btn-secondary">
+                <a href="/projects" class="nexus-btn nexus-btn-secondary">
                     PROJECTS
                 </a>
             </div>

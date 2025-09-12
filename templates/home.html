@@ -1,7 +1,7 @@
 {{define "home-content"}}
 <!-- Hero Section -->
 <section class="hero-section relative">
-    <!-- CTOS Status Indicators -->
+    <!-- xiaoOS Status Indicators -->
     <div class="absolute top-4 right-4 z-10">
         <div class="text-xs font-mono text-blue-400 space-y-1">
             <div>SYSTEM_ID: 001</div>
@@ -14,8 +14,8 @@
         
         <!-- Profile Card - Left Side -->
         <div>
-            <div class="ctos-profile-card">
-                <div class="ctos-header">PROFILING</div>
+            <div class="nexus-profile-card">
+                <div class="nexus-header">PROFILING</div>
                 <div class="profile-content">
                     <!-- Profile Image -->
                     <div class="profile-image">
@@ -64,16 +64,16 @@
         <div class="main-content">
             <!-- Welcome Message -->
             <div>
-                <h1 class="ctos-title" data-text="SYSTEM ONLINE">
+                <h1 class="nexus-title" data-text="SYSTEM ONLINE">
                     SYSTEM <span class="highlight">ONLINE</span>
                 </h1>
-                <h2 class="ctos-subtitle">
+                <h2 class="nexus-subtitle">
                     {{.Personal.Title}}
                 </h2>
             </div>
             
             <!-- Bio Panel -->
-            <div class="ctos-panel">
+            <div class="nexus-panel">
                 <div class="panel-header">PROFILE DATA</div>
                 <p class="bio-text">
                     {{.Personal.Bio}}
@@ -81,11 +81,11 @@
             </div>
             
             <!-- Action Buttons -->
-            <div class="ctos-actions">
-                <a href="/projects" class="ctos-btn ctos-btn-primary">
+            <div class="nexus-actions">
+                <a href="/projects" class="nexus-btn nexus-btn-primary">
                     VIEW PROJECTS
                 </a>
-                <a href="/contact" class="ctos-btn ctos-btn-secondary">
+                <a href="/contact" class="nexus-btn nexus-btn-secondary">
                     CONTACT ME
                 </a>
             </div>
@@ -119,7 +119,7 @@
     <div class="container">
         <!-- Section Header -->
         <div class="section-header">
-            <div class="ctos-header" style="margin-bottom: 32px; font-size: 18px;">
+            <div class="nexus-header" style="margin-bottom: 32px; font-size: 18px;">
                 TECHNICAL SPECIFICATIONS
             </div>
             <h2 class="section-title" data-text="SYSTEM CAPABILITIES">
@@ -132,7 +132,7 @@
             {{range .Personal.Skills}}
             <div class="skill-card">
                 <!-- Skill Header -->
-                <div class="ctos-header">{{.Category}}</div>
+                <div class="nexus-header">{{.Category}}</div>
                 
                 <!-- Skills List -->
                 <div class="skill-content">
@@ -153,8 +153,8 @@
                     <!-- Status Indicator -->
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333333;">
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
-                            <span style="color: #999999;">STATUS:</span>
-                            <span class="status-online" style="font-weight: bold;">OPERATIONAL</span>
+                            <span class="status-text">STATUS:</span>
+                            <span class="status-online status-value">OPERATIONAL</span>
                         </div>
                     </div>
                 </div>
@@ -165,11 +165,11 @@
 </section>
 
 <!-- Projects Section -->
-<section class="section" style="background-color: #000000;">
+<section class="section">
     <div class="container">
         <!-- Section Header -->
         <div class="section-header">
-            <div class="ctos-header" style="margin-bottom: 32px; font-size: 18px;">
+            <div class="nexus-header" style="margin-bottom: 32px; font-size: 18px;">
                 PROJECT DATABASE
             </div>
             <h2 class="section-title" data-text="DEVELOPMENT RECORDS">
@@ -189,7 +189,7 @@
                     
                     <!-- Project Visual -->
                     <div class="project-visual">
-                        <div style="color: #00ffff; font-size: 32px;">📁</div>
+                        <div class="project-icon text-cyan-400">📁</div>
                     </div>
                     
                     <!-- Project Title -->
@@ -230,7 +230,7 @@
         
         <!-- View All Projects -->
         <div style="text-align: center;">
-            <a href="/projects" class="ctos-btn ctos-btn-primary">
+            <a href="/projects" class="nexus-btn nexus-btn-primary">
                 ACCESS FULL DATABASE
             </a>
         </div>
@@ -241,7 +241,7 @@
 <section class="section section-dark">
     <div class="container">
         <!-- Main Communication Panel -->
-        <div class="ctos-panel" style="max-width: 800px; margin: 0 auto;">
+        <div class="nexus-panel" style="max-width: 800px; margin: 0 auto;">
             <div style="padding: 32px; text-align: center;">
                 <!-- Header -->
                 <div class="panel-header" style="font-size: 18px;">
@@ -254,20 +254,20 @@
                 </h2>
                 
                 <!-- Status Terminal -->
-                <div class="ctos-terminal">
+                <div class="nexus-terminal">
                     <div class="terminal-line">&gt; scanning_for_opportunities...</div>
                     <div class="terminal-line">&gt; new_projects: <span class="terminal-highlight">WELCOME</span></div>
                     <div class="terminal-line">&gt; collaborations: <span class="terminal-highlight">AUTHORIZED</span></div>
                     <div class="terminal-line">&gt; contact_status: <span class="terminal-highlight terminal-pulse">READY</span></div>
                 </div>
                 
-                <p style="color: #cccccc; font-size: 18px; margin-bottom: 32px; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <p class="section-description">
                     Always interested in new opportunities and collaborative development projects. 
                     Security clearance verified. Communication channels open.
                 </p>
                 
                 <!-- Action Button -->
-                <a href="/contact" class="ctos-btn ctos-btn-primary" style="margin-bottom: 32px;">
+                <a href="/contact" class="nexus-btn nexus-btn-primary" style="margin-bottom: 32px;">
                     INITIATE CONTACT
                 </a>
                 
@@ -278,8 +278,8 @@
                         <div class="status-online">AVAILABLE</div>
                     </div>
                     <div class="status-item">
-                        <div style="color: #00ffff; font-weight: bold; margin-bottom: 4px;">RESPONSE TIME</div>
-                        <div style="color: #00ffff;">24HR MAX</div>
+                        <div class="text-cyan-400 font-bold mb-1">RESPONSE TIME</div>
+                        <div class="text-cyan-400">24HR MAX</div>
                     </div>
                     <div class="status-item">
                         <div class="status-warning" style="font-weight: bold; margin-bottom: 4px;">PRIORITY</div>

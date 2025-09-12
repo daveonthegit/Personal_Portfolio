@@ -35,16 +35,9 @@ class GlitchAnimationController {
             }
         });
     }
-    triggerGlitchLoad(element, index) {
-        const delay = this.options.delay + (index * this.options.staggerDelay);
-        setTimeout(() => {
-            // Add subtle loading animation
-            element.classList.add('ctos-load');
-            // Add hover effects after animation completes
-            setTimeout(() => {
-                element.classList.add('ctos-hover');
-            }, 800);
-        }, delay);
+    triggerGlitchLoad(_element, _index) {
+        // No loading animations - elements appear immediately
+        return;
     }
     observeElements() {
         if (!this.observer)
@@ -53,8 +46,8 @@ class GlitchAnimationController {
         const cardSelectors = [
             '.skill-card',
             '.project-card',
-            '.ctos-profile-card',
-            '.ctos-panel',
+            '.nexus-profile-card',
+            '.nexus-panel',
             '.status-item'
         ];
         cardSelectors.forEach(selector => {
@@ -65,13 +58,8 @@ class GlitchAnimationController {
         });
     }
     setupHoverEffects() {
-        // Simple fade-in effects for titles
-        const titles = document.querySelectorAll('.project-title, .section-title, .ctos-title');
-        titles.forEach((title, index) => {
-            setTimeout(() => {
-                title.classList.add('fade-in-up');
-            }, index * 100);
-        });
+        // No loading animations for titles - they appear immediately
+        return;
     }
     destroy() {
         if (this.observer) {

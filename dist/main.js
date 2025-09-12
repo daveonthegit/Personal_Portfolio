@@ -2,7 +2,7 @@
 import { SmoothScroll } from './utils/smoothScroll';
 import { AnimationObserver } from './utils/animationObserver';
 import { ContactFormHandler } from './components/ContactFormHandler';
-import { ThemeHandler } from './components/ThemeHandler';
+import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
 import { initNetworkVisualization, createFloatingDataElements } from './utils/networkVisualization';
 // Initialize utilities
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize contact form
     ContactFormHandler.init();
     // Initialize theme toggle
-    ThemeHandler.init();
+    initThemeHandler();
     console.log('✅ CTOS Interface - All systems operational');
 });
 //# sourceMappingURL=main.js.map

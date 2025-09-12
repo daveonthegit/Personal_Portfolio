@@ -28,7 +28,7 @@ class CTOSNetworkVisualization {
 
   private createNetworkOverlay(): void {
     const networkOverlay = document.createElement('div');
-    networkOverlay.className = 'ctos-network';
+    networkOverlay.className = 'nexus-network';
     this.container.appendChild(networkOverlay);
   }
 
@@ -149,24 +149,12 @@ class CTOSNetworkVisualization {
 
 // Initialize network visualization for all sections
 export function initNetworkVisualization(): void {
-  const sections = document.querySelectorAll('.hero-section, .section');
-  const processedSections = new Set<HTMLElement>();
-  
-  sections.forEach((section) => {
-    const sectionElement = section as HTMLElement;
-    
-    // Skip if already processed or has network visualization
-    if (processedSections.has(sectionElement) || sectionElement.querySelector('.ctos-network')) {
-      return;
-    }
-    
-    // Mark as processed
-    processedSections.add(sectionElement);
-    
-    // Add network visualization
-    const visualization = new CTOSNetworkVisualization(sectionElement);
+  // Only add network to the main hero section
+  const heroSection = document.querySelector('.hero-section');
+  if (heroSection && !heroSection.querySelector('.nexus-network')) {
+    const visualization = new CTOSNetworkVisualization(heroSection as HTMLElement);
     visualization.generateNetwork();
-  });
+  }
 }
 
 // Create floating data elements

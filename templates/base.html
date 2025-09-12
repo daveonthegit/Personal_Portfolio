@@ -33,24 +33,34 @@
 </head>
 <body>
     <!-- Background Grid -->
-    <div class="ctos-grid-bg"></div>
+    <div class="nexus-grid-bg"></div>
     
     <!-- Navigation -->
-    <nav class="ctos-nav">
-        <div class="ctos-nav-container">
-            <a href="/" class="ctos-logo">
-                <span class="ctos-logo-ct">ct</span><span class="ctos-logo-os">OS</span>
+    <nav class="nexus-nav">
+        <div class="nexus-nav-container">
+            <a href="/" class="nexus-logo">
+                <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
             </a>
             
-            <ul class="ctos-nav-links">
-                <li><a href="/" class="ctos-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
-                <li><a href="/about" class="ctos-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
-                <li><a href="/projects" class="ctos-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
-                <li><a href="/contact" class="ctos-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
+            <ul class="nexus-nav-links">
+                <li><a href="/" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+                <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
+                <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
+                <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
             </ul>
             
-            <button class="ctos-mobile-toggle" id="mobile-toggle" aria-label="Toggle mobile menu">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="nav-controls">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                    <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+                <button class="nexus-mobile-toggle" id="mobile-toggle" aria-label="Toggle mobile menu">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
@@ -58,17 +68,28 @@
     </nav>
 
     <!-- Mobile Menu -->
-    <div class="ctos-mobile-menu hidden" id="mobile-menu">
+    <div class="nexus-mobile-menu hidden" id="mobile-menu">
         <ul>
-            <li><a href="/" class="ctos-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
-            <li><a href="/about" class="ctos-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
-            <li><a href="/projects" class="ctos-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
-            <li><a href="/contact" class="ctos-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
+            <li><a href="/" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+            <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
+            <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
+            <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
         </ul>
+        <div class="mobile-theme-toggle">
+            <button class="theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
+                <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                </svg>
+                <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <!-- Main Content -->
-    <main class="ctos-main">
+    <main class="nexus-main">
         {{if eq .TemplateName "home"}}
             {{template "home-content" .}}
         {{else if eq .TemplateName "about"}}
@@ -85,9 +106,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="ctos-footer">
+    <footer class="nexus-footer">
         <div class="footer-content">
-            <!-- CTOS System Information -->
+            <!-- xiaoOS System Information -->
             <div class="bg-black/90 p-4 mb-6 border border-blue-400/30">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
                     <div>
@@ -120,7 +141,7 @@
             <div class="footer-main">
                 <div class="footer-info">
                     <p style="color: #cccccc; font-size: 14px;">
-                        © {{.Year}} {{.Personal.Name}} - <span style="color: #3b82f6;">CTOS PORTFOLIO SYSTEM</span>
+                        © {{.Year}} {{.Personal.Name}} - <span style="color: #3b82f6;">xiaoOS PORTFOLIO SYSTEM</span>
                     </p>
                     <p style="font-size: 12px; color: #666666;">All rights reserved. Unauthorized access prohibited.</p>
                 </div>
@@ -181,7 +202,7 @@
                 });
             }
             
-            // Clean CTOS interface - no excessive effects
+            // Clean xiaoOS interface - no excessive effects
         });
     </script>
 </body>
