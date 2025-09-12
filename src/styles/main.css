@@ -240,8 +240,6 @@
   /* Form Container within Grid */
   .form-container {
     @apply w-full bg-black p-6 mb-8;
-    border: 0px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
     min-width: 0; /* Prevent grid shrinking */
     overflow: hidden; /* Prevent content from expanding grid */
   }
@@ -956,8 +954,7 @@
   
   .light-mode .form-container {
     @apply bg-white;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
   }
 
   .light-mode .data-label {
@@ -1057,6 +1054,47 @@
 
   .light-mode .theme-icon-light {
     @apply opacity-100 text-black;
+  }
+
+  /* Light Mode Corner Accents */
+  .light-mode .nexus-profile-card::before {
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+  }
+
+  .light-mode .nexus-profile-card::after {
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+  }
+
+  .light-mode .nexus-panel::before {
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+  }
+
+  .light-mode .nexus-panel::after {
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+  }
+
+  .light-mode .skill-card::before {
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+  }
+
+  .light-mode .skill-card::after {
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+  }
+
+  .light-mode .project-card::before {
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+  }
+
+  .light-mode .project-card::after {
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
   }
   
   /* Connection Lines */
