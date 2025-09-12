@@ -42,6 +42,7 @@ ehthumbs.db
 Thumbs.db
 
 # Built assets (these get built during deployment)
+static/css/main.css
 static/css/main.css.map
 static/js/main.js
 static/js/main.js.map

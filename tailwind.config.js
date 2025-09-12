@@ -151,7 +151,7 @@ module.exports = {
       },
       fontFamily: {
         'mono': ['Courier New', 'monospace'],
-        'tech': ['Orbitron', 'monospace'],
+        'ctos': ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
         'cyber': ['Share Tech Mono', 'monospace'],
       },
       boxShadow: {
