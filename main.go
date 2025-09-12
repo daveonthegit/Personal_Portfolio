@@ -83,6 +83,7 @@ func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
 	data := PageData{
 		Title:        "About Me - " + personal.Name,
 		Description:  "Learn more about my background, skills, and experience in software development.",
+		Projects:     s.projects,
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "about",
