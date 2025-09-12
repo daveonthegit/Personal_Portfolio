@@ -494,6 +494,46 @@
   .project-title {
     @apply text-xl font-bold mb-3 text-white;
   }
+
+  .light-mode .project-title {
+    @apply text-black;
+  }
+
+  .light-mode .project-description {
+    @apply text-gray-700;
+  }
+
+  .light-mode .tech-label {
+    @apply text-black;
+  }
+
+  .light-mode .project-links {
+    @apply border-black;
+  }
+
+  .light-mode .project-link {
+    @apply text-black;
+  }
+
+  .light-mode .project-link:hover {
+    @apply text-gray-600;
+  }
+
+  .light-mode .project-link.demo {
+    @apply text-orange-600;
+  }
+
+  .light-mode .project-link.demo:hover {
+    @apply text-orange-700;
+  }
+
+  .light-mode .status-online {
+    @apply text-green-600;
+  }
+
+  .light-mode .terminal-highlight {
+    @apply text-blue-600;
+  }
   
   .project-description {
     @apply text-gray-300 text-sm mb-4 leading-relaxed;
@@ -1104,7 +1144,10 @@
   .light-mode .nexus-terminal {
     @apply bg-white border-black text-black;
   }
-
+  .light-mode .nexus-status-bar {
+    @apply bg-white border-black text-black;
+    backdrop-filter: blur(10px);
+  }
   /* Projects Container */
   .projects-container {
     @apply max-h-[600px] overflow-y-auto;
