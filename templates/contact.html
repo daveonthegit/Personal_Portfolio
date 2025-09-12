@@ -1,10 +1,10 @@
 {{define "contact-content"}}
-<section class="section">
+<section class="section relative">
     <div class="container">
         <!-- Page Header -->
         <div class="section-header">
             <div class="ctos-header" style="margin-bottom: 32px;">COMMUNICATION PROTOCOL</div>
-            <h1 class="section-title">
+            <h1 class="section-title" data-text="ESTABLISH CONNECTION">
                 ESTABLISH <span class="highlight">CONNECTION</span>
             </h1>
             <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
@@ -115,52 +115,56 @@
                     <div class="panel-header">SECURE MESSAGE FORM</div>
                     
                     <form id="contact-form" style="margin-top: 24px;">
-                        <div style="margin-bottom: 20px;">
-                            <label style="color: #ffffff; font-weight: bold; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 8px;">
+                        <div class="form-group">
+                            <label class="data-label" style="display: block; margin-bottom: 8px;">
                                 SENDER NAME
                             </label>
                             <input type="text" 
                                    id="name" 
                                    name="name" 
                                    required
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 14px;">
+                                   class="form-input"
+                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
                         </div>
                         
-                        <div style="margin-bottom: 20px;">
-                            <label style="color: #ffffff; font-weight: bold; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 8px;">
+                        <div class="form-group">
+                            <label class="data-label" style="display: block; margin-bottom: 8px;">
                                 EMAIL ADDRESS
                             </label>
                             <input type="email" 
                                    id="email" 
                                    name="email" 
                                    required
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 14px;">
+                                   class="form-input"
+                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
                         </div>
                         
-                        <div style="margin-bottom: 20px;">
-                            <label style="color: #ffffff; font-weight: bold; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 8px;">
+                        <div class="form-group">
+                            <label class="data-label" style="display: block; margin-bottom: 8px;">
                                 SUBJECT LINE
                             </label>
                             <input type="text" 
                                    id="subject" 
                                    name="subject" 
                                    required
-                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 14px;">
+                                   class="form-input"
+                                   style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace;">
                         </div>
                         
-                        <div style="margin-bottom: 24px;">
-                            <label style="color: #ffffff; font-weight: bold; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 8px;">
+                        <div class="form-group">
+                            <label class="data-label" style="display: block; margin-bottom: 8px;">
                                 MESSAGE CONTENT
                             </label>
                             <textarea id="message" 
                                       name="message" 
                                       rows="6" 
                                       required
-                                      style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; font-size: 14px; resize: vertical; min-height: 120px;"></textarea>
+                                      class="form-textarea"
+                                      style="width: 100%; background-color: #222222; border: 1px solid #666666; color: #ffffff; padding: 12px; font-family: 'Share Tech Mono', monospace; resize: vertical; min-height: 120px;"></textarea>
                         </div>
                         
-                        <div style="display: flex; gap: 16px; margin-bottom: 20px;">
-                            <button type="submit" class="ctos-btn ctos-btn-primary" style="flex: 1;">
+                        <div class="ctos-actions" style="margin-bottom: 20px;">
+                            <button type="submit" class="ctos-btn ctos-btn-primary">
                                 TRANSMIT MESSAGE
                             </button>
                             <button type="reset" class="ctos-btn ctos-btn-secondary">
@@ -191,7 +195,7 @@
         <!-- Quick Actions -->
         <div style="text-align: center; margin-top: 64px;">
             <div class="ctos-header" style="margin-bottom: 24px;">QUICK ACTIONS</div>
-            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <div class="ctos-actions" style="justify-content: center; max-width: 600px; margin: 0 auto;">
                 {{if .Personal.Email}}
                 <a href="mailto:{{.Personal.Email}}" class="ctos-btn ctos-btn-secondary">
                     DIRECT EMAIL
@@ -199,14 +203,14 @@
                 {{end}}
                 {{if .Personal.LinkedIn}}
                 <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="ctos-btn ctos-btn-secondary">
-                    LINKEDIN CONNECT
+                    LINKEDIN
                 </a>
                 {{end}}
                 <a href="/resume" class="ctos-btn ctos-btn-secondary">
-                    VIEW RESUME
+                    RESUME
                 </a>
                 <a href="/projects" class="ctos-btn ctos-btn-secondary">
-                    BROWSE PROJECTS
+                    PROJECTS
                 </a>
             </div>
         </div>

@@ -23,10 +23,13 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     
-    <!-- CTOS uses system fonts - Helvetica Neue for authentic look -->
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="/static/css/main.css?v=7" rel="stylesheet">
+    <link href="/static/css/main.css?v=8" rel="stylesheet">
 </head>
 <body>
     <!-- Background Grid -->
@@ -46,13 +49,23 @@
                 <li><a href="/contact" class="ctos-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
             </ul>
             
-            <button class="ctos-mobile-toggle" id="mobile-toggle">
+            <button class="ctos-mobile-toggle" id="mobile-toggle" aria-label="Toggle mobile menu">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
         </div>
     </nav>
+
+    <!-- Mobile Menu -->
+    <div class="ctos-mobile-menu hidden" id="mobile-menu">
+        <ul>
+            <li><a href="/" class="ctos-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+            <li><a href="/about" class="ctos-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
+            <li><a href="/projects" class="ctos-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
+            <li><a href="/contact" class="ctos-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
+        </ul>
+    </div>
 
     <!-- Main Content -->
     <main class="ctos-main">
@@ -74,10 +87,40 @@
     <!-- Footer -->
     <footer class="ctos-footer">
         <div class="footer-content">
+            <!-- CTOS System Information -->
+            <div class="bg-black/90 p-4 mb-6 border border-blue-400/30">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
+                    <div>
+                        <div class="text-blue-400 font-bold mb-2">SYSTEM STATUS</div>
+                        <div class="text-green-400">OPERATIONAL</div>
+                        <div class="text-blue-200">UPTIME: 99.9%</div>
+                        <div class="text-blue-200">LOAD: 12%</div>
+                    </div>
+                    <div>
+                        <div class="text-blue-400 font-bold mb-2">NETWORK</div>
+                        <div class="text-green-400">CONNECTED</div>
+                        <div class="text-blue-200">LATENCY: 23ms</div>
+                        <div class="text-blue-200">BANDWIDTH: 1Gbps</div>
+                    </div>
+                    <div>
+                        <div class="text-blue-400 font-bold mb-2">SECURITY</div>
+                        <div class="text-green-400">SECURED</div>
+                        <div class="text-blue-200">FIREWALL: ACTIVE</div>
+                        <div class="text-blue-200">ENCRYPTION: AES-256</div>
+                    </div>
+                    <div>
+                        <div class="text-blue-400 font-bold mb-2">BUILD INFO</div>
+                        <div class="text-blue-200">VERSION: 2.1.{{.Year}}</div>
+                        <div class="text-blue-200">BUILD: {{.Year}}0912</div>
+                        <div class="text-blue-200">ENV: PRODUCTION</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="footer-main">
                 <div class="footer-info">
                     <p style="color: #cccccc; font-size: 14px;">
-                        © {{.Year}} {{.Personal.Name}} - <span style="color: #00ffff;">SYSTEM SECURE</span>
+                        © {{.Year}} {{.Personal.Name}} - <span style="color: #3b82f6;">CTOS PORTFOLIO SYSTEM</span>
                     </p>
                     <p style="font-size: 12px; color: #666666;">All rights reserved. Unauthorized access prohibited.</p>
                 </div>
@@ -103,18 +146,6 @@
                     </a>
                 </div>
             </div>
-            
-            <!-- CTOS Status Bar -->
-            <div class="footer-status">
-                <div class="status-indicators">
-                    <span class="status-online" style="font-weight: bold;">STATUS: OPERATIONAL</span>
-                    <span style="color: #00ffff; font-weight: bold;">UPTIME: 99.9%</span>
-                    <span class="status-warning" style="font-weight: bold;">SECURITY: MAXIMUM</span>
-                </div>
-                <div style="color: #666666;">
-                    CTOS_V2.1_PORTFOLIO_BUILD
-                </div>
-            </div>
         </div>
     </footer>
 
@@ -122,8 +153,35 @@
     <script src="/static/js/main.js"></script>
     <script>
         // Mobile menu toggle
-        document.getElementById('mobile-toggle')?.addEventListener('click', function() {
-            alert('Mobile menu - implement as needed');
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileToggle && mobileMenu) {
+                mobileToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                    mobileMenu.classList.toggle('show');
+                });
+                
+                // Close mobile menu when clicking on a link
+                const mobileLinks = mobileMenu.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenu.classList.remove('show');
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenu.classList.remove('show');
+                    }
+                });
+            }
+            
+            // Clean CTOS interface - no excessive effects
         });
     </script>
 </body>

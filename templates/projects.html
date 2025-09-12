@@ -1,10 +1,17 @@
 {{define "projects-content"}}
-<section class="section">
+<section class="section relative">
     <div class="container">
         <!-- Page Header -->
-        <div class="section-header">
+        <div class="section-header relative">
+            <!-- CTOS Status Bar -->
+            <div class="absolute top-0 right-0">
+                <div class="ctos-status-bar">
+                    DATABASE_ACCESS: AUTHORIZED | CLEARANCE_LEVEL: 3
+                </div>
+            </div>
+            
             <div class="ctos-header" style="margin-bottom: 32px;">PROJECT DATABASE</div>
-            <h1 class="section-title">
+            <h1 class="section-title" data-text="DEVELOPMENT ARCHIVE">
                 DEVELOPMENT <span class="highlight">ARCHIVE</span>
             </h1>
             <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
@@ -39,9 +46,9 @@
         <div class="ctos-panel" style="margin-bottom: 48px;">
             <div class="panel-header">FILTER CONTROLS</div>
             
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">
+            <div class="ctos-actions" style="margin-top: 16px; justify-content: center;">
                 <button class="ctos-btn ctos-btn-secondary filter-btn active" data-filter="all">ALL PROJECTS</button>
-                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="web">WEB DEVELOPMENT</button>
+                <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="web">WEB DEV</button>
                 <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="mobile">MOBILE</button>
                 <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="ai">AI/ML</button>
                 <button class="ctos-btn ctos-btn-secondary filter-btn" data-filter="security">SECURITY</button>
@@ -54,7 +61,7 @@
                 <span style="color: #00ffff;">root@ctos:~$</span> query_project_database --status=active
             </div>
             <div class="terminal-line">
-                Scanning project archives...
+                Scanning project archives<span class="terminal-pulse">...</span>
             </div>
             <div class="terminal-line">
                 <span style="color: #00ff00;">✓</span> Found {{len .Projects}} active projects
@@ -83,7 +90,7 @@
                     </div>
                     
                     <!-- Project Info -->
-                    <div class="project-title">{{.Title}}</div>
+                    <div class="project-title" data-text="{{.Title}}">{{.Title}}</div>
                     <div class="project-description">{{.Description}}</div>
                     
                     <!-- Tech Stack -->

@@ -1,6 +1,15 @@
 {{define "home-content"}}
 <!-- Hero Section -->
-<section class="hero-section">
+<section class="hero-section relative">
+    <!-- CTOS Status Indicators -->
+    <div class="absolute top-4 right-4 z-10">
+        <div class="text-xs font-mono text-blue-400 space-y-1">
+            <div>SYSTEM_ID: 001</div>
+            <div>STATUS: <span class="text-green-400">OPERATIONAL</span></div>
+            <div>UPTIME: 99.9%</div>
+        </div>
+    </div>
+    
     <div class="hero-grid">
         
         <!-- Profile Card - Left Side -->
@@ -55,7 +64,7 @@
         <div class="main-content">
             <!-- Welcome Message -->
             <div>
-                <h1 class="ctos-title">
+                <h1 class="ctos-title" data-text="SYSTEM ONLINE">
                     SYSTEM <span class="highlight">ONLINE</span>
                 </h1>
                 <h2 class="ctos-subtitle">
@@ -85,14 +94,35 @@
 </section>
 
 <!-- Skills Section -->
-<section class="section section-dark">
+<section class="section section-dark relative">
+    <!-- Data Visualization Elements -->
+    <div class="absolute top-20 left-10 z-10 hidden lg:block">
+        <div class="data-circle">
+            <div class="text-center">
+                <div class="data-value-large">8</div>
+                <div class="data-label-small text-blue-400">YEARS</div>
+                <div class="data-label-small mt-1">EXPERIENCE</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="absolute bottom-20 right-10 z-10 hidden lg:block">
+        <div class="data-circle data-circle-large">
+            <div class="text-center">
+                <div class="data-value-large">{{len .Projects}}</div>
+                <div class="data-label-small text-blue-400">PROJECTS</div>
+                <div class="data-label-small mt-1">COMPLETED</div>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <!-- Section Header -->
         <div class="section-header">
             <div class="ctos-header" style="margin-bottom: 32px; font-size: 18px;">
                 TECHNICAL SPECIFICATIONS
             </div>
-            <h2 class="section-title">
+            <h2 class="section-title" data-text="SYSTEM CAPABILITIES">
                 SYSTEM <span class="highlight">CAPABILITIES</span>
             </h2>
         </div>
@@ -142,7 +172,7 @@
             <div class="ctos-header" style="margin-bottom: 32px; font-size: 18px;">
                 PROJECT DATABASE
             </div>
-            <h2 class="section-title">
+            <h2 class="section-title" data-text="DEVELOPMENT RECORDS">
                 DEVELOPMENT <span class="highlight">RECORDS</span>
             </h2>
         </div>
@@ -219,7 +249,7 @@
                 </div>
                 
                 <!-- Main Message -->
-                <h2 class="section-title" style="margin-bottom: 24px;">
+                <h2 class="section-title" data-text="ESTABLISH CONNECTION" style="margin-bottom: 24px;">
                     ESTABLISH <span class="highlight">CONNECTION</span>
                 </h2>
                 
