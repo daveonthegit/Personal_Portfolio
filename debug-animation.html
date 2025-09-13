@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Debug Test</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: monospace;
+            margin: 0;
+            padding: 20px;
+        }
+        .debug-info {
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            background: #111;
+        }
+        .error {
+            border-color: #ff0000;
+            background: #220;
+        }
+    </style>
+</head>
+<body>
+    <h1>Animation Debug Test</h1>
+    
+    <div class="debug-info">
+        <h3>Current URL Information:</h3>
+        <p>Pathname: <span id="pathname"></span></p>
+        <p>Full URL: <span id="fullurl"></span></p>
+        <p>Host: <span id="host"></span></p>
+    </div>
+
+    <div class="debug-info">
+        <h3>JavaScript Files:</h3>
+        <p>main.js exists: <span id="js-exists"></span></p>
+        <p>main.css exists: <span id="css-exists"></span></p>
+    </div>
+
+    <div class="debug-info">
+        <h3>Console Logs:</h3>
+        <div id="console-logs"></div>
+    </div>
+
+    <div class="debug-info">
+        <h3>Animation Test:</h3>
+        <button onclick="testAnimation()">Test Animation</button>
+        <div id="animation-test"></div>
+    </div>
+
+    <script>
+        // Display URL information
+        document.getElementById('pathname').textContent = window.location.pathname;
+        document.getElementById('fullurl').textContent = window.location.href;
+        document.getElementById('host').textContent = window.location.host;
+
+        // Check if files exist
+        fetch('/static/js/main.js')
+            .then(response => {
+                document.getElementById('js-exists').textContent = response.ok ? 'YES' : 'NO';
+                document.getElementById('js-exists').style.color = response.ok ? '#00ff00' : '#ff0000';
+            })
+            .catch(() => {
+                document.getElementById('js-exists').textContent = 'NO';
+                document.getElementById('js-exists').style.color = '#ff0000';
+            });
+
+        fetch('/static/css/main.css')
+            .then(response => {
+                document.getElementById('css-exists').textContent = response.ok ? 'YES' : 'NO';
+                document.getElementById('css-exists').style.color = response.ok ? '#00ff00' : '#ff0000';
+            })
+            .catch(() => {
+                document.getElementById('css-exists').textContent = 'NO';
+                document.getElementById('css-exists').style.color = '#ff0000';
+            });
+
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logContainer = document.getElementById('console-logs');
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logContainer.innerHTML += '<div style="color: #00ff00;">LOG: ' + args.join(' ') + '</div>';
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logContainer.innerHTML += '<div style="color: #ff0000;">ERROR: ' + args.join(' ') + '</div>';
+        };
+
+        // Test animation function
+        function testAnimation() {
+            const testDiv = document.getElementById('animation-test');
+            testDiv.innerHTML = '<div style="color: #00ff00;">Testing animation...</div>';
+            
+            // Try to load the main script
+            const script = document.createElement('script');
+            script.src = '/static/js/main.js';
+            script.onload = () => {
+                testDiv.innerHTML += '<div style="color: #00ff00;">Script loaded successfully!</div>';
+            };
+            script.onerror = () => {
+                testDiv.innerHTML += '<div style="color: #ff0000;">Script failed to load!</div>';
+            };
+            document.head.appendChild(script);
+        }
+
+        // Log initial state
+        console.log('Debug page loaded');
+        console.log('Current path:', window.location.pathname);
+        console.log('Should show animation:', window.location.pathname === '/');
+    </script>
+</body>
+</html>

@@ -493,6 +493,11 @@ func main() {
 	r.HandleFunc("/resume", server.resumeHandler).Methods("GET")
 	r.HandleFunc("/resume/pdf", server.resumePDFHandler).Methods("GET")
 
+	// Debug route for animation troubleshooting
+	r.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "debug-animation.html")
+	})
+
 	// Static files
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 

@@ -8,16 +8,16 @@ export class StartupAnimation {
         this.isAnimating = false;
         this.mainTerminal = null;
         this.usedPositions = new Set();
-        console.log('🚀 StartupAnimation: Constructor called');
+        console.log('StartupAnimation: Constructor called');
         this.init();
     }
     init() {
-        console.log('🚀 StartupAnimation: Initializing...');
+        console.log('StartupAnimation: Initializing...');
         this.createAnimationContainer();
         this.startAnimation();
     }
     createAnimationContainer() {
-        console.log('🚀 StartupAnimation: Creating chaotic terminal container...');
+        console.log('StartupAnimation: Creating chaotic terminal container...');
         // Create the startup animation overlay
         const overlay = document.createElement('div');
         overlay.id = 'startup-animation';
@@ -28,7 +28,7 @@ export class StartupAnimation {
         // Add to body
         document.body.appendChild(overlay);
         this.container = overlay;
-        console.log('🚀 StartupAnimation: Main terminal container created');
+        console.log('StartupAnimation: Main terminal container created');
     }
     createMainTerminal() {
         const terminal = document.createElement('div');
@@ -531,19 +531,35 @@ export class StartupAnimation {
 }
 // Auto-initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 StartupAnimation: DOM loaded, checking route...');
+    console.log('StartupAnimation: DOM loaded, checking route...');
+    console.log('StartupAnimation: User agent:', navigator.userAgent);
+    console.log('StartupAnimation: Viewport size:', window.innerWidth + 'x' + window.innerHeight);
     // Only run startup animation on the root route (terminal page)
     const currentPath = window.location.pathname;
-    console.log('🚀 StartupAnimation: Current path:', currentPath);
+    console.log('StartupAnimation: Current path:', currentPath);
+    // Check if required elements exist
+    const startupContainer = document.getElementById('startup-animation');
+    console.log('StartupAnimation: Startup container found:', !!startupContainer);
     if (currentPath === '/') {
-        console.log('🚀 StartupAnimation: Root route detected - showing matrix animation');
-        new StartupAnimation();
+        console.log('StartupAnimation: Root route detected - showing matrix animation');
+        // Additional checks before starting animation
+        const cssLoaded = document.querySelector('link[href*="main.css"]');
+        console.log('StartupAnimation: CSS file loaded:', !!cssLoaded);
+        try {
+            new StartupAnimation();
+            console.log('StartupAnimation: Animation instance created successfully');
+        }
+        catch (error) {
+            console.error('StartupAnimation: Error creating animation:', error);
+        }
     }
     else {
-        console.log('🚀 StartupAnimation: Non-root route detected - skipping animation');
+        console.log('StartupAnimation: Non-root route detected - skipping animation');
         // For other routes, just show the main content immediately
         const mainContent = document.getElementById('main-content');
         const nav = document.getElementById('main-nav');
+        console.log('StartupAnimation: Main content found:', !!mainContent);
+        console.log('StartupAnimation: Main nav found:', !!nav);
         if (mainContent) {
             mainContent.style.opacity = '1';
             mainContent.style.transform = 'translateY(0)';
