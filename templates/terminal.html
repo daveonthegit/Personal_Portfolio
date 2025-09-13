@@ -65,6 +65,83 @@
     </main>
 
     <!-- Scripts -->
-    <script src="/static/js/main.js"></script>
+    <script>
+        console.log('=== TERMINAL PAGE DEBUG ===');
+        console.log('Current URL:', window.location.href);
+        console.log('Current path:', window.location.pathname);
+        console.log('Document ready state:', document.readyState);
+        
+        // Test if we can create elements
+        const testDiv = document.createElement('div');
+        testDiv.style.cssText = 'position:fixed;top:10px;right:10px;background:lime;color:black;padding:10px;z-index:99999;font-family:monospace;';
+        testDiv.textContent = 'TERMINAL PAGE LOADED';
+        document.body.appendChild(testDiv);
+        
+        // Remove after 3 seconds
+        setTimeout(() => testDiv.remove(), 3000);
+        
+        // Try to load main script
+        console.log('Attempting to load main script...');
+        fetch('/static/js/main.js')
+            .then(response => {
+                console.log('Main script fetch status:', response.status);
+                if (response.ok) {
+                    console.log('Main script is accessible');
+                    return response.text();
+                } else {
+                    throw new Error('Script not accessible: ' + response.status);
+                }
+            })
+            .then(scriptContent => {
+                console.log('Script content length:', scriptContent.length);
+                console.log('Script preview:', scriptContent.substring(0, 200));
+                
+                // Execute the script
+                const script = document.createElement('script');
+                script.textContent = scriptContent;
+                document.head.appendChild(script);
+                console.log('Script executed');
+            })
+            .catch(error => {
+                console.error('Failed to load main script:', error);
+                
+                // Show fallback animation
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: linear-gradient(135deg, #000 0%, #111 50%, #000 100%);
+                    color: #00ff00; font-family: monospace; font-size: 18px;
+                    display: flex; align-items: center; justify-content: center;
+                    z-index: 99999; flex-direction: column;
+                `;
+                overlay.innerHTML = `
+                    <div style="text-align: center; line-height: 1.8;">
+                        <div style="font-size: 28px; margin-bottom: 30px; color: #00ff00;">xiaoOS v2.1</div>
+                        <div style="margin: 10px 0;">Initializing surveillance system...</div>
+                        <div style="margin: 10px 0;">Loading kernel modules...</div>
+                        <div style="margin: 10px 0;">Starting network protocols...</div>
+                        <div style="margin: 10px 0;">Activating matrix interface...</div>
+                        <div style="margin: 30px 0; color: #ffff00; font-size: 20px;">ACCESS GRANTED</div>
+                        <div style="font-size: 14px; color: #888;">Redirecting to main system...</div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                
+                // Animate lines
+                const lines = overlay.querySelectorAll('div div');
+                lines.forEach((line, i) => {
+                    line.style.opacity = '0';
+                    setTimeout(() => {
+                        line.style.transition = 'opacity 0.6s ease-in';
+                        line.style.opacity = '1';
+                    }, i * 600);
+                });
+                
+                // Redirect after animation
+                setTimeout(() => {
+                    window.location.href = '/home';
+                }, 6000);
+            });
+    </script>
 </body>
 </html>
