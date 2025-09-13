@@ -10,6 +10,8 @@ export class StartupAnimation {
 
   constructor() {
     console.log('StartupAnimation: Constructor called');
+    console.log('StartupAnimation: Document ready state:', document.readyState);
+    console.log('StartupAnimation: Document body exists:', !!document.body);
     this.init();
   }
 
@@ -640,10 +642,24 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('StartupAnimation: CSS computed styles available:', !!testStyle);
     
     try {
-      new StartupAnimation();
-      console.log('StartupAnimation: Animation instance created successfully');
+      console.log('StartupAnimation: About to create animation instance...');
+      const animation = new StartupAnimation();
+      console.log('StartupAnimation: Animation instance created successfully', animation);
+      
+      // Additional check: verify the container was created
+      setTimeout(() => {
+        const container = document.getElementById('startup-animation');
+        console.log('StartupAnimation: Container exists after creation:', !!container);
+        if (container) {
+          console.log('StartupAnimation: Container children count:', container.children.length);
+          console.log('StartupAnimation: Container classes:', container.className);
+          console.log('StartupAnimation: Container styles:', window.getComputedStyle(container).position);
+        }
+      }, 100);
+      
     } catch (error) {
       console.error('StartupAnimation: Error creating animation:', error);
+      console.error('StartupAnimation: Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       
       // Fallback: try to show a simple animation
       console.log('StartupAnimation: Attempting fallback animation...');
