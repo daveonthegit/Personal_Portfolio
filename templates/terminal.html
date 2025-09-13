@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <meta name="description" content="{{.Description}}">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body class="h-full bg-black text-white font-mono overflow-hidden">
+    <!-- Terminal Startup Animation Container -->
+    <div id="startup-animation" class="startup-animation-overlay">
+        <!-- Animation will be created by JavaScript -->
+    </div>
+
+    <!-- Navigation (hidden initially) -->
+    <nav class="nexus-nav" id="main-nav" style="opacity: 0; transform: translateY(-20px);">
+        <div class="nexus-nav-container">
+            <div class="nexus-nav-brand">
+                <a href="/home" class="nexus-nav-logo">
+                    <span class="nexus-nav-logo-text">{{.Personal.Name}}</span>
+                </a>
+            </div>
+            <div class="nexus-nav-menu" id="nav-menu">
+                <a href="/home" class="nexus-nav-link">Home</a>
+                <a href="/about" class="nexus-nav-link">About</a>
+                <a href="/projects" class="nexus-nav-link">Projects</a>
+                <a href="/contact" class="nexus-nav-link">Contact</a>
+                <a href="/resume" class="nexus-nav-link">Resume</a>
+            </div>
+            <div class="nexus-nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content (hidden initially) -->
+    <main class="nexus-main" id="main-content" style="opacity: 0; transform: translateY(20px);">
+        <div class="nexus-container">
+            <div class="nexus-hero">
+                <div class="nexus-hero-content">
+                    <h1 class="nexus-hero-title">
+                        <span class="nexus-hero-title-main">Welcome to xiaoOS</span>
+                        <span class="nexus-hero-title-sub">System Initialization Complete</span>
+                    </h1>
+                    <p class="nexus-hero-description">
+                        Portfolio system online. All services running. Ready for user interaction.
+                    </p>
+                    <div class="nexus-hero-actions">
+                        <a href="/home" class="nexus-btn nexus-btn-primary">
+                            <span class="nexus-btn-text">Enter System</span>
+                            <span class="nexus-btn-icon">→</span>
+                        </a>
+                        <a href="/about" class="nexus-btn nexus-btn-secondary">
+                            <span class="nexus-btn-text">System Info</span>
+                            <span class="nexus-btn-icon">ℹ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

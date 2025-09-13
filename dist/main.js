@@ -5,6 +5,7 @@ import { ContactFormHandler } from './components/ContactFormHandler';
 import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
 import { initNetworkVisualization, createFloatingDataElements } from './utils/networkVisualization';
+import './components/StartupAnimation';
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 CTOS Interface - Initializing...');

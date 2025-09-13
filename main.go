@@ -95,6 +95,22 @@ func NewServer() *Server {
 	}
 }
 
+func (s *Server) terminalHandler(w http.ResponseWriter, r *http.Request) {
+	personal := config.GetPersonalInfo()
+	data := PageData{
+		Title:        "xiaoOS Terminal - " + personal.Name,
+		Description:  "Welcome to xiaoOS - Portfolio system initialization and access point.",
+		Personal:     personal,
+		Year:         time.Now().Year(),
+		TemplateName: "terminal",
+	}
+
+	if err := s.templates.ExecuteTemplate(w, "terminal.html", data); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("Template execution error: %v", err)
+	}
+}
+
 func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 	personal := config.GetPersonalInfo()
 	data := PageData{
@@ -469,7 +485,8 @@ func main() {
 	r := mux.NewRouter()
 
 	// Routes
-	r.HandleFunc("/", server.homeHandler).Methods("GET")
+	r.HandleFunc("/", server.terminalHandler).Methods("GET")
+	r.HandleFunc("/home", server.homeHandler).Methods("GET")
 	r.HandleFunc("/about", server.aboutHandler).Methods("GET")
 	r.HandleFunc("/projects", server.projectsHandler).Methods("GET")
 	r.HandleFunc("/contact", server.contactHandler).Methods("GET", "POST")

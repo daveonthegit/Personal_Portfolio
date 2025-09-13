@@ -40,14 +40,14 @@
     <div class="nexus-grid-bg"></div>
     
     <!-- Navigation -->
-    <nav class="nexus-nav">
+    <nav class="nexus-nav" id="main-nav" style="opacity: 0; transform: translateY(-20px);">
         <div class="nexus-nav-container">
-            <a href="/" class="nexus-logo">
+            <a href="/home" class="nexus-logo">
                 <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
             </a>
             
             <ul class="nexus-nav-links">
-                <li><a href="/" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+                <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
                 <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
                 <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
                 <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
@@ -74,7 +74,7 @@
     <!-- Mobile Menu -->
     <div class="nexus-mobile-menu hidden" id="mobile-menu">
         <ul>
-            <li><a href="/" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
+            <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">PROFILE</a></li>
             <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">DOSSIER</a></li>
             <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">ARCHIVES</a></li>
             <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONNECT</a></li>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="nexus-main">
+    <main class="nexus-main" id="main-content" style="opacity: 0; transform: translateY(20px);">
         {{if eq .TemplateName "home"}}
             {{template "home-content" .}}
         {{else if eq .TemplateName "about"}}
