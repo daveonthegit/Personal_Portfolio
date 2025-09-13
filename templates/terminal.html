@@ -6,7 +6,7 @@
     <title>{{.Title}}</title>
     <meta name="description" content="{{.Description}}">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/main.css?v={{.Timestamp}}">
 </head>
 <body class="h-full bg-black text-white font-mono overflow-hidden">
     <!-- Terminal Startup Animation Container -->
@@ -65,6 +65,23 @@
     </main>
 
     <!-- Scripts -->
-    <script src="/static/js/main.js"></script>
+    <script>
+        console.log('=== xiaoOS TERMINAL INITIALIZATION ===');
+        console.log('Loading main.js with timestamp to bypass cache...');
+        
+        // Add timestamp to force fresh load
+        const script = document.createElement('script');
+        script.src = '/static/js/main.js?v={{.Timestamp}}';
+        
+        script.onload = () => {
+            console.log('✅ Script loaded successfully');
+        };
+        
+        script.onerror = (e) => {
+            console.error('❌ Script failed to load:', e);
+        };
+        
+        document.head.appendChild(script);
+    </script>
 </body>
 </html>

@@ -8,13 +8,18 @@ export class StartupAnimation {
         this.isAnimating = false;
         this.mainTerminal = null;
         this.usedPositions = new Set();
+        console.log('StartupAnimation: Constructor called');
+        console.log('StartupAnimation: Document ready state:', document.readyState);
+        console.log('StartupAnimation: Document body exists:', !!document.body);
         this.init();
     }
     init() {
+        console.log('StartupAnimation: Initializing...');
         this.createAnimationContainer();
         this.startAnimation();
     }
     createAnimationContainer() {
+        console.log('StartupAnimation: Creating chaotic terminal container...');
         // Create the startup animation overlay
         const overlay = document.createElement('div');
         overlay.id = 'startup-animation';
@@ -25,6 +30,7 @@ export class StartupAnimation {
         // Add to body
         document.body.appendChild(overlay);
         this.container = overlay;
+        console.log('StartupAnimation: Main terminal container created');
     }
     createMainTerminal() {
         const terminal = document.createElement('div');
@@ -527,8 +533,11 @@ export class StartupAnimation {
 }
 // Simple initialization
 function initStartupAnimation() {
+    console.log('StartupAnimation: Initializing... VERSION 2.1.0');
     const currentPath = window.location.pathname;
+    console.log('StartupAnimation: Current path:', currentPath);
     if (currentPath === '/') {
+        console.log('StartupAnimation: Root route - starting animation');
         try {
             new StartupAnimation();
         }

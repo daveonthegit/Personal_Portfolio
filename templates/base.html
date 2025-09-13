@@ -33,7 +33,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="/static/css/main.css?v=8" rel="stylesheet">
+    <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
 </head>
 <body>
     <!-- Background Grid -->
@@ -175,7 +175,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js?v={{.Timestamp}}"></script>
     <script>
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {

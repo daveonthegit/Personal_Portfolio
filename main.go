@@ -56,6 +56,7 @@ type PageData struct {
 	Personal     config.PersonalInfo
 	Year         int
 	TemplateName string
+	Timestamp    int64
 }
 
 func NewServer() *Server {
@@ -103,6 +104,7 @@ func (s *Server) terminalHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "terminal",
+		Timestamp:    time.Now().Unix(),
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "terminal.html", data); err != nil {
@@ -120,6 +122,7 @@ func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "home",
+		Timestamp:    time.Now().Unix(),
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -137,6 +140,7 @@ func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "about",
+		Timestamp:    time.Now().Unix(),
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -154,6 +158,7 @@ func (s *Server) projectsHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "projects",
+		Timestamp:    time.Now().Unix(),
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -172,6 +177,7 @@ func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
 			Personal:     personal,
 			Year:         time.Now().Year(),
 			TemplateName: "contact",
+			Timestamp:    time.Now().Unix(),
 		}
 
 		if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -197,6 +203,7 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "resume",
+		Timestamp:    time.Now().Unix(),
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
