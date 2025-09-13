@@ -337,7 +337,7 @@ func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
 		// For engines that need multiple passes, try again
 		if engine.name == "lualatex" || engine.name == "xelatex" || engine.name == "pdflatex" {
 			cmd = exec.Command(engine.cmd[0], engine.cmd[1:]...)
-			output, err = cmd.CombinedOutput()
+			_, err = cmd.CombinedOutput()
 			if err == nil {
 				s.cleanupAuxFiles()
 				if _, err := os.Stat("resume.pdf"); err == nil {
@@ -657,6 +657,32 @@ func (s *Server) projectsByStatusAPIHandler(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(filteredProjects)
 }
 
+// HTTPS redirect middleware
+func httpsRedirectMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check if we're in production (not localhost)
+		if r.Host != "localhost:8080" && r.Host != "127.0.0.1:8080" {
+			// Check if the request is HTTP (not HTTPS)
+			if r.Header.Get("X-Forwarded-Proto") != "https" && r.TLS == nil {
+				// Redirect to HTTPS www version
+				httpsURL := "https://www." + r.Host + r.RequestURI
+				http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
+				return
+			}
+
+			// Check if the request is to apex domain (without www)
+			if !strings.HasPrefix(r.Host, "www.") {
+				// Redirect to www version
+				wwwURL := "https://www." + r.Host + r.RequestURI
+				http.Redirect(w, r, wwwURL, http.StatusMovedPermanently)
+				return
+			}
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// Load .env file if it exists
 	if err := godotenv.Load(); err != nil {
@@ -702,5 +728,9 @@ func main() {
 
 	log.Printf("Server starting on port %s", port)
 	log.Printf("Visit http://localhost:%s to view your portfolio", port)
-	log.Fatal(http.ListenAndServe(":"+port, r))
+
+	// Wrap the router with HTTPS redirect middleware
+	handler := httpsRedirectMiddleware(r)
+
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }

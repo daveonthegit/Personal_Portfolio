@@ -15,7 +15,7 @@
         <!-- Profile Card - Left Side -->
         <div>
             <div class="nexus-profile-card">
-                <div class="nexus-header">PROFILING</div>
+                <div class="nexus-header">PROFILE</div>
                 <div class="profile-content">
                     <!-- Profile Image -->
                     <div class="profile-image">
@@ -31,27 +31,27 @@
                         </div>
                         <div class="data-field">
                             <div class="data-label">STATUS</div>
-                            <div class="data-value">ACTIVE</div>
+                            <div class="data-value">AVAILABLE</div>
                         </div>
                         <div class="data-field">
                             <div class="data-label">LOCATION</div>
                             <div class="data-value">{{.Personal.Location}}</div>
                         </div>
                         <div class="data-field">
-                            <div class="data-label">CLEARANCE</div>
-                            <div class="data-value">AUTHORIZED</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">OCCUPATION</div>
+                            <div class="data-label">ROLE</div>
                             <div class="data-value">{{.Personal.Title}}</div>
                         </div>
                         <div class="data-field">
-                            <div class="data-label">ID</div>
-                            <div class="data-value">DEV-001</div>
+                            <div class="data-label">EXPERIENCE</div>
+                            <div class="data-value">8+ YEARS</div>
+                        </div>
+                        <div class="data-field">
+                            <div class="data-label">FOCUS</div>
+                            <div class="data-value">FULL-STACK</div>
                         </div>
                     </div>
                     
-                    <!-- Threat Level -->
+                    <!-- Availability -->
                     <div class="threat-level">
                         THREAT LEVEL: MINIMAL<br>
                         PROBABILITY: 15%
@@ -94,36 +94,15 @@
 </section>
 
 <!-- Skills Section -->
-<section class="section  relative">
-    <!-- Data Visualization Elements -->
-    <div class="absolute top-20 left-10 z-10 hidden lg:block">
-        <div class="data-circle">
-            <div class="text-center">
-                <div class="data-value-large">8</div>
-                <div class="data-label-small text-blue-400">YEARS</div>
-                <div class="data-label-small mt-1">EXPERIENCE</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="absolute bottom-20 right-10 z-10 hidden lg:block">
-        <div class="data-circle data-circle-large">
-            <div class="text-center">
-                <div class="data-value-large">{{len .Projects}}</div>
-                <div class="data-label-small text-blue-400">PROJECTS</div>
-                <div class="data-label-small mt-1">COMPLETED</div>
-            </div>
-        </div>
-    </div>
-    
+<section class="section">
     <div class="container">
         <!-- Section Header -->
         <div class="section-header">
             <div class="nexus-header" style="margin-bottom: 32px; font-size: 18px;">
-                TECHNICAL SPECIFICATIONS
+                TECHNICAL SKILLS
             </div>
-            <h2 class="section-title" data-text="SYSTEM CAPABILITIES">
-                SYSTEM <span class="highlight">CAPABILITIES</span>
+            <h2 class="section-title" data-text="SKILLS & EXPERTISE">
+                SKILLS & <span class="highlight">EXPERTISE</span>
             </h2>
         </div>
         
@@ -170,39 +149,44 @@
         <!-- Section Header -->
         <div class="section-header">
             <div class="nexus-header" style="margin-bottom: 32px; font-size: 18px;">
-                PROJECT DATABASE
+                FEATURED PROJECTS
             </div>
-            <h2 class="section-title" data-text="DEVELOPMENT RECORDS">
-                DEVELOPMENT <span class="highlight">RECORDS</span>
+            <h2 class="section-title" data-text="RECENT WORK">
+                RECENT <span class="highlight">WORK</span>
             </h2>
         </div>
         
-        <!-- Projects Grid -->
+        <!-- Featured Projects Grid -->
         <div class="projects-grid">
-            {{range .Projects}}
+            {{range $index, $project := .Projects}}
+            {{if lt $index 3}}
             <div class="project-card">
                 <div class="project-content">
                     <!-- Project Header -->
                     <div class="panel-header">
-                        PROJECT FILE
+                        FEATURED PROJECT
                     </div>
                     
                     <!-- Project Visual -->
                     <div class="project-visual">
+                        {{if $project.Image}}
+                        <img src="{{$project.Image}}" alt="{{$project.Title}}" class="w-full h-full object-cover">
+                        {{else}}
                         <div class="project-icon text-cyan-400">📁</div>
+                        {{end}}
                     </div>
                     
                     <!-- Project Title -->
-                    <h3 class="project-title">{{.Title}}</h3>
+                    <h3 class="project-title">{{$project.Title}}</h3>
                     
                     <!-- Project Description -->
-                    <p class="project-description">{{.Description}}</p>
+                    <p class="project-description">{{$project.Description}}</p>
                     
                     <!-- Technologies -->
                     <div class="tech-stack">
                         <div class="tech-label">Tech Stack:</div>
                         <div class="tech-tags">
-                            {{range .Technologies}}
+                            {{range $project.Technologies}}
                             <span class="tech-tag">{{.}}</span>
                             {{end}}
                         </div>
@@ -210,28 +194,34 @@
                     
                     <!-- Project Links -->
                     <div class="project-links">
-                        {{if .GitHubURL}}
-                        <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" 
+                        {{if $project.GitHubURL}}
+                        <a href="{{$project.GitHubURL}}" target="_blank" rel="noopener noreferrer" 
                            class="project-link">
-                            Repository
+                            <i class="fab fa-github"></i> Repository
                         </a>
                         {{end}}
-                        {{if .LiveURL}}
-                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" 
+                        {{if $project.LiveURL}}
+                        <a href="{{$project.LiveURL}}" target="_blank" rel="noopener noreferrer" 
                            class="project-link demo">
-                            Live Demo
+                            <i class="fas fa-external-link-alt"></i> Live Demo
+                        </a>
+                        {{end}}
+                        {{if eq $project.DemoType "hosted"}}
+                        <a href="{{$project.DemoURL}}" class="project-link">
+                            <i class="fas fa-play"></i> View Demo
                         </a>
                         {{end}}
                     </div>
                 </div>
             </div>
             {{end}}
+            {{end}}
         </div>
         
         <!-- View All Projects -->
         <div style="text-align: center;">
             <a href="/projects" class="nexus-btn nexus-btn-primary">
-                ACCESS FULL DATABASE
+                VIEW ALL PROJECTS
             </a>
         </div>
     </div>
@@ -245,30 +235,30 @@
             <div style="padding: 32px; text-align: center;">
                 <!-- Header -->
                 <div class="panel-header" style="font-size: 18px;">
-                    COMMUNICATION PROTOCOL
+                    GET IN TOUCH
                 </div>
                 
                 <!-- Main Message -->
-                <h2 class="section-title" data-text="ESTABLISH CONNECTION" style="margin-bottom: 24px;">
-                    ESTABLISH <span class="highlight">CONNECTION</span>
+                <h2 class="section-title" data-text="LET'S CONNECT" style="margin-bottom: 24px;">
+                    LET'S <span class="highlight">CONNECT</span>
                 </h2>
                 
                 <!-- Status Terminal -->
                 <div class="nexus-terminal">
-                    <div class="terminal-line">&gt; scanning_for_opportunities...</div>
+                    <div class="terminal-line">&gt; looking_for_opportunities...</div>
                     <div class="terminal-line">&gt; new_projects: <span class="terminal-highlight">WELCOME</span></div>
-                    <div class="terminal-line">&gt; collaborations: <span class="terminal-highlight">AUTHORIZED</span></div>
+                    <div class="terminal-line">&gt; collaborations: <span class="terminal-highlight">OPEN</span></div>
                     <div class="terminal-line">&gt; contact_status: <span class="terminal-highlight terminal-pulse">READY</span></div>
                 </div>
                 
                 <p class="section-description">
                     Always interested in new opportunities and collaborative development projects. 
-                    Security clearance verified. Communication channels open.
+                    Available for freelance work, full-time positions, and exciting partnerships.
                 </p>
                 
                 <!-- Action Button -->
                 <a href="/contact" class="nexus-btn nexus-btn-primary" style="margin-bottom: 32px;">
-                    INITIATE CONTACT
+                    CONTACT ME
                 </a>
                 
                 <!-- Status Grid -->

@@ -99,15 +99,15 @@ export class StartupAnimation {
     const optimizationLevel = isLowEndDevice ? 'Performance Mode' : 'Full Experience';
     
     const osSteps = [
-      { delay: 0, text: 'Initializing xiaoOS v2.1...', type: 'system' },
-      { delay: 800, text: 'Loading kernel modules...', type: 'loading' },
-      { delay: 1500, text: 'Mounting surveillance filesystem...', type: 'system' },
-      { delay: 2200, text: 'Starting network protocols...', type: 'loading' },
-      { delay: 3000, text: 'Activating security subsystems...', type: 'system' },
-      { delay: 3600, text: `Device profile: ${deviceType} hardware detected`, type: 'system' },
-      { delay: 4000, text: `Optimization: ${optimizationLevel} enabled`, type: 'system' },
-      { delay: 4400, text: 'xiaoOS v2.1 ready for operation', type: 'success' },
-      { delay: 4800, text: '', type: 'prompt' }
+      { delay: 0, text: 'Initializing portfolio system...', type: 'system' },
+      { delay: 300, text: 'Loading components...', type: 'loading' },
+      { delay: 600, text: 'Mounting file system...', type: 'system' },
+      { delay: 900, text: 'Starting network protocols...', type: 'loading' },
+      { delay: 1200, text: 'Activating security subsystems...', type: 'system' },
+      { delay: 1400, text: `Device profile: ${deviceType} hardware detected`, type: 'system' },
+      { delay: 1600, text: `Optimization: ${optimizationLevel} enabled`, type: 'system' },
+      { delay: 1800, text: 'Portfolio system ready for operation', type: 'success' },
+      { delay: 2000, text: '', type: 'prompt' }
     ];
 
     for (const step of osSteps) {
@@ -128,15 +128,15 @@ export class StartupAnimation {
     content.appendChild(promptLine);
     
     // Auto-fill the target after a delay (like typing)
-    await this.wait(1000);
-    await this.simulateTyping(content, 'DAVID_XIAO.portfolio');
+    await this.wait(500);
+    await this.simulateTyping(content, 'portfolio.main');
     
     // Simulate pressing Enter
-    await this.wait(500);
-    this.addTerminalLine(content, 'Accessing target file: DAVID_XIAO.portfolio...', 'system', 'main');
+    await this.wait(300);
+    this.addTerminalLine(content, 'Accessing portfolio: portfolio.main...', 'system', 'main');
     
-    await this.wait(1000);
-    this.addTerminalLine(content, 'Initiating matrix protocol...', 'success', 'main');
+    await this.wait(500);
+    this.addTerminalLine(content, 'Loading portfolio data...', 'success', 'main');
   }
 
   private async simulateTyping(content: HTMLElement, text: string): Promise<void> {
@@ -162,14 +162,14 @@ export class StartupAnimation {
     
     // Create multiple overlapping terminals with random positions
     const allTerminalConfigs = [
-      { id: 'surveillance-terminal', title: 'Surveillance Matrix', type: 'surveillance', delay: 0 },
-      { id: 'network-terminal', title: 'Network Scanner', type: 'network', delay: 300 },
-      { id: 'security-terminal', title: 'Security Breach', type: 'security', delay: 600 },
-      { id: 'data-terminal', title: 'Data Extraction', type: 'data', delay: 900 },
-      { id: 'analysis-terminal', title: 'Target Analysis', type: 'analysis', delay: 1200 },
-      { id: 'access-terminal', title: 'Access Control', type: 'access', delay: 1500 },
-      { id: 'crypto-terminal', title: 'Crypto Decoder', type: 'crypto', delay: 1800 },
-      { id: 'monitor-terminal', title: 'System Monitor', type: 'monitor', delay: 2100 }
+      { id: 'surveillance-terminal', title: 'Portfolio Data', type: 'surveillance', delay: 0 },
+      { id: 'network-terminal', title: 'Network Scanner', type: 'network', delay: 150 },
+      { id: 'security-terminal', title: 'Security Check', type: 'security', delay: 300 },
+      { id: 'data-terminal', title: 'Data Processing', type: 'data', delay: 450 },
+      { id: 'analysis-terminal', title: 'Content Analysis', type: 'analysis', delay: 600 },
+      { id: 'access-terminal', title: 'Access Control', type: 'access', delay: 750 },
+      { id: 'crypto-terminal', title: 'Crypto Decoder', type: 'crypto', delay: 900 },
+      { id: 'monitor-terminal', title: 'System Monitor', type: 'monitor', delay: 1050 }
     ];
 
     // Reduce terminal count for low-end devices (50% fewer terminals)
@@ -391,7 +391,7 @@ export class StartupAnimation {
     terminals.forEach(terminal => this.generateMatrixText(terminal.id, terminal.type));
     
     // Wait for the matrix sequence
-    await this.wait(6000);
+    await this.wait(3000);
     
     // Add final success messages
     this.addMatrixFinalMessages();
@@ -412,9 +412,9 @@ export class StartupAnimation {
     // Optimize text generation based on device performance
     const generateText = () => {
       // Dramatically reduce text generation for low-end devices
-      const lineCount = isLowEndDevice ? 8 : 50;  // 84% fewer lines on low-end devices
-      const baseDelay = isLowEndDevice ? 200 : 50;  // 4x slower on low-end devices
-      const randomDelay = isLowEndDevice ? 300 : 100;  // 3x slower random delay
+      const lineCount = isLowEndDevice ? 6 : 25;  // Reduced from 8/50 to 6/25
+      const baseDelay = isLowEndDevice ? 100 : 30;  // Faster delays
+      const randomDelay = isLowEndDevice ? 150 : 50;  // Faster random delay
       
       for (let i = 0; i < lineCount; i++) {
         setTimeout(() => {
@@ -426,14 +426,13 @@ export class StartupAnimation {
     
     generateText();
     
-    // Reduce number of text generation cycles for low-end devices
+    // Reduce number of text generation cycles for all devices
     if (!isLowEndDevice) {
-      // High-end devices: full experience with 3 cycles
-      setTimeout(() => generateText(), 2000);
-      setTimeout(() => generateText(), 4000);
+      // High-end devices: 2 cycles instead of 3
+      setTimeout(() => generateText(), 1000);
     } else {
-      // Low-end devices: single additional cycle with longer delay
-      setTimeout(() => generateText(), 4000);
+      // Low-end devices: single cycle only
+      setTimeout(() => generateText(), 2000);
     }
   }
 
@@ -490,8 +489,8 @@ export class StartupAnimation {
     terminals.forEach(terminalId => {
       const content = document.getElementById(terminalId);
       if (content) {
-        this.addMatrixTerminalLine(content, 'MATRIX PROTOCOL COMPLETE', 'success', 'final');
-        this.addMatrixTerminalLine(content, 'TARGET DOSSIER READY', 'success', 'final');
+        this.addMatrixTerminalLine(content, 'PORTFOLIO LOADED', 'success', 'final');
+        this.addMatrixTerminalLine(content, 'DATA READY', 'success', 'final');
       }
     });
   }
@@ -530,7 +529,7 @@ export class StartupAnimation {
     if (mainContent) {
       const finalLine = document.createElement('div');
       finalLine.className = 'terminal-line redirect';
-      finalLine.innerHTML = `<span class="prompt">root@xiaoOS-main:~$</span> <span class="redirect-text">Matrix protocol complete. Accessing DAVID_XIAO.dossier...</span>`;
+      finalLine.innerHTML = `<span class="prompt">root@xiaoOS-main:~$</span> <span class="redirect-text">Authentication protocol complete. Accessing DAVID_XIAO.portfolio...</span>`;
       mainContent.appendChild(finalLine);
     }
     
