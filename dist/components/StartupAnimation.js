@@ -654,35 +654,37 @@ export class StartupAnimation {
         return matrixTexts[terminalType] || ['Processing...'];
     }
     detectLowEndDevice() {
-        // Multiple performance indicators to detect low-end devices
-        const indicators = {
-            // Mobile device check
-            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-            // Small screen size
-            isSmallScreen: window.innerWidth <= 768 || window.innerHeight <= 600,
-            // Hardware concurrency (CPU cores)
-            lowCoreCount: navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2,
-            // Memory limitations (if available)
-            lowMemory: navigator.deviceMemory && navigator.deviceMemory <= 2,
-            // Connection speed (if available)
-            slowConnection: navigator.connection &&
+        // Mobile device check (primary indicator) - includes tablets
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // If it's mobile, always use performance mode
+        if (isMobile) {
+            console.log('Mobile device detected - using Performance Mode');
+            return true;
+        }
+        // For desktop devices, use more restrictive criteria
+        const desktopIndicators = {
+            // Very small screen size (likely windowed browser or very old monitor)
+            isVerySmallScreen: window.innerWidth <= 480 || window.innerHeight <= 480,
+            // Hardware concurrency (CPU cores) - only single core systems
+            singleCore: navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 1,
+            // Memory limitations (if available) - only very low memory systems
+            veryLowMemory: navigator.deviceMemory && navigator.deviceMemory <= 1,
+            // Connection speed (if available) - only very slow connections
+            verySlowConnection: navigator.connection &&
                 (navigator.connection.effectiveType === 'slow-2g' ||
-                    navigator.connection.effectiveType === '2g' ||
-                    navigator.connection.effectiveType === '3g'),
-            // User agent patterns for known low-end devices
-            lowEndUA: /Android.*Mobile.*Chrome\/[1-7][0-9]\.|iPhone.*OS [1-9]_|iPad.*OS [1-9]_/.test(navigator.userAgent),
-            // Touch device (often mobile/tablet)
-            isTouchDevice: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
-            // Older browser versions
-            oldBrowser: /Chrome\/[1-7][0-9]\.|Firefox\/[1-6][0-9]\.|Safari\/[1-9][0-9][0-9]\./.test(navigator.userAgent)
+                    navigator.connection.effectiveType === '2g'),
+            // Very old browser versions (Chrome < 60, Firefox < 50, Safari < 600)
+            veryOldBrowser: /Chrome\/[1-5][0-9]\.|Firefox\/[1-4][0-9]\.|Safari\/[1-5][0-9][0-9]\./.test(navigator.userAgent)
         };
-        // Consider it low-end if multiple indicators are true
-        const trueIndicators = Object.values(indicators).filter(Boolean).length;
+        // Count desktop performance issues
+        const desktopIssues = Object.values(desktopIndicators).filter(Boolean).length;
         // Log for debugging (can be removed in production)
-        console.log('Device performance indicators:', indicators);
-        console.log('Low-end device score:', trueIndicators, '/ 8');
-        // Device is considered low-end if 2+ indicators are true
-        return trueIndicators >= 2;
+        console.log('Desktop performance indicators:', desktopIndicators);
+        console.log('Desktop performance issues:', desktopIssues, '/ 5');
+        // Desktop is considered low-end only if it has 3+ serious performance issues
+        const isLowEndDesktop = desktopIssues >= 3;
+        console.log(isLowEndDesktop ? 'Low-end desktop detected - using Performance Mode' : 'High-end desktop detected - using Full Experience');
+        return isLowEndDesktop;
     }
 }
 // Simple initialization
