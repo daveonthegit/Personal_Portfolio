@@ -26,5 +26,6 @@ export declare class StartupAnimation {
     private wait;
     restart(): void;
     get isRunning(): boolean;
+    private detectLowEndDevice;
 }
 //# sourceMappingURL=StartupAnimation.d.ts.map

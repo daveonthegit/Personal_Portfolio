@@ -125,8 +125,10 @@ export class StartupAnimation {
     async createMatrixTerminalExplosion() {
         if (!this.container)
             return;
+        // Detect low-end device and adjust terminal count
+        const isLowEndDevice = this.detectLowEndDevice();
         // Create multiple overlapping terminals with random positions
-        const terminalConfigs = [
+        const allTerminalConfigs = [
             { id: 'surveillance-terminal', title: 'Surveillance Matrix', type: 'surveillance', delay: 0 },
             { id: 'network-terminal', title: 'Network Scanner', type: 'network', delay: 300 },
             { id: 'security-terminal', title: 'Security Breach', type: 'security', delay: 600 },
@@ -136,6 +138,11 @@ export class StartupAnimation {
             { id: 'crypto-terminal', title: 'Crypto Decoder', type: 'crypto', delay: 1800 },
             { id: 'monitor-terminal', title: 'System Monitor', type: 'monitor', delay: 2100 }
         ];
+        // Reduce terminal count for low-end devices (50% fewer terminals)
+        const terminalConfigs = isLowEndDevice
+            ? allTerminalConfigs.slice(0, 4) // Only 4 terminals on low-end devices
+            : allTerminalConfigs; // All 8 terminals on high-end devices
+        console.log(`Creating ${terminalConfigs.length} terminals for ${isLowEndDevice ? 'low-end' : 'high-end'} device`);
         // Create terminals with staggered timing and random positions
         for (const config of terminalConfigs) {
             setTimeout(() => {
@@ -313,6 +320,8 @@ export class StartupAnimation {
         const content = document.getElementById(contentId);
         if (!content)
             return;
+        // Comprehensive device performance detection
+        const isLowEndDevice = this.detectLowEndDevice();
         const matrixTexts = {
             main: [
                 'xiaoOS v2.1 online...',
@@ -395,19 +404,30 @@ export class StartupAnimation {
             ]
         };
         const texts = matrixTexts[terminalType] || ['Processing...'];
-        // Generate massive amounts of rapid text
+        // Optimize text generation based on device performance
         const generateText = () => {
-            for (let i = 0; i < 50; i++) {
+            // Dramatically reduce text generation for low-end devices
+            const lineCount = isLowEndDevice ? 8 : 50; // 84% fewer lines on low-end devices
+            const baseDelay = isLowEndDevice ? 200 : 50; // 4x slower on low-end devices
+            const randomDelay = isLowEndDevice ? 300 : 100; // 3x slower random delay
+            for (let i = 0; i < lineCount; i++) {
                 setTimeout(() => {
                     const randomText = texts[Math.floor(Math.random() * texts.length)] || 'Processing...';
                     this.addMatrixTerminalLine(content, randomText, 'matrix', terminalType);
-                }, i * (50 + Math.random() * 100));
+                }, i * (baseDelay + Math.random() * randomDelay));
             }
         };
         generateText();
-        // Continue generating more text
-        setTimeout(() => generateText(), 2000);
-        setTimeout(() => generateText(), 4000);
+        // Reduce number of text generation cycles for low-end devices
+        if (!isLowEndDevice) {
+            // High-end devices: full experience with 3 cycles
+            setTimeout(() => generateText(), 2000);
+            setTimeout(() => generateText(), 4000);
+        }
+        else {
+            // Low-end devices: single additional cycle with longer delay
+            setTimeout(() => generateText(), 4000);
+        }
     }
     addMatrixTerminalLine(content, text, type, terminalType) {
         const line = document.createElement('div');
@@ -529,6 +549,37 @@ export class StartupAnimation {
     // Check if animation is currently running
     get isRunning() {
         return this.isAnimating;
+    }
+    detectLowEndDevice() {
+        // Multiple performance indicators to detect low-end devices
+        const indicators = {
+            // Mobile device check
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            // Small screen size
+            isSmallScreen: window.innerWidth <= 768 || window.innerHeight <= 600,
+            // Hardware concurrency (CPU cores)
+            lowCoreCount: navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2,
+            // Memory limitations (if available)
+            lowMemory: navigator.deviceMemory && navigator.deviceMemory <= 2,
+            // Connection speed (if available)
+            slowConnection: navigator.connection &&
+                (navigator.connection.effectiveType === 'slow-2g' ||
+                    navigator.connection.effectiveType === '2g' ||
+                    navigator.connection.effectiveType === '3g'),
+            // User agent patterns for known low-end devices
+            lowEndUA: /Android.*Mobile.*Chrome\/[1-7][0-9]\.|iPhone.*OS [1-9]_|iPad.*OS [1-9]_/.test(navigator.userAgent),
+            // Touch device (often mobile/tablet)
+            isTouchDevice: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+            // Older browser versions
+            oldBrowser: /Chrome\/[1-7][0-9]\.|Firefox\/[1-6][0-9]\.|Safari\/[1-9][0-9][0-9]\./.test(navigator.userAgent)
+        };
+        // Consider it low-end if multiple indicators are true
+        const trueIndicators = Object.values(indicators).filter(Boolean).length;
+        // Log for debugging (can be removed in production)
+        console.log('Device performance indicators:', indicators);
+        console.log('Low-end device score:', trueIndicators, '/ 8');
+        // Device is considered low-end if 2+ indicators are true
+        return trueIndicators >= 2;
     }
 }
 // Simple initialization
