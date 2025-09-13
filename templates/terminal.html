@@ -69,22 +69,39 @@
         console.log('=== TERMINAL PAGE LOADED ===');
         console.log('Current path:', window.location.pathname);
         
-        // IMMEDIATE SIMPLE ANIMATION - NO COMPLEX LOGIC
-        function showSimpleAnimation() {
-            console.log('Creating simple animation...');
+        // Load the main script immediately and start animation
+        console.log('Loading main script...');
+        const script = document.createElement('script');
+        script.src = '/static/js/main.js';
+        
+        script.onload = () => {
+            console.log('Main script loaded successfully');
+            // The main script will automatically start the animation
+        };
+        
+        script.onerror = () => {
+            console.error('Main script failed to load - showing fallback');
+            // Fallback animation if main script fails
+            showFallbackAnimation();
+        };
+        
+        document.head.appendChild(script);
+        
+        // Fallback animation function
+        function showFallbackAnimation() {
+            console.log('Creating fallback animation...');
             
-            // Create a simple black overlay
             const overlay = document.createElement('div');
-            overlay.id = 'simple-animation-overlay';
+            overlay.id = 'fallback-animation-overlay';
             overlay.style.cssText = `
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: black;
+                background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
                 color: lime;
-                font-family: monospace;
+                font-family: 'Courier New', monospace;
                 font-size: 18px;
                 display: flex;
                 flex-direction: column;
@@ -106,7 +123,6 @@
             `;
             
             document.body.appendChild(overlay);
-            console.log('Simple animation overlay created');
             
             // Animate text
             const lines = overlay.querySelectorAll('div');
@@ -120,24 +136,10 @@
             
             // Redirect after 6 seconds
             setTimeout(() => {
-                console.log('Redirecting to home...');
+                console.log('Fallback animation complete - redirecting to home...');
                 window.location.href = '/home';
             }, 6000);
         }
-        
-        // Show animation immediately
-        console.log('About to show simple animation...');
-        showSimpleAnimation();
-        
-        // Also try to load the main script for comparison
-        setTimeout(() => {
-            console.log('Loading main script...');
-            const script = document.createElement('script');
-            script.src = '/static/js/main.js';
-            script.onload = () => console.log('Main script loaded');
-            script.onerror = () => console.error('Main script failed to load');
-            document.head.appendChild(script);
-        }, 1000);
     </script>
 </body>
 </html>
