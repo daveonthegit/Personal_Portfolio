@@ -9,20 +9,15 @@ export class StartupAnimation {
   private mainTerminal: HTMLElement | null = null;
 
   constructor() {
-    console.log('StartupAnimation: Constructor called');
-    console.log('StartupAnimation: Document ready state:', document.readyState);
-    console.log('StartupAnimation: Document body exists:', !!document.body);
     this.init();
   }
 
   private init(): void {
-    console.log('StartupAnimation: Initializing...');
     this.createAnimationContainer();
     this.startAnimation();
   }
 
   private createAnimationContainer(): void {
-    console.log('StartupAnimation: Creating chaotic terminal container...');
     // Create the startup animation overlay
     const overlay = document.createElement('div');
     overlay.id = 'startup-animation';
@@ -35,7 +30,6 @@ export class StartupAnimation {
     // Add to body
     document.body.appendChild(overlay);
     this.container = overlay;
-    console.log('StartupAnimation: Main terminal container created');
   }
 
   private createMainTerminal(): HTMLElement {
@@ -595,12 +589,9 @@ export class StartupAnimation {
 
 // Simple initialization
 function initStartupAnimation() {
-  console.log('StartupAnimation: Initializing... VERSION 2.1.0');
   const currentPath = window.location.pathname;
-  console.log('StartupAnimation: Current path:', currentPath);
   
   if (currentPath === '/') {
-    console.log('StartupAnimation: Root route - starting animation');
     try {
       new StartupAnimation();
     } catch (error) {
