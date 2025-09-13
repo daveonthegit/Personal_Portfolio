@@ -1,0 +1,17 @@
+{
+  "name": "ascii-rpg-game",
+  "version": "1.0.0",
+  "description": "An ASCII-based RPG adventure game with character creation, combat, and exploration",
+  "main": "ascii-rpg.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["rpg", "ascii", "game", "typescript", "adventure", "role-playing"],
+  "author": "David Xiao",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

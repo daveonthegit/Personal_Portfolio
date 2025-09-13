@@ -1,4 +1,4 @@
-# Hosted Projects
+jec# Hosted Projects
 
 This directory contains projects that are hosted directly on the portfolio website. Each project should be in its own subdirectory with an `index.html` file as the entry point.
 
@@ -10,6 +10,13 @@ hosted-projects/
 │   ├── index.html          # Main HTML file
 │   ├── minesweeper.ts      # TypeScript source
 │   ├── minesweeper.js      # Compiled JavaScript
+│   ├── tsconfig.json       # TypeScript configuration
+│   ├── package.json        # Node.js dependencies
+│   └── build.bat           # Build script for Windows
+├── ascii-rpg/
+│   ├── index.html          # Main HTML file
+│   ├── ascii-rpg.ts        # TypeScript source
+│   ├── ascii-rpg.js        # Compiled JavaScript
 │   ├── tsconfig.json       # TypeScript configuration
 │   ├── package.json        # Node.js dependencies
 │   └── build.bat           # Build script for Windows
@@ -39,8 +46,9 @@ For TypeScript projects:
 Hosted projects are accessible via:
 - `http://localhost:8080/hosted/project-name/`
 
-## Example: Minesweeper Game
+## Example Projects
 
+### Minesweeper Game
 The Minesweeper game demonstrates:
 - TypeScript with strict type checking
 - Modern ES2020 features
@@ -52,6 +60,22 @@ The Minesweeper game demonstrates:
 To build the Minesweeper project:
 ```bash
 cd hosted-projects/minesweeper
+npm install
+npx tsc
+```
+
+### ASCII RPG Adventure
+The ASCII RPG Adventure demonstrates:
+- TypeScript with complex game state management
+- ASCII art integration
+- Turn-based combat system
+- Character progression and inventory management
+- Terminal-style UI design
+- RPG game mechanics implementation
+
+To build the ASCII RPG project:
+```bash
+cd hosted-projects/ascii-rpg
 npm install
 npx tsc
 ```

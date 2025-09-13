@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII RPG Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .terminal-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+            border: 2px solid #00ff00;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #001100;
+            padding: 10px;
+            border-bottom: 1px solid #00ff00;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid #00ff00;
+        }
+
+        .close { background: #ff0000; }
+        .minimize { background: #ffff00; }
+        .maximize { background: #00ff00; }
+
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .main-display {
+            flex: 1;
+            background: #000;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-bottom: 10px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 11px;
+        }
+
+        .status-item {
+            background: #001100;
+            padding: 5px 10px;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .command-input {
+            flex: 1;
+            background: #000;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .command-input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+
+        .btn {
+            background: #001100;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 5px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .btn:disabled {
+            background: #333;
+            color: #666;
+            border-color: #666;
+            cursor: not-allowed;
+        }
+
+        .combat-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .inventory-slot {
+            background: #001100;
+            border: 1px solid #00ff00;
+            padding: 5px;
+            text-align: center;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .inventory-slot:hover {
+            background: #00ff00;
+            color: #000;
+        }
+
+        .character-sheet {
+            background: #001100;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .character-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            font-size: 11px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .hp-bar, .mp-bar, .xp-bar {
+            background: #333;
+            border: 1px solid #00ff00;
+            height: 8px;
+            margin: 2px 0;
+        }
+
+        .hp-fill { background: #ff0000; height: 100%; }
+        .mp-fill { background: #0000ff; height: 100%; }
+        .xp-fill { background: #ffff00; height: 100%; }
+
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            line-height: 1;
+            white-space: pre;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-content {
+            background: #000;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #00ff00;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ff00; }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">ASCII RPG Adventure v1.0</div>
+            <div class="terminal-controls">
+                <div class="terminal-btn close"></div>
+                <div class="terminal-btn minimize"></div>
+                <div class="terminal-btn maximize"></div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="status-bar">
+                <div class="status-item" id="player-name">Adventurer</div>
+                <div class="status-item" id="player-level">Level 1</div>
+                <div class="status-item" id="player-hp">HP: 100/100</div>
+                <div class="status-item" id="player-mp">MP: 50/50</div>
+                <div class="status-item" id="player-hunger">Hunger: 100/100</div>
+                <div class="status-item" id="player-gold">Gold: 0</div>
+                <div class="status-item" id="location">Location: Tavern</div>
+            </div>
+
+            <div class="main-display" id="game-display">
+                Welcome to ASCII RPG Adventure!
+                Type 'help' for commands or 'start' to begin your journey.
+            </div>
+
+            <div class="input-area">
+                <span class="prompt">&gt;</span>
+                <input type="text" class="command-input" id="command-input" placeholder="Enter command..." autocomplete="off">
+                <button class="btn" id="submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="game-over hidden" id="game-over">
+        <div class="game-over-content">
+            <h2 id="game-over-title">Game Over</h2>
+            <p id="game-over-message">Your adventure has ended...</p>
+            <button class="btn" id="restart-btn">Restart Game</button>
+        </div>
+    </div>
+
+    <script src="ascii-rpg.js"></script>
+</body>
+</html>
