@@ -47,6 +47,9 @@ class SurveillanceSystem {
         linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
         background-size: 20px 20px;"></div>
       
+      <!-- Blur Layer Over Surveillance Windows -->
+      <div class="absolute inset-0 backdrop-blur-sm" style="z-index: 2; background: rgba(0,0,0,0.1);"></div>
+      
       <!-- Surveillance Windows Container -->
       <div class="surveillance-windows-container" style="z-index: 1;"></div>
       
@@ -331,7 +334,7 @@ class SurveillanceSystem {
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
-                        style="pointer-events: none; filter: sepia(0.3) hue-rotate(90deg) contrast(1.2) brightness(0.8);">
+                        style="pointer-events: none;">
                 </iframe>
                 <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
                 <div class="absolute top-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">LIVE STREAM</div>
@@ -377,7 +380,7 @@ class SurveillanceSystem {
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
-                        style="pointer-events: none; filter: sepia(0.3) hue-rotate(90deg) contrast(1.2) brightness(0.8);">
+                        style="pointer-events: none;">
                 </iframe>
                 <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
                 <div class="absolute top-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">LIVE FEED</div>

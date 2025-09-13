@@ -729,25 +729,61 @@
     z-index: 10;
   }
 
-  /* Surveillance Windows */
-  .surveillance-window {
-    position: relative;
-    z-index: 1;
-    background-color: rgba(0, 0, 0, 0.9);
-    border: 1px solid #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-  }
+/* Surveillance System Background Blur */
+.fixed.inset-0.pointer-events-none.z-0 {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Blur Layer Over Surveillance Windows */
+.surveillance-blur-layer {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 2;
+}
+
+/* Surveillance Windows */
+.surveillance-window {
+  position: relative;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
 
   .surveillance-camera {
-    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.2) !important;
-    border-width: 2px !important;
-    border-color: #ffffff !important;
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 255, 255, 0.1) !important;
   }
 
   .surveillance-data {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
   }
+
+  /* Surveillance Window Content */
+  .surveillance-window .surveillance-header {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+  }
+
+  .light-mode .surveillance-window .surveillance-header {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+  }
+
   
   .terminal-line {
     @apply text-green-400 mb-2;
@@ -1283,21 +1319,42 @@
     @apply opacity-100 text-black;
   }
 
+  /* Light Mode Background Blur */
+  .light-mode .fixed.inset-0.pointer-events-none.z-0 {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Light Mode Blur Layer */
+  .light-mode .surveillance-blur-layer {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 2;
+  }
+
   /* Light Mode Surveillance Windows */
   .light-mode .surveillance-window {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-color: #000000 !important;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
   }
 
   .light-mode .surveillance-camera {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.2) !important;
-    border-color: #000000 !important;
-    border-width: 2px !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 2px solid rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 40px rgba(0, 0, 0, 0.1) !important;
   }
 
   .light-mode .surveillance-data {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
   }
 
   /* Light Mode Corner Accents */
