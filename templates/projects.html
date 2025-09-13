@@ -46,12 +46,31 @@
         <div class="nexus-panel" style="margin-bottom: 48px;">
             <div class="panel-header">FILTER CONTROLS</div>
             
-            <div class="nexus-actions" style="margin-top: 16px; justify-content: center;">
+            <!-- Primary Filters -->
+            <div class="nexus-actions" style="margin-top: 16px; justify-content: center; flex-wrap: wrap; gap: 8px;">
                 <button class="nexus-btn nexus-btn-secondary filter-btn active" data-filter="all">ALL PROJECTS</button>
-                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="web">WEB DEV</button>
-                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="mobile">MOBILE</button>
-                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="ai">AI/ML</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="web">WEB DEVELOPMENT</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="academic">ACADEMIC</button>
                 <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="security">SECURITY</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="research">RESEARCH</button>
+                <button class="nexus-btn nexus-btn-secondary filter-btn" data-filter="tool">TOOLS</button>
+            </div>
+            
+            <!-- Status Filters -->
+            <div class="nexus-actions" style="margin-top: 12px; justify-content: center; flex-wrap: wrap; gap: 8px;">
+                <button class="nexus-btn nexus-btn-tertiary status-filter-btn active" data-status="all">ALL STATUS</button>
+                <button class="nexus-btn nexus-btn-tertiary status-filter-btn" data-status="active">ACTIVE</button>
+                <button class="nexus-btn nexus-btn-tertiary status-filter-btn" data-status="in-development">IN DEVELOPMENT</button>
+                <button class="nexus-btn nexus-btn-tertiary status-filter-btn" data-status="archived">ARCHIVED</button>
+            </div>
+            
+            <!-- Demo Type Filters -->
+            <div class="nexus-actions" style="margin-top: 12px; justify-content: center; flex-wrap: wrap; gap: 8px;">
+                <button class="nexus-btn nexus-btn-tertiary demo-filter-btn active" data-demo="all">ALL DEMOS</button>
+                <button class="nexus-btn nexus-btn-tertiary demo-filter-btn" data-demo="live">LIVE DEMOS</button>
+                <button class="nexus-btn nexus-btn-tertiary demo-filter-btn" data-demo="hosted">HOSTED DEMOS</button>
+                <button class="nexus-btn nexus-btn-tertiary demo-filter-btn" data-demo="video">VIDEO DEMOS</button>
+                <button class="nexus-btn nexus-btn-tertiary demo-filter-btn" data-demo="screenshot">SCREENSHOTS</button>
             </div>
         </div>
 
@@ -78,7 +97,7 @@
         <div class="projects-container">
             <div class="projects-grid">
                 {{range .Projects}}
-                <div class="project-card" data-category="{{.ID}}">
+                <div class="project-card" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
                 <div class="nexus-header">PROJECT {{.ID}}</div>
                 <div class="project-content">
                     <!-- Project Visual -->
@@ -111,9 +130,21 @@
                             SOURCE CODE
                         </a>
                         {{end}}
-                        {{if .LiveURL}}
-                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo">
+                        {{if eq .DemoType "live"}}
+                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo live-demo">
                             LIVE DEMO
+                        </a>
+                        {{else if eq .DemoType "hosted"}}
+                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo hosted-demo">
+                            PLAY DEMO
+                        </a>
+                        {{else if eq .DemoType "video"}}
+                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo video-demo" data-demo-type="video">
+                            WATCH DEMO
+                        </a>
+                        {{else if eq .DemoType "screenshot"}}
+                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo screenshot-demo" data-demo-type="screenshot">
+                            VIEW DEMO
                         </a>
                         {{end}}
                     </div>
@@ -122,7 +153,15 @@
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333333; display: flex; justify-content: space-between; align-items: center;">
                         <div style="font-size: 12px;">
                             <span class="status-text">STATUS:</span>
+                            {{if eq .Status "active"}}
+                            <span class="status-online">ACTIVE</span>
+                            {{else if eq .Status "in-development"}}
+                            <span class="status-warning">IN DEVELOPMENT</span>
+                            {{else if eq .Status "archived"}}
+                            <span class="status-offline">ARCHIVED</span>
+                            {{else}}
                             <span class="status-online">DEPLOYED</span>
+                            {{end}}
                         </div>
                         <div style="font-size: 12px; color: #cccccc;">
                             {{.Date.Format "2006-01-02"}}
@@ -147,34 +186,94 @@
 </section>
 
 <script>
-// Project Filter Functionality
+// Enhanced Project Filter Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
+    const statusButtons = document.querySelectorAll('.status-filter-btn');
+    const demoButtons = document.querySelectorAll('.demo-filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
     
+    let currentFilters = {
+        type: 'all',
+        status: 'all',
+        demo: 'all'
+    };
+    
+    function updateActiveButtons(category, value) {
+        const buttons = document.querySelectorAll(`.${category}-filter-btn`);
+        buttons.forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.querySelector(`[data-${category}="${value}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+    }
+    
+    function filterProjects() {
+        projectCards.forEach(card => {
+            const cardType = card.getAttribute('data-type');
+            const cardStatus = card.getAttribute('data-status');
+            const cardDemo = card.getAttribute('data-demo');
+            
+            let showCard = true;
+            
+            // Type filter
+            if (currentFilters.type !== 'all' && cardType !== currentFilters.type) {
+                showCard = false;
+            }
+            
+            // Status filter
+            if (currentFilters.status !== 'all' && cardStatus !== currentFilters.status) {
+                showCard = false;
+            }
+            
+            // Demo filter
+            if (currentFilters.demo !== 'all' && cardDemo !== currentFilters.demo) {
+                showCard = false;
+            }
+            
+            card.style.display = showCard ? 'block' : 'none';
+        });
+        
+        // Update project count display
+        const visibleProjects = document.querySelectorAll('.project-card[style*="block"], .project-card:not([style*="none"])');
+        const projectCount = Array.from(visibleProjects).filter(card => 
+            card.style.display !== 'none'
+        ).length;
+        
+        // Update the terminal output to show filtered count
+        const terminalLine = document.querySelector('.terminal-line:last-child');
+        if (terminalLine) {
+            terminalLine.innerHTML = `<span class="terminal-success">✓</span> Found ${projectCount} projects matching filters`;
+        }
+    }
+    
+    // Type filter buttons
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            
-            // Update active button
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Filter projects
-            projectCards.forEach(card => {
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    const category = card.getAttribute('data-category');
-                    if (category && category.toLowerCase().includes(filter)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                }
-            });
+            currentFilters.type = this.getAttribute('data-filter');
+            updateActiveButtons('type', currentFilters.type);
+            filterProjects();
         });
     });
+    
+    // Status filter buttons
+    statusButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentFilters.status = this.getAttribute('data-status');
+            updateActiveButtons('status', currentFilters.status);
+            filterProjects();
+        });
+    });
+    
+    // Demo filter buttons
+    demoButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentFilters.demo = this.getAttribute('data-demo');
+            updateActiveButtons('demo', currentFilters.demo);
+            filterProjects();
+        });
+    });
+    
+    // Initialize with all projects visible
+    filterProjects();
 });
 </script>
 {{end}}

@@ -3,226 +3,56 @@
     <div class="container">
         <!-- Page Header -->
         <div class="section-header">
-            <div class="ctos-header" style="margin-bottom: 32px;">PERSONNEL DOCUMENTATION</div>
-            <h1 class="section-title">
+            <div class="nexus-header" style="margin-bottom: 32px;">PERSONNEL DOCUMENTATION</div>
+            <h1 class="section-title" data-text="PROFESSIONAL RESUME">
                 PROFESSIONAL <span class="highlight">RESUME</span>
             </h1>
-            <p style="color: #cccccc; font-size: 18px; margin-top: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <p class="section-description">
                 Comprehensive professional documentation and qualifications
             </p>
         </div>
 
         <!-- Resume Actions -->
-        <div style="text-align: center; margin-bottom: 64px;">
-            <div class="ctos-panel" style="display: inline-block; max-width: 500px;">
+        <div style="text-align: center; margin-bottom: 48px;">
+            <div class="nexus-panel" style="display: inline-block; max-width: 600px;">
                 <div class="panel-header">DOCUMENT ACCESS</div>
                 
                 <div style="display: flex; gap: 16px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
-                    <a href="/resume/pdf" target="_blank" class="ctos-btn ctos-btn-primary">
-                        DOWNLOAD PDF
+                    <a href="/resume/download" class="nexus-btn nexus-btn-primary">
+                        📄 DOWNLOAD PDF
                     </a>
-                    <button onclick="window.print()" class="ctos-btn ctos-btn-secondary">
-                        PRINT DOCUMENT
+                    <button onclick="window.print()" class="nexus-btn nexus-btn-secondary">
+                        🖨️ PRINT DOCUMENT
                     </button>
                 </div>
                 
                 <div style="margin-top: 16px; font-size: 12px; color: #666666;">
-                    Last Updated: {{.Year}}-09-12 | Version: 2.1
+                    Last Updated: {{.Year}}-09-12 | Version: 2.1 | Classification: <span class="status-online">PUBLIC</span>
                 </div>
             </div>
         </div>
 
-        <!-- Terminal Interface -->
-        <div class="ctos-terminal" style="margin-bottom: 48px;">
-            <div class="terminal-line">
-                <span style="color: #00ffff;">root@ctos:~$</span> generate_resume --format=web --classification=public
-            </div>
-            <div class="terminal-line">
-                Compiling professional documentation...
-            </div>
-            <div class="terminal-line">
-                <span style="color: #00ff00;">✓</span> Personal data loaded
-            </div>
-            <div class="terminal-line">
-                <span style="color: #00ff00;">✓</span> Experience records verified
-            </div>
-            <div class="terminal-line">
-                <span style="color: #00ff00;">✓</span> Education credentials confirmed
-            </div>
-            <div class="terminal-line">
-                <span class="terminal-highlight">></span> Resume compilation complete <span class="terminal-pulse">█</span>
+        <!-- Resume Display -->
+        <div class="nexus-panel" style="margin-bottom: 48px;">
+            <div class="panel-header">RESUME PREVIEW</div>
+            
+            <!-- PDF Display -->
+            <div style="padding: 32px; background: rgba(0, 0, 0, 0.3); border-radius: 8px; margin-top: 16px;">
+                <iframe 
+                    src="/resume/pdf" 
+                    style="width: 100%; height: 800px; border: none; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"
+                    title="Resume Preview">
+                </iframe>
             </div>
         </div>
 
-        <!-- Resume Content Grid -->
-        <div class="hero-grid">
-            <!-- Left Column - Personal Info & Skills -->
-            <div>
-                <!-- Personal Information -->
-                <div class="ctos-profile-card" style="margin-bottom: 32px;">
-                    <div class="ctos-header">PERSONAL DATA</div>
-                    <div class="profile-content">
-                        <!-- Profile Image -->
-                        <div class="profile-image" style="width: 150px; height: 180px;">
-                            <img src="/static/images/Profile_Picture.jpeg" alt="{{.Personal.Name}}">
-                        </div>
-                        
-                        <!-- Contact Information -->
-                        <div class="data-grid">
-                            <div style="grid-column: 1 / -1;">
-                                <div class="data-label">FULL NAME</div>
-                                <div class="data-value">{{.Personal.Name}}</div>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <div class="data-label">PROFESSION</div>
-                                <div class="data-value">{{.Personal.Title}}</div>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <div class="data-label">LOCATION</div>
-                                <div class="data-value">{{.Personal.Location}}</div>
-                            </div>
-                            {{if .Personal.Email}}
-                            <div style="grid-column: 1 / -1;">
-                                <div class="data-label">EMAIL</div>
-                                <div class="data-value">{{.Personal.Email}}</div>
-                            </div>
-                            {{end}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Skills Section -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">TECHNICAL SKILLS</div>
-                    
-                    <div style="margin-top: 16px;">
-                        {{range .Personal.Skills}}
-                        <div style="margin-bottom: 24px;">
-                            <div style="color: #ffffff; font-weight: bold; font-size: 14px; margin-bottom: 12px; text-transform: uppercase;">
-                                {{.Category}}
-                            </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                                {{range .Items}}
-                                <span class="tech-tag">{{.}}</span>
-                                {{end}}
-                            </div>
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="status-grid">
-                    <div class="status-item">
-                        <div style="font-size: 20px; font-weight: bold; color: #00ffff;">{{len .Personal.Experience}}</div>
-                        <div style="font-size: 10px; color: #cccccc;">POSITIONS</div>
-                    </div>
-                    <div class="status-item">
-                        <div style="font-size: 20px; font-weight: bold; color: #ff6600;">{{len .Projects}}</div>
-                        <div style="font-size: 10px; color: #cccccc;">PROJECTS</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column - Experience & Education -->
-            <div>
-                <!-- Professional Summary -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">PROFESSIONAL SUMMARY</div>
-                    <p class="bio-text">{{.Personal.Bio}}</p>
-                </div>
-
-                <!-- Work Experience -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">WORK EXPERIENCE</div>
-                    
-                    <div style="margin-top: 24px;">
-                        {{range .Personal.Experience}}
-                        <div style="margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid #333333;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap;">
-                                <div>
-                                    <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Position}}</h3>
-                                    <p style="color: #ff6600; font-weight: bold; font-size: 16px;">{{.Company}}</p>
-                                    <p style="color: #cccccc; font-size: 14px;">{{.Location}}</p>
-                                </div>
-                                <div style="color: #cccccc; font-size: 14px; text-align: right;">
-                                    {{.StartDate.Format "Jan 2006"}} - 
-                                    {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}<span class="status-online">CURRENT</span>{{end}}
-                                </div>
-                            </div>
-                            
-                            <ul style="margin-bottom: 16px;">
-                                {{range .Description}}
-                                <li style="color: #cccccc; margin-bottom: 8px; padding-left: 16px; position: relative; line-height: 1.5;">
-                                    <span style="color: #ffffff; position: absolute; left: 0;">•</span>
-                                    {{.}}
-                                </li>
-                                {{end}}
-                            </ul>
-                            
-                            {{if .Technologies}}
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px;">
-                                {{range .Technologies}}
-                                <span class="tech-tag">{{.}}</span>
-                                {{end}}
-                            </div>
-                            {{end}}
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
-
-                <!-- Education -->
-                <div class="ctos-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">EDUCATION</div>
-                    
-                    <div style="margin-top: 24px;">
-                        {{range .Personal.Education}}
-                        <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #333333;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap;">
-                                <div>
-                                    <h3 style="font-size: 18px; font-weight: bold; color: #ffffff; margin-bottom: 4px;">{{.Institution}}</h3>
-                                    <p style="color: #ff6600; font-size: 16px;">{{.Degree}} in {{.Field}}</p>
-                                    <p style="color: #cccccc; font-size: 14px;">{{.Location}}</p>
-                                </div>
-                                <div style="color: #cccccc; font-size: 14px;">
-                                    {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
-                                </div>
-                            </div>
-                            {{if .GPA}}
-                            <p style="color: #cccccc; font-size: 14px;">GPA: {{.GPA}}</p>
-                            {{end}}
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
-
-                <!-- Certifications/Additional Info -->
-                {{if .Personal.Interests}}
-                <div class="ctos-panel">
-                    <div class="panel-header">ADDITIONAL QUALIFICATIONS</div>
-                    
-                    <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;">
-                        {{range .Personal.Interests}}
-                        <span class="tech-tag">{{.}}</span>
-                        {{end}}
-                    </div>
-                </div>
-                {{end}}
-            </div>
-        </div>
-
-        <!-- Document Footer -->
-        <div style="text-align: center; margin-top: 64px; padding: 32px; border-top: 1px solid #333333;">
-            <div style="color: #cccccc; font-size: 14px; margin-bottom: 8px;">
-                DOCUMENT VERIFICATION
-            </div>
-            <div style="color: #666666; font-size: 12px;">
-                Generated: {{.Year}}-09-12 | Classification: <span class="status-online">PUBLIC</span> | Status: <span class="status-online">VERIFIED</span>
-            </div>
-            <div style="margin-top: 16px;">
-                <a href="/contact" class="ctos-btn ctos-btn-secondary">
-                    REQUEST REFERENCES
+        <!-- Contact CTA -->
+        <div style="text-align: center; margin-top: 32px;">
+            <div class="nexus-panel" style="display: inline-block;">
+                <div class="panel-header">INTERESTED IN WORKING TOGETHER?</div>
+                <p style="color: #cccccc; margin: 16px 0;">Let's discuss how I can contribute to your team</p>
+                <a href="/contact" class="nexus-btn nexus-btn-primary">
+                    GET IN TOUCH
                 </a>
             </div>
         </div>
@@ -231,25 +61,23 @@
 
 <style>
 @media print {
-    .ctos-nav, .ctos-footer {
+    .nexus-nav, .nexus-footer {
         display: none !important;
     }
     
     .section {
-        padding: 20px 0 !important;
+        padding: 0 !important;
     }
     
-    .hero-grid {
-        display: block !important;
+    .nexus-panel {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
     }
     
-    .hero-grid > div {
-        margin-bottom: 20px !important;
-    }
-    
-    .ctos-panel, .ctos-profile-card {
-        break-inside: avoid;
-        margin-bottom: 20px !important;
+    .panel-header {
+        display: none !important;
     }
     
     body {
@@ -257,14 +85,17 @@
         color: black !important;
     }
     
-    .ctos-panel, .ctos-profile-card, .status-item {
+    /* Hide the CTOS styling wrapper for print */
+    .nexus-panel > div:first-child {
         background: white !important;
-        border: 1px solid #333 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
     }
     
-    .ctos-header, .panel-header {
-        background: #333 !important;
-        color: white !important;
+    /* Ensure proper page breaks */
+    .resume-content {
+        page-break-inside: avoid;
     }
 }
 </style>

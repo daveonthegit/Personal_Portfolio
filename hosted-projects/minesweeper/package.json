@@ -1,0 +1,17 @@
+{
+  "name": "minesweeper-game",
+  "version": "1.0.0",
+  "description": "A TypeScript implementation of the classic Minesweeper game",
+  "main": "minesweeper.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["minesweeper", "game", "typescript", "html5"],
+  "author": "David Xiao",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

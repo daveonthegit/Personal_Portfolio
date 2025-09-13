@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/daveonthegit/Personal_Portfolio/config"
@@ -29,17 +31,6 @@ type EmailConfig struct {
 	Password  string
 	FromEmail string
 	ToEmail   string
-}
-
-type Project struct {
-	ID           string    `json:"id" yaml:"id"`
-	Title        string    `json:"title" yaml:"title"`
-	Description  string    `json:"description" yaml:"description"`
-	Image        string    `json:"image" yaml:"image"`
-	Technologies []string  `json:"technologies" yaml:"technologies"`
-	GitHubURL    string    `json:"github_url" yaml:"github_url"`
-	LiveURL      string    `json:"live_url" yaml:"live_url"`
-	Date         time.Time `json:"date" yaml:"date"`
 }
 
 type ContactForm struct {
@@ -67,7 +58,7 @@ func NewServer() *Server {
 	}
 
 	// Load projects data
-	projects := loadProjects()
+	projects := LoadProjects()
 
 	// Initialize email configuration from environment variables
 	emailConfig := EmailConfig{
@@ -213,19 +204,324 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
+	texPath := "./static/assets/resume.tex"
 	pdfPath := "./static/assets/resume.pdf"
 
-	// Check if PDF exists
-	if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
-		http.Error(w, "Resume PDF not found. Please build the resume first.", http.StatusNotFound)
+	// Check if LaTeX file exists
+	if _, err := os.Stat(texPath); os.IsNotExist(err) {
+		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
 		return
 	}
 
-	// Set headers for PDF download
+	// Check if PDF exists and is newer than LaTeX file
+	texInfo, err := os.Stat(texPath)
+	if err != nil {
+		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
+		return
+	}
+
+	pdfInfo, err := os.Stat(pdfPath)
+	needsRebuild := os.IsNotExist(err) || pdfInfo.ModTime().Before(texInfo.ModTime())
+
+	if needsRebuild {
+		// Build PDF from LaTeX
+		if err := s.buildPDFFromLaTeX(texPath, pdfPath); err != nil {
+			// Try using the existing build script as fallback
+			if err := s.buildPDFUsingScript(); err != nil {
+				// If all else fails, create a simple HTML fallback
+				if err := s.createHTMLFallback(texPath, pdfPath); err != nil {
+					http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
+					return
+				}
+			}
+		}
+	}
+
+	// Set headers for PDF display (inline)
 	w.Header().Set("Content-Type", "application/pdf")
 	w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
 
 	http.ServeFile(w, r, pdfPath)
+}
+
+func (s *Server) resumeDownloadHandler(w http.ResponseWriter, r *http.Request) {
+	texPath := "./static/assets/resume.tex"
+	pdfPath := "./static/assets/resume.pdf"
+
+	// Check if LaTeX file exists
+	if _, err := os.Stat(texPath); os.IsNotExist(err) {
+		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if PDF exists and is newer than LaTeX file
+	texInfo, err := os.Stat(texPath)
+	if err != nil {
+		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
+		return
+	}
+
+	pdfInfo, err := os.Stat(pdfPath)
+	needsRebuild := os.IsNotExist(err) || pdfInfo.ModTime().Before(texInfo.ModTime())
+
+	if needsRebuild {
+		// Build PDF from LaTeX
+		if err := s.buildPDFFromLaTeX(texPath, pdfPath); err != nil {
+			// Try using the existing build script as fallback
+			if err := s.buildPDFUsingScript(); err != nil {
+				// If all else fails, create a simple HTML fallback
+				if err := s.createHTMLFallback(texPath, pdfPath); err != nil {
+					http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
+					return
+				}
+			}
+		}
+	}
+
+	// Set headers for PDF download (attachment)
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	http.ServeFile(w, r, pdfPath)
+}
+
+func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
+	// Change to the assets directory
+	originalDir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get current directory: %v", err)
+	}
+
+	if err := os.Chdir("./static/assets"); err != nil {
+		return fmt.Errorf("failed to change to assets directory: %v", err)
+	}
+	defer os.Chdir(originalDir)
+
+	// Try different LaTeX engines in order of preference
+	engines := []struct {
+		name string
+		cmd  []string
+	}{
+		{"latexmk", []string{"latexmk", "-pdf", "-interaction=nonstopmode", "resume.tex"}},
+		{"lualatex", []string{"lualatex", "-interaction=nonstopmode", "resume.tex"}},
+		{"xelatex", []string{"xelatex", "-interaction=nonstopmode", "resume.tex"}},
+		{"pdflatex", []string{"pdflatex", "-interaction=nonstopmode", "resume.tex"}},
+	}
+
+	var lastErr error
+	for _, engine := range engines {
+		if _, err := exec.LookPath(engine.name); err != nil {
+			continue // Skip if engine not found
+		}
+
+		// Try the engine
+		cmd := exec.Command(engine.cmd[0], engine.cmd[1:]...)
+		output, err := cmd.CombinedOutput()
+
+		if err == nil {
+			// Success! Clean up and return
+			s.cleanupAuxFiles()
+			if _, err := os.Stat("resume.pdf"); err == nil {
+				return nil
+			}
+		}
+
+		lastErr = fmt.Errorf("%s failed: %v\nOutput: %s", engine.name, err, string(output))
+
+		// For engines that need multiple passes, try again
+		if engine.name == "lualatex" || engine.name == "xelatex" || engine.name == "pdflatex" {
+			cmd = exec.Command(engine.cmd[0], engine.cmd[1:]...)
+			output, err = cmd.CombinedOutput()
+			if err == nil {
+				s.cleanupAuxFiles()
+				if _, err := os.Stat("resume.pdf"); err == nil {
+					return nil
+				}
+			}
+		}
+	}
+
+	return fmt.Errorf("all LaTeX engines failed. Last error: %v", lastErr)
+}
+
+func (s *Server) cleanupAuxFiles() {
+	auxFiles := []string{"resume.aux", "resume.log", "resume.out", "resume.fdb_latexmk", "resume.fls", "resume.synctex.gz", "resume.toc", "resume.nav", "resume.snm"}
+	for _, file := range auxFiles {
+		os.Remove(file)
+	}
+}
+
+func (s *Server) buildPDFUsingScript() error {
+	// Try using the existing build script
+	cmd := exec.Command("scripts/build-resume.bat")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("build script failed: %v\nOutput: %s", err, string(output))
+	}
+	return nil
+}
+
+func (s *Server) createHTMLFallback(texPath, pdfPath string) error {
+	// Create a simple HTML version as fallback
+	htmlPath := strings.Replace(pdfPath, ".pdf", ".html", 1)
+
+	// Read the LaTeX file
+	texContent, err := os.ReadFile(texPath)
+	if err != nil {
+		return err
+	}
+
+	// Convert to HTML
+	htmlContent := s.convertLaTeXToHTML(string(texContent))
+
+	// Write HTML file
+	if err := os.WriteFile(htmlPath, []byte(htmlContent), 0644); err != nil {
+		return err
+	}
+
+	// Update the PDF handler to serve HTML instead
+	return nil
+}
+
+func (s *Server) resumeHTMLHandler(w http.ResponseWriter, r *http.Request) {
+	texPath := "./static/assets/resume.tex"
+	htmlPath := "./static/assets/resume.html"
+
+	// Check if LaTeX file exists
+	if _, err := os.Stat(texPath); os.IsNotExist(err) {
+		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
+		return
+	}
+
+	// Check if HTML exists and is newer than LaTeX file
+	texInfo, err := os.Stat(texPath)
+	if err != nil {
+		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
+		return
+	}
+
+	htmlInfo, err := os.Stat(htmlPath)
+	needsRebuild := os.IsNotExist(err) || htmlInfo.ModTime().Before(texInfo.ModTime())
+
+	if needsRebuild {
+		// Try to convert LaTeX to HTML using pandoc
+		cmd := exec.Command("pandoc", texPath, "-o", htmlPath, "--mathjax", "--standalone", "--css", "resume.css")
+		cmd.Dir = "./static/assets"
+
+		if err := cmd.Run(); err != nil {
+			// If pandoc fails, try htlatex
+			cmd = exec.Command("htlatex", "resume.tex", "xhtml,2", "charset=utf-8", "")
+			cmd.Dir = "./static/assets"
+
+			if err := cmd.Run(); err != nil {
+				// If both fail, create a simple HTML version from the LaTeX content
+				if err := s.createSimpleHTMLFromLaTeX(texPath, htmlPath); err != nil {
+					http.Error(w, "Failed to create HTML from LaTeX", http.StatusInternalServerError)
+					return
+				}
+			}
+		}
+	}
+
+	// Serve the HTML file
+	http.ServeFile(w, r, htmlPath)
+}
+
+func (s *Server) createSimpleHTMLFromLaTeX(texPath, htmlPath string) error {
+	// Read the LaTeX file
+	texContent, err := os.ReadFile(texPath)
+	if err != nil {
+		return err
+	}
+
+	// Simple LaTeX to HTML conversion
+	htmlContent := s.convertLaTeXToHTML(string(texContent))
+
+	// Write the HTML file
+	return os.WriteFile(htmlPath, []byte(htmlContent), 0644)
+}
+
+func (s *Server) convertLaTeXToHTML(texContent string) string {
+	// Basic LaTeX to HTML conversion
+	html := `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David Xiao - Resume</title>
+    <link rel="stylesheet" href="resume.css">
+</head>
+<body>
+`
+
+	// Extract content between \begin{document} and \end{document}
+	start := "\\begin{document}"
+	end := "\\end{document}"
+	startIdx := strings.Index(texContent, start)
+	endIdx := strings.Index(texContent, end)
+
+	if startIdx == -1 || endIdx == -1 {
+		return html + "<p>Error: Could not find document content</p></body></html>"
+	}
+
+	content := texContent[startIdx+len(start) : endIdx]
+
+	// Convert LaTeX commands to HTML
+	content = strings.ReplaceAll(content, "\\textbf{", "<strong>")
+	content = strings.ReplaceAll(content, "\\textit{", "<em>")
+	content = strings.ReplaceAll(content, "\\href{", "<a href=\"")
+	content = strings.ReplaceAll(content, "\\underline{", "<u>")
+	content = strings.ReplaceAll(content, "\\scshape", "")
+	content = strings.ReplaceAll(content, "\\Huge", "")
+	content = strings.ReplaceAll(content, "\\large", "")
+	content = strings.ReplaceAll(content, "\\small", "")
+	content = strings.ReplaceAll(content, "\\tiny", "")
+
+	// Handle closing braces
+	content = strings.ReplaceAll(content, "}", "</strong>")
+	content = strings.ReplaceAll(content, "}", "</em>")
+	content = strings.ReplaceAll(content, "}", "\">")
+	content = strings.ReplaceAll(content, "}", "</u>")
+
+	// Convert sections
+	content = strings.ReplaceAll(content, "\\section{", "<h2>")
+	content = strings.ReplaceAll(content, "\\subsection{", "<h3>")
+
+	// Convert itemize environments
+	content = strings.ReplaceAll(content, "\\begin{itemize}", "<ul>")
+	content = strings.ReplaceAll(content, "\\end{itemize}", "</ul>")
+	content = strings.ReplaceAll(content, "\\item", "<li>")
+
+	// Convert resumeItem commands
+	content = strings.ReplaceAll(content, "\\resumeItem{", "<li>")
+	content = strings.ReplaceAll(content, "\\resumeSubheading{", "<div class=\"resumeSubheading\">")
+	content = strings.ReplaceAll(content, "\\resumeProjectHeading{", "<div class=\"resumeProjectHeading\">")
+
+	// Handle special characters
+	content = strings.ReplaceAll(content, "\\&", "&")
+	content = strings.ReplaceAll(content, "\\$", "$")
+	content = strings.ReplaceAll(content, "\\%", "%")
+	content = strings.ReplaceAll(content, "\\#", "#")
+	content = strings.ReplaceAll(content, "\\_", "_")
+	content = strings.ReplaceAll(content, "\\{", "{")
+	content = strings.ReplaceAll(content, "\\}", "}")
+
+	// Clean up extra spaces and line breaks
+	content = strings.ReplaceAll(content, "\n\n", "\n")
+	content = strings.TrimSpace(content)
+
+	html += content
+	html += `
+</body>
+</html>`
+
+	return html
 }
 
 func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
@@ -268,152 +564,6 @@ func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
 		"status":  "success",
 		"message": "Thank you for your message! I'll get back to you soon.",
 	})
-}
-
-func loadProjects() []Project {
-	// Projects from David's actual GitHub profile
-	return []Project{
-		{
-			ID:           "personal-portfolio",
-			Title:        "Personal Portfolio Website",
-			Description:  "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
-			Image:        "/static/images/portfolio-project.jpg",
-			Technologies: []string{"Go", "TypeScript", "HTML/CSS", "Tailwind CSS", "LaTeX", "Docker", "Heroku"},
-			GitHubURL:    "https://github.com/daveonthegit/Personal_Portfolio",
-			LiveURL:      "",
-			Date:         time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "forgearena",
-			Title:        "ForgeArena",
-			Description:  "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
-			Image:        "/static/images/forgearena-project.jpg",
-			Technologies: []string{"TypeScript", "Go", "React", "PostgreSQL"},
-			GitHubURL:    "",
-			LiveURL:      "",
-			Date:         time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "randcompile-extension",
-			Title:        "RandCompile: Kernel Hardening Extension Research",
-			Description:  "Academic research paper extending existing RandCompile work with our own secured kernel implementation. Developed compile-time kernel hardening techniques with ABI randomization and data structure obfuscation, maintaining less than 5% performance overhead while enhancing security against malicious hypervisor threat models.",
-			Image:        "/static/images/randcompile-research.jpg",
-			Technologies: []string{"Python", "C", "GCC", "Shell", "Docker", "Research"},
-			GitHubURL:    "https://github.com/daveonthegit/Randcompile-Extension-Paper",
-			LiveURL:      "",
-			Date:         time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "rsa-factorization-tls-decryption",
-			Title:        "RSA Factorization & TLS Decryption",
-			Description:  "Automated RSA key recovery and TLS decryption by scripting modulus analysis and key extraction. Factored 1024-bit RSA keys using GCD-based methods and analyzed decrypted TLS session data with Wireshark for security research.",
-			Image:        "/static/images/cryptography-project.jpg",
-			Technologies: []string{"C", "Python", "Cado-NFS", "MSieve", "Wireshark"},
-			GitHubURL:    "https://github.com/daveonthegit/RSA-Factorization-TLS-Decryption-",
-			LiveURL:      "",
-			Date:         time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "hs-projects",
-			Title:        "High School Projects Collection",
-			Description:  "A collection of Java projects from my high school computer science coursework, showcasing fundamental programming concepts and problem-solving skills in object-oriented programming.",
-			Image:        "/static/images/hs-projects.jpg",
-			Technologies: []string{"Java"},
-			GitHubURL:    "https://github.com/daveonthegit/HS-Projects",
-			LiveURL:      "",
-			Date:         time.Date(2022, 6, 1, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "hunter-cs-work",
-			Title:        "Hunter College CS Coursework",
-			Description:  "Academic projects and assignments from CSCI 12700 at Hunter College, demonstrating proficiency in computer science fundamentals and coursework requirements.",
-			Image:        "/static/images/hunter-cs-project.jpg",
-			Technologies: []string{"Various", "Academic Projects"},
-			GitHubURL:    "https://github.com/daveonthegit/HUNTER-CS-WORK",
-			LiveURL:      "",
-			Date:         time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "leetcode-solutions",
-			Title:        "LeetCode Solutions",
-			Description:  "My LeetCode submission collection showcasing problem-solving skills and algorithmic thinking. Features solutions to various coding challenges with optimized approaches and clean implementations.",
-			Image:        "/static/images/leetcode-project.jpg",
-			Technologies: []string{"Python", "Algorithm", "Data Structures"},
-			GitHubURL:    "https://github.com/daveonthegit/leetcode",
-			LiveURL:      "",
-			Date:         time.Date(2025, 4, 18, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "cs43500-food-delivery",
-			Title:        "Food Delivery Service",
-			Description:  "CS43500 project creating a database for a comprehensive food delivery service system. Features include user management, order processing, restaurant management, and delivery tracking with database integration.",
-			Image:        "/static/images/food-delivery-project.jpg",
-			Technologies: []string{"PostgreSQL", "Database", "System Design"},
-			GitHubURL:    "https://github.com/daveonthegit/CS43500-project",
-			LiveURL:      "",
-			Date:         time.Date(2025, 5, 22, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "csci-49381-labs",
-			Title:        "CSCI 49381 Security Labs",
-			Description:  "Collection of cybersecurity lab assignments covering topics like buffer overflow exploitation, Slowloris DoS attacks, cryptography implementations, and penetration testing techniques.",
-			Image:        "/static/images/security-labs-project.jpg",
-			Technologies: []string{"C", "Python", "HTML", "CSS", "Security", "Cryptography"},
-			GitHubURL:    "",
-			LiveURL:      "",
-			Date:         time.Date(2025, 5, 21, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "csci-260-assembly",
-			Title:        "CSCI 260 Assembly Projects",
-			Description:  "Assembly language programming projects demonstrating low-level system programming, MIPS architecture understanding, and computer organization concepts.",
-			Image:        "/static/images/assembly-project.jpg",
-			Technologies: []string{"Assembly", "MIPS", "C++"},
-			GitHubURL:    "https://github.com/daveonthegit/CSCI-260-PROJECT-1",
-			LiveURL:      "",
-			Date:         time.Date(2025, 5, 14, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "cs-260-cpp",
-			Title:        "CS 260 C++ Projects",
-			Description:  "C++ programming projects showcasing object-oriented programming principles, data structures implementation, and software engineering best practices.",
-			Image:        "/static/images/cpp-project.jpg",
-			Technologies: []string{"C++", "OOP", "Data Structures"},
-			GitHubURL:    "https://github.com/daveonthegit/CS-260",
-			LiveURL:      "",
-			Date:         time.Date(2025, 4, 21, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "cs335-projects",
-			Title:        "CS 335 Software Engineering Projects",
-			Description:  "Software engineering coursework projects demonstrating system design, project management, and collaborative development practices in C++.",
-			Image:        "/static/images/software-eng-project.jpg",
-			Technologies: []string{"C++", "Software Engineering", "System Design"},
-			GitHubURL:    "",
-			LiveURL:      "",
-			Date:         time.Date(2024, 5, 11, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "jbot-discord",
-			Title:        "JBot Discord Bot",
-			Description:  "DEFUNCT Custom Discord bot implementation with various utility commands, moderation features, and interactive functionality for server management and entertainment.",
-			Image:        "/static/images/discord-bot-project.jpg",
-			Technologies: []string{"JavaScript", "Discord.js", "Node.js"},
-			GitHubURL:    "https://github.com/daveonthegit/JBot",
-			LiveURL:      "",
-			Date:         time.Date(2022, 9, 26, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			ID:           "basic-web-projects",
-			Title:        "Basic Web Projects",
-			Description:  "Collection of foundational web development projects demonstrating HTML, CSS, and JavaScript skills with responsive design and interactive features.",
-			Image:        "/static/images/web-projects.jpg",
-			Technologies: []string{"HTML", "CSS", "JavaScript"},
-			GitHubURL:    "https://github.com/daveonthegit/Basic-Web-Projects",
-			LiveURL:      "",
-			Date:         time.Date(2023, 12, 9, 0, 0, 0, 0, time.UTC),
-		},
-	}
 }
 
 func min(a, b int) int {
@@ -481,6 +631,32 @@ This message was sent from your portfolio contact form.
 	return nil
 }
 
+// API Handlers for project filtering
+func (s *Server) projectsAPIHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(s.projects)
+}
+
+func (s *Server) projectsByTypeAPIHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	projectType := vars["type"]
+
+	filteredProjects := GetProjectsByType(projectType)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(filteredProjects)
+}
+
+func (s *Server) projectsByStatusAPIHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	status := vars["status"]
+
+	filteredProjects := GetProjectsByStatus(status)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(filteredProjects)
+}
+
 func main() {
 	// Load .env file if it exists
 	if err := godotenv.Load(); err != nil {
@@ -499,11 +675,21 @@ func main() {
 	r.HandleFunc("/contact", server.contactHandler).Methods("GET", "POST")
 	r.HandleFunc("/resume", server.resumeHandler).Methods("GET")
 	r.HandleFunc("/resume/pdf", server.resumePDFHandler).Methods("GET")
+	r.HandleFunc("/resume/download", server.resumeDownloadHandler).Methods("GET")
+	r.HandleFunc("/resume/html", server.resumeHTMLHandler).Methods("GET")
 
 	// Debug route for animation troubleshooting
 	r.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "debug-animation.html")
 	})
+
+	// API routes for project filtering
+	r.HandleFunc("/api/projects", server.projectsAPIHandler).Methods("GET")
+	r.HandleFunc("/api/projects/type/{type}", server.projectsByTypeAPIHandler).Methods("GET")
+	r.HandleFunc("/api/projects/status/{status}", server.projectsByStatusAPIHandler).Methods("GET")
+
+	// Hosted projects routes
+	r.PathPrefix("/hosted/").Handler(http.StripPrefix("/hosted/", http.FileServer(http.Dir("./hosted-projects/"))))
 
 	// Static files
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
