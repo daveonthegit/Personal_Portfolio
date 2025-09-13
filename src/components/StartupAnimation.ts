@@ -606,22 +606,6 @@ function initStartupAnimation() {
     } catch (error) {
       console.error('StartupAnimation: Error:', error);
     }
-  } else {
-    console.log('StartupAnimation: Non-root route - showing content');
-    const mainContent = document.getElementById('main-content');
-    const nav = document.getElementById('main-nav');
-    
-    if (mainContent) {
-      mainContent.style.opacity = '1';
-      mainContent.style.transform = 'translateY(0)';
-      mainContent.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    }
-    
-    if (nav) {
-      nav.style.opacity = '1';
-      nav.style.transform = 'translateY(0)';
-      nav.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    }
   }
 }
 

@@ -40,7 +40,7 @@
     <div class="nexus-grid-bg"></div>
     
     <!-- Navigation -->
-    <nav class="nexus-nav" id="main-nav" style="opacity: 0; transform: translateY(-20px);">
+    <nav class="nexus-nav" id="main-nav">
         <div class="nexus-nav-container">
             <a href="/home" class="nexus-logo">
                 <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
@@ -93,7 +93,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="nexus-main" id="main-content" style="opacity: 0; transform: translateY(20px);">
+    <main class="nexus-main" id="main-content">
         {{if eq .TemplateName "home"}}
             {{template "home-content" .}}
         {{else if eq .TemplateName "about"}}
