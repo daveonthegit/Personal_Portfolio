@@ -1800,8 +1800,20 @@ You feel stronger and more powerful!
 
     private addToDisplay(text: string): void {
         const gameDisplay = document.getElementById('game-display') as HTMLDivElement;
-        gameDisplay.textContent += text + '\n';
-        gameDisplay.scrollTop = gameDisplay.scrollHeight;
+        gameDisplay.innerHTML += text + '<br>';
+        this.scrollToBottom();
+    }
+
+    private scrollToBottom(): void {
+        const gameDisplay = document.getElementById('game-display') as HTMLDivElement;
+        // Use requestAnimationFrame to ensure DOM is updated before scrolling
+        requestAnimationFrame(() => {
+            gameDisplay.scrollTop = gameDisplay.scrollHeight;
+            // Also try scrolling after a small delay to handle async updates
+            setTimeout(() => {
+                gameDisplay.scrollTop = gameDisplay.scrollHeight;
+            }, 50);
+        });
     }
 
     private gameOver(): void {
@@ -1821,7 +1833,7 @@ You feel stronger and more powerful!
         gameOverModal.classList.add('hidden');
         
         const gameDisplay = document.getElementById('game-display') as HTMLDivElement;
-        gameDisplay.textContent = '';
+        gameDisplay.innerHTML = '';
         
         this.initializeGame();
         this.displayWelcome();

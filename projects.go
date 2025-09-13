@@ -85,7 +85,7 @@ func LoadProjects() []Project {
 			ID:           "ascii-rpg-game",
 			Title:        "Procedural Roguelike RPG",
 			Description:  "A hardcore ASCII-based roguelike RPG featuring permadeath, procedural dungeon generation, hunger system, item identification, and cursed items. Built with TypeScript and styled with a terminal-inspired interface. Includes infinite dungeon floors, dynamic bosses, magic spells, abilities, status effects, and save/load functionality. A true roguelike experience where every decision matters.",
-			Image:        "/static/images/ascii-rpg-project.jpg",
+			Image:        "/static/images/ascii-rpg.png",
 			Technologies: []string{"TypeScript", "HTML5", "CSS3", "Game Development", "ASCII Art", "Roguelike", "Procedural Generation", "LocalStorage"},
 			Type:         "web",
 			GitHubURL:    "",

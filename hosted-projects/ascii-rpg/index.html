@@ -15,10 +15,12 @@
             font-family: 'Courier New', monospace;
             background: #0a0a0a;
             color: #00ff00;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin: 0;
+            padding: 0;
         }
 
         .terminal-container {
@@ -27,9 +29,10 @@
             flex-direction: column;
             background: #000;
             border: 2px solid #00ff00;
-            margin: 10px;
+            margin: 20px;
             border-radius: 5px;
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            min-height: 90vh;
         }
 
         .terminal-header {
@@ -66,7 +69,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 10px;
+            padding: 20px;
             overflow: hidden;
         }
 
@@ -74,20 +77,24 @@
             flex: 1;
             background: #000;
             border: 1px solid #00ff00;
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 10px;
             overflow-y: auto;
-            font-size: 12px;
-            line-height: 1.2;
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.4;
             white-space: pre-wrap;
             font-family: 'Courier New', monospace;
+            min-height: 500px;
+            max-height: 600px;
+            scroll-behavior: smooth;
         }
 
         .status-bar {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 11px;
+            margin-bottom: 15px;
+            font-size: 13px;
         }
 
         .status-item {
@@ -113,9 +120,9 @@
             background: #000;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 5px;
+            padding: 8px;
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .command-input:focus {
@@ -127,9 +134,9 @@
             background: #001100;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 5px 10px;
+            padding: 8px 15px;
             font-family: 'Courier New', monospace;
-            font-size: 11px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -289,8 +296,16 @@
             </div>
 
             <div class="main-display" id="game-display">
-                Welcome to ASCII RPG Adventure!
-                Type 'help' for commands or 'start' to begin your journey.
+                Welcome to ASCII Roguelike Adventure!<br>
+                Type 'help' for commands or 'start' to begin your journey.<br>
+                <br>
+                <strong>WARNING:</strong> This is a ROGUELIKE game!<br>
+                • Death is PERMANENT - no second chances<br>
+                • You must eat food or starve to death<br>
+                • Items must be identified before use<br>
+                • Some items may be cursed<br>
+                <br>
+                Good luck, adventurer!<br>
             </div>
 
             <div class="input-area">

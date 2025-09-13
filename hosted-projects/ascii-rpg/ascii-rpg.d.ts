@@ -201,6 +201,7 @@ declare class ASCIIRPG {
     private getManaBar;
     private getXPBar;
     private addToDisplay;
+    private scrollToBottom;
     private gameOver;
     private restartGame;
     private castSpell;
