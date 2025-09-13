@@ -8,6 +8,76 @@ export class StartupAnimation {
         this.isAnimating = false;
         this.mainTerminal = null;
         this.usedPositions = new Set();
+        // Predetermined window placements for low-end devices (avoids random generation overhead)
+        this.lowEndPlacements = [
+            { top: '10%', left: '60%', rotation: '2deg' },
+            { top: '25%', left: '15%', rotation: '-1deg' },
+            { top: '45%', left: '70%', rotation: '1deg' },
+            { top: '60%', left: '25%', rotation: '-2deg' }
+        ];
+        // Precreated message arrays for low-end devices (more efficient than random generation)
+        this.lowEndMessages = {
+            surveillance: [
+                'SURVEILLANCE MODULE ACTIVE',
+                'Scanning network perimeter...',
+                'Target acquisition in progress',
+                'Biometric data collected',
+                'Security clearance verified',
+                'Access protocols engaged',
+                'Monitoring all channels',
+                'Data stream established'
+            ],
+            data: [
+                'DATA MINING INITIATED',
+                'Processing user profiles...',
+                'Extracting metadata',
+                'Cross-referencing databases',
+                'Pattern analysis complete',
+                'Information compiled',
+                'Data integrity verified',
+                'Archive synchronization'
+            ],
+            analysis: [
+                'BEHAVIORAL ANALYSIS RUNNING',
+                'Parsing digital footprint...',
+                'Social network mapping',
+                'Threat assessment active',
+                'Risk evaluation complete',
+                'Profile classification',
+                'Predictive modeling online',
+                'Analysis framework ready'
+            ],
+            access: [
+                'ACCESS CONTROL ENGAGED',
+                'Authentication protocols...',
+                'Permission matrix loaded',
+                'Security tokens verified',
+                'Encryption keys active',
+                'Firewall configuration',
+                'Access granted to user',
+                'Session established'
+            ],
+            crypto: [
+                'CRYPTOGRAPHIC MODULE',
+                'Initializing cipher suites...',
+                'Key exchange protocol',
+                'Hash verification active',
+                'Digital signatures valid',
+                'Secure channel open',
+                'Encryption layer active',
+                'Crypto operations ready'
+            ],
+            monitor: [
+                'SYSTEM MONITOR ONLINE',
+                'Resource utilization...',
+                'Performance metrics',
+                'Network traffic analysis',
+                'System health check',
+                'Process monitoring',
+                'Alert system active',
+                'Monitoring dashboard ready'
+            ]
+        };
         console.log('StartupAnimation: Constructor called');
         console.log('StartupAnimation: Document ready state:', document.readyState);
         console.log('StartupAnimation: Document body exists:', !!document.body);
@@ -76,14 +146,20 @@ export class StartupAnimation {
         this.redirectToHome();
     }
     async executeOSLoadingSequence(content) {
+        // Detect device type for reporting
+        const isLowEndDevice = this.detectLowEndDevice();
+        const deviceType = isLowEndDevice ? 'Low-Performance' : 'High-Performance';
+        const optimizationLevel = isLowEndDevice ? 'Performance Mode' : 'Full Experience';
         const osSteps = [
             { delay: 0, text: 'Initializing xiaoOS v2.1...', type: 'system' },
             { delay: 800, text: 'Loading kernel modules...', type: 'loading' },
             { delay: 1500, text: 'Mounting surveillance filesystem...', type: 'system' },
             { delay: 2200, text: 'Starting network protocols...', type: 'loading' },
             { delay: 3000, text: 'Activating security subsystems...', type: 'system' },
-            { delay: 3800, text: 'xiaoOS v2.1 ready for operation', type: 'success' },
-            { delay: 4200, text: '', type: 'prompt' }
+            { delay: 3600, text: `Device profile: ${deviceType} hardware detected`, type: 'system' },
+            { delay: 4000, text: `Optimization: ${optimizationLevel} enabled`, type: 'system' },
+            { delay: 4400, text: 'xiaoOS v2.1 ready for operation', type: 'success' },
+            { delay: 4800, text: '', type: 'prompt' }
         ];
         for (const step of osSteps) {
             await this.wait(step.delay);
@@ -156,112 +232,133 @@ export class StartupAnimation {
         const terminal = document.createElement('div');
         terminal.className = `startup-terminal startup-terminal-${config.type} matrix-terminal-overlay`;
         terminal.id = config.id;
-        // Expanded position grid with many more options
-        const allPositions = [
-            // Top row
-            { top: '5%', left: '5%', transform: 'rotate(-1deg)' },
-            { top: '5%', left: '15%', transform: 'rotate(1deg)' },
-            { top: '5%', left: '25%', transform: 'rotate(-2deg)' },
-            { top: '5%', left: '35%', transform: 'rotate(1deg)' },
-            { top: '5%', left: '45%', transform: 'rotate(-1deg)' },
-            { top: '5%', left: '55%', transform: 'rotate(2deg)' },
-            { top: '5%', left: '65%', transform: 'rotate(-1deg)' },
-            { top: '5%', left: '75%', transform: 'rotate(1deg)' },
-            { top: '5%', left: '85%', transform: 'rotate(-2deg)' },
-            // Second row
-            { top: '15%', left: '8%', transform: 'rotate(1deg)' },
-            { top: '15%', left: '18%', transform: 'rotate(-1deg)' },
-            { top: '15%', left: '28%', transform: 'rotate(2deg)' },
-            { top: '15%', left: '38%', transform: 'rotate(-1deg)' },
-            { top: '15%', left: '48%', transform: 'rotate(1deg)' },
-            { top: '15%', left: '58%', transform: 'rotate(-2deg)' },
-            { top: '15%', left: '68%', transform: 'rotate(1deg)' },
-            { top: '15%', left: '78%', transform: 'rotate(-1deg)' },
-            { top: '15%', left: '88%', transform: 'rotate(2deg)' },
-            // Third row
-            { top: '25%', left: '3%', transform: 'rotate(-1deg)' },
-            { top: '25%', left: '13%', transform: 'rotate(1deg)' },
-            { top: '25%', left: '23%', transform: 'rotate(-2deg)' },
-            { top: '25%', left: '33%', transform: 'rotate(1deg)' },
-            { top: '25%', left: '43%', transform: 'rotate(-1deg)' },
-            { top: '25%', left: '53%', transform: 'rotate(2deg)' },
-            { top: '25%', left: '63%', transform: 'rotate(-1deg)' },
-            { top: '25%', left: '73%', transform: 'rotate(1deg)' },
-            { top: '25%', left: '83%', transform: 'rotate(-2deg)' },
-            // Fourth row
-            { top: '35%', left: '6%', transform: 'rotate(1deg)' },
-            { top: '35%', left: '16%', transform: 'rotate(-1deg)' },
-            { top: '35%', left: '26%', transform: 'rotate(2deg)' },
-            { top: '35%', left: '36%', transform: 'rotate(-1deg)' },
-            { top: '35%', left: '46%', transform: 'rotate(1deg)' },
-            { top: '35%', left: '56%', transform: 'rotate(-2deg)' },
-            { top: '35%', left: '66%', transform: 'rotate(1deg)' },
-            { top: '35%', left: '76%', transform: 'rotate(-1deg)' },
-            { top: '35%', left: '86%', transform: 'rotate(2deg)' },
-            // Fifth row
-            { top: '45%', left: '1%', transform: 'rotate(-1deg)' },
-            { top: '45%', left: '11%', transform: 'rotate(1deg)' },
-            { top: '45%', left: '21%', transform: 'rotate(-2deg)' },
-            { top: '45%', left: '31%', transform: 'rotate(1deg)' },
-            { top: '45%', left: '41%', transform: 'rotate(-1deg)' },
-            { top: '45%', left: '51%', transform: 'rotate(2deg)' },
-            { top: '45%', left: '61%', transform: 'rotate(-1deg)' },
-            { top: '45%', left: '71%', transform: 'rotate(1deg)' },
-            { top: '45%', left: '81%', transform: 'rotate(-2deg)' },
-            // Sixth row
-            { top: '55%', left: '4%', transform: 'rotate(1deg)' },
-            { top: '55%', left: '14%', transform: 'rotate(-1deg)' },
-            { top: '55%', left: '24%', transform: 'rotate(2deg)' },
-            { top: '55%', left: '34%', transform: 'rotate(-1deg)' },
-            { top: '55%', left: '44%', transform: 'rotate(1deg)' },
-            { top: '55%', left: '54%', transform: 'rotate(-2deg)' },
-            { top: '55%', left: '64%', transform: 'rotate(1deg)' },
-            { top: '55%', left: '74%', transform: 'rotate(-1deg)' },
-            { top: '55%', left: '84%', transform: 'rotate(2deg)' },
-            // Bottom row
-            { top: '65%', left: '7%', transform: 'rotate(-1deg)' },
-            { top: '65%', left: '17%', transform: 'rotate(1deg)' },
-            { top: '65%', left: '27%', transform: 'rotate(-2deg)' },
-            { top: '65%', left: '37%', transform: 'rotate(1deg)' },
-            { top: '65%', left: '47%', transform: 'rotate(-1deg)' },
-            { top: '65%', left: '57%', transform: 'rotate(2deg)' },
-            { top: '65%', left: '67%', transform: 'rotate(-1deg)' },
-            { top: '65%', left: '77%', transform: 'rotate(1deg)' },
-            { top: '65%', left: '87%', transform: 'rotate(-2deg)' }
-        ];
-        // Find an available position
-        const availablePositions = allPositions.filter(pos => {
-            const positionKey = `${pos.top}-${pos.left}`;
-            return !this.usedPositions.has(positionKey);
-        });
+        // Check if this is a low-end device
+        const isLowEndDevice = this.detectLowEndDevice();
         let position;
-        if (availablePositions.length > 0) {
-            position = availablePositions[Math.floor(Math.random() * availablePositions.length)];
-            if (position) {
-                const positionKey = `${position.top}-${position.left}`;
-                this.usedPositions.add(positionKey);
+        if (isLowEndDevice) {
+            // Use predetermined placements for low-end devices (no random generation overhead)
+            const terminalIndex = this.usedPositions.size; // Use size as index since we're creating sequentially
+            const placementIndex = terminalIndex % this.lowEndPlacements.length;
+            const placement = this.lowEndPlacements[placementIndex];
+            if (placement) {
+                position = {
+                    top: placement.top,
+                    left: placement.left,
+                    transform: `rotate(${placement.rotation})`
+                };
+            }
+            else {
+                // Fallback position for low-end devices
+                position = {
+                    top: '10%',
+                    left: '60%',
+                    transform: 'rotate(2deg)'
+                };
             }
         }
         else {
-            // Fallback if all positions are used (shouldn't happen with 8 terminals)
-            position = allPositions[Math.floor(Math.random() * allPositions.length)];
+            // High-end devices: use the full random position system
+            const allPositions = [
+                // Top row
+                { top: '5%', left: '5%', transform: 'rotate(-1deg)' },
+                { top: '5%', left: '15%', transform: 'rotate(1deg)' },
+                { top: '5%', left: '25%', transform: 'rotate(-2deg)' },
+                { top: '5%', left: '35%', transform: 'rotate(1deg)' },
+                { top: '5%', left: '45%', transform: 'rotate(-1deg)' },
+                { top: '5%', left: '55%', transform: 'rotate(2deg)' },
+                { top: '5%', left: '65%', transform: 'rotate(-1deg)' },
+                { top: '5%', left: '75%', transform: 'rotate(1deg)' },
+                { top: '5%', left: '85%', transform: 'rotate(-2deg)' },
+                // Second row
+                { top: '15%', left: '8%', transform: 'rotate(1deg)' },
+                { top: '15%', left: '18%', transform: 'rotate(-1deg)' },
+                { top: '15%', left: '28%', transform: 'rotate(2deg)' },
+                { top: '15%', left: '38%', transform: 'rotate(-1deg)' },
+                { top: '15%', left: '48%', transform: 'rotate(1deg)' },
+                { top: '15%', left: '58%', transform: 'rotate(-2deg)' },
+                { top: '15%', left: '68%', transform: 'rotate(1deg)' },
+                { top: '15%', left: '78%', transform: 'rotate(-1deg)' },
+                { top: '15%', left: '88%', transform: 'rotate(2deg)' },
+                // Third row
+                { top: '25%', left: '3%', transform: 'rotate(-1deg)' },
+                { top: '25%', left: '13%', transform: 'rotate(1deg)' },
+                { top: '25%', left: '23%', transform: 'rotate(-2deg)' },
+                { top: '25%', left: '33%', transform: 'rotate(1deg)' },
+                { top: '25%', left: '43%', transform: 'rotate(-1deg)' },
+                { top: '25%', left: '53%', transform: 'rotate(2deg)' },
+                { top: '25%', left: '63%', transform: 'rotate(-1deg)' },
+                { top: '25%', left: '73%', transform: 'rotate(1deg)' },
+                { top: '25%', left: '83%', transform: 'rotate(-2deg)' },
+                // Fourth row
+                { top: '35%', left: '6%', transform: 'rotate(1deg)' },
+                { top: '35%', left: '16%', transform: 'rotate(-1deg)' },
+                { top: '35%', left: '26%', transform: 'rotate(2deg)' },
+                { top: '35%', left: '36%', transform: 'rotate(-1deg)' },
+                { top: '35%', left: '46%', transform: 'rotate(1deg)' },
+                { top: '35%', left: '56%', transform: 'rotate(-2deg)' },
+                { top: '35%', left: '66%', transform: 'rotate(1deg)' },
+                { top: '35%', left: '76%', transform: 'rotate(-1deg)' },
+                { top: '35%', left: '86%', transform: 'rotate(2deg)' },
+                // Fifth row
+                { top: '45%', left: '1%', transform: 'rotate(-1deg)' },
+                { top: '45%', left: '11%', transform: 'rotate(1deg)' },
+                { top: '45%', left: '21%', transform: 'rotate(-2deg)' },
+                { top: '45%', left: '31%', transform: 'rotate(1deg)' },
+                { top: '45%', left: '41%', transform: 'rotate(-1deg)' },
+                { top: '45%', left: '51%', transform: 'rotate(2deg)' },
+                { top: '45%', left: '61%', transform: 'rotate(-1deg)' },
+                { top: '45%', left: '71%', transform: 'rotate(1deg)' },
+                { top: '45%', left: '81%', transform: 'rotate(-2deg)' },
+                // Sixth row
+                { top: '55%', left: '4%', transform: 'rotate(1deg)' },
+                { top: '55%', left: '14%', transform: 'rotate(-1deg)' },
+                { top: '55%', left: '24%', transform: 'rotate(2deg)' },
+                { top: '55%', left: '34%', transform: 'rotate(-1deg)' },
+                { top: '55%', left: '44%', transform: 'rotate(1deg)' },
+                { top: '55%', left: '54%', transform: 'rotate(-2deg)' },
+                { top: '55%', left: '64%', transform: 'rotate(1deg)' },
+                { top: '55%', left: '74%', transform: 'rotate(-1deg)' },
+                { top: '55%', left: '84%', transform: 'rotate(2deg)' },
+                // Bottom row
+                { top: '65%', left: '7%', transform: 'rotate(-1deg)' },
+                { top: '65%', left: '17%', transform: 'rotate(1deg)' },
+                { top: '65%', left: '27%', transform: 'rotate(-2deg)' },
+                { top: '65%', left: '37%', transform: 'rotate(1deg)' },
+                { top: '65%', left: '47%', transform: 'rotate(-1deg)' },
+                { top: '65%', left: '57%', transform: 'rotate(2deg)' },
+                { top: '65%', left: '67%', transform: 'rotate(-1deg)' },
+                { top: '65%', left: '77%', transform: 'rotate(1deg)' },
+                { top: '65%', left: '87%', transform: 'rotate(-2deg)' }
+            ];
+            // Find an available position
+            const availablePositions = allPositions.filter(pos => {
+                const positionKey = `${pos.top}-${pos.left}`;
+                return !this.usedPositions.has(positionKey);
+            });
+            if (availablePositions.length > 0) {
+                const selectedPosition = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+                if (selectedPosition) {
+                    position = selectedPosition;
+                    const positionKey = `${selectedPosition.top}-${selectedPosition.left}`;
+                    this.usedPositions.add(positionKey);
+                }
+                else {
+                    // Fallback if selectedPosition is undefined
+                    position = { top: '10%', left: '10%', transform: 'rotate(0deg)' };
+                }
+            }
+            else {
+                // Fallback if all positions are used (shouldn't happen with 8 terminals)
+                const fallbackPosition = allPositions[Math.floor(Math.random() * allPositions.length)];
+                position = fallbackPosition || { top: '10%', left: '10%', transform: 'rotate(0deg)' };
+            }
         }
-        // Ensure position is defined before using it
-        if (position) {
-            terminal.style.position = 'absolute';
-            terminal.style.top = position.top;
-            terminal.style.left = position.left;
-            terminal.style.transform = position.transform;
-            terminal.style.zIndex = (Math.floor(Math.random() * 5) + 15).toString();
-        }
-        else {
-            // Ultimate fallback
-            terminal.style.position = 'absolute';
-            terminal.style.top = '10%';
-            terminal.style.left = '10%';
-            terminal.style.transform = 'rotate(0deg)';
-            terminal.style.zIndex = '15';
-        }
+        // Apply position styling
+        terminal.style.position = 'absolute';
+        terminal.style.top = position.top;
+        terminal.style.left = position.left;
+        terminal.style.transform = position.transform;
+        terminal.style.zIndex = isLowEndDevice ? '15' : (Math.floor(Math.random() * 5) + 15).toString();
         // Create terminal header
         const header = document.createElement('div');
         header.className = 'startup-terminal-header';
@@ -322,88 +419,10 @@ export class StartupAnimation {
             return;
         // Comprehensive device performance detection
         const isLowEndDevice = this.detectLowEndDevice();
-        const matrixTexts = {
-            main: [
-                'xiaoOS v2.1 online...',
-                'Matrix protocol activated...',
-                'Neural network initialized...',
-                'Quantum encryption loaded...',
-                'Target locked: DAVID_XIAO...'
-            ],
-            surveillance: [
-                'Scanning biometric signatures...',
-                'Processing facial recognition data...',
-                'Analyzing movement patterns...',
-                'Tracking digital footprint...',
-                'Monitoring communication channels...',
-                'Cross-referencing databases...',
-                'Building psychological profile...'
-            ],
-            network: [
-                'Penetrating firewall defenses...',
-                'Bypassing security protocols...',
-                'Establishing backdoor connections...',
-                'Intercepting data packets...',
-                'Mapping network topology...',
-                'Exploiting zero-day vulnerabilities...',
-                'Injecting malicious payloads...'
-            ],
-            security: [
-                'Exploiting buffer overflow...',
-                'Escalating privileges...',
-                'Bypassing authentication...',
-                'Accessing restricted areas...',
-                'Injecting SQL payloads...',
-                'Brute forcing credentials...',
-                'Social engineering attack...'
-            ],
-            data: [
-                'Extracting personal files...',
-                'Decrypting sensitive data...',
-                'Downloading contact lists...',
-                'Scanning social media profiles...',
-                'Compiling comprehensive dossier...',
-                'Analyzing behavioral patterns...',
-                'Cross-referencing multiple sources...'
-            ],
-            analysis: [
-                'Running behavioral analysis...',
-                'Building psychological profile...',
-                'Identifying key connections...',
-                'Assessing threat level...',
-                'Predicting future actions...',
-                'Analyzing communication patterns...',
-                'Mapping social networks...'
-            ],
-            access: [
-                'Overriding access controls...',
-                'Generating fake credentials...',
-                'Bypassing security checks...',
-                'Granting elevated permissions...',
-                'Establishing persistent access...',
-                'Creating backdoor accounts...',
-                'Modifying system logs...'
-            ],
-            crypto: [
-                'Breaking encryption algorithms...',
-                'Decrypting secure communications...',
-                'Cracking password hashes...',
-                'Analyzing cryptographic keys...',
-                'Exploiting weak ciphers...',
-                'Reverse engineering protocols...',
-                'Bypassing digital signatures...'
-            ],
-            monitor: [
-                'Monitoring system resources...',
-                'Tracking network traffic...',
-                'Analyzing system logs...',
-                'Detecting security breaches...',
-                'Monitoring user activities...',
-                'Tracking file access patterns...',
-                'Analyzing system performance...'
-            ]
-        };
-        const texts = matrixTexts[terminalType] || ['Processing...'];
+        // Use precreated messages for low-end devices, or full arrays for high-end devices
+        const texts = isLowEndDevice ?
+            this.lowEndMessages[terminalType] || ['Processing...'] :
+            this.getHighEndMessages(terminalType);
         // Optimize text generation based on device performance
         const generateText = () => {
             // Dramatically reduce text generation for low-end devices
@@ -549,6 +568,90 @@ export class StartupAnimation {
     // Check if animation is currently running
     get isRunning() {
         return this.isAnimating;
+    }
+    getHighEndMessages(terminalType) {
+        const matrixTexts = {
+            main: [
+                'xiaoOS v2.1 online...',
+                'Matrix protocol activated...',
+                'Neural network initialized...',
+                'Quantum encryption loaded...',
+                'Target locked: DAVID_XIAO...'
+            ],
+            surveillance: [
+                'Scanning biometric signatures...',
+                'Processing facial recognition data...',
+                'Analyzing movement patterns...',
+                'Tracking digital footprint...',
+                'Monitoring communication channels...',
+                'Cross-referencing databases...',
+                'Building psychological profile...'
+            ],
+            network: [
+                'Penetrating firewall defenses...',
+                'Bypassing security protocols...',
+                'Establishing backdoor connections...',
+                'Intercepting data packets...',
+                'Mapping network topology...',
+                'Exploiting zero-day vulnerabilities...',
+                'Injecting malicious payloads...'
+            ],
+            security: [
+                'Exploiting buffer overflow...',
+                'Escalating privileges...',
+                'Bypassing authentication...',
+                'Accessing restricted areas...',
+                'Injecting SQL payloads...',
+                'Brute forcing credentials...',
+                'Social engineering attack...'
+            ],
+            data: [
+                'Extracting personal files...',
+                'Decrypting sensitive data...',
+                'Downloading contact lists...',
+                'Scanning social media profiles...',
+                'Compiling comprehensive dossier...',
+                'Analyzing behavioral patterns...',
+                'Cross-referencing multiple sources...'
+            ],
+            analysis: [
+                'Running behavioral analysis...',
+                'Building psychological profile...',
+                'Identifying key connections...',
+                'Assessing threat level...',
+                'Predicting future actions...',
+                'Analyzing communication patterns...',
+                'Mapping social networks...'
+            ],
+            access: [
+                'Overriding access controls...',
+                'Generating fake credentials...',
+                'Bypassing security checks...',
+                'Granting elevated permissions...',
+                'Establishing persistent access...',
+                'Creating backdoor accounts...',
+                'Modifying system logs...'
+            ],
+            crypto: [
+                'Breaking encryption algorithms...',
+                'Decrypting secure communications...',
+                'Cracking password hashes...',
+                'Analyzing cryptographic keys...',
+                'Exploiting weak ciphers...',
+                'Reverse engineering protocols...',
+                'Bypassing digital signatures...'
+            ],
+            monitor: [
+                'Monitoring system resources...',
+                'Tracking network traffic...',
+                'Analyzing system logs...',
+                'Detecting security breaches...',
+                'Monitoring user activities...',
+                'Tracking file access patterns...',
+                'Analyzing system performance...'
+            ]
+        };
+        return matrixTexts[terminalType] || ['Processing...'];
     }
     detectLowEndDevice() {
         // Multiple performance indicators to detect low-end devices
