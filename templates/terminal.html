@@ -66,47 +66,78 @@
 
     <!-- Scripts -->
     <script>
-        // Check if CSS is loaded before starting animation
-        function waitForCSS() {
-            return new Promise((resolve) => {
-                const checkCSS = () => {
-                    const testEl = document.createElement('div');
-                    testEl.className = 'startup-animation-overlay';
-                    document.body.appendChild(testEl);
-                    const styles = window.getComputedStyle(testEl);
-                    const hasStyles = styles.position === 'fixed';
-                    document.body.removeChild(testEl);
-                    
-                    if (hasStyles) {
-                        resolve(true);
-                    } else {
-                        setTimeout(checkCSS, 50);
-                    }
-                };
-                checkCSS();
+        console.log('=== TERMINAL PAGE LOADED ===');
+        console.log('Current path:', window.location.pathname);
+        
+        // IMMEDIATE SIMPLE ANIMATION - NO COMPLEX LOGIC
+        function showSimpleAnimation() {
+            console.log('Creating simple animation...');
+            
+            // Create a simple black overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'simple-animation-overlay';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: black;
+                color: lime;
+                font-family: monospace;
+                font-size: 18px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 99999;
+            `;
+            
+            overlay.innerHTML = `
+                <div style="text-align: center; line-height: 1.5;">
+                    <div style="color: #00ff00; font-size: 24px; margin-bottom: 20px;">xiaoOS v2.1</div>
+                    <div>Initializing system...</div>
+                    <div>Loading kernel modules...</div>
+                    <div>Starting network protocols...</div>
+                    <div>Matrix protocol activated...</div>
+                    <div style="margin-top: 20px; color: #ffff00;">ACCESS GRANTED</div>
+                    <div style="margin-top: 10px; font-size: 14px;">Redirecting to home...</div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            console.log('Simple animation overlay created');
+            
+            // Animate text
+            const lines = overlay.querySelectorAll('div');
+            lines.forEach((line, index) => {
+                line.style.opacity = '0';
+                setTimeout(() => {
+                    line.style.transition = 'opacity 0.5s ease-in';
+                    line.style.opacity = '1';
+                }, index * 800);
             });
+            
+            // Redirect after 6 seconds
+            setTimeout(() => {
+                console.log('Redirecting to home...');
+                window.location.href = '/home';
+            }, 6000);
         }
         
-        // Wait for CSS then load main script
-        waitForCSS().then(() => {
-            console.log('CSS loaded, loading main script...');
+        // Show animation immediately
+        console.log('About to show simple animation...');
+        showSimpleAnimation();
+        
+        // Also try to load the main script for comparison
+        setTimeout(() => {
+            console.log('Loading main script...');
             const script = document.createElement('script');
             script.src = '/static/js/main.js';
-            script.onerror = () => {
-                console.error('Failed to load main.js');
-                // Fallback: redirect to home
-                setTimeout(() => {
-                    window.location.href = '/home';
-                }, 1000);
-            };
+            script.onload = () => console.log('Main script loaded');
+            script.onerror = () => console.error('Main script failed to load');
             document.head.appendChild(script);
-        }).catch(() => {
-            console.error('CSS loading timeout');
-            // Fallback: load script anyway
-            const script = document.createElement('script');
-            script.src = '/static/js/main.js';
-            document.head.appendChild(script);
-        });
+        }, 1000);
     </script>
 </body>
 </html>
