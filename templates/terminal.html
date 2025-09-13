@@ -65,6 +65,48 @@
     </main>
 
     <!-- Scripts -->
-    <script src="/static/js/main.js"></script>
+    <script>
+        // Check if CSS is loaded before starting animation
+        function waitForCSS() {
+            return new Promise((resolve) => {
+                const checkCSS = () => {
+                    const testEl = document.createElement('div');
+                    testEl.className = 'startup-animation-overlay';
+                    document.body.appendChild(testEl);
+                    const styles = window.getComputedStyle(testEl);
+                    const hasStyles = styles.position === 'fixed';
+                    document.body.removeChild(testEl);
+                    
+                    if (hasStyles) {
+                        resolve(true);
+                    } else {
+                        setTimeout(checkCSS, 50);
+                    }
+                };
+                checkCSS();
+            });
+        }
+        
+        // Wait for CSS then load main script
+        waitForCSS().then(() => {
+            console.log('CSS loaded, loading main script...');
+            const script = document.createElement('script');
+            script.src = '/static/js/main.js';
+            script.onerror = () => {
+                console.error('Failed to load main.js');
+                // Fallback: redirect to home
+                setTimeout(() => {
+                    window.location.href = '/home';
+                }, 1000);
+            };
+            document.head.appendChild(script);
+        }).catch(() => {
+            console.error('CSS loading timeout');
+            // Fallback: load script anyway
+            const script = document.createElement('script');
+            script.src = '/static/js/main.js';
+            document.head.appendChild(script);
+        });
+    </script>
 </body>
 </html>

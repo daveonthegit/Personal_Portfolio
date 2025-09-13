@@ -596,6 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('StartupAnimation: DOM loaded, checking route...');
   console.log('StartupAnimation: User agent:', navigator.userAgent);
   console.log('StartupAnimation: Viewport size:', window.innerWidth + 'x' + window.innerHeight);
+  console.log('StartupAnimation: Host:', window.location.host);
+  console.log('StartupAnimation: Protocol:', window.location.protocol);
   
   // Only run startup animation on the root route (terminal page)
   const currentPath = window.location.pathname;
@@ -605,6 +607,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const startupContainer = document.getElementById('startup-animation');
   console.log('StartupAnimation: Startup container found:', !!startupContainer);
   
+  // Test if we can create elements
+  const testDiv = document.createElement('div');
+  testDiv.id = 'animation-test';
+  testDiv.style.position = 'fixed';
+  testDiv.style.top = '10px';
+  testDiv.style.left = '10px';
+  testDiv.style.background = 'red';
+  testDiv.style.color = 'white';
+  testDiv.style.padding = '10px';
+  testDiv.style.zIndex = '99999';
+  testDiv.textContent = 'Animation Test - JS Working';
+  document.body.appendChild(testDiv);
+  
+  // Remove test div after 3 seconds
+  setTimeout(() => {
+    const testElement = document.getElementById('animation-test');
+    if (testElement) {
+      testElement.remove();
+    }
+  }, 3000);
+  
   if (currentPath === '/') {
     console.log('StartupAnimation: Root route detected - showing matrix animation');
     
@@ -612,11 +635,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const cssLoaded = document.querySelector('link[href*="main.css"]');
     console.log('StartupAnimation: CSS file loaded:', !!cssLoaded);
     
+    // Test CSS classes
+    const testStyle = window.getComputedStyle(document.documentElement);
+    console.log('StartupAnimation: CSS computed styles available:', !!testStyle);
+    
     try {
       new StartupAnimation();
       console.log('StartupAnimation: Animation instance created successfully');
     } catch (error) {
       console.error('StartupAnimation: Error creating animation:', error);
+      
+      // Fallback: try to show a simple animation
+      console.log('StartupAnimation: Attempting fallback animation...');
+      try {
+        const fallbackDiv = document.createElement('div');
+        fallbackDiv.style.position = 'fixed';
+        fallbackDiv.style.top = '0';
+        fallbackDiv.style.left = '0';
+        fallbackDiv.style.width = '100%';
+        fallbackDiv.style.height = '100%';
+        fallbackDiv.style.background = 'black';
+        fallbackDiv.style.color = 'lime';
+        fallbackDiv.style.fontFamily = 'monospace';
+        fallbackDiv.style.fontSize = '20px';
+        fallbackDiv.style.display = 'flex';
+        fallbackDiv.style.alignItems = 'center';
+        fallbackDiv.style.justifyContent = 'center';
+        fallbackDiv.style.zIndex = '99999';
+        fallbackDiv.innerHTML = '<div>xiaoOS Loading...<br/>Fallback Mode</div>';
+        document.body.appendChild(fallbackDiv);
+        
+        setTimeout(() => {
+          fallbackDiv.remove();
+          window.location.href = '/home';
+        }, 3000);
+      } catch (fallbackError) {
+        console.error('StartupAnimation: Fallback also failed:', fallbackError);
+      }
     }
   } else {
     console.log('StartupAnimation: Non-root route detected - skipping animation');
