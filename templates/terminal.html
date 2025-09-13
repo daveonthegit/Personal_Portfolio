@@ -80,9 +80,10 @@
         // Remove after 3 seconds
         setTimeout(() => testDiv.remove(), 3000);
         
-        // Try to load main script
-        console.log('Attempting to load main script...');
-        fetch('/static/js/main.js')
+        // Try to load main script with cache busting
+        const timestamp = Date.now();
+        console.log('Attempting to load main script with cache buster...');
+        fetch(`/static/js/main.js?v=${timestamp}`)
             .then(response => {
                 console.log('Main script fetch status:', response.status);
                 if (response.ok) {

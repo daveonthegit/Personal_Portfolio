@@ -595,7 +595,7 @@ export class StartupAnimation {
 
 // Simple initialization
 function initStartupAnimation() {
-  console.log('StartupAnimation: Initializing...');
+  console.log('StartupAnimation: Initializing... VERSION 2.1.0');
   const currentPath = window.location.pathname;
   console.log('StartupAnimation: Current path:', currentPath);
   
