@@ -565,12 +565,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
     if (currentPath === '/') {
         console.log('StartupAnimation: Root route detected - showing matrix animation');
+        // Force clear any potential session storage
+        try {
+            sessionStorage.clear();
+            localStorage.removeItem('startup-animation-seen');
+            localStorage.removeItem('animation-completed');
+            console.log('StartupAnimation: Cleared any potential session/local storage');
+        }
+        catch (e) {
+            console.log('StartupAnimation: No storage to clear or error clearing:', e);
+        }
         // Additional checks before starting animation
         const cssLoaded = document.querySelector('link[href*="main.css"]');
         console.log('StartupAnimation: CSS file loaded:', !!cssLoaded);
         // Test CSS classes
         const testStyle = window.getComputedStyle(document.documentElement);
         console.log('StartupAnimation: CSS computed styles available:', !!testStyle);
+        // Force animation to run - no session checks
+        console.log('StartupAnimation: FORCING animation to run (no session checks)');
         try {
             console.log('StartupAnimation: About to create animation instance...');
             const animation = new StartupAnimation();
@@ -612,6 +624,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     fallbackDiv.remove();
                     window.location.href = '/home';
                 }, 3000);
+                // Also try to create a simple terminal manually
+                console.log('StartupAnimation: Creating manual fallback terminal...');
+                const manualTerminal = document.createElement('div');
+                manualTerminal.style.position = 'fixed';
+                manualTerminal.style.top = '50%';
+                manualTerminal.style.left = '50%';
+                manualTerminal.style.transform = 'translate(-50%, -50%)';
+                manualTerminal.style.background = '#000';
+                manualTerminal.style.border = '2px solid #00ff00';
+                manualTerminal.style.padding = '20px';
+                manualTerminal.style.color = '#00ff00';
+                manualTerminal.style.fontFamily = 'monospace';
+                manualTerminal.style.zIndex = '99999';
+                manualTerminal.innerHTML = `
+          <div>xiaoOS v2.1 - Manual Terminal</div>
+          <div>root@xiaoOS:~$ Loading system...</div>
+          <div>root@xiaoOS:~$ Matrix protocol activated</div>
+          <div>root@xiaoOS:~$ Redirecting to home...</div>
+        `;
+                document.body.appendChild(manualTerminal);
+                setTimeout(() => {
+                    manualTerminal.remove();
+                }, 2500);
             }
             catch (fallbackError) {
                 console.error('StartupAnimation: Fallback also failed:', fallbackError);
