@@ -124,6 +124,8 @@
   /* Hero Section */
   .hero-section {
     @apply py-20 px-5 min-h-screen;
+    position: relative;
+    z-index: 10;
   }
   
   .hero-grid {
@@ -182,16 +184,22 @@
   
   .nexus-header {
     @apply bg-black text-white px-4 py-2 font-medium text-xs uppercase tracking-wider font-nexus;
+    position: relative;
+    z-index: 10;
     letter-spacing: 1.5px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .profile-content {
     @apply p-6;
+    position: relative;
+    z-index: 10;
   }
   
   .profile-image {
     @apply w-32 h-40 mx-auto mb-6 border-2 border-white overflow-hidden bg-black;
+    position: relative;
+    z-index: 10;
   }
   
   .profile-image img {
@@ -201,15 +209,21 @@
   /* Data Grid */
   .data-grid {
     @apply grid grid-cols-2 gap-6 text-sm mb-6;
+    position: relative;
+    z-index: 10;
   }
   
   .data-label {
     @apply text-white font-bold mb-2 uppercase text-xs font-nexus;
+    position: relative;
+    z-index: 10;
     letter-spacing: 0.5px;
   }
   
   .data-value {
     @apply bg-black border border-white px-4 py-3 text-white text-sm font-mono;
+    position: relative;
+    z-index: 10;
     min-height: 3rem;
     display: flex;
     align-items: center;
@@ -220,6 +234,8 @@
 
   .data-link {
     @apply text-white hover:text-blue-400 transition-colors;
+    position: relative;
+    z-index: 10;
   }
 
   /* Form Input Styles */
@@ -228,6 +244,8 @@
     background-color: #000000 !important;
     color: #ffffff !important;
     border: 1px solid #ffffff !important;
+    position: relative;
+    z-index: 10;
   }
   
   .form-textarea {
@@ -235,26 +253,36 @@
     background-color: #000000 !important;
     color: #ffffff !important;
     border: 1px solid #ffffff !important;
+    position: relative;
+    z-index: 10;
     resize: vertical;
   }
 
   /* Form Group and Label Styles */
   .form-group {
     @apply mb-4;
+    position: relative;
+    z-index: 10;
   }
 
   .form-label {
     @apply block mb-2;
+    position: relative;
+    z-index: 10;
   }
 
   /* Form Message Styles */
   .form-message {
     @apply mt-6;
+    position: relative;
+    z-index: 10;
   }
 
   /* Contact Form Specific Styles */
   .contact-form {
     @apply w-full;
+    position: relative;
+    z-index: 10;
     min-width: 0; /* Prevent form from expanding grid */
   }
 
@@ -305,6 +333,8 @@
   /* Form Container within Grid */
   .form-container {
     @apply w-full bg-black p-6 mb-8;
+    position: relative;
+    z-index: 10;
     min-width: 0; /* Prevent grid shrinking */
     overflow: hidden; /* Prevent content from expanding grid */
   }
@@ -349,6 +379,8 @@
   
   .nexus-title {
     @apply font-nexus-display text-5xl font-bold mb-4 text-white uppercase;
+    position: relative;
+    z-index: 10;
     text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     letter-spacing: 0.1em;
     background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
@@ -366,6 +398,8 @@
   
   .nexus-subtitle {
     @apply text-xl text-blue-200 mb-8 font-light font-nexus;
+    position: relative;
+    z-index: 10;
     letter-spacing: 0.05em;
   }
   
@@ -400,20 +434,28 @@
   
   .panel-header {
     @apply bg-black text-white px-3 py-1.5 font-bold text-xs uppercase -mx-6 -mt-6 mb-4 inline-block;
+    position: relative;
+    z-index: 10;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .bio-text {
     @apply text-gray-300 leading-relaxed text-base;
+    position: relative;
+    z-index: 10;
   }
   
   /* Buttons */
   .nexus-actions {
     @apply flex gap-5 mt-8;
+    position: relative;
+    z-index: 10;
   }
   
   .nexus-btn {
     @apply px-6 py-3 font-nexus font-bold uppercase tracking-wide no-underline transition-all border-2 text-sm inline-block text-center;
+    position: relative;
+    z-index: 10;
   }
   
   .nexus-btn-primary {
@@ -435,22 +477,32 @@
   /* Sections */
   .section {
     @apply py-20 px-5;
+    position: relative;
+    z-index: 10;
   }
   
   .section-dark {
     @apply bg-black;
+    position: relative;
+    z-index: 10;
   }
   
   .container {
     @apply max-w-6xl mx-auto px-5;
+    position: relative;
+    z-index: 10;
   }
   
   .section-header {
     @apply text-center mb-16;
+    position: relative;
+    z-index: 10;
   }
   
   .section-title {
     @apply font-nexus text-4xl font-bold text-white m-0 uppercase;
+    position: relative;
+    z-index: 10;
     letter-spacing: 0.05em;
   }
   
@@ -592,6 +644,22 @@
     @apply text-orange-700;
   }
 
+  .light-mode .project-visual {
+    @apply bg-gray-100 border-gray-400;
+  }
+
+  .light-mode .project-content {
+    @apply bg-white;
+  }
+
+  .light-mode .projects-grid {
+    @apply bg-transparent;
+  }
+
+  .light-mode .project-card:hover {
+    border-color: rgba(0, 0, 0, 0.5);
+  }
+
   .light-mode .status-online {
     @apply text-green-600;
   }
@@ -614,22 +682,32 @@
   
   .tech-label {
     @apply text-white font-bold text-xs uppercase mb-2;
+    position: relative;
+    z-index: 10;
   }
   
   .tech-tags {
     @apply flex flex-wrap gap-1;
+    position: relative;
+    z-index: 10;
   }
   
   .tech-tag {
     @apply bg-black text-blue-200 text-xs px-2 py-1 border border-blue-400;
+    position: relative;
+    z-index: 10;
   }
   
   .project-links {
     @apply flex gap-4 pt-4 border-t border-white;
+    position: relative;
+    z-index: 10;
   }
   
   .project-link {
     @apply text-white font-bold text-xs uppercase transition-colors;
+    position: relative;
+    z-index: 10;
   }
   
   .project-link:hover {
@@ -647,6 +725,28 @@
   /* Terminal */
   .nexus-terminal {
     @apply bg-black border-2 border-white p-6 mb-8 font-mono text-sm max-w-2xl mx-auto;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Surveillance Windows */
+  .surveillance-window {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  .surveillance-camera {
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.2) !important;
+    border-width: 2px !important;
+    border-color: #ffffff !important;
+  }
+
+  .surveillance-data {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3) !important;
   }
   
   .terminal-line {
@@ -664,10 +764,14 @@
   /* Status Grid */
   .status-grid {
     @apply grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto;
+    position: relative;
+    z-index: 10;
   }
   
   .status-item {
     @apply bg-black p-4 border-2 border-white text-center;
+    position: relative;
+    z-index: 10;
   }
   
   /* Status Colors */
@@ -723,10 +827,14 @@
   /* Statistics Grid */
   .stats-grid {
     @apply grid grid-cols-2 gap-4 mt-6;
+    position: relative;
+    z-index: 10;
   }
 
   .stat-item {
     @apply bg-black border border-white p-4 text-center;
+    position: relative;
+    z-index: 10;
   }
 
   .stat-value {
@@ -768,18 +876,26 @@
   .experience-item {
     @apply relative mb-6 pl-6;
     border-left: 2px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 10;
   }
 
   .experience-timeline {
     @apply absolute -left-1 top-2;
+    position: relative;
+    z-index: 10;
   }
 
   .timeline-dot {
     @apply w-3 h-3 bg-white rounded-full;
+    position: relative;
+    z-index: 10;
   }
 
   .experience-card {
     @apply bg-gray-900 p-4 border border-white/20;
+    position: relative;
+    z-index: 10;
   }
 
   .experience-header {
@@ -849,6 +965,8 @@
 
   .education-card {
     @apply bg-gray-900 p-4 border border-white/20;
+    position: relative;
+    z-index: 10;
   }
 
   .education-header {
@@ -1163,6 +1281,23 @@
 
   .light-mode .theme-icon-light {
     @apply opacity-100 text-black;
+  }
+
+  /* Light Mode Surveillance Windows */
+  .light-mode .surveillance-window {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: #000000 !important;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .light-mode .surveillance-camera {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.2) !important;
+    border-color: #000000 !important;
+    border-width: 2px !important;
+  }
+
+  .light-mode .surveillance-data {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
   }
 
   /* Light Mode Corner Accents */
@@ -1878,6 +2013,8 @@
   /* Footer */
   .nexus-footer {
     @apply bg-black border-t-2 border-white py-8 text-center text-gray-300;
+    position: relative;
+    z-index: 50;
   }
   
   .footer-content {

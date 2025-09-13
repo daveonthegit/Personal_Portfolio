@@ -4,7 +4,7 @@ import { AnimationObserver } from './utils/animationObserver';
 import { ContactFormHandler } from './components/ContactFormHandler';
 import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
-import { initNetworkVisualization, createFloatingDataElements } from './utils/networkVisualization';
+import { initSurveillanceWindows } from './utils/surveillanceWindows';
 import './components/StartupAnimation';
 
 // Initialize utilities
@@ -20,10 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize subtle loading animations
   initGlitchAnimations();
   
-  // Initialize CTOS network visualization
+  // Initialize surveillance windows
   setTimeout(() => {
-    initNetworkVisualization();
-    createFloatingDataElements();
+    initSurveillanceWindows();
   }, 500);
   
   // Initialize contact form

@@ -52,11 +52,14 @@ class ThemeHandler {
     }
     applyTheme() {
         const html = document.documentElement;
+        const body = document.body;
         if (this.currentTheme === 'light') {
             html.classList.add('light-mode');
+            body.classList.add('light-mode');
         }
         else {
             html.classList.remove('light-mode');
+            body.classList.remove('light-mode');
         }
         // Update theme icons
         this.updateThemeIcons();
