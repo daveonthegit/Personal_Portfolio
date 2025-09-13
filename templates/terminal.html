@@ -76,7 +76,27 @@
         
         script.onload = () => {
             console.log('Main script loaded successfully');
-            // The main script will automatically start the animation
+            
+            // Force trigger the animation since DOM is already loaded
+            setTimeout(() => {
+                console.log('Checking if animation started...');
+                const startupDiv = document.getElementById('startup-animation');
+                
+                if (!startupDiv) {
+                    console.log('No startup animation found - manually triggering...');
+                    
+                    // Manually trigger the animation
+                    if (typeof window.StartupAnimation !== 'undefined') {
+                        console.log('StartupAnimation class found - creating instance');
+                        new window.StartupAnimation();
+                    } else {
+                        console.log('StartupAnimation class not found - showing fallback');
+                        showFallbackAnimation();
+                    }
+                } else {
+                    console.log('Startup animation found - should be running');
+                }
+            }, 1000);
         };
         
         script.onerror = () => {

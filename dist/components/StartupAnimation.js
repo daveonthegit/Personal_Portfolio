@@ -531,6 +531,8 @@ export class StartupAnimation {
         return this.isAnimating;
     }
 }
+// Expose StartupAnimation globally for manual triggering
+window.StartupAnimation = StartupAnimation;
 // Auto-initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     console.log('StartupAnimation: DOM loaded, checking route...');
