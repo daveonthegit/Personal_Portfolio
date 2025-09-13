@@ -1318,8 +1318,14 @@
   }
 
   .matrix-terminal-overlay {
-    @apply w-[400px] h-[300px] absolute;
+    @apply w-[350px] h-[250px] absolute;
     animation: matrixTerminalPop 0.4s ease-out;
+    opacity: 0.9;
+  }
+
+  .matrix-terminal-overlay:hover {
+    opacity: 1;
+    z-index: 50 !important;
   }
 
   @keyframes matrixTerminalPop {
@@ -1760,7 +1766,7 @@
     }
     
     .matrix-terminal-overlay {
-      @apply w-[300px] h-[200px] text-xs;
+      @apply w-[280px] h-[180px] text-xs;
     }
     
     .startup-terminal-header {
@@ -1778,7 +1784,7 @@
     }
     
     .matrix-terminal-overlay {
-      @apply w-[250px] h-[150px] text-[10px];
+      @apply w-[220px] h-[140px] text-[10px];
     }
     
     .startup-terminal-header {

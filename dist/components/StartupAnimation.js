@@ -7,6 +7,7 @@ export class StartupAnimation {
         this.container = null;
         this.isAnimating = false;
         this.mainTerminal = null;
+        this.usedPositions = new Set();
         console.log('🚀 StartupAnimation: Constructor called');
         this.init();
     }
@@ -56,6 +57,8 @@ export class StartupAnimation {
         if (this.isAnimating)
             return;
         this.isAnimating = true;
+        // Reset used positions for fresh animation
+        this.usedPositions.clear();
         const mainContent = document.getElementById('main-terminal-content');
         if (!mainContent)
             return;
@@ -144,24 +147,111 @@ export class StartupAnimation {
         const terminal = document.createElement('div');
         terminal.className = `startup-terminal startup-terminal-${config.type} matrix-terminal-overlay`;
         terminal.id = config.id;
-        // Random positioning for overlapping effect
-        const positions = [
-            { top: '10%', left: '15%', transform: 'rotate(-2deg)' },
-            { top: '5%', left: '60%', transform: 'rotate(1deg)' },
-            { top: '25%', left: '5%', transform: 'rotate(-1deg)' },
-            { top: '20%', left: '70%', transform: 'rotate(2deg)' },
-            { top: '40%', left: '10%', transform: 'rotate(-1deg)' },
-            { top: '35%', left: '65%', transform: 'rotate(1deg)' },
-            { top: '55%', left: '20%', transform: 'rotate(2deg)' },
-            { top: '50%', left: '75%', transform: 'rotate(-2deg)' }
+        // Expanded position grid with many more options
+        const allPositions = [
+            // Top row
+            { top: '5%', left: '5%', transform: 'rotate(-1deg)' },
+            { top: '5%', left: '15%', transform: 'rotate(1deg)' },
+            { top: '5%', left: '25%', transform: 'rotate(-2deg)' },
+            { top: '5%', left: '35%', transform: 'rotate(1deg)' },
+            { top: '5%', left: '45%', transform: 'rotate(-1deg)' },
+            { top: '5%', left: '55%', transform: 'rotate(2deg)' },
+            { top: '5%', left: '65%', transform: 'rotate(-1deg)' },
+            { top: '5%', left: '75%', transform: 'rotate(1deg)' },
+            { top: '5%', left: '85%', transform: 'rotate(-2deg)' },
+            // Second row
+            { top: '15%', left: '8%', transform: 'rotate(1deg)' },
+            { top: '15%', left: '18%', transform: 'rotate(-1deg)' },
+            { top: '15%', left: '28%', transform: 'rotate(2deg)' },
+            { top: '15%', left: '38%', transform: 'rotate(-1deg)' },
+            { top: '15%', left: '48%', transform: 'rotate(1deg)' },
+            { top: '15%', left: '58%', transform: 'rotate(-2deg)' },
+            { top: '15%', left: '68%', transform: 'rotate(1deg)' },
+            { top: '15%', left: '78%', transform: 'rotate(-1deg)' },
+            { top: '15%', left: '88%', transform: 'rotate(2deg)' },
+            // Third row
+            { top: '25%', left: '3%', transform: 'rotate(-1deg)' },
+            { top: '25%', left: '13%', transform: 'rotate(1deg)' },
+            { top: '25%', left: '23%', transform: 'rotate(-2deg)' },
+            { top: '25%', left: '33%', transform: 'rotate(1deg)' },
+            { top: '25%', left: '43%', transform: 'rotate(-1deg)' },
+            { top: '25%', left: '53%', transform: 'rotate(2deg)' },
+            { top: '25%', left: '63%', transform: 'rotate(-1deg)' },
+            { top: '25%', left: '73%', transform: 'rotate(1deg)' },
+            { top: '25%', left: '83%', transform: 'rotate(-2deg)' },
+            // Fourth row
+            { top: '35%', left: '6%', transform: 'rotate(1deg)' },
+            { top: '35%', left: '16%', transform: 'rotate(-1deg)' },
+            { top: '35%', left: '26%', transform: 'rotate(2deg)' },
+            { top: '35%', left: '36%', transform: 'rotate(-1deg)' },
+            { top: '35%', left: '46%', transform: 'rotate(1deg)' },
+            { top: '35%', left: '56%', transform: 'rotate(-2deg)' },
+            { top: '35%', left: '66%', transform: 'rotate(1deg)' },
+            { top: '35%', left: '76%', transform: 'rotate(-1deg)' },
+            { top: '35%', left: '86%', transform: 'rotate(2deg)' },
+            // Fifth row
+            { top: '45%', left: '1%', transform: 'rotate(-1deg)' },
+            { top: '45%', left: '11%', transform: 'rotate(1deg)' },
+            { top: '45%', left: '21%', transform: 'rotate(-2deg)' },
+            { top: '45%', left: '31%', transform: 'rotate(1deg)' },
+            { top: '45%', left: '41%', transform: 'rotate(-1deg)' },
+            { top: '45%', left: '51%', transform: 'rotate(2deg)' },
+            { top: '45%', left: '61%', transform: 'rotate(-1deg)' },
+            { top: '45%', left: '71%', transform: 'rotate(1deg)' },
+            { top: '45%', left: '81%', transform: 'rotate(-2deg)' },
+            // Sixth row
+            { top: '55%', left: '4%', transform: 'rotate(1deg)' },
+            { top: '55%', left: '14%', transform: 'rotate(-1deg)' },
+            { top: '55%', left: '24%', transform: 'rotate(2deg)' },
+            { top: '55%', left: '34%', transform: 'rotate(-1deg)' },
+            { top: '55%', left: '44%', transform: 'rotate(1deg)' },
+            { top: '55%', left: '54%', transform: 'rotate(-2deg)' },
+            { top: '55%', left: '64%', transform: 'rotate(1deg)' },
+            { top: '55%', left: '74%', transform: 'rotate(-1deg)' },
+            { top: '55%', left: '84%', transform: 'rotate(2deg)' },
+            // Bottom row
+            { top: '65%', left: '7%', transform: 'rotate(-1deg)' },
+            { top: '65%', left: '17%', transform: 'rotate(1deg)' },
+            { top: '65%', left: '27%', transform: 'rotate(-2deg)' },
+            { top: '65%', left: '37%', transform: 'rotate(1deg)' },
+            { top: '65%', left: '47%', transform: 'rotate(-1deg)' },
+            { top: '65%', left: '57%', transform: 'rotate(2deg)' },
+            { top: '65%', left: '67%', transform: 'rotate(-1deg)' },
+            { top: '65%', left: '77%', transform: 'rotate(1deg)' },
+            { top: '65%', left: '87%', transform: 'rotate(-2deg)' }
         ];
-        const position = positions[Math.floor(Math.random() * positions.length)];
+        // Find an available position
+        const availablePositions = allPositions.filter(pos => {
+            const positionKey = `${pos.top}-${pos.left}`;
+            return !this.usedPositions.has(positionKey);
+        });
+        let position;
+        if (availablePositions.length > 0) {
+            position = availablePositions[Math.floor(Math.random() * availablePositions.length)];
+            if (position) {
+                const positionKey = `${position.top}-${position.left}`;
+                this.usedPositions.add(positionKey);
+            }
+        }
+        else {
+            // Fallback if all positions are used (shouldn't happen with 8 terminals)
+            position = allPositions[Math.floor(Math.random() * allPositions.length)];
+        }
+        // Ensure position is defined before using it
         if (position) {
             terminal.style.position = 'absolute';
             terminal.style.top = position.top;
             terminal.style.left = position.left;
             terminal.style.transform = position.transform;
-            terminal.style.zIndex = (Math.floor(Math.random() * 10) + 20).toString();
+            terminal.style.zIndex = (Math.floor(Math.random() * 5) + 15).toString();
+        }
+        else {
+            // Ultimate fallback
+            terminal.style.position = 'absolute';
+            terminal.style.top = '10%';
+            terminal.style.left = '10%';
+            terminal.style.transform = 'rotate(0deg)';
+            terminal.style.zIndex = '15';
         }
         // Create terminal header
         const header = document.createElement('div');
@@ -320,7 +410,7 @@ export class StartupAnimation {
     addMatrixTerminalLine(content, text, type, terminalType) {
         const line = document.createElement('div');
         line.className = `terminal-line ${type} matrix-text-line`;
-        const prompt = `root@matrix-${terminalType}:~$`;
+        const prompt = `root@xiaoOS-${terminalType}:~$`;
         if (type === 'matrix') {
             line.innerHTML = `<span class="prompt">${prompt}</span> <span class="matrix-text">${text}</span>`;
         }

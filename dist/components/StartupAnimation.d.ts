@@ -15,6 +15,7 @@ export declare class StartupAnimation {
     private promptUserInteraction;
     private simulateTyping;
     private createMatrixTerminalExplosion;
+    private usedPositions;
     private createOverlappingTerminal;
     private executeMatrixTextStorm;
     private generateMatrixText;
