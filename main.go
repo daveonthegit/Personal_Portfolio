@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -9,13 +10,25 @@ import (
 	"time"
 
 	"github.com/daveonthegit/Personal_Portfolio/config"
+	"github.com/joho/godotenv"
 
 	"github.com/gorilla/mux"
+	"gopkg.in/mail.v2"
 )
 
 type Server struct {
-	templates *template.Template
-	projects  []Project
+	templates   *template.Template
+	projects    []Project
+	emailConfig EmailConfig
+}
+
+type EmailConfig struct {
+	SMTPHost  string
+	SMTPPort  int
+	Username  string
+	Password  string
+	FromEmail string
+	ToEmail   string
 }
 
 type Project struct {
@@ -55,9 +68,30 @@ func NewServer() *Server {
 	// Load projects data
 	projects := loadProjects()
 
+	// Initialize email configuration from environment variables
+	emailConfig := EmailConfig{
+		SMTPHost:  getEnv("SMTP_HOST", "smtp.gmail.com"),
+		SMTPPort:  getEnvInt("SMTP_PORT", 587),
+		Username:  getEnv("SMTP_USERNAME", ""),
+		Password:  getEnv("SMTP_PASSWORD", ""),
+		FromEmail: getEnv("FROM_EMAIL", ""),
+		ToEmail:   getEnv("TO_EMAIL", ""),
+	}
+
+	// Debug: Log email configuration status
+	log.Printf("Email config loaded - SMTP: %s:%d, Username: %s, From: %s, To: %s",
+		emailConfig.SMTPHost, emailConfig.SMTPPort,
+		emailConfig.Username, emailConfig.FromEmail, emailConfig.ToEmail)
+
+	if emailConfig.Username == "" || emailConfig.Password == "" || emailConfig.ToEmail == "" {
+		log.Printf("⚠️  Email configuration incomplete - please check your .env file")
+		log.Printf("Required: SMTP_USERNAME, SMTP_PASSWORD, TO_EMAIL")
+	}
+
 	return &Server{
-		templates: templates,
-		projects:  projects,
+		templates:   templates,
+		projects:    projects,
+		emailConfig: emailConfig,
 	}
 }
 
@@ -179,10 +213,33 @@ func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Here you would typically send an email or save to database
-	// For now, we'll just log the contact form submission
-	log.Printf("Contact form submission: %+v", form)
+	// Validate required fields
+	if form.Name == "" || form.Email == "" || form.Message == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "error",
+			"message": "Name, email, and message are required fields.",
+		})
+		return
+	}
 
+	// Log the contact form submission
+	log.Printf("Contact form submission from %s (%s): %s", form.Name, form.Email, form.Subject)
+
+	// Send email
+	if err := s.sendEmail(form); err != nil {
+		log.Printf("Failed to send email: %v", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"status":  "error",
+			"message": "Failed to send message. Please try again or contact me directly.",
+		})
+		return
+	}
+
+	// Success response
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
@@ -343,7 +400,70 @@ func min(a, b int) int {
 	return b
 }
 
+// Helper functions for environment variables
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getEnvInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		if intValue, err := fmt.Sscanf(value, "%d", &defaultValue); err == nil && intValue == 1 {
+			return defaultValue
+		}
+	}
+	return defaultValue
+}
+
+// Email sending function
+func (s *Server) sendEmail(form ContactForm) error {
+	// Check if email configuration is properly set
+	if s.emailConfig.Username == "" || s.emailConfig.Password == "" || s.emailConfig.ToEmail == "" {
+		return fmt.Errorf("email configuration incomplete")
+	}
+
+	// Create new message
+	m := mail.NewMessage()
+	m.SetHeader("From", s.emailConfig.FromEmail)
+	m.SetHeader("To", s.emailConfig.ToEmail)
+	m.SetHeader("Subject", fmt.Sprintf("Portfolio Contact: %s", form.Subject))
+
+	// Create email body
+	body := fmt.Sprintf(`
+New contact form submission from your portfolio:
+
+Name: %s
+Email: %s
+Subject: %s
+
+Message:
+%s
+
+---
+This message was sent from your portfolio contact form.
+`, form.Name, form.Email, form.Subject, form.Message)
+
+	m.SetBody("text/plain", body)
+
+	// Create dialer
+	d := mail.NewDialer(s.emailConfig.SMTPHost, s.emailConfig.SMTPPort, s.emailConfig.Username, s.emailConfig.Password)
+
+	// Send email
+	if err := d.DialAndSend(m); err != nil {
+		return fmt.Errorf("failed to send email: %v", err)
+	}
+
+	return nil
+}
+
 func main() {
+	// Load .env file if it exists
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
 	server := NewServer()
 
 	r := mux.NewRouter()

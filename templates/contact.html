@@ -158,7 +158,7 @@
                         </div>
                         
                         <div class="nexus-actions" style="margin-bottom: 20px;">
-                            <button type="submit" class="nexus-btn nexus-btn-primary">
+                            <button type="submit" id="submit-btn" class="nexus-btn nexus-btn-primary">
                                 TRANSMIT MESSAGE
                             </button>
                             <button type="reset" class="nexus-btn nexus-btn-secondary">
@@ -175,15 +175,8 @@
                 
 
                 <!-- Response Status -->
-                <div id="form-status" style="margin-top: 24px; display: none;">
-                    <div style="background-color: #222222; border: 1px solid #00ff00; padding: 16px;">
-                        <div style="background-color: #00ff00; color: #000000; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
-                            TRANSMISSION STATUS
-                        </div>
-                        <p style="color: #00ff00; font-size: 14px;">
-                            Message transmitted successfully. Expect a response within 24 hours.
-                        </p>
-                    </div>
+                <div id="form-message" class="form-message" style="margin-top: 24px; display: none;">
+                    <!-- Messages will be dynamically inserted here by TypeScript handler -->
                 </div>
             </div>
         </div>
@@ -213,55 +206,4 @@
     </div>
 </section>
 
-<script>
-// Contact Form Handling
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('contact-form');
-    const status = document.getElementById('form-status');
-    
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            subject: formData.get('subject'),
-            message: formData.get('message')
-        };
-        
-        // Simulate form submission
-        fetch('/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                status.style.display = 'block';
-                form.reset();
-                status.scrollIntoView({ behavior: 'smooth' });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Show error status
-            status.innerHTML = `
-                <div style="background-color: #222222; border: 1px solid #ff0000; padding: 16px;">
-                    <div style="background-color: #ff0000; color: #ffffff; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
-                        TRANSMISSION ERROR
-                    </div>
-                    <p style="color: #ff0000; font-size: 14px;">
-                        Failed to transmit message. Please try again or use direct email.
-                    </p>
-                </div>
-            `;
-            status.style.display = 'block';
-        });
-    });
-});
-</script>
 {{end}}

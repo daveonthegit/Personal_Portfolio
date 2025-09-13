@@ -1,0 +1,29 @@
+# Email Configuration for Contact Form
+# Set these environment variables to enable email functionality
+
+# SMTP Server Settings
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+
+# Email Credentials
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password
+
+# Email Addresses
+FROM_EMAIL=your-email@gmail.com
+TO_EMAIL=your-email@gmail.com
+
+# Note: For Gmail, you'll need to:
+# 1. Enable 2-factor authentication
+# 2. Generate an "App Password" for this application
+# 3. Use the App Password as SMTP_PASSWORD, not your regular password
+
+# For other email providers:
+# - Outlook/Hotmail: smtp-mail.outlook.com, port 587
+# - Yahoo: smtp.mail.yahoo.com, port 587
+# - Custom SMTP: Use your provider's SMTP settings
+
+# To set environment variables:
+# Windows: set SMTP_USERNAME=your-email@gmail.com
+# Linux/Mac: export SMTP_USERNAME=your-email@gmail.com
+# Heroku: heroku config:set SMTP_USERNAME=your-email@gmail.com

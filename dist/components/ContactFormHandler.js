@@ -53,21 +53,36 @@ export class ContactFormHandler {
         }
         finally {
             this.submitButton.disabled = false;
-            this.submitButton.textContent = 'Send Message';
+            this.submitButton.textContent = 'TRANSMIT MESSAGE';
         }
     }
     static showMessage(message, type) {
         if (!this.messageContainer)
             return;
-        this.messageContainer.textContent = message;
-        this.messageContainer.className = `form-message ${type === 'success' ? 'form-success' : 'form-error'}`;
+        const isSuccess = type === 'success';
+        const borderColor = isSuccess ? '#00ff00' : '#ff0000';
+        const bgColor = isSuccess ? '#00ff00' : '#ff0000';
+        const textColor = isSuccess ? '#000000' : '#ffffff';
+        const messageColor = isSuccess ? '#00ff00' : '#ff0000';
+        const statusText = isSuccess ? 'TRANSMISSION STATUS' : 'TRANSMISSION ERROR';
+        this.messageContainer.innerHTML = `
+      <div style="background-color: #222222; border: 1px solid ${borderColor}; padding: 16px;">
+        <div style="background-color: ${bgColor}; color: ${textColor}; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
+          ${statusText}
+        </div>
+        <p style="color: ${messageColor}; font-size: 14px;">
+          ${message}
+        </p>
+      </div>
+    `;
         this.messageContainer.style.display = 'block';
-        // Clear message after 5 seconds
+        this.messageContainer.scrollIntoView({ behavior: 'smooth' });
+        // Clear message after 5 seconds for success, 10 seconds for errors
         setTimeout(() => {
             if (this.messageContainer) {
                 this.messageContainer.style.display = 'none';
             }
-        }, 5000);
+        }, isSuccess ? 5000 : 10000);
     }
     static isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
