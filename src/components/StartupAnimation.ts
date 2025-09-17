@@ -129,11 +129,11 @@ export class StartupAnimation {
     
     // Auto-fill the target after a delay (like typing)
     await this.wait(500);
-    await this.simulateTyping(content, 'portfolio.main');
+    await this.simulateTyping(content, 'DAVID_XIAO.portfolio');
     
     // Simulate pressing Enter
     await this.wait(300);
-    this.addTerminalLine(content, 'Accessing portfolio: portfolio.main...', 'system', 'main');
+    this.addTerminalLine(content, 'Accessing portfolio: DAVID_XIAO.portfolio...', 'system', 'main');
     
     await this.wait(500);
     this.addTerminalLine(content, 'Loading portfolio data...', 'success', 'main');
