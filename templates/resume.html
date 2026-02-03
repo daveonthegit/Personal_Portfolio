@@ -1,59 +1,92 @@
 {{define "resume-content"}}
-<section class="section">
-    <div class="container">
-        <!-- Page Header -->
-        <div class="section-header">
-            <div class="nexus-header" style="margin-bottom: 32px;">PERSONNEL DOCUMENTATION</div>
-            <h1 class="section-title" data-text="PROFESSIONAL RESUME">
-                PROFESSIONAL <span class="highlight">RESUME</span>
-            </h1>
-            <p class="section-description">
-                Comprehensive professional documentation and qualifications
-            </p>
+<section class="section relative">
+    <div class="container max-w-5xl mx-auto">
+        <!-- Page Header - Newstyle -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1 h-6 bg-nexus-cyan"></div>
+                <h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Personnel Documentation</h1>
+            </div>
+            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">PROFESSIONAL RESUME // CLEARANCE: PUBLIC</p>
         </div>
 
-        <!-- Resume Actions -->
-        <div style="text-align: center; margin-bottom: 48px;">
-            <div class="nexus-panel" style="display: inline-block; max-width: 600px;">
-                <div class="panel-header">DOCUMENT ACCESS</div>
-                
-                <div style="display: flex; gap: 16px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
-                    <a href="/resume/download" class="nexus-btn nexus-btn-primary">
-                        📄 DOWNLOAD PDF
-                    </a>
-                    <button onclick="window.print()" class="nexus-btn nexus-btn-secondary">
-                        🖨️ PRINT DOCUMENT
-                    </button>
-                </div>
-                
-                <div style="margin-top: 16px; font-size: 12px; color: #666666;">
-                    Last Updated: {{.Year}}-09-12 | Version: 2.1 | Classification: <span class="status-online">PUBLIC</span>
-                </div>
+        <!-- Resume Actions Panel -->
+        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md mb-8">
+            <div class="corner-accent-tl"></div>
+            <div class="corner-accent-br"></div>
+            
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-nexus-cyan"></div>
+                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Document Access</h2>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
+                <a href="/resume/download" class="nexus-btn-primary flex items-center gap-2 no-underline">
+                    <span class="material-symbols-outlined text-sm">download</span>
+                    DOWNLOAD PDF
+                </a>
+                <button onclick="window.print()" class="nexus-btn-secondary flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm">print</span>
+                    PRINT DOCUMENT
+                </button>
+            </div>
+            
+            <div class="text-center text-[10px] font-mono text-gray-500 pt-4 border-t border-white/5">
+                Last Updated: {{.Year}}.01.15 | Version: 2.1 | Classification: <span class="text-[#4ade80]">PUBLIC</span>
             </div>
         </div>
 
-        <!-- Resume Display -->
-        <div class="nexus-panel" style="margin-bottom: 48px;">
-            <div class="panel-header">RESUME PREVIEW</div>
+        <!-- Resume Preview Panel -->
+        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-8 backdrop-blur-md mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-nexus-cyan"></div>
+                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Resume Preview</h2>
+                <span class="ml-auto text-[10px] font-mono text-gray-500">DOCUMENT_ID: RES_{{.Year}}_001</span>
+            </div>
             
             <!-- PDF Display -->
-            <div style="padding: 32px; background: rgba(0, 0, 0, 0.3); border-radius: 8px; margin-top: 16px;">
+            <div class="bg-black/40 border border-white/10 p-4">
                 <iframe 
                     src="/resume/pdf" 
-                    style="width: 100%; height: 800px; border: none; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);"
+                    class="w-full border-0 bg-white"
+                    style="height: 800px;"
                     title="Resume Preview">
                 </iframe>
             </div>
         </div>
 
-        <!-- Contact CTA -->
-        <div style="text-align: center; margin-top: 32px;">
-            <div class="nexus-panel" style="display: inline-block;">
-                <div class="panel-header">INTERESTED IN WORKING TOGETHER?</div>
-                <p style="color: #cccccc; margin: 16px 0;">Let's discuss how I can contribute to your team</p>
-                <a href="/contact" class="nexus-btn nexus-btn-primary">
-                    GET IN TOUCH
-                </a>
+        <!-- Contact CTA Panel -->
+        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-8 backdrop-blur-md text-center">
+            <div class="corner-accent-tl"></div>
+            <div class="corner-accent-br"></div>
+            
+            <div class="flex items-center justify-center gap-3 mb-6">
+                <div class="w-2 h-8 bg-nexus-cyan"></div>
+                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Initiate Contact</h2>
+            </div>
+            
+            <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+                Interested in collaboration or have project inquiries? Establish a secure communication channel.
+            </p>
+            
+            <a href="/contact" class="nexus-btn-primary inline-flex items-center gap-2 no-underline">
+                <span class="material-symbols-outlined text-sm">send</span>
+                GET IN TOUCH
+            </a>
+            
+            <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-3 gap-4 max-w-md mx-auto">
+                <div class="text-center">
+                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
+                    <div class="text-[#4ade80] font-mono text-sm">AVAILABLE</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
+                    <div class="text-nexus-cyan font-mono text-sm">24HR MAX</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
+                    <div class="text-[#ff5500] font-mono text-sm">HIGH</div>
+                </div>
             </div>
         </div>
     </div>
@@ -76,24 +109,11 @@
         margin: 0 !important;
     }
     
-    .panel-header {
-        display: none !important;
-    }
-    
     body {
         background: white !important;
         color: black !important;
     }
     
-    /* Hide the CTOS styling wrapper for print */
-    .nexus-panel > div:first-child {
-        background: white !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-    }
-    
-    /* Ensure proper page breaks */
     .resume-content {
         page-break-inside: avoid;
     }

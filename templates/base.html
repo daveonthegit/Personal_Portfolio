@@ -30,59 +30,50 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
     
     <!-- Styles -->
     <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
 </head>
-<body>
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-screen flex flex-col relative">
     <!-- Background Grid -->
     <div class="nexus-grid-bg"></div>
+    <div class="scan-line" aria-hidden="true"></div>
     
-    <!-- Navigation -->
-    <nav class="nexus-nav" id="main-nav">
-        <div class="nexus-nav-container">
-            <a href="/home" class="nexus-logo">
+    <!-- Navigation - Newstyle -->
+    <header class="nexus-nav fixed top-0 left-0 right-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-surface-translucent backdrop-blur-sm" id="main-nav">
+        <div class="flex items-center gap-2">
+            <a href="/home" class="nexus-logo flex items-center gap-0 no-underline">
                 <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
             </a>
-            
-            <ul class="nexus-nav-links">
-                <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">HOME</a></li>
-                <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">ABOUT</a></li>
-                <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">PROJECTS</a></li>
-                <li><a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active{{end}}">RESUME</a></li>
-                <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONTACT</a></li>
-            </ul>
-            
-            <div class="nav-controls">
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-                    <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                    </svg>
-                    <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                    </svg>
-                </button>
-                <button class="nexus-mobile-toggle" id="mobile-toggle" aria-label="Toggle mobile menu">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
         </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div class="nexus-mobile-menu hidden" id="mobile-menu">
-        <ul>
-            <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">HOME</a></li>
-            <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">ABOUT</a></li>
-            <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">PROJECTS</a></li>
-            <li><a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active{{end}}">RESUME</a></li>
-            <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONTACT</a></li>
-        </ul>
-        <div class="mobile-theme-toggle">
-            <button class="theme-toggle" id="mobile-theme-toggle" aria-label="Toggle theme">
+        
+        <nav class="nexus-nav-links hidden md:flex items-center gap-8 text-[10px] font-nexus-display font-bold tracking-[0.2em] text-gray-400">
+            <a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "home"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>HOME</span>
+            </a>
+            <a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "about"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>ABOUT</span>
+            </a>
+            <a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "projects"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>PROJECTS</span>
+            </a>
+            <a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "resume"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>RESUME</span>
+            </a>
+            <a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "contact"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>CONTACT</span>
+            </a>
+        </nav>
+        
+        <div class="flex items-center gap-4">
+            <button class="theme-toggle hidden" id="theme-toggle" aria-label="Toggle theme">
                 <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                 </svg>
@@ -91,7 +82,42 @@
                     <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
                 </svg>
             </button>
+            <div class="nav-status hidden md:flex items-center gap-2">
+                <span class="text-[10px] font-mono text-nexus-cyan animate-pulse">NET_ACTIVE</span>
+                <span class="material-symbols-outlined text-gray-400 text-sm" aria-hidden="true">wifi</span>
+            </div>
+            <button class="nexus-mobile-toggle md:hidden text-gray-400 hover:text-white" id="mobile-toggle" aria-label="Toggle mobile menu">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
         </div>
+    </header>
+
+    <!-- Mobile Menu - Newstyle -->
+    <div class="nexus-mobile-menu hidden fixed top-16 left-0 right-0 z-40 bg-surface-translucent backdrop-blur-md border-b border-white/5" id="mobile-menu">
+        <nav class="flex flex-col p-4 space-y-4">
+            <a href="/home" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "home"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "home"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>HOME</span>
+            </a>
+            <a href="/about" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "about"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "about"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>ABOUT</span>
+            </a>
+            <a href="/projects" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "projects"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "projects"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>PROJECTS</span>
+            </a>
+            <a href="/resume" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "resume"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "resume"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>RESUME</span>
+            </a>
+            <a href="/contact" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "contact"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
+                {{if eq .TemplateName "contact"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
+                <span>CONTACT</span>
+            </a>
+        </nav>
     </div>
 
     <!-- Main Content -->
@@ -111,66 +137,32 @@
         {{end}}
     </main>
 
-    <!-- Footer -->
-    <footer class="nexus-footer">
-        <div class="footer-content">
-            <!-- xiaoOS System Information -->
-            <div class="bg-black/90 p-4 mb-6 border border-blue-400/30">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
-                    <div>
-                        <div class="text-blue-400 font-bold mb-2">SYSTEM STATUS</div>
-                        <div class="text-green-400">OPERATIONAL</div>
-                        <div class="text-blue-200">UPTIME: 99.9%</div>
-                        <div class="text-blue-200">LOAD: 12%</div>
-                    </div>
-                    <div>
-                        <div class="text-blue-400 font-bold mb-2">NETWORK</div>
-                        <div class="text-green-400">CONNECTED</div>
-                        <div class="text-blue-200">LATENCY: 23ms</div>
-                        <div class="text-blue-200">BANDWIDTH: 1Gbps</div>
-                    </div>
-                    <div>
-                        <div class="text-blue-400 font-bold mb-2">SECURITY</div>
-                        <div class="text-green-400">SECURED</div>
-                        <div class="text-blue-200">FIREWALL: ACTIVE</div>
-                        <div class="text-blue-200">ENCRYPTION: AES-256</div>
-                    </div>
-                    <div>
-                        <div class="text-blue-400 font-bold mb-2">BUILD INFO</div>
-                        <div class="text-blue-200">VERSION: 2.1.{{.Year}}</div>
-                        <div class="text-blue-200">BUILD: {{.Year}}0912</div>
-                        <div class="text-blue-200">ENV: PRODUCTION</div>
-                    </div>
-                </div>
+    <!-- Footer - Newstyle Minimal -->
+    <footer class="nexus-footer relative z-10 mt-auto p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-[10px] font-mono text-gray-500 tracking-widest text-center md:text-left">
+                <div>© {{.Year}} {{.Personal.Name}} // <span class="text-nexus-cyan">xiaoOS</span> // ALL RIGHTS RESERVED</div>
+                <div class="mt-1">SYSTEM_STATUS: <span class="text-[#4ade80]">STABLE</span> | ENCRYPTION: AES-256-GCM</div>
             </div>
             
-            <div class="footer-main">
-                <div class="footer-info">
-                    <p style="color: #cccccc; font-size: 14px;">
-                        © {{.Year}} {{.Personal.Name}} - <span style="color: #3b82f6;">xiaoOS PORTFOLIO SYSTEM</span>
-                    </p>
-                    <p style="font-size: 12px; color: #666666;">All rights reserved. Unauthorized access prohibited.</p>
-                </div>
-                
-                <div class="footer-links">
+            <div class="flex items-center gap-6">
+                <div class="hidden md:block text-[10px] font-mono text-nexus-cyan">v2.1.{{.Year}}</div>
+                <div class="flex gap-4">
                     {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="footer-link">
+                    <a href="mailto:{{.Personal.Email}}" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="Email">
                         EMAIL
                     </a>
                     {{end}}
                     {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="LinkedIn">
                         LINKEDIN
                     </a>
                     {{end}}
                     {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="GitHub">
                         GITHUB
                     </a>
                     {{end}}
-                    <a href="/resume" class="footer-link">
-                        RESUME
-                    </a>
                 </div>
             </div>
         </div>

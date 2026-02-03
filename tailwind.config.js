@@ -11,15 +11,15 @@ module.exports = {
     'bg-white', 'bg-cyan-400', 'bg-orange-500', 'bg-green-400', 'bg-red-900', 'bg-green-900',
     // Text colors
     'text-white', 'text-black', 'text-gray-300', 'text-gray-400', 'text-gray-500',
-    'text-cyan-400', 'text-green-400', 'text-orange-400', 'text-red-400',
+    'text-cyan-400', 'text-nexus-cyan', 'text-nexus-orange', 'text-green-400', 'text-orange-400', 'text-red-400',
     'text-green-300', 'text-red-300',
     // Border colors
-    'border-cyan-400', 'border-gray-600', 'border-gray-700', 'border-cyan-400/30',
+    'border-cyan-400', 'border-nexus-cyan', 'border-white/5', 'border-white/10', 'border-gray-600', 'border-gray-700', 'border-cyan-400/30',
     'border-green-400', 'border-red-400', 'border-black', 'border-2', 'border-b', 'border-t',
     'border-b-2', 'border-l-2', 'border-r-2', 'border-t-2',
     // Hover states
     'hover:bg-cyan-400', 'hover:bg-cyan-300', 'hover:bg-orange-400',
-    'hover:text-black', 'hover:text-cyan-400', 'hover:text-cyan-300', 'hover:text-white',
+    'hover:text-black', 'hover:text-nexus-cyan', 'hover:text-cyan-400', 'hover:text-cyan-300', 'hover:text-white',
     'hover:text-orange-300', 'hover:border-cyan-300', 'hover:border-cyan-400', 'hover:border-l-2',
     // Animations
     'animate-pulse', 'animate-scan-line',
@@ -70,6 +70,12 @@ module.exports = {
           800: '#b36000',
           900: '#994d00',
         },
+        // Newstyle / CTOS dashboard
+        'nexus-cyan': '#00d2ff',
+        'nexus-orange': '#ff5500',
+        surface: '#0a0a0a',
+        'surface-translucent': 'rgba(10, 10, 10, 0.85)',
+        'border-dim': 'rgba(255, 255, 255, 0.1)',
         // Standard colors that we're using
         cyan: {
           300: '#67e8f9',
@@ -152,7 +158,7 @@ module.exports = {
       fontFamily: {
         'mono': ['Courier New', 'monospace'],
         'nexus': ['Inter', 'Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        'nexus-display': ['Orbitron', 'Exo 2', 'Rajdhani', 'sans-serif'],
+        'nexus-display': ['JetBrains Mono', 'monospace'],
         'cyber': ['Share Tech Mono', 'monospace'],
       },
       boxShadow: {

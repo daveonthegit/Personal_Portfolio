@@ -1,209 +1,193 @@
 {{define "contact-content"}}
-<section class="section relative">
-    <div class="container">
-        <!-- Page Header -->
-        <div class="section-header">
-            <div class="nexus-header" style="margin-bottom: 32px;">COMMUNICATION PROTOCOL</div>
-            <h1 class="section-title" data-text="ESTABLISH CONNECTION">
-                ESTABLISH <span class="highlight">CONNECTION</span>
-            </h1>
-            <p class="section-description">
-                Secure communication channel for project inquiries and collaboration requests
-            </p>
-        </div>
-
-        <div class="hero-grid">
-            <!-- Left Column - System Status -->
-            <div>
-                <!-- Communication Status -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">SYSTEM STATUS</div>
-                    
-                    <div style="margin-top: 16px;">
-                        <div class="skill-item">
-                            <span>Communication</span>
-                            <span class="status-online">ONLINE</span>
-                        </div>
-                        <div class="skill-item">
-                            <span>Encryption</span>
-                            <span class="status-online">ACTIVE</span>
-                        </div>
-                        <div class="skill-item">
-                            <span>Response Time</span>
-                            <span class="status-warning">< 24H</span>
-                        </div>
-                        <div class="skill-item" style="border-bottom: none;">
-                            <span>Availability</span>
-                            <span class="status-online">24/7</span>
-                        </div>
-                    </div>
+<style>
+/* Contact page layout */
+.contact-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 1.5rem;
+}
+@media (min-width: 768px) {
+    .contact-main {
+        padding: 3rem;
+    }
+}
+@media (min-width: 1024px) {
+    .contact-main {
+        padding: 5rem;
+    }
+}
+</style>
+<main class="contact-main relative z-10">
+    <div class="contact-grid" style="display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; max-width: 80rem; margin: 0 auto; align-items: start;">
+        <style>
+            @media (min-width: 1024px) {
+                .contact-grid {
+                    grid-template-columns: 1fr 2fr !important;
+                }
+                .contact-left {
+                    order: 1 !important;
+                }
+                .contact-right {
+                    order: 2 !important;
+                }
+            }
+        </style>
+        <!-- Left Column - Direct Links & Status -->
+        <div class="contact-left flex flex-col gap-6" style="order: 2;">
+            <!-- Direct Links Panel -->
+            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+                <div class="corner-accent-tl"></div>
+                <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-2">
+                    <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Direct Links</h2>
+                    <span class="material-symbols-outlined text-nexus-cyan text-lg">hub</span>
                 </div>
-
-                <!-- Contact Information -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">DIRECT CHANNELS</div>
-                    
-                    <div style="margin-top: 16px;">
-                        {{if .Personal.Email}}
-                        <div style="margin-bottom: 16px;">
-                            <div class="data-label">EMAIL</div>
-                            <div class="data-value">
-                                <a href="mailto:{{.Personal.Email}}" class="data-link">{{.Personal.Email}}</a>
-                            </div>
+                <div class="space-y-4">
+                    {{if .Personal.Email}}
+                    <a href="mailto:{{.Personal.Email}}" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Secure_Mail</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">alternate_email</span>
                         </div>
-                        {{end}}
-                        
-                        {{if .Personal.LinkedIn}}
-                        <div style="margin-bottom: 16px;">
-                            <div class="data-label">LINKEDIN</div>
-                            <div class="data-value">
-                                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="data-link">Professional Network</a>
-                            </div>
+                        <div class="font-mono text-sm text-white">{{.Personal.Email}}</div>
+                    </a>
+                    {{end}}
+                    {{if .Personal.GitHub}}
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Github_Node</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">terminal</span>
                         </div>
-                        {{end}}
-                        
-                        {{if .Personal.GitHub}}
-                        <div style="margin-bottom: 16px;">
-                            <div class="data-label">GITHUB</div>
-                            <div class="data-value">
-                                <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="data-link">Code Repository</a>
-                            </div>
+                        <div class="font-mono text-sm text-white">Code Repository</div>
+                    </a>
+                    {{end}}
+                    {{if .Personal.LinkedIn}}
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Signal_Alias</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">radar</span>
                         </div>
-                        {{end}}
-                        
-                        <div>
-                            <div class="data-label">LOCATION</div>
-                            <div class="data-value">{{.Personal.Location}}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Notice -->
-                <div class="security-notice">
-                    <div class="security-notice-header">SECURITY NOTICE</div>
-                    <p class="security-notice-text">
-                        All communications are monitored and encrypted. Response times may vary based on project complexity and current workload.
-                    </p>
+                        <div class="font-mono text-sm text-white">Professional Network</div>
+                    </a>
+                    {{end}}
                 </div>
             </div>
             
-            <!-- Right Column - Contact Form -->
-            <div>
-                <!-- Terminal Interface -->
-                <div class="nexus-terminal" style="margin-bottom: 32px;">
-                    <div class="terminal-line">
-                        <span class="terminal-prompt">root@xiaoos:~$</span> initialize_secure_channel
-                    </div>
-                    <div class="terminal-line">
-                        Establishing encrypted connection...
-                    </div>
-                    <div class="terminal-line">
-                        <span class="terminal-success">✓</span> SSL/TLS handshake complete
-                    </div>
-                    <div class="terminal-line">
-                        <span class="terminal-success">✓</span> Authentication verified
-                    </div>
-                    <div class="terminal-line">
-                        <span class="terminal-highlight">></span> Ready for secure transmission <span class="terminal-pulse">█</span>
-                    </div>
+            <!-- Comm Status Panel -->
+            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+                <div class="corner-accent-br"></div>
+                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+                    <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Comm Status</h2>
+                    <span class="material-symbols-outlined text-nexus-cyan text-lg">sensors</span>
                 </div>
-
-                <!-- Contact Form -->
-                <div class="nexus-panel">
-                    <!-- Full Width Form Container -->
-                    <div class="panel-header">SECURE MESSAGE FORM</div>
-                    <form id="contact-form" class="contact-form">
-                        <div class="form-group">
-                            <label class="data-label form-label">
-                                SENDER NAME
-                            </label>
-                            <input type="text" 
-                                   id="name" 
-                                   name="name" 
-                                   required
-                                   class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="data-label form-label">
-                                EMAIL ADDRESS
-                            </label>
-                            <input type="email" 
-                                   id="email" 
-                                   name="email" 
-                                   required
-                                   class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="data-label form-label">
-                                SUBJECT LINE
-                            </label>
-                            <input type="text" 
-                                   id="subject" 
-                                   name="subject" 
-                                   required
-                                   class="form-input">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="data-label form-label">
-                                MESSAGE CONTENT
-                            </label>
-                            <textarea id="message" 
-                                      name="message" 
-                                      rows="6" 
-                                      required
-                                      class="form-textarea"></textarea>
-                        </div>
-                        
-                        <div class="nexus-actions" style="margin-bottom: 20px;">
-                            <button type="submit" id="submit-btn" class="nexus-btn nexus-btn-primary">
-                                TRANSMIT MESSAGE
-                            </button>
-                            <button type="reset" class="nexus-btn nexus-btn-secondary">
-                                CLEAR FORM
-                            </button>
-                        </div>
-                        
-                        <div style="font-size: 12px; color: #666666; text-align: center;">
-                            Message will be encrypted and transmitted securely
-                        </div>
-                    </form>
-                </div>
-                
-                
-
-                <!-- Response Status -->
-                <div id="form-message" class="form-message" style="margin-top: 24px; display: none;">
-                    <!-- Messages will be dynamically inserted here by TypeScript handler -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500 uppercase tracking-tighter">Signal Strength</span>
+                        <span class="text-nexus-cyan">STABLE</span>
+                    </div>
+                    <div class="w-full bg-white/5 h-1">
+                        <div class="bg-nexus-cyan h-full w-[94%]" style="box-shadow: 0 0 8px rgba(0,210,255,0.5);"></div>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500 uppercase tracking-tighter">Packet Loss</span>
+                        <span class="text-white">0.00%</span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span class="text-gray-500 uppercase tracking-tighter">Encryption</span>
+                        <span class="text-white">AES-256-GCM</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Quick Actions -->
-        <div style="text-align: center; margin-top: 64px;">
-            <div class="nexus-header" style="margin-bottom: 24px;">QUICK ACTIONS</div>
-            <div class="nexus-actions" style="justify-content: center; max-width: 600px; margin: 0 auto;">
-                {{if .Personal.Email}}
-                <a href="mailto:{{.Personal.Email}}" class="nexus-btn nexus-btn-secondary">
-                    DIRECT EMAIL
-                </a>
-                {{end}}
-                {{if .Personal.LinkedIn}}
-                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="nexus-btn nexus-btn-secondary">
-                    LINKEDIN
-                </a>
-                {{end}}
-                <a href="/resume" class="nexus-btn nexus-btn-secondary">
-                    RESUME
-                </a>
-                <a href="/projects" class="nexus-btn nexus-btn-secondary">
-                    PROJECTS
-                </a>
+        
+        <!-- Right Column - Contact Form -->
+        <div class="contact-right" style="order: 1;">
+            <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <span class="material-symbols-outlined text-8xl text-white">cell_tower</span>
+                </div>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-2 h-8 bg-nexus-cyan"></div>
+                    <div>
+                        <h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none">
+                            Secure Communications
+                        </h1>
+                        <p class="text-[10px] font-mono text-nexus-cyan mt-1 tracking-widest">ESTABLISHING TUNNEL: NEXUS_CONTACT_V4.0</p>
+                    </div>
+                </div>
+                
+                <form id="contact-form" class="space-y-6 relative z-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmitter ID (Email)</label>
+                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="SENDER@UNKNOWN.LOCAL">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject Header</label>
+                            <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="OBJECTIVE_DESCRIPTION">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmission Data (Message)</label>
+                        <textarea id="message" name="message" rows="6" required class="nexus-input resize-none w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="ENTER ENCRYPTED PAYLOAD..."></textarea>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-4 border-t border-white/5">
+                        <div class="flex items-center gap-4 text-[10px] font-mono text-gray-500">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-nexus-cyan"></span> PROTOCOL_ACTIVE</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#ff5500]"></span> IP_LOGGING_DISABLED</span>
+                        </div>
+                        <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full md:w-auto flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">send</span>
+                            SEND TRANSMISSION
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Response Status -->
+            <div id="form-message" class="form-message mt-6" style="display: none;">
+                <!-- Messages will be dynamically inserted here by TypeScript handler -->
+            </div>
+            
+            <!-- Info Cards -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4 backdrop-blur-md">
+                    <div class="p-2 bg-nexus-cyan/10">
+                        <span class="material-symbols-outlined text-nexus-cyan">verified_user</span>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Security Protocol</div>
+                        <div class="text-sm font-mono text-white">End-to-End Encrypted</div>
+                    </div>
+                </div>
+                <div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4 backdrop-blur-md">
+                    <div class="p-2 bg-[#ff5500]/10">
+                        <span class="material-symbols-outlined text-[#ff5500]">history</span>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Avg Response</div>
+                        <div class="text-sm font-mono text-white">&lt; 24 Standard Cycles</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</section>
-
+    
+    <!-- Decorative Elements -->
+    <div class="absolute bottom-10 right-10 hidden lg:block opacity-50 pointer-events-none">
+        <div class="text-[10px] font-mono text-right text-nexus-cyan mb-1 uppercase">comms_uplink_active</div>
+        <div class="flex gap-1 justify-end">
+            <div class="w-1 h-3 bg-nexus-cyan animate-pulse"></div>
+            <div class="w-1 h-3 bg-white/20"></div>
+            <div class="w-1 h-3 bg-nexus-cyan"></div>
+            <div class="w-1 h-3 bg-white/20"></div>
+        </div>
+    </div>
+    <div class="absolute top-1/2 left-8 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20 pointer-events-none">
+        <span class="material-symbols-outlined text-white text-xs">add</span>
+        <span class="material-symbols-outlined text-nexus-cyan text-xs">close</span>
+        <span class="material-symbols-outlined text-white text-xs">add</span>
+    </div>
+</main>
 {{end}}
