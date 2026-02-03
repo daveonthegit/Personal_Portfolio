@@ -9,50 +9,55 @@
             </h1>
         </div>
 
-        <div class="hero-grid">
-            <!-- Left Column - Profile Data -->
-            <div>
-                <!-- Extended Profile Card -->
-                <div class="nexus-profile-card" style="margin-bottom: 32px;">
-                    <div class="nexus-header">DETAILED PROFILE</div>
-                    <div class="profile-content">
-                        <!-- Profile Image -->
-                        <div class="profile-image">
-                            <img src="/static/images/Profile_Picture.jpg" alt="{{.Personal.Name}}">
+        <div class="hero-grid hero-grid-newstyle grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">
+            <!-- Left Column - Profile Data (newstyle) -->
+            <div class="col-span-12 lg:col-span-4">
+                <div class="nexus-profile-card relative mb-8">
+                    <div class="corner-accent-tl"></div>
+                    <div class="corner-accent-br"></div>
+                    <div class="profile-card-inner">
+                        <div class="nexus-header flex items-center justify-between">
+                            <h2 class="font-nexus-display font-bold text-white tracking-widest uppercase m-0">DETAILED PROFILE</h2>
+                            <span class="material-symbols-outlined text-gray-500 text-sm" aria-hidden="true">fingerprint</span>
                         </div>
-                        
-                        <!-- Extended Profile Data -->
-                        <div class="data-grid">
-                            <div>
-                                <div class="data-label">FULL NAME</div>
-                                <div class="data-value">{{.Personal.Name}}</div>
+                        <div class="profile-image relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
+                            <img src="/static/images/Profile_Picture.jpg" alt="{{.Personal.Name}}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="threat-level bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between">
+                            <span>THREAT LEVEL</span>
+                            <span>MINIMAL</span>
+                        </div>
+                        <div class="profile-content space-y-3 px-2 pb-4">
+                        <div class="data-grid space-y-3 text-xs">
+                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                                <span class="data-label">FULL NAME</span>
+                                <span class="col-span-2 data-value text-right">{{.Personal.Name}}</span>
                             </div>
-                            <div>
-                                <div class="data-label">PROFESSION</div>
-                                <div class="data-value">{{.Personal.Title}}</div>
+                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                                <span class="data-label">PROFESSION</span>
+                                <span class="col-span-2 data-value text-right">{{.Personal.Title}}</span>
                             </div>
-                            <div>
-                                <div class="data-label">LOCATION</div>
-                                <div class="data-value">{{.Personal.Location}}</div>
+                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                                <span class="data-label">LOCATION</span>
+                                <span class="col-span-2 data-value text-right">{{.Personal.Location}}</span>
                             </div>
                             {{if .Personal.Email}}
-                            <div>
-                                <div class="data-label">CONTACT</div>
-                                <div class="data-value">{{.Personal.Email}}</div>
+                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                                <span class="data-label">CONTACT</span>
+                                <span class="col-span-2 data-value text-right"><a href="mailto:{{.Personal.Email}}" class="data-link">{{.Personal.Email}}</a></span>
                             </div>
                             {{end}}
-                            <div>
-                                <div class="data-label">CLEARANCE</div>
-                                <div class="data-value status-online">AUTHORIZED</div>
+                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
+                                <span class="data-label">CLEARANCE</span>
+                                <span class="col-span-2 data-value text-right status-online">AUTHORIZED</span>
                             </div>
-                            <div>
-                                <div class="data-label">STATUS</div>
-                                <div class="data-value status-online">ACTIVE</div>
+                            <div class="grid grid-cols-3 gap-2 pb-1">
+                                <span class="data-label">STATUS</span>
+                                <span class="col-span-2 data-value text-right status-online flex items-center justify-end gap-2"><span class="status-dot pulse"></span> ACTIVE</span>
                             </div>
                         </div>
-                        
                         <!-- Statistics -->
-                        <div class="stats-grid">
+                        <div class="stats-grid mt-4 pt-4 border-t border-white/5">
                             <div class="stat-item">
                                 <div class="stat-value stat-experience">{{len .Personal.Experience}}</div>
                                 <div class="stat-label">WORK EXPERIENCE</div>
@@ -62,12 +67,13 @@
                                 <div class="stat-label">PROJECTS</div>
                             </div>
                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Right Column - Detailed Information -->
-            <div>
+            <div class="col-span-12 lg:col-span-8 space-y-8">
                 <!-- Biography Panel -->
                 <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">BIOGRAPHICAL DATA</div>

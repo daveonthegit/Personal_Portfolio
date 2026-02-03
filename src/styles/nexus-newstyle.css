@@ -1,0 +1,524 @@
+/**
+ * Nexus Newstyle — Component styles from newstyles/*.html
+ * Applied after main.css component layer to rebuild site in dashboard/CTOS style.
+ */
+
+:root {
+  --nexus-cyan: #00d2ff;
+  --nexus-orange: #ff5500;
+  --surface: #0a0a0a;
+  --surface-translucent: rgba(10, 10, 10, 0.85);
+}
+
+/* Base */
+body {
+  background-color: #050505 !important;
+  color: #e5e7eb;
+}
+
+/* Grid background — newstyle */
+.nexus-grid-bg {
+  opacity: 1;
+  background-image:
+    radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px, 100px 100px, 100px 100px;
+}
+.nexus-grid-bg::before,
+.nexus-grid-bg::after {
+  display: none;
+}
+
+/* Scan line overlay */
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.02) 51%, transparent 51%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Corner accents — used on profile cards and panels */
+.corner-accent-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid var(--nexus-cyan);
+  border-left: 2px solid var(--nexus-cyan);
+  z-index: 10;
+}
+.corner-accent-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid var(--nexus-cyan);
+  border-right: 2px solid var(--nexus-cyan);
+  z-index: 10;
+}
+
+/* Nav — newstyle dark bar */
+.nexus-nav {
+  background: var(--surface-translucent) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+}
+.nexus-logo {
+  color: inherit;
+}
+.nexus-logo-ct {
+  background: #fff !important;
+  color: #000 !important;
+  padding: 0.125rem 0.5rem;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.nexus-logo-os {
+  color: #fff !important;
+  font-weight: 300;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.nexus-nav-link {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af !important;
+}
+.nexus-nav-link:hover {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-nav-link.active {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-nav-link.active::after {
+  display: none;
+}
+.nexus-nav-link.active .nav-link-dot,
+.nexus-nav-link.active .nav-link-dot {
+  display: inline-block;
+}
+
+/* Buttons — newstyle outline cyan / secondary */
+.nexus-btn-primary,
+.nexus-btn.nexus-btn-primary,
+a.nexus-btn-primary {
+  background-color: transparent !important;
+  border: 1px solid var(--nexus-cyan) !important;
+  color: var(--nexus-cyan) !important;
+  text-transform: uppercase;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  transition: all 0.2s ease;
+}
+.nexus-btn-primary:hover,
+.nexus-btn.nexus-btn-primary:hover,
+a.nexus-btn-primary:hover {
+  background-color: var(--nexus-cyan) !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+}
+.nexus-btn-secondary,
+.nexus-btn.nexus-btn-secondary,
+a.nexus-btn-secondary {
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-transform: uppercase;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-size: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s ease;
+}
+.nexus-btn-secondary:hover,
+.nexus-btn.nexus-btn-secondary:hover,
+a.nexus-btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Filter / tertiary buttons (projects) */
+.nexus-filter-btn,
+.nexus-btn-tertiary {
+  padding: 0.25rem 1rem;
+  font-size: 10px;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  background: transparent;
+  transition: all 0.2s;
+}
+.nexus-filter-btn:hover,
+.nexus-btn-tertiary:hover {
+  border-color: var(--nexus-cyan);
+  color: var(--nexus-cyan);
+}
+.nexus-filter-btn.active,
+.nexus-btn-tertiary.active {
+  border-color: var(--nexus-cyan);
+  color: var(--nexus-cyan);
+  background: rgba(0, 210, 255, 0.05);
+}
+
+/* Profile card — newstyle surface-translucent, corner accents */
+.nexus-profile-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative;
+}
+.nexus-profile-card .profile-card-inner {
+  background: var(--surface-translucent);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px;
+  backdrop-filter: blur(12px);
+}
+.nexus-profile-card .nexus-header {
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.nexus-profile-card .profile-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0 0 0.25rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  max-width: none;
+}
+.nexus-profile-card .profile-image img {
+  filter: grayscale(1) contrast(1.25) brightness(0.9);
+  transition: filter 0.5s;
+}
+.nexus-profile-card:hover .profile-image img {
+  filter: none;
+}
+.threat-level {
+  background: var(--nexus-orange) !important;
+  color: #000 !important;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.nexus-profile-card .data-grid {
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5rem;
+  padding: 0 0.5rem 1rem;
+  margin-bottom: 0;
+  font-size: 0.75rem;
+}
+.nexus-profile-card .data-label {
+  color: #6b7280;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  text-transform: uppercase;
+  margin-bottom: 0;
+  text-shadow: none;
+  filter: none;
+}
+.nexus-profile-card .data-value {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: 0;
+  text-align: right;
+  font-size: 0.75rem;
+}
+.nexus-profile-card .data-value.status-online {
+  color: var(--nexus-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--nexus-cyan);
+  flex-shrink: 0;
+}
+.status-dot.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Panel — newstyle border-t-2 nexus-cyan or border white/10 */
+.nexus-panel {
+  background: var(--surface-translucent) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 2px solid var(--nexus-cyan) !important;
+  padding: 2rem !important;
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+  position: relative;
+}
+.nexus-panel::before,
+.nexus-panel::after {
+  display: none;
+}
+.nexus-panel .panel-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin: -2rem -2rem 1.5rem -2rem;
+  padding: 0.5rem 0 0.5rem 0;
+  font-size: 0.75rem;
+}
+.panel-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+.panel-title-bar .title-accent {
+  width: 8px;
+  height: 2rem;
+  background: var(--nexus-cyan);
+  flex-shrink: 0;
+}
+.panel-title-bar h1 {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  text-shadow: none;
+}
+
+/* Bio text */
+.bio-text {
+  color: #9ca3af;
+  line-height: 1.6;
+  font-size: 0.875rem;
+}
+
+/* Form input — newstyle */
+.form-input,
+.form-textarea,
+.nexus-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  padding: 0.75rem 1rem;
+  font-family: Courier New, monospace;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+.form-input:focus,
+.form-textarea:focus,
+.nexus-input:focus {
+  outline: none;
+  border-color: var(--nexus-cyan) !important;
+  box-shadow: none;
+}
+
+/* Terminal */
+.nexus-terminal {
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  font-family: Courier New, monospace;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+.terminal-line { margin: 0.25rem 0; }
+.terminal-prompt { color: var(--nexus-cyan); }
+.terminal-success { color: #4ade80; }
+.terminal-highlight { color: var(--nexus-cyan); }
+
+/* Project card — newstyle */
+.project-card {
+  background: var(--surface-translucent) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s;
+}
+.project-card:hover {
+  border-color: rgba(0, 210, 255, 0.4) !important;
+}
+.project-card .nexus-header {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #6b7280;
+}
+.project-card .project-visual {
+  aspect-ratio: 16 / 10;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.project-card .project-title {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  transition: color 0.2s;
+}
+.project-card:hover .project-title {
+  color: var(--nexus-cyan);
+}
+
+/* Skill item / status row */
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.skill-item:last-child {
+  border-bottom: none;
+}
+.status-online { color: #4ade80; }
+.status-warning { color: var(--nexus-orange); }
+
+/* Footer — newstyle minimal */
+.nexus-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem 1.5rem;
+}
+.nexus-footer .footer-content > div:first-child {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  margin-bottom: 1rem;
+}
+.nexus-footer .text-cyan-400,
+.nexus-footer .text-blue-400 {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-footer .text-blue-200,
+.nexus-footer .text-slate-300 {
+  color: #9ca3af;
+}
+.footer-link:hover {
+  color: var(--nexus-cyan) !important;
+}
+
+/* Security notice (contact page) */
+.security-notice {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 2px solid var(--nexus-orange);
+  padding: 1rem;
+  background: rgba(255, 87, 0, 0.05);
+}
+.security-notice-header {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--nexus-orange);
+  margin-bottom: 0.5rem;
+}
+.security-notice-text {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Hero grid — 12 col layout like newstyles */
+.hero-grid.hero-grid-newstyle {
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 80rem;
+}
+@media (min-width: 1024px) {
+  .hero-grid.hero-grid-newstyle {
+    grid-template-columns: 1fr 2fr;
+  }
+  .hero-grid.hero-grid-newstyle .hero-aside {
+    min-width: 0;
+  }
+  .hero-grid.hero-grid-newstyle .hero-main {
+    min-width: 0;
+  }
+}
+
+/* Main content area */
+.nexus-main {
+  position: relative;
+  z-index: 10;
+  padding: 1.5rem 1.5rem 3rem;
+}
+@media (min-width: 768px) {
+  .nexus-main {
+    padding: 2rem 3rem 3rem;
+  }
+}
+@media (min-width: 1024px) {
+  .nexus-main {
+    padding: 2rem 5rem 3rem;
+  }
+}
+
+/* Section title with accent bar */
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.section-title-bar .title-accent {
+  width: 4px;
+  height: 1.5rem;
+  background: var(--nexus-cyan);
+}
+.section-title-bar h1 {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #fff;
+}
+
+/* Nav status strip (optional right side) */
+.nav-status {
+  font-size: 10px;
+  font-family: Courier New, monospace;
+  color: var(--nexus-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

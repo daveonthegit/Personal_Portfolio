@@ -1,93 +1,89 @@
 {{define "home-content"}}
-<!-- Hero Section -->
-<section class="hero-section relative">
-    <!-- xiaoOS Status Indicators -->
-    <div class="absolute top-4 right-4 z-10">
-        <div class="text-xs font-mono text-blue-400 space-y-1">
-            <div>SYSTEM_ID: 001</div>
-            <div>STATUS: <span class="text-green-400">OPERATIONAL</span></div>
-            <div>UPTIME: 99.9%</div>
-        </div>
+<!-- Hero Section (newstyle) -->
+<section class="hero-section relative flex items-center justify-center p-6 md:p-12 lg:p-20">
+    <div class="absolute top-4 right-4 z-10 text-xs font-mono text-nexus-cyan space-y-1">
+        <div>SYSTEM_ID: 001</div>
+        <div>STATUS: <span class="text-green-400">OPERATIONAL</span></div>
+        <div>UPTIME: 99.9%</div>
     </div>
     
-    <div class="hero-grid">
-        
-        <!-- Profile Card - Left Side -->
-        <div>
-            <div class="nexus-profile-card">
-                <div class="nexus-header">PROFILE</div>
-                <div class="profile-content">
-                    <!-- Profile Image -->
-                    <div class="profile-image">
-                        <img src="/static/images/Profile_Picture.jpg" 
-                             alt="{{.Personal.Name}}">
+    <div class="hero-grid hero-grid-newstyle grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto items-start">
+        <!-- Profile Card - Left (newstyle) -->
+        <div class="col-span-12 lg:col-span-4 nexus-profile-card relative group">
+            <div class="corner-accent-tl"></div>
+            <div class="corner-accent-br"></div>
+            <div class="profile-card-inner">
+                <div class="flex items-center justify-between nexus-header">
+                    <h2 class="font-nexus-display text-lg font-bold text-white tracking-widest uppercase m-0">PROFILE</h2>
+                    <span class="material-symbols-outlined text-gray-500 text-sm" aria-hidden="true">fingerprint</span>
+                </div>
+                <div class="profile-image relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
+                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover transition-all duration-500" src="/static/images/Profile_Picture.jpg">
+                </div>
+                <div class="bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between threat-level">
+                    <span>THREAT LEVEL</span>
+                    <span>MINIMAL</span>
+                </div>
+                <div class="space-y-3 px-2 pb-4">
+                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+                        <span class="data-label">Name</span>
+                        <span class="col-span-2 data-value text-right">{{.Personal.Name}}</span>
                     </div>
-                    
-                    <!-- Profile Data Grid -->
-                    <div class="data-grid">
-                        <div class="data-field">
-                            <div class="data-label">NAME</div>
-                            <div class="data-value">{{.Personal.Name}}</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">STATUS</div>
-                            <div class="data-value">AVAILABLE</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">LOCATION</div>
-                            <div class="data-value">{{.Personal.Location}}</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">ROLE</div>
-                            <div class="data-value">{{.Personal.Title}}</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">EXPERIENCE</div>
-                            <div class="data-value">8+ YEARS</div>
-                        </div>
-                        <div class="data-field">
-                            <div class="data-label">FOCUS</div>
-                            <div class="data-value">FULL-STACK</div>
-                        </div>
+                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+                        <span class="data-label">Role</span>
+                        <span class="col-span-2 data-value text-right">{{.Personal.Title}}</span>
                     </div>
-                    
-                    <!-- Availability -->
-                    <div class="threat-level">
-                        THREAT LEVEL: MINIMAL<br>
-                        PROBABILITY: 15%
+                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+                        <span class="data-label">Status</span>
+                        <span class="col-span-2 data-value text-right flex items-center justify-end gap-2">
+                            <span class="status-dot pulse"></span> ONLINE
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+                        <span class="data-label">Location</span>
+                        <span class="col-span-2 data-value text-right">{{.Personal.Location}}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-xs pb-1">
+                        <span class="data-label">Focus</span>
+                        <span class="col-span-2 data-value text-right">FULL-STACK</span>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Main Content - Right Side -->
-        <div class="main-content">
-            <!-- Welcome Message -->
-            <div>
-                <h1 class="nexus-title" data-text="SYSTEM ONLINE">
-                    SYSTEM <span class="highlight">ONLINE</span>
-                </h1>
-                <h2 class="nexus-subtitle">
-                    {{.Personal.Title}}
-                </h2>
-            </div>
-            
-            <!-- Bio Panel -->
-            <div class="nexus-panel">
-                <div class="panel-header">PROFILE DATA</div>
-                <p class="bio-text">
-                    {{.Personal.Bio}}
-                </p>
-            </div>
-            
-            <!-- Action Buttons -->
-            <div class="nexus-actions">
-                <a href="/projects" class="nexus-btn nexus-btn-primary">
-                    VIEW PROJECTS
-                </a>
-                <a href="/contact" class="nexus-btn nexus-btn-secondary">
-                    CONTACT ME
-                </a>
+        <!-- Main Content - Right (newstyle panel) -->
+        <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+            <div class="nexus-panel relative">
+                <div class="absolute top-0 right-0 p-4 opacity-20 pointer-events-none" aria-hidden="true">
+                    <span class="material-symbols-outlined text-6xl text-white">data_object</span>
+                </div>
+                <div class="panel-title-bar flex items-center gap-3 mb-8">
+                    <div class="title-accent w-2 h-8 bg-nexus-cyan"></div>
+                    <h1 class="text-3xl md:text-4xl font-nexus-display font-bold text-white tracking-tighter uppercase">Profile Data</h1>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <p class="bio-text font-nexus text-gray-400 text-sm leading-relaxed m-0">
+                        {{.Personal.Bio}}
+                    </p>
+                    <div class="font-mono text-xs text-gray-500 space-y-4 border-l border-white/10 pl-6">
+                        <div>
+                            <div class="text-nexus-cyan mb-1">CURRENT_PROJECT</div>
+                            <div class="text-white">xiaoOS_DASHBOARD</div>
+                        </div>
+                        <div>
+                            <div class="text-nexus-cyan mb-1">STATUS</div>
+                            <div class="text-nexus-cyan">OPERATIONAL</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-4 mt-8 pt-6 border-t border-white/5">
+                    <a href="/" class="nexus-btn-primary flex items-center gap-2 no-underline">
+                        <span class="material-symbols-outlined text-sm">terminal</span>
+                        Initialize Shell
+                    </a>
+                    <a href="/projects" class="nexus-btn-secondary no-underline">View Source</a>
+                    <a href="/contact" class="nexus-btn-secondary no-underline">Contact Subject</a>
+                </div>
             </div>
         </div>
     </div>
@@ -172,7 +168,7 @@
                         {{if $project.Image}}
                         <img src="{{$project.Image}}" alt="{{$project.Title}}" class="w-full h-full object-cover">
                         {{else}}
-                        <div class="project-icon text-cyan-400">📁</div>
+                        <div class="project-icon text-nexus-cyan">📁</div>
                         {{end}}
                     </div>
                     
@@ -268,8 +264,8 @@
                         <div class="status-online">AVAILABLE</div>
                     </div>
                     <div class="status-item">
-                        <div class="text-cyan-400 font-bold mb-1">RESPONSE TIME</div>
-                        <div class="text-cyan-400">24HR MAX</div>
+                        <div class="text-nexus-cyan font-bold mb-1">RESPONSE TIME</div>
+                        <div class="text-nexus-cyan">24HR MAX</div>
                     </div>
                     <div class="status-item">
                         <div class="status-warning" style="font-weight: bold; margin-bottom: 4px;">PRIORITY</div>

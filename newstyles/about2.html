@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>xiaoOS: Career Log &amp; Resume</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "cyan-ctos": "#00f0ff",
+                        "nexus-cyan": "#00d2ff",
+                        "nexus-orange": "#ff5500",
+                        "surface": "#0a0a0a",
+                        "surface-translucent": "rgba(10, 10, 10, 0.85)",
+                        "border-dim": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "nexus": ["Inter", "sans-serif"],
+                        "nexus-display": ["JetBrains Mono", "monospace"]
+                    },
+                    spacing: {
+                        '128': '32rem',
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            background-color: #050505;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        .nexus-grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image: 
+                radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px, 100px 100px, 100px 100px;
+            pointer-events: none;
+        }
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.02) 51%, transparent 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .corner-accent-tl {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 16px;
+            height: 16px;
+            border-top: 2px solid #00d2ff;
+            border-left: 2px solid #00d2ff;
+            z-index: 10;
+        }
+        .corner-accent-br {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 16px;
+            height: 16px;
+            border-bottom: 2px solid #00d2ff;
+            border-right: 2px solid #00d2ff;
+            z-index: 10;
+        }
+        .nexus-btn-primary {
+            background-color: transparent;
+            border: 1px solid #00d2ff;
+            color: #00d2ff;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nexus-btn-primary:hover {
+            background-color: #00d2ff;
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+        .nexus-btn-secondary {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nexus-btn-secondary:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .skill-tag {
+            @apply border border-white/10 px-3 py-1 text-[10px] font-nexus-display text-gray-400 uppercase tracking-widest hover:border-nexus-cyan hover:text-nexus-cyan transition-colors cursor-default;
+        }
+    </style>
+</head>
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-screen flex flex-col relative">
+<div class="nexus-grid-bg"></div>
+<div class="scan-line"></div>
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-surface-translucent backdrop-blur-sm nexus-nav">
+<div class="flex items-center gap-2">
+<div class="bg-white text-black px-2 py-0.5 font-nexus-display font-bold text-xl tracking-tighter nexus-logo-ct">
+                xiao
+            </div>
+<div class="text-white font-nexus-display font-light text-xl tracking-tighter nexus-logo-os">
+                OS
+            </div>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-[10px] font-nexus-display font-bold tracking-[0.2em] text-gray-400">
+<a class="hover:text-nexus-cyan transition-colors" href="#">DASHBOARD</a>
+<a class="hover:text-nexus-cyan transition-colors" href="#">MODULES</a>
+<a class="hover:text-nexus-cyan transition-colors" href="#">SYSTEM</a>
+<a class="hover:text-nexus-cyan transition-colors flex items-center gap-2 text-nexus-cyan" href="#">
+<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>
+<span>LOGS</span>
+</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="text-[10px] font-mono text-nexus-cyan animate-pulse">NET_ACTIVE</div>
+<span class="material-symbols-outlined text-gray-400 text-sm">wifi</span>
+<span class="material-symbols-outlined text-gray-400 text-sm">battery_charging_full</span>
+</div>
+</header>
+<main class="relative z-10 w-full flex-grow flex items-center justify-center p-6 md:p-12 lg:p-20 mt-16">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto items-start">
+<div class="col-span-12 lg:col-span-4 nexus-profile-card relative group">
+<div class="corner-accent-tl"></div>
+<div class="corner-accent-br"></div>
+<div class="bg-surface-translucent border border-white/10 p-1 backdrop-blur-md">
+<div class="flex items-center justify-between bg-black/50 px-3 py-2 border-b border-white/5 mb-1">
+<h2 class="font-nexus-display text-lg font-bold text-white tracking-widest uppercase">Profile</h2>
+<span class="material-symbols-outlined text-gray-500 text-sm">fingerprint</span>
+</div>
+<div class="relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
+<img alt="Subject Profile" class="w-full h-full object-cover filter grayscale contrast-125 brightness-90 group-hover:grayscale-0 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBadd0XI_TG_5MIVRfv2zkvNPZqC59-_xNIX909ToAGuQ7J2242Gbe-zoBVUNv_6uGIWZGXe0tMOYJ8lhFF8hphclOp4cgaZ___ahkH8wssME-y0hIa3RNtYySA7JyvhveBwLl2sAp9W0zNLnXC3VoFS-W_ofzHC2yX5wltrDUwdJINoKG5QmVQ9run6zRNHwPsc1B926zTsfr7A4pZSPCZdvEOwDdfnA_nKXpoeRwMlVmm41CZWFiU82fWcuoE7l9zpJ5snVgpA70r"/>
+<div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+<div class="bg-black/80 text-nexus-cyan text-[10px] font-mono px-1 border border-nexus-cyan/30">ID_9902</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
+</div>
+<div class="bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between">
+<span>THREAT LEVEL</span>
+<span>MINIMAL</span>
+</div>
+<div class="space-y-3 px-2 pb-4">
+<div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+<span class="text-gray-500 font-nexus-display uppercase">Name</span>
+<span class="col-span-2 text-white font-mono text-right">Xiao Long</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+<span class="text-gray-500 font-nexus-display uppercase">Role</span>
+<span class="col-span-2 text-white font-mono text-right">System Architect</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+<span class="text-gray-500 font-nexus-display uppercase">Status</span>
+<span class="col-span-2 text-nexus-cyan font-mono text-right flex items-center justify-end gap-2">
+<span class="w-1.5 h-1.5 bg-nexus-cyan rounded-full animate-pulse"></span> ONLINE
+                            </span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
+<span class="text-gray-500 font-nexus-display uppercase">Location</span>
+<span class="col-span-2 text-white font-mono text-right">San Francisco, CA</span>
+</div>
+<div class="grid grid-cols-3 gap-2 text-xs pb-1">
+<span class="text-gray-500 font-nexus-display uppercase">Affiliation</span>
+<span class="col-span-2 text-white font-mono text-right">DedSec / Blume</span>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-7xl text-white">history_edu</span>
+</div>
+<div class="flex items-center gap-3 mb-10">
+<div class="w-2 h-8 bg-nexus-cyan"></div>
+<h1 class="text-3xl md:text-4xl font-nexus-display font-bold text-white tracking-tighter uppercase">
+                            Career Log
+                        </h1>
+</div>
+<section class="mb-12">
+<div class="flex items-center gap-2 mb-6 text-nexus-cyan">
+<span class="material-symbols-outlined text-sm">terminal</span>
+<h2 class="font-nexus-display font-bold text-sm tracking-[0.3em] uppercase">Work Experience</h2>
+</div>
+<div class="space-y-8 border-l border-white/10 ml-2 pl-6">
+<div class="relative">
+<div class="absolute -left-[31px] top-1.5 w-2 h-2 bg-nexus-cyan"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="font-nexus-display font-bold text-lg text-white">Lead System Architect</h3>
+<span class="font-nexus-display text-[10px] text-nexus-cyan bg-nexus-cyan/5 px-2 py-0.5 border border-nexus-cyan/20">2021 — PRESENT</span>
+</div>
+<div class="text-xs font-nexus-display text-gray-500 mb-3 tracking-wider uppercase">Blume Corporation // Frontend Division</div>
+<ul class="font-nexus text-sm text-gray-400 space-y-2 list-none">
+<li class="flex gap-3">
+<span class="text-nexus-cyan text-[10px] mt-1">&gt;&gt;</span>
+<span>Architected the core UI/UX framework for city-wide surveillance dashboard, improving operator response time by 40%.</span>
+</li>
+<li class="flex gap-3">
+<span class="text-nexus-cyan text-[10px] mt-1">&gt;&gt;</span>
+<span>Engineered high-performance WebGL visualizations for real-time data streaming and network topology maps.</span>
+</li>
+<li class="flex gap-3">
+<span class="text-nexus-cyan text-[10px] mt-1">&gt;&gt;</span>
+<span>Mentored a team of 12 frontend operatives on modern reactive patterns and secure code deployment.</span>
+</li>
+</ul>
+</div>
+<div class="relative">
+<div class="absolute -left-[31px] top-1.5 w-2 h-2 bg-white/20"></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+<h3 class="font-nexus-display font-bold text-lg text-white">Senior Interface Specialist</h3>
+<span class="font-nexus-display text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 border border-white/10">2018 — 2021</span>
+</div>
+<div class="text-xs font-nexus-display text-gray-500 mb-3 tracking-wider uppercase">TIDIS Group // Digital Infrastructure</div>
+<ul class="font-nexus text-sm text-gray-400 space-y-2 list-none">
+<li class="flex gap-3">
+<span class="text-gray-600 text-[10px] mt-1">&gt;&gt;</span>
+<span>Developed modular UI components used across 15+ internal security modules.</span>
+</li>
+<li class="flex gap-3">
+<span class="text-gray-600 text-[10px] mt-1">&gt;&gt;</span>
+<span>Optimized data-heavy dashboards for low-latency browser environments.</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<section>
+<div class="flex items-center gap-2 mb-6 text-nexus-cyan">
+<span class="material-symbols-outlined text-sm">school</span>
+<h2 class="font-nexus-display font-bold text-sm tracking-[0.3em] uppercase">Education</h2>
+</div>
+<div class="space-y-6">
+<div class="border-b border-white/5 pb-4">
+<div class="font-nexus-display text-white text-sm font-bold uppercase mb-1">B.S. Computer Science</div>
+<div class="font-nexus-display text-[10px] text-gray-500 flex justify-between uppercase">
+<span>Stanford University</span>
+<span class="text-nexus-cyan">GRAD_2018</span>
+</div>
+</div>
+<div class="border-b border-white/5 pb-4">
+<div class="font-nexus-display text-white text-sm font-bold uppercase mb-1">Cyber Security Certification</div>
+<div class="font-nexus-display text-[10px] text-gray-500 flex justify-between uppercase">
+<span>Global Defense Academy</span>
+<span class="text-nexus-cyan">CERT_2019</span>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-2 mb-6 text-nexus-cyan">
+<span class="material-symbols-outlined text-sm">psychology</span>
+<h2 class="font-nexus-display font-bold text-sm tracking-[0.3em] uppercase">Core Skills</h2>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="skill-tag">TypeScript</span>
+<span class="skill-tag">React.js</span>
+<span class="skill-tag">TailwindCSS</span>
+<span class="skill-tag">WebGL</span>
+<span class="skill-tag">Node.js</span>
+<span class="skill-tag">Rust</span>
+<span class="skill-tag">Encryption</span>
+<span class="skill-tag">UI/UX</span>
+<span class="skill-tag">Pentesting</span>
+<span class="skill-tag">Docker</span>
+<span class="skill-tag">CI/CD</span>
+</div>
+</section>
+</div>
+<div class="flex flex-wrap gap-4 mt-12 pt-8 border-t border-white/5">
+<button class="nexus-btn-primary gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Download PDF_v4.2
+                        </button>
+<button class="nexus-btn-secondary">
+                            View Portfolio
+                        </button>
+<button class="nexus-btn-secondary">
+                            Contact Office
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-translucent border border-white/5 p-4 flex items-center justify-between">
+<div>
+<div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest mb-1">Experience Verified</div>
+<div class="text-2xl font-mono text-white">100<span class="text-nexus-cyan">%</span></div>
+</div>
+<span class="material-symbols-outlined text-nexus-cyan/50">verified_user</span>
+</div>
+<div class="bg-surface-translucent border border-white/5 p-4 flex items-center justify-between">
+<div>
+<div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest mb-1">Skill Proficiency</div>
+<div class="text-2xl font-mono text-white">EXPERT</div>
+</div>
+<div class="flex gap-1 items-end h-6">
+<div class="w-1.5 bg-nexus-cyan h-6"></div>
+<div class="w-1.5 bg-nexus-cyan h-6"></div>
+<div class="w-1.5 bg-nexus-cyan h-6"></div>
+<div class="w-1.5 bg-nexus-cyan h-6"></div>
+<div class="w-1.5 bg-white/20 h-6"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-10 hidden lg:block opacity-50">
+<div class="text-[10px] font-mono text-right text-nexus-cyan mb-1">CAREER_INDEX_SYNC</div>
+<div class="flex gap-1">
+<div class="w-2 h-2 bg-nexus-cyan"></div>
+<div class="w-2 h-2 bg-nexus-cyan"></div>
+<div class="w-2 h-2 bg-nexus-cyan animate-pulse"></div>
+<div class="w-2 h-2 bg-white/20"></div>
+</div>
+</div>
+<div class="absolute top-1/2 left-8 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-30">
+<span class="material-symbols-outlined text-white">add</span>
+<span class="material-symbols-outlined text-white">add</span>
+<span class="material-symbols-outlined text-white">add</span>
+</div>
+</main>
+
+</body></html>

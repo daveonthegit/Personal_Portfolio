@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>xiaoOS | Secure Communications Interface</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "cyan-ctos": "#00f0ff",
+                        "nexus-cyan": "#00d2ff",
+                        "nexus-orange": "#ff5500",
+                        "surface": "#0a0a0a",
+                        "surface-translucent": "rgba(10, 10, 10, 0.85)",
+                        "border-dim": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "nexus": ["Inter", "sans-serif"],
+                        "nexus-display": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-[#050505] text-[#e5e7eb] overflow-x-hidden;
+            }
+        }
+        .nexus-grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image: 
+                radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px, 100px 100px, 100px 100px;
+            pointer-events: none;
+        }
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.02) 51%, transparent 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .nexus-btn-primary {
+            background-color: transparent;
+            border: 1px solid var(--nexus-cyan);
+            color: var(--nexus-cyan);
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .nexus-btn-primary:hover {
+            background-color: var(--nexus-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+        .nexus-input {
+            @apply w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20;
+        }
+        .corner-accent-tl {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 16px;
+            height: 16px;
+            border-top: 2px solid #00d2ff;
+            border-left: 2px solid #00d2ff;
+            z-index: 10;
+        }
+        .corner-accent-br {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 16px;
+            height: 16px;
+            border-bottom: 2px solid #00d2ff;
+            border-right: 2px solid #00d2ff;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-screen flex flex-col relative">
+<div class="nexus-grid-bg"></div>
+<div class="scan-line"></div>
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-surface-translucent backdrop-blur-sm nexus-nav">
+<div class="flex items-center gap-2">
+<div class="bg-white text-black px-2 py-0.5 font-nexus-display font-bold text-xl tracking-tighter nexus-logo-ct">
+                xiao
+            </div>
+<div class="text-white font-nexus-display font-light text-xl tracking-tighter nexus-logo-os">
+                OS
+            </div>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-[10px] font-nexus-display font-bold tracking-[0.2em] text-gray-400">
+<a class="hover:text-nexus-cyan transition-colors" href="#">DASHBOARD</a>
+<a class="hover:text-nexus-cyan transition-colors" href="#">MODULES</a>
+<a class="hover:text-nexus-cyan transition-colors" href="#">SYSTEM</a>
+<a class="hover:text-nexus-cyan transition-colors flex items-center gap-2" href="#">
+<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>
+<span>COMMS</span>
+</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="text-[10px] font-mono text-nexus-cyan animate-pulse">ENCRYPTION_ON</div>
+<span class="material-symbols-outlined text-gray-400 text-sm">lock</span>
+<span class="material-symbols-outlined text-gray-400 text-sm">wifi</span>
+</div>
+</header>
+<main class="relative z-10 w-full flex-grow flex items-center justify-center p-6 md:p-12 lg:p-20 mt-16">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto items-start">
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6 order-2 lg:order-1">
+<div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+<div class="corner-accent-tl"></div>
+<div class="flex items-center justify-between mb-6 border-b border-white/5 pb-2">
+<h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Direct Links</h2>
+<span class="material-symbols-outlined text-nexus-cyan text-lg">hub</span>
+</div>
+<div class="space-y-4">
+<div class="group cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Secure_Mail</span>
+<span class="material-symbols-outlined text-xs text-nexus-cyan">alternate_email</span>
+</div>
+<div class="font-mono text-sm text-white">ops@xiao-os.io</div>
+</div>
+<div class="group cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Github_Node</span>
+<span class="material-symbols-outlined text-xs text-nexus-cyan">terminal</span>
+</div>
+<div class="font-mono text-sm text-white">github.com/xiao-dev</div>
+</div>
+<div class="group cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Signal_Alias</span>
+<span class="material-symbols-outlined text-xs text-nexus-cyan">radar</span>
+</div>
+<div class="font-mono text-sm text-white">@xiao_architect</div>
+</div>
+</div>
+</div>
+<div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+<div class="corner-accent-br"></div>
+<div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+<h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Comm Status</h2>
+<span class="material-symbols-outlined text-nexus-cyan text-lg">sensors</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-gray-500 uppercase tracking-tighter">Signal Strength</span>
+<span class="text-nexus-cyan">STABLE</span>
+</div>
+<div class="w-full bg-white/5 h-1">
+<div class="bg-nexus-cyan h-full w-[94%] shadow-[0_0_8px_rgba(0,210,255,0.5)]"></div>
+</div>
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-gray-500 uppercase tracking-tighter">Packet Loss</span>
+<span class="text-white">0.00%</span>
+</div>
+<div class="flex justify-between items-center text-[10px] font-mono">
+<span class="text-gray-500 uppercase tracking-tighter">Encryption</span>
+<span class="text-white">AES-256-GCM</span>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-8 order-1 lg:order-2">
+<div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl text-white">cell_tower</span>
+</div>
+<div class="flex items-center gap-3 mb-8">
+<div class="w-2 h-8 bg-nexus-cyan"></div>
+<div>
+<h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none">
+                                Secure Communications
+                            </h1>
+<p class="text-[10px] font-mono text-nexus-cyan mt-1 tracking-widest">ESTABLISHING TUNNEL: NEXUS_CONTACT_V4.0</p>
+</div>
+</div>
+<form action="#" class="space-y-6 relative z-10" onsubmit="return false;">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmitter ID (Email)</label>
+<input class="nexus-input" placeholder="SENDER@UNKNOWN.LOCAL" required="" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject Header</label>
+<input class="nexus-input" placeholder="OBJECTIVE_DESCRIPTION" required="" type="text"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmission Data (Message)</label>
+<textarea class="nexus-input resize-none" placeholder="ENTER ENCRYPTED PAYLOAD..." required="" rows="6"></textarea>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-4 border-t border-white/5">
+<div class="flex items-center gap-4 text-[10px] font-mono text-gray-500">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-nexus-cyan"></span> PROTOCOL_ACTIVE</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-nexus-orange"></span> IP_LOGGING_DISABLED</span>
+</div>
+<button class="nexus-btn-primary group w-full md:w-auto" type="submit">
+<span class="material-symbols-outlined text-sm">send</span>
+                                SEND TRANSMISSION
+                            </button>
+</div>
+</form>
+</div>
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4">
+<div class="p-2 bg-nexus-cyan/10">
+<span class="material-symbols-outlined text-nexus-cyan">verified_user</span>
+</div>
+<div>
+<div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Security Protocol</div>
+<div class="text-sm font-mono text-white">End-to-End Encrypted</div>
+</div>
+</div>
+<div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4">
+<div class="p-2 bg-nexus-orange/10">
+<span class="material-symbols-outlined text-nexus-orange">history</span>
+</div>
+<div>
+<div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Avg Response</div>
+<div class="text-sm font-mono text-white">&lt; 24 Standard Cycles</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-10 right-10 hidden lg:block opacity-50">
+<div class="text-[10px] font-mono text-right text-nexus-cyan mb-1 uppercase">comms_uplink_active</div>
+<div class="flex gap-1 justify-end">
+<div class="w-1 h-3 bg-nexus-cyan animate-pulse"></div>
+<div class="w-1 h-3 bg-white/20"></div>
+<div class="w-1 h-3 bg-nexus-cyan"></div>
+<div class="w-1 h-3 bg-white/20"></div>
+</div>
+</div>
+<div class="absolute top-1/2 left-8 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20">
+<span class="material-symbols-outlined text-white text-xs">add</span>
+<span class="material-symbols-outlined text-nexus-cyan text-xs">close</span>
+<span class="material-symbols-outlined text-white text-xs">add</span>
+</div>
+</main>
+
+</body></html>

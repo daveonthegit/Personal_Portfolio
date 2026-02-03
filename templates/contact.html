@@ -12,9 +12,9 @@
             </p>
         </div>
 
-        <div class="hero-grid">
+        <div class="hero-grid hero-grid-newstyle grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">
             <!-- Left Column - System Status -->
-            <div>
+            <div class="col-span-12 lg:col-span-4">
                 <!-- Communication Status -->
                 <div class="nexus-panel" style="margin-bottom: 32px;">
                     <div class="panel-header">SYSTEM STATUS</div>
@@ -88,7 +88,7 @@
             </div>
             
             <!-- Right Column - Contact Form -->
-            <div>
+            <div class="col-span-12 lg:col-span-8">
                 <!-- Terminal Interface -->
                 <div class="nexus-terminal" style="margin-bottom: 32px;">
                     <div class="terminal-line">
@@ -121,7 +121,7 @@
                                    id="name" 
                                    name="name" 
                                    required
-                                   class="form-input">
+                                   class="form-input nexus-input">
                         </div>
                         
                         <div class="form-group">
@@ -132,7 +132,7 @@
                                    id="email" 
                                    name="email" 
                                    required
-                                   class="form-input">
+                                   class="form-input nexus-input">
                         </div>
                         
                         <div class="form-group">
@@ -143,7 +143,7 @@
                                    id="subject" 
                                    name="subject" 
                                    required
-                                   class="form-input">
+                                   class="form-input nexus-input">
                         </div>
                         
                         <div class="form-group">
@@ -154,7 +154,7 @@
                                       name="message" 
                                       rows="6" 
                                       required
-                                      class="form-textarea"></textarea>
+                                      class="form-textarea nexus-input"></textarea>
                         </div>
                         
                         <div class="nexus-actions" style="margin-bottom: 20px;">

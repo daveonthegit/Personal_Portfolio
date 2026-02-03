@@ -30,31 +30,33 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
     
     <!-- Styles -->
     <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
 </head>
-<body>
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-screen flex flex-col relative">
     <!-- Background Grid -->
     <div class="nexus-grid-bg"></div>
+    <div class="scan-line" aria-hidden="true"></div>
     
     <!-- Navigation -->
-    <nav class="nexus-nav" id="main-nav">
-        <div class="nexus-nav-container">
-            <a href="/home" class="nexus-logo">
+    <header class="nexus-nav fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-surface-translucent backdrop-blur-sm" id="main-nav">
+        <div class="nexus-nav-container flex items-center gap-2">
+            <a href="/home" class="nexus-logo flex items-center gap-0 no-underline">
                 <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
             </a>
             
-            <ul class="nexus-nav-links">
-                <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}}">HOME</a></li>
-                <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}}">ABOUT</a></li>
-                <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}}">PROJECTS</a></li>
-                <li><a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active{{end}}">RESUME</a></li>
-                <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}}">CONTACT</a></li>
+            <ul class="nexus-nav-links hidden md:flex items-center gap-8 list-none m-0 p-0">
+                <li><a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active{{end}} no-underline flex items-center gap-2"><span class="w-1.5 h-1.5 bg-nexus-cyan block {{if ne .TemplateName "home"}}hidden{{end}} nav-link-dot"></span>HOME</a></li>
+                <li><a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active{{end}} no-underline flex items-center gap-2"><span class="w-1.5 h-1.5 bg-nexus-cyan block {{if ne .TemplateName "about"}}hidden{{end}} nav-link-dot"></span>ABOUT</a></li>
+                <li><a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active{{end}} no-underline flex items-center gap-2"><span class="w-1.5 h-1.5 bg-nexus-cyan block {{if ne .TemplateName "projects"}}hidden{{end}} nav-link-dot"></span>PROJECTS</a></li>
+                <li><a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active{{end}} no-underline flex items-center gap-2"><span class="w-1.5 h-1.5 bg-nexus-cyan block {{if ne .TemplateName "resume"}}hidden{{end}} nav-link-dot"></span>RESUME</a></li>
+                <li><a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active{{end}} no-underline flex items-center gap-2"><span class="w-1.5 h-1.5 bg-nexus-cyan block {{if ne .TemplateName "contact"}}hidden{{end}} nav-link-dot"></span>CONTACT</a></li>
             </ul>
             
-            <div class="nav-controls">
+            <div class="nav-controls flex items-center gap-4 ml-auto">
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
                     <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
@@ -69,8 +71,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </button>
+            <div class="nav-status hidden md:flex items-center gap-2">
+                <span class="text-[10px] font-mono text-nexus-cyan animate-pulse">NET_ACTIVE</span>
+                <span class="material-symbols-outlined text-gray-400 text-sm" aria-hidden="true">wifi</span>
+            </div>
         </div>
-    </nav>
+    </header>
 
     <!-- Mobile Menu -->
     <div class="nexus-mobile-menu hidden" id="mobile-menu">
