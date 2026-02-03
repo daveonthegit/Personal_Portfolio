@@ -1,4 +1,40 @@
 {{define "home-content"}}
+<style>
+    .home-hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        width: 100%;
+        max-width: 80rem;
+        margin: 0 auto;
+        align-items: start;
+    }
+    @media (min-width: 1024px) {
+        .home-hero-grid {
+            grid-template-columns: 1fr 2fr;
+        }
+    }
+    .profile-data-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    @media (min-width: 768px) {
+        .profile-data-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+    .stat-boxes-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    @media (min-width: 768px) {
+        .stat-boxes-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
 <!-- Hero Section (newstyle) -->
 <section class="hero-section relative flex items-center justify-center p-6 md:p-12 lg:p-20">
     <div class="absolute top-4 right-4 z-10 text-xs font-mono text-nexus-cyan space-y-1">
@@ -7,9 +43,9 @@
         <div>UPTIME: 99.9%</div>
     </div>
     
-    <div class="hero-grid hero-grid-newstyle grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto items-start">
+    <div class="home-hero-grid">
         <!-- Profile Card - Left (newstyle) -->
-        <div class="col-span-12 lg:col-span-4 nexus-profile-card relative group">
+        <div class="nexus-profile-card relative group">
             <div class="corner-accent-tl"></div>
             <div class="corner-accent-br"></div>
             <div class="profile-card-inner">
@@ -52,7 +88,7 @@
         </div>
         
         <!-- Main Content - Right (newstyle panel) -->
-        <div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+        <div class="flex flex-col gap-6">
             <div class="nexus-panel relative">
                 <div class="absolute top-0 right-0 p-4 opacity-20 pointer-events-none" aria-hidden="true">
                     <span class="material-symbols-outlined text-6xl text-white">data_object</span>
@@ -61,7 +97,7 @@
                     <div class="title-accent w-2 h-8 bg-nexus-cyan"></div>
                     <h1 class="text-3xl md:text-4xl font-nexus-display font-bold text-white tracking-tighter uppercase">Profile Data</h1>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="profile-data-grid" style="margin-bottom: 2rem;">
                     <p class="bio-text font-nexus text-gray-400 text-sm leading-relaxed m-0">
                         {{.Personal.Bio}}
                     </p>
@@ -87,7 +123,7 @@
             </div>
             
             <!-- Stat Boxes - Newstyle -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="stat-boxes-grid">
                 <div class="border border-white/10 p-6 flex items-center justify-between" style="background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px);">
                     <div>
                         <div class="text-xs font-nexus-display text-gray-500 uppercase tracking-widest mb-2">Projects Active</div>
