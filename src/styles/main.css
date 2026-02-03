@@ -2188,7 +2188,7 @@
 
 /* Mobile Menu */
 .nexus-mobile-toggle {
-  @apply md:hidden block text-black bg-transparent border-none cursor-pointer p-2;
+  @apply md:hidden block text-gray-400 hover:text-white bg-transparent border-none cursor-pointer p-2 transition-colors;
 }
 
 .nexus-mobile-menu {
