@@ -11,7 +11,7 @@
         </div>
 
         <!-- Two Column Layout -->
-        <div style="display: grid; grid-template-columns: 320px 1fr; gap: 2rem;" class="about-grid">
+        <div class="about-grid">
             <!-- Left Column - Profile, Interests, Contact -->
             <div class="about-left-col space-y-6">
                 <!-- Profile Card -->
@@ -127,7 +127,7 @@
                         <div class="w-1.5 sm:w-2 h-6 sm:h-8 bg-nexus-cyan"></div>
                         <h2 class="text-lg sm:text-xl md:text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Biographical Data</h2>
                     </div>
-                    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2rem;" class="bio-grid">
+                    <div class="bio-grid">
                         <div>
                             <p class="text-base sm:text-lg text-white font-light italic border-l-2 border-nexus-cyan/30 pl-3 sm:pl-4 mb-4 sm:mb-6 bio-quote">
                                 "In the overlap between digital architecture and human perception lies the nexus of modern existence."
@@ -243,7 +243,7 @@
                         <h2 class="text-lg sm:text-xl md:text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Skillset Matrix</h2>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 2rem;" class="skills-matrix-grid">
+                    <div class="skills-matrix-grid">
                         {{range $index, $skill := .Personal.Skills}}
                         <div class="space-y-3 sm:space-y-6">
                             <div class="text-[9px] sm:text-[10px] font-nexus-display text-nexus-cyan tracking-[0.15em] sm:tracking-[0.2em] mb-2 sm:mb-4 flex items-center gap-1.5 sm:gap-2">
@@ -276,58 +276,82 @@
 </section>
 
 <style>
-/* About page responsive grid */
+/* Base grid styles */
+.about-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+}
+
+.bio-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 2rem;
+}
+
+.skills-matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+/* Large screens */
 @media (max-width: 1279px) {
     .about-grid {
-        grid-template-columns: 280px 1fr !important;
+        grid-template-columns: 280px 1fr;
     }
 }
+
+/* Tablet - single column layout */
 @media (max-width: 1023px) {
     .about-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
     .about-left-col {
         max-width: 400px;
         margin: 0 auto;
     }
     .bio-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
     .skills-matrix-grid {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 2rem 2rem !important;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
     }
 }
 
 /* Mobile breakpoint */
 @media (max-width: 640px) {
     .about-grid {
-        gap: 1.5rem !important;
+        gap: 1.5rem;
     }
     .about-left-col {
         max-width: 100%;
     }
     .about-right-col {
-        gap: 1.5rem !important;
+        gap: 1.5rem;
     }
     .about-right-col > div {
-        padding: 1.25rem !important;
+        padding: 1.25rem;
     }
     .skills-matrix-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1.5rem !important;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .bio-grid {
+        gap: 1.5rem;
     }
     /* Page header adjustments */
     .about-page-header h1 {
-        font-size: 1.25rem !important;
+        font-size: 1.25rem;
     }
     /* Panel heading adjustments */
     .nexus-panel h2 {
-        font-size: 1.25rem !important;
+        font-size: 1.25rem;
     }
     /* Bio quote adjustment */
     .bio-quote {
-        font-size: 1rem !important;
+        font-size: 1rem;
     }
     /* Action buttons stack on mobile */
     .about-action-buttons {
@@ -340,22 +364,22 @@
     }
     /* Employment/Education scrollable areas */
     .custom-scrollbar {
-        max-height: 300px !important;
+        max-height: 300px;
     }
     /* Job cards */
     .job-card-header {
         flex-direction: column;
-        align-items: flex-start !important;
+        align-items: flex-start;
     }
 }
 
 /* Extra small screens */
 @media (max-width: 380px) {
     .nexus-profile-card .grid-cols-2 {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
     .about-stats-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
     }
 }
 
