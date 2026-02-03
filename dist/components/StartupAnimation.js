@@ -178,10 +178,10 @@ export class StartupAnimation {
         content.appendChild(promptLine);
         // Auto-fill the target after a delay (like typing)
         await this.wait(500);
-        await this.simulateTyping(content, 'portfolio.main');
+        await this.simulateTyping(content, 'DAVID_XIAO.portfolio');
         // Simulate pressing Enter
         await this.wait(300);
-        this.addTerminalLine(content, 'Accessing portfolio: portfolio.main...', 'system', 'main');
+        this.addTerminalLine(content, 'Accessing portfolio: DAVID_XIAO.portfolio...', 'system', 'main');
         await this.wait(500);
         this.addTerminalLine(content, 'Loading portfolio data...', 'success', 'main');
     }
@@ -538,7 +538,7 @@ export class StartupAnimation {
         if (mainContent) {
             const finalLine = document.createElement('div');
             finalLine.className = 'terminal-line redirect';
-            finalLine.innerHTML = `<span class="prompt">root@portfolio-main:~$</span> <span class="redirect-text">Portfolio loaded. Redirecting to main page...</span>`;
+            finalLine.innerHTML = `<span class="prompt">root@xiaoOS-main:~$</span> <span class="redirect-text">Authentication protocol complete. Accessing DAVID_XIAO.portfolio...</span>`;
             mainContent.appendChild(finalLine);
         }
         // Fade out animation

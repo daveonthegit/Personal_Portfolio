@@ -1,170 +1,148 @@
 {{define "projects-content"}}
+<style>
+/* Projects scrollbar styling */
+.projects-container::-webkit-scrollbar {
+    width: 6px;
+}
+.projects-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+.projects-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 210, 255, 0.4);
+    border-radius: 3px;
+}
+.projects-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 210, 255, 0.6);
+}
+.projects-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 210, 255, 0.4) rgba(255, 255, 255, 0.05);
+}
+</style>
 <section class="section relative">
-    <div class="container">
-        <!-- Page Header -->
-        <div class="section-header relative">
-            <!-- xiaoOS Status Bar -->
-            <div class="absolute top-0 right-0">
-                <div class="nexus-status-bar">
-                    DATABASE_ACCESS: AUTHORIZED | CLEARANCE_LEVEL: 3
+    <div class="container max-w-7xl mx-auto">
+        <!-- Page Header - Newstyle -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1 h-6 bg-nexus-cyan"></div>
+                <h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Operational Modules</h1>
+            </div>
+            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">SELECT PROJECT DIRECTORY TO INITIALIZE INTERFACE</p>
+        </div>
+
+        <!-- Filter Controls - Newstyle -->
+        <div class="flex flex-wrap gap-3 mb-8 pb-6 border-b border-white/5">
+            <button class="nexus-filter-btn filter-btn active" data-filter="all">ALL_PROJECTS</button>
+            <button class="nexus-filter-btn filter-btn" data-filter="web">WEB_DEV</button>
+            <button class="nexus-filter-btn filter-btn" data-filter="academic">ACADEMIC</button>
+            <button class="nexus-filter-btn filter-btn" data-filter="security">SECURITY</button>
+            <button class="nexus-filter-btn filter-btn" data-filter="research">RESEARCH</button>
+            <button class="nexus-filter-btn filter-btn" data-filter="tool">TOOLS</button>
+        </div>
+
+        <!-- Projects Grid - Newstyle with scroll container -->
+        <div class="projects-container" style="max-height: 1100px; overflow-y: auto; padding-right: 1rem;">
+            <div class="projects-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-4">
+            {{range $index, $project := .Projects}}
+            <div class="project-card nexus-panel relative bg-surface-translucent border border-white/10 group transition-all duration-300 hover:border-nexus-cyan/40" data-category="{{$project.ID}}" data-type="{{$project.Type}}" data-status="{{$project.Status}}" data-demo="{{$project.DemoType}}">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <!-- Project Header -->
+                <div class="p-1 border-b border-white/10 bg-black/40 flex justify-between items-center px-4 py-2">
+                    <span class="text-[9px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase">Module ID: {{$project.ID}}</span>
+                    <span class="material-symbols-outlined text-[12px] text-nexus-cyan">
+                        {{if eq $project.Type "web"}}web{{else if eq $project.Type "security"}}security{{else if eq $project.Type "research"}}science{{else if eq $project.Type "tool"}}build{{else}}terminal{{end}}
+                    </span>
                 </div>
-            </div>
-            
-            <div class="nexus-header" style="margin-bottom: 32px;">PROJECT DATABASE</div>
-            <h1 class="section-title" data-text="DEVELOPMENT ARCHIVE">
-                DEVELOPMENT <span class="highlight">ARCHIVE</span>
-            </h1>
-            <p class="section-description">
-                Classified development records and project documentation
-            </p>
-        </div>
-
-        <!-- Database Stats -->
-        <div class="status-grid" style="margin-bottom: 64px;">
-            <div class="status-item">
-                <div class="data-stat text-cyan-400">{{len .Projects}}</div>
-                <div class="data-stat-label">Total Projects</div>
-            </div>
-            
-            <div class="status-item">
-                <div class="data-stat text-orange-500">6</div>
-                <div class="data-stat-label">Technologies</div>
-            </div>
-            
-            <div class="status-item">
-                <div class="data-stat text-green-400">100%</div>
-                <div class="data-stat-label">Success Rate</div>
-            </div>
-            
-            <div class="status-item">
-                <div class="data-stat status-text">2025</div>
-                <div class="data-stat-label">Latest Build</div>
-            </div>
-        </div>
-
-        <!-- Filter Controls -->
-        <div class="nexus-panel" style="margin-bottom: 48px;">
-            <div class="panel-header">FILTER CONTROLS</div>
-            
-            <!-- Primary Filters (newstyle) -->
-            <div class="nexus-actions flex flex-wrap gap-3 mt-4 justify-center">
-                <button class="nexus-filter-btn filter-btn active" data-filter="all">ALL PROJECTS</button>
-                <button class="nexus-filter-btn filter-btn" data-filter="web">WEB DEVELOPMENT</button>
-                <button class="nexus-filter-btn filter-btn" data-filter="academic">ACADEMIC</button>
-                <button class="nexus-filter-btn filter-btn" data-filter="security">SECURITY</button>
-                <button class="nexus-filter-btn filter-btn" data-filter="research">RESEARCH</button>
-                <button class="nexus-filter-btn filter-btn" data-filter="tool">TOOLS</button>
-            </div>
-            
-            <!-- Status Filters -->
-            <div class="nexus-actions flex flex-wrap gap-3 mt-3 justify-center">
-                <button class="nexus-filter-btn nexus-btn-tertiary status-filter-btn active" data-status="all">ALL STATUS</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary status-filter-btn" data-status="active">ACTIVE</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary status-filter-btn" data-status="in-development">IN DEVELOPMENT</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary status-filter-btn" data-status="archived">ARCHIVED</button>
-            </div>
-            
-            <!-- Demo Type Filters -->
-            <div class="nexus-actions flex flex-wrap gap-3 mt-3 justify-center">
-                <button class="nexus-filter-btn nexus-btn-tertiary demo-filter-btn active" data-demo="all">ALL DEMOS</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary demo-filter-btn" data-demo="live">LIVE DEMOS</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary demo-filter-btn" data-demo="hosted">HOSTED DEMOS</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary demo-filter-btn" data-demo="video">VIDEO DEMOS</button>
-                <button class="nexus-filter-btn nexus-btn-tertiary demo-filter-btn" data-demo="screenshot">SCREENSHOTS</button>
-            </div>
-        </div>
-
-        <!-- Terminal Output -->
-        <div class="nexus-terminal" style="margin-bottom: 48px;">
-            <div class="terminal-line">
-                <span class="terminal-prompt">root@xiaoos:~$</span> query_project_database --status=active
-            </div>
-            <div class="terminal-line">
-                Scanning project archives<span class="terminal-pulse">...</span>
-            </div>
-            <div class="terminal-line">
-                <span class="terminal-success">✓</span> Found {{len .Projects}} active projects
-            </div>
-            <div class="terminal-line">
-                <span class="terminal-success">✓</span> Security clearance verified
-            </div>
-            <div class="terminal-line">
-                <span class="terminal-highlight">></span> Displaying results <span class="terminal-pulse">█</span>
-            </div>
-        </div>
-
-        <!-- Projects Grid -->
-        <div class="projects-container">
-            <div class="projects-grid">
-                {{range .Projects}}
-                <div class="project-card" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
-                <div class="nexus-header">PROJECT {{.ID}}</div>
-                <div class="project-content">
+                
+                <div class="p-6">
                     <!-- Project Visual -->
-                    <div class="project-visual">
-                        {{if .Image}}
-                        <img src="{{.Image}}" alt="{{.Title}}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='/static/images/wip-default.svg'; this.onerror=null;">
+                    <div class="aspect-video bg-black/60 border border-white/5 relative overflow-hidden mb-6 flex items-center justify-center">
+                        {{if $project.Image}}
+                        <img src="{{$project.Image}}" alt="{{$project.Title}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='/static/images/wip-default.svg'; this.onerror=null;">
                         {{else}}
-                        <img src="/static/images/wip-default.svg" alt="Work In Progress" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="material-symbols-outlined text-6xl text-white/5 group-hover:scale-110 transition-transform duration-700">terminal</span>
                         {{end}}
-                    </div>
-                    
-                    <!-- Project Info -->
-                    <div class="project-title" data-text="{{.Title}}">{{.Title}}</div>
-                    <div class="project-description">{{.Description}}</div>
-                    
-                    <!-- Tech Stack -->
-                    <div class="tech-stack">
-                        <div class="tech-label">TECHNOLOGIES</div>
-                        <div class="tech-tags">
-                            {{range .Technologies}}
-                            <span class="tech-tag">{{.}}</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                        <div class="absolute bottom-3 left-3 flex gap-1">
+                            {{if eq $project.Status "active"}}
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            {{else if eq $project.Status "in-development"}}
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            <span class="w-2 h-2 bg-white/20"></span>
+                            {{else}}
+                            <span class="w-2 h-2 bg-nexus-cyan"></span>
+                            <span class="w-2 h-2 bg-white/20"></span>
+                            <span class="w-2 h-2 bg-white/20"></span>
                             {{end}}
                         </div>
                     </div>
                     
+                    <!-- Project Info -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-xl font-nexus-display font-bold text-white tracking-tight uppercase group-hover:text-nexus-cyan transition-colors">{{$project.Title}}</h3>
+                            <p class="text-[10px] text-gray-500 font-mono mt-1 uppercase">{{$project.Type}} MODULE</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Description -->
+                    <p class="text-xs text-gray-400 leading-relaxed font-nexus mb-6">{{$project.Description}}</p>
+                    
+                    <!-- Technologies -->
+                    <div class="flex flex-wrap gap-1.5 mb-6 max-h-16 overflow-hidden">
+                        {{range $project.Technologies}}
+                        <span class="text-[8px] font-mono text-nexus-cyan/70 bg-nexus-cyan/5 border border-nexus-cyan/20 px-1.5 py-0.5 whitespace-nowrap">{{.}}</span>
+                        {{end}}
+                    </div>
+                    
                     <!-- Project Links -->
-                    <div class="project-links">
-                        {{if .GitHubURL}}
-                        <a href="{{.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="project-link">
-                            SOURCE CODE
+                    <div class="flex gap-2">
+                        {{if $project.GitHubURL}}
+                        <a href="{{$project.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
+                            SOURCE
                         </a>
                         {{end}}
-                        {{if eq .DemoType "live"}}
-                        <a href="{{.LiveURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo live-demo">
+                        {{if eq $project.DemoType "live"}}
+                        <a href="{{$project.LiveURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
                             LIVE DEMO
                         </a>
-                        {{else if eq .DemoType "hosted"}}
-                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo hosted-demo">
+                        {{else if eq $project.DemoType "hosted"}}
+                        <a href="{{$project.DemoURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
                             PLAY DEMO
                         </a>
-                        {{else if eq .DemoType "video"}}
-                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo video-demo" data-demo-type="video">
-                            WATCH DEMO
+                        {{else if eq $project.DemoType "video"}}
+                        <a href="{{$project.DemoURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
+                            WATCH
                         </a>
-                        {{else if eq .DemoType "screenshot"}}
-                        <a href="{{.DemoURL}}" target="_blank" rel="noopener noreferrer" class="project-link demo screenshot-demo" data-demo-type="screenshot">
-                            VIEW DEMO
+                        {{else if eq $project.DemoType "screenshot"}}
+                        <a href="{{$project.DemoURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
+                            VIEW
                         </a>
                         {{end}}
                     </div>
                     
                     <!-- Project Status -->
-                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333333; display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: 12px;">
-                            <span class="status-text">STATUS:</span>
-                            {{if eq .Status "active"}}
-                            <span class="status-online">ACTIVE</span>
-                            {{else if eq .Status "in-development"}}
-                            <span class="status-warning">IN DEVELOPMENT</span>
-                            {{else if eq .Status "archived"}}
-                            <span class="status-offline">ARCHIVED</span>
+                    <div class="mt-4 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-mono">
+                        <div>
+                            <span class="text-gray-500">STATUS:</span>
+                            {{if eq $project.Status "active"}}
+                            <span class="text-[#4ade80]">ACTIVE</span>
+                            {{else if eq $project.Status "in-development"}}
+                            <span class="text-[#ff5500]">IN DEV</span>
+                            {{else if eq $project.Status "archived"}}
+                            <span class="text-gray-500">ARCHIVED</span>
                             {{else}}
-                            <span class="status-online">DEPLOYED</span>
+                            <span class="text-[#4ade80]">DEPLOYED</span>
                             {{end}}
                         </div>
-                        <div style="font-size: 12px; color: #cccccc;">
-                            {{.Date.Format "2006-01-02"}}
+                        <div class="text-gray-600">
+                            {{$project.Date.Format "2006.01.02"}}
                         </div>
                     </div>
                 </div>
@@ -173,107 +151,57 @@
             </div>
         </div>
 
+        <!-- Load More Button -->
+        <div class="mt-20 flex justify-center">
+            <button class="nexus-btn-primary px-12 flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">terminal</span>
+                Load System Archives
+            </button>
+        </div>
+        
         <!-- Database Footer -->
-        <div style="text-align: center; margin-top: 64px; padding: 32px; border-top: 1px solid #333333;">
-            <div style="color: #cccccc; font-size: 14px; margin-bottom: 8px;">
-                PROJECT DATABASE ACCESS LOG
+        <div class="mt-16 pt-6 border-t border-white/5 flex justify-between items-end">
+            <div class="text-[10px] font-mono text-gray-600">
+                SYSTEM_STATUS: STABLE<br/>
+                ENCRYPTION: AES-256-GCM
             </div>
-            <div style="color: #666666; font-size: 12px;">
-                Last Updated: {{.Year}}-09-12 | Access Level: <span class="status-online">AUTHORIZED</span>
+            <div class="flex flex-col items-end gap-2">
+                <div class="text-[10px] font-mono text-nexus-cyan">ACTIVE_MODULES: {{len .Projects}}</div>
+                <div class="flex gap-1">
+                    <div class="w-2 h-2 bg-nexus-cyan"></div>
+                    <div class="w-2 h-2 bg-nexus-cyan"></div>
+                    <div class="w-2 h-2 bg-white/20"></div>
+                    <div class="w-2 h-2 bg-white/20"></div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <script>
-// Enhanced Project Filter Functionality
+// Project Filter Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const statusButtons = document.querySelectorAll('.status-filter-btn');
-    const demoButtons = document.querySelectorAll('.demo-filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
     
-    let currentFilters = {
-        type: 'all',
-        status: 'all',
-        demo: 'all'
-    };
-    
-    function updateActiveButtons(category, value) {
-        const buttons = document.querySelectorAll(`.${category}-filter-btn`);
-        buttons.forEach(btn => btn.classList.remove('active'));
-        const activeBtn = document.querySelector(`[data-${category}="${value}"]`);
-        if (activeBtn) activeBtn.classList.add('active');
-    }
-    
-    function filterProjects() {
-        projectCards.forEach(card => {
-            const cardType = card.getAttribute('data-type');
-            const cardStatus = card.getAttribute('data-status');
-            const cardDemo = card.getAttribute('data-demo');
-            
-            let showCard = true;
-            
-            // Type filter
-            if (currentFilters.type !== 'all' && cardType !== currentFilters.type) {
-                showCard = false;
-            }
-            
-            // Status filter
-            if (currentFilters.status !== 'all' && cardStatus !== currentFilters.status) {
-                showCard = false;
-            }
-            
-            // Demo filter
-            if (currentFilters.demo !== 'all' && cardDemo !== currentFilters.demo) {
-                showCard = false;
-            }
-            
-            card.style.display = showCard ? 'block' : 'none';
-        });
-        
-        // Update project count display
-        const visibleProjects = document.querySelectorAll('.project-card[style*="block"], .project-card:not([style*="none"])');
-        const projectCount = Array.from(visibleProjects).filter(card => 
-            card.style.display !== 'none'
-        ).length;
-        
-        // Update the terminal output to show filtered count
-        const terminalLine = document.querySelector('.terminal-line:last-child');
-        if (terminalLine) {
-            terminalLine.innerHTML = `<span class="terminal-success">✓</span> Found ${projectCount} projects matching filters`;
-        }
-    }
-    
-    // Type filter buttons
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            currentFilters.type = this.getAttribute('data-filter');
-            updateActiveButtons('type', currentFilters.type);
-            filterProjects();
+            // Update active state
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.getAttribute('data-filter');
+            
+            projectCards.forEach(card => {
+                const cardType = card.getAttribute('data-type');
+                if (filter === 'all' || cardType === filter) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     });
-    
-    // Status filter buttons
-    statusButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            currentFilters.status = this.getAttribute('data-status');
-            updateActiveButtons('status', currentFilters.status);
-            filterProjects();
-        });
-    });
-    
-    // Demo filter buttons
-    demoButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            currentFilters.demo = this.getAttribute('data-demo');
-            updateActiveButtons('demo', currentFilters.demo);
-            filterProjects();
-        });
-    });
-    
-    // Initialize with all projects visible
-    filterProjects();
 });
 </script>
 {{end}}

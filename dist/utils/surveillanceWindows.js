@@ -23,11 +23,12 @@ class SurveillanceSystem {
         const overlay = document.createElement('div');
         overlay.className = 'fixed inset-0 pointer-events-none z-0 overflow-hidden';
         overlay.innerHTML = `
-      <!-- Surveillance Grid Background -->
-      <div class="absolute inset-0 opacity-5" style="background-image: 
-        linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px), 
-        linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
-        background-size: 20px 20px;"></div>
+      <!-- Surveillance Grid Background - Newstyle cyan -->
+      <div class="absolute inset-0 opacity-10" style="background-image: 
+        radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px), 
+        linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px, 100px 100px, 100px 100px;"></div>
       
       <!-- Blur Layer Over Surveillance Windows -->
       <div class="absolute inset-0 backdrop-blur-sm" style="z-index: 2; background: rgba(0,0,0,0.1);"></div>
@@ -35,11 +36,13 @@ class SurveillanceSystem {
       <!-- Surveillance Windows Container -->
       <div class="surveillance-windows-container" style="z-index: 1;"></div>
       
-      <!-- System Status Overlay -->
-      <div class="absolute top-4 left-4 text-white text-xs font-mono">
-        <div>xiaoOS v2.1 - SURVEILLANCE ACTIVE</div>
-        <div>CAMERAS: <span id="camera-count">0</span> | DATA: <span id="data-count">0</span></div>
-        <div>SECURITY: <span id="security-count">0</span> | SYSTEM: <span id="system-count">0</span></div>
+      <!-- System Status Overlay - Newstyle -->
+      <div class="absolute top-20 left-4 text-xs font-mono bg-black/60 border border-white/10 p-3 backdrop-blur-md" style="border-left: 2px solid #00d2ff;">
+        <div class="text-[#00d2ff] font-bold tracking-widest mb-2" style="font-family: 'JetBrains Mono', monospace;">xiaoOS SURVEILLANCE</div>
+        <div class="text-gray-400 space-y-1">
+          <div>CAMERAS: <span id="camera-count" class="text-[#00d2ff]">0</span> | DATA: <span id="data-count" class="text-[#00d2ff]">0</span></div>
+          <div>SECURITY: <span id="security-count" class="text-[#00d2ff]">0</span> | SYSTEM: <span id="system-count" class="text-[#00d2ff]">0</span></div>
+        </div>
       </div>
     `;
         this.container.appendChild(overlay);
@@ -122,7 +125,7 @@ class SurveillanceSystem {
             return;
         }
         const { x, y } = position;
-        window.className = `absolute bg-black border border-white shadow-lg surveillance-window`;
+        window.className = `absolute bg-black/90 border border-white/10 shadow-lg surveillance-window backdrop-blur-md`;
         window.setAttribute('data-type', randomType);
         window.style.left = `${x}%`;
         window.style.top = `${y}%`;
@@ -130,18 +133,20 @@ class SurveillanceSystem {
         window.style.height = `${height}px`;
         window.style.zIndex = '1';
         window.style.opacity = '0';
-        window.style.borderRadius = '4px';
-        // Enhanced styling for video cameras with white accents
+        window.style.borderRadius = '0';
+        // Enhanced styling for video cameras with cyan accents (newstyle)
         if (randomType === 'camera') {
             window.classList.add('surveillance-camera');
-            window.style.boxShadow = '0 0 40px rgba(255,255,255,0.6), inset 0 0 30px rgba(255,255,255,0.2)';
-            window.style.borderWidth = '2px';
-            window.style.borderColor = '#ffffff';
-            window.style.zIndex = '1'; // Higher z-index for video cameras
+            window.style.boxShadow = '0 0 30px rgba(0, 210, 255, 0.4), inset 0 0 20px rgba(0, 210, 255, 0.1)';
+            window.style.borderWidth = '1px';
+            window.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            window.style.borderTop = '2px solid #00d2ff';
+            window.style.zIndex = '1';
         }
         else {
             window.classList.add('surveillance-data');
-            window.style.boxShadow = '0 0 20px rgba(255,255,255,0.3)';
+            window.style.boxShadow = '0 0 15px rgba(0, 210, 255, 0.2)';
+            window.style.borderTop = '1px solid rgba(0, 210, 255, 0.3)';
         }
         // Random pop-in effect
         const effects = [
@@ -164,24 +169,24 @@ class SurveillanceSystem {
             windowsContainer.appendChild(window);
             // Trigger pop-in animation after a brief delay
             setTimeout(() => {
-                window.style.opacity = '0.8';
+                window.style.opacity = '0.85';
                 window.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-                // Enhanced glow effect for video cameras
+                // Enhanced glow effect for video cameras (newstyle cyan)
                 if (randomType === 'camera') {
-                    window.style.boxShadow = '0 0 50px rgba(255,255,255,0.8), 0 0 100px rgba(255,255,255,0.4), inset 0 0 30px rgba(255,255,255,0.2)';
+                    window.style.boxShadow = '0 0 40px rgba(0, 210, 255, 0.6), 0 0 80px rgba(0, 210, 255, 0.3), inset 0 0 20px rgba(0, 210, 255, 0.1)';
                     // Add pulsing effect for video cameras
                     window.style.animation = 'videoCameraPulse 2s ease-in-out infinite';
                 }
                 else {
-                    window.style.boxShadow = '0 0 30px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.3)';
+                    window.style.boxShadow = '0 0 25px rgba(0, 210, 255, 0.4), 0 0 50px rgba(0, 210, 255, 0.2)';
                 }
                 // Reset glow after animation
                 setTimeout(() => {
                     if (randomType === 'camera') {
-                        window.style.boxShadow = '0 0 40px rgba(255,255,255,0.6), inset 0 0 30px rgba(255,255,255,0.2)';
+                        window.style.boxShadow = '0 0 30px rgba(0, 210, 255, 0.4), inset 0 0 20px rgba(0, 210, 255, 0.1)';
                     }
                     else {
-                        window.style.boxShadow = '0 0 20px rgba(255,255,255,0.3)';
+                        window.style.boxShadow = '0 0 15px rgba(0, 210, 255, 0.2)';
                     }
                 }, 600);
             }, 50);
@@ -269,12 +274,16 @@ class SurveillanceSystem {
                     const cameraLocation = randomCamera.name || randomCamera.id;
                     const streamUrl = randomCamera.streamUrl;
                     return `
-            <div class="p-2 h-full flex flex-col">
-              <div class="text-white text-xs font-mono flex justify-between items-center mb-2 bg-black/50 px-2 py-1 rounded-t">
-                <span>CAM-${id.slice(-4).toUpperCase()}</span>
-                <span>${timestamp}</span>
+            <div class="p-1 h-full flex flex-col" style="font-family: 'JetBrains Mono', monospace;">
+              <!-- Corner accents -->
+              <div style="position: absolute; top: -1px; left: -1px; width: 12px; height: 12px; border-top: 2px solid #00d2ff; border-left: 2px solid #00d2ff; z-index: 10;"></div>
+              <div style="position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px; border-bottom: 2px solid #00d2ff; border-right: 2px solid #00d2ff; z-index: 10;"></div>
+              
+              <div class="flex justify-between items-center mb-1 bg-black/60 px-2 py-1 border-b border-white/10">
+                <span class="text-[#00d2ff] text-[10px] font-bold tracking-widest">CAM-${id.slice(-4).toUpperCase()}</span>
+                <span class="text-gray-500 text-[10px]">${timestamp}</span>
               </div>
-              <div class="flex-1 bg-gray-900 border border-white relative overflow-hidden">
+              <div class="flex-1 bg-black border border-white/10 relative overflow-hidden">
                 <iframe src="${streamUrl}" 
                         class="w-full h-full"
                         frameborder="0" 
@@ -282,13 +291,13 @@ class SurveillanceSystem {
                         allowfullscreen
                         style="pointer-events: none;">
                 </iframe>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
-                <div class="absolute top-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">LIVE STREAM</div>
-                <div class="absolute bottom-2 right-2 text-red-400 text-xs bg-black/50 px-1 animate-pulse pointer-events-none">● REC</div>
-                <div class="absolute top-2 right-2 text-white text-xs bg-black/50 px-1 pointer-events-none">HD</div>
-                <div class="absolute bottom-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">${cameraLocation}</div>
+                <div class="absolute inset-0 bg-gradient-to-br from-[#00d2ff]/5 to-transparent pointer-events-none"></div>
+                <div class="absolute top-2 left-2 text-[#00d2ff] text-[10px] bg-black/70 px-1 border border-[#00d2ff]/30 pointer-events-none">LIVE</div>
+                <div class="absolute bottom-2 right-2 text-[#ff5500] text-[10px] bg-black/70 px-1 animate-pulse pointer-events-none">● REC</div>
+                <div class="absolute top-2 right-2 text-white/60 text-[10px] bg-black/70 px-1 pointer-events-none">HD</div>
+                <div class="absolute bottom-2 left-2 text-white/80 text-[10px] bg-black/70 px-1 pointer-events-none">${cameraLocation}</div>
               </div>
-              <div class="text-white text-xs mt-1">STATUS: ACTIVE | SOURCE: Custom</div>
+              <div class="text-gray-500 text-[10px] mt-1 px-1">STATUS: <span class="text-[#00d2ff]">ACTIVE</span> | SOURCE: CUSTOM</div>
             </div>
           `;
                 }
@@ -312,12 +321,16 @@ class SurveillanceSystem {
                     // Mark this video as used
                     this.usedVideoIds.add(fallbackStream.id);
                     return `
-            <div class="p-2 h-full flex flex-col">
-              <div class="text-white text-xs font-mono flex justify-between items-center mb-2 bg-black/50 px-2 py-1 rounded-t">
-                <span>CAM-${id.slice(-4).toUpperCase()}</span>
-                <span>${timestamp}</span>
+            <div class="p-1 h-full flex flex-col" style="font-family: 'JetBrains Mono', monospace;">
+              <!-- Corner accents -->
+              <div style="position: absolute; top: -1px; left: -1px; width: 12px; height: 12px; border-top: 2px solid #00d2ff; border-left: 2px solid #00d2ff; z-index: 10;"></div>
+              <div style="position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px; border-bottom: 2px solid #00d2ff; border-right: 2px solid #00d2ff; z-index: 10;"></div>
+              
+              <div class="flex justify-between items-center mb-1 bg-black/60 px-2 py-1 border-b border-white/10">
+                <span class="text-[#00d2ff] text-[10px] font-bold tracking-widest">CAM-${id.slice(-4).toUpperCase()}</span>
+                <span class="text-gray-500 text-[10px]">${timestamp}</span>
               </div>
-              <div class="flex-1 bg-gray-900 border border-white relative overflow-hidden">
+              <div class="flex-1 bg-black border border-white/10 relative overflow-hidden">
                 <iframe src="${fallbackStream.url}" 
                         class="w-full h-full"
                         frameborder="0" 
@@ -325,13 +338,13 @@ class SurveillanceSystem {
                         allowfullscreen
                         style="pointer-events: none;">
                 </iframe>
-                <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
-                <div class="absolute top-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">LIVE FEED</div>
-                <div class="absolute bottom-2 right-2 text-red-400 text-xs bg-black/50 px-1 animate-pulse pointer-events-none">● REC</div>
-                <div class="absolute top-2 right-2 text-white text-xs bg-black/50 px-1 pointer-events-none">HD</div>
-                <div class="absolute bottom-2 left-2 text-white text-xs bg-black/50 px-1 pointer-events-none">${fallbackStream.name}</div>
+                <div class="absolute inset-0 bg-gradient-to-br from-[#00d2ff]/5 to-transparent pointer-events-none"></div>
+                <div class="absolute top-2 left-2 text-[#00d2ff] text-[10px] bg-black/70 px-1 border border-[#00d2ff]/30 pointer-events-none">LIVE</div>
+                <div class="absolute bottom-2 right-2 text-[#ff5500] text-[10px] bg-black/70 px-1 animate-pulse pointer-events-none">● REC</div>
+                <div class="absolute top-2 right-2 text-white/60 text-[10px] bg-black/70 px-1 pointer-events-none">HD</div>
+                <div class="absolute bottom-2 left-2 text-white/80 text-[10px] bg-black/70 px-1 pointer-events-none">${fallbackStream.name}</div>
               </div>
-              <div class="text-white text-xs mt-1">STATUS: ACTIVE | SOURCE: Custom</div>
+              <div class="text-gray-500 text-[10px] mt-1 px-1">STATUS: <span class="text-[#00d2ff]">ACTIVE</span> | SOURCE: CUSTOM</div>
             </div>
           `;
                 }
@@ -343,58 +356,88 @@ class SurveillanceSystem {
                     ['→ 203.0.113.12:443', '→ 198.51.100.45:80', '→ 192.0.2.23:22', '→ 203.0.113.89:3389', '→ 198.51.100.67:25']
                 ];
                 const randomStream = dataStreams[Math.floor(Math.random() * dataStreams.length)];
-                const streamHtml = randomStream ? randomStream.map(stream => `<div class="text-green-300">${stream}</div>`).join('') : '';
+                const streamHtml = randomStream ? randomStream.map(stream => `<div class="text-[#00d2ff]">${stream}</div>`).join('') : '';
                 return `
-          <div class="p-2 h-full flex flex-col">
-            <div class="text-white text-xs font-mono flex justify-between items-center mb-2 bg-black/50 px-2 py-1 rounded-t">
-              <span>DATA-${id.slice(-4).toUpperCase()}</span>
-              <span>${timestamp}</span>
+          <div class="p-1 h-full flex flex-col" style="font-family: 'JetBrains Mono', monospace;">
+            <div class="flex justify-between items-center mb-1 bg-black/60 px-2 py-1 border-b border-white/10">
+              <span class="text-[#00d2ff] text-[10px] font-bold tracking-widest">DATA-${id.slice(-4).toUpperCase()}</span>
+              <span class="text-gray-500 text-[10px]">${timestamp}</span>
             </div>
-            <div class="flex-1 bg-gray-900 border border-white p-2 font-mono text-xs text-white">
-              <div class="mb-1 text-white">PACKET STREAM:</div>
+            <div class="flex-1 bg-black/60 border border-white/10 p-2 text-[10px]">
+              <div class="mb-1 text-gray-400 uppercase tracking-wider">PACKET STREAM:</div>
               <div class="space-y-1">
                 ${streamHtml}
               </div>
-              <div class="mt-2 text-white">ENCRYPTION: AES-256</div>
-              <div class="text-white">BANDWIDTH: ${Math.floor(Math.random() * 50 + 10)}Mbps</div>
+              <div class="mt-3 pt-2 border-t border-white/5 text-gray-500">
+                <div>ENCRYPTION: <span class="text-[#00d2ff]">AES-256</span></div>
+                <div>BANDWIDTH: <span class="text-white">${Math.floor(Math.random() * 50 + 10)}Mbps</span></div>
+              </div>
             </div>
           </div>
         `;
             case 'security':
                 return `
-          <div class="p-2 h-full flex flex-col">
-            <div class="text-white text-xs font-mono flex justify-between items-center mb-2 bg-black/50 px-2 py-1 rounded-t">
-              <span>SEC-${id.slice(-4).toUpperCase()}</span>
-              <span>${timestamp}</span>
+          <div class="p-1 h-full flex flex-col" style="font-family: 'JetBrains Mono', monospace;">
+            <div class="flex justify-between items-center mb-1 bg-black/60 px-2 py-1 border-b border-white/10">
+              <span class="text-[#ff5500] text-[10px] font-bold tracking-widest">SEC-${id.slice(-4).toUpperCase()}</span>
+              <span class="text-gray-500 text-[10px]">${timestamp}</span>
             </div>
-            <div class="flex-1 bg-gray-900 border border-white p-2 font-mono text-xs text-white">
-              <div class="mb-2 text-red-400">THREAT DETECTED</div>
-              <div class="space-y-1">
-                <div>SCAN: IN PROGRESS</div>
-                <div>FIREWALL: ACTIVE</div>
-                <div>ANTIVIRUS: UPDATED</div>
-                <div>INTRUSION: BLOCKED</div>
+            <div class="flex-1 bg-black/60 border border-white/10 p-2 text-[10px]">
+              <div class="mb-2 text-[#ff5500] font-bold animate-pulse">⚠ THREAT DETECTED</div>
+              <div class="space-y-1 text-gray-400">
+                <div>SCAN: <span class="text-[#00d2ff]">IN PROGRESS</span></div>
+                <div>FIREWALL: <span class="text-[#4ade80]">ACTIVE</span></div>
+                <div>ANTIVIRUS: <span class="text-[#4ade80]">UPDATED</span></div>
+                <div>INTRUSION: <span class="text-[#ff5500]">BLOCKED</span></div>
               </div>
-              <div class="mt-2 text-white">STATUS: SECURE</div>
+              <div class="mt-3 pt-2 border-t border-white/5 text-gray-500">STATUS: <span class="text-[#4ade80]">SECURE</span></div>
             </div>
           </div>
         `;
             case 'system':
+                const cpuVal = Math.floor(Math.random() * 40 + 20);
+                const ramVal = Math.floor(Math.random() * 30 + 40);
+                const diskVal = Math.floor(Math.random() * 20 + 60);
+                const netVal = Math.floor(Math.random() * 50 + 10);
                 return `
-          <div class="p-2 h-full flex flex-col">
-            <div class="text-white text-xs font-mono flex justify-between items-center mb-2 bg-black/50 px-2 py-1 rounded-t">
-              <span>SYS-${id.slice(-4).toUpperCase()}</span>
-              <span>${timestamp}</span>
+          <div class="p-1 h-full flex flex-col" style="font-family: 'JetBrains Mono', monospace;">
+            <div class="flex justify-between items-center mb-1 bg-black/60 px-2 py-1 border-b border-white/10">
+              <span class="text-[#00d2ff] text-[10px] font-bold tracking-widest">SYS-${id.slice(-4).toUpperCase()}</span>
+              <span class="text-gray-500 text-[10px]">${timestamp}</span>
             </div>
-            <div class="flex-1 bg-gray-900 border border-white p-2 font-mono text-xs text-white">
-              <div class="mb-2">SYSTEM STATUS:</div>
-              <div class="space-y-1">
-                <div>CPU: ${Math.floor(Math.random() * 40 + 20)}%</div>
-                <div>RAM: ${Math.floor(Math.random() * 30 + 40)}%</div>
-                <div>DISK: ${Math.floor(Math.random() * 20 + 60)}%</div>
-                <div>NET: ${Math.floor(Math.random() * 50 + 10)}%</div>
+            <div class="flex-1 bg-black/60 border border-white/10 p-2 text-[10px]">
+              <div class="mb-2 text-gray-400 uppercase tracking-wider">SYSTEM STATUS:</div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-500">CPU</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 h-1 bg-white/10"><div class="h-full bg-[#00d2ff]" style="width: ${cpuVal}%"></div></div>
+                    <span class="text-white w-8 text-right">${cpuVal}%</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-500">RAM</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 h-1 bg-white/10"><div class="h-full bg-[#00d2ff]" style="width: ${ramVal}%"></div></div>
+                    <span class="text-white w-8 text-right">${ramVal}%</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-500">DISK</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 h-1 bg-white/10"><div class="h-full bg-[#00d2ff]" style="width: ${diskVal}%"></div></div>
+                    <span class="text-white w-8 text-right">${diskVal}%</span>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-500">NET</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-16 h-1 bg-white/10"><div class="h-full bg-[#00d2ff]" style="width: ${netVal}%"></div></div>
+                    <span class="text-white w-8 text-right">${netVal}%</span>
+                  </div>
+                </div>
               </div>
-              <div class="mt-2 text-white">UPTIME: ${Math.floor(Math.random() * 99 + 1)}d</div>
+              <div class="mt-3 pt-2 border-t border-white/5 text-gray-500">UPTIME: <span class="text-[#4ade80]">${Math.floor(Math.random() * 99 + 1)}d</span></div>
             </div>
           </div>
         `;

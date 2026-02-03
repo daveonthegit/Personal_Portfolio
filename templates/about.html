@@ -1,199 +1,336 @@
 {{define "about-content"}}
 <section class="section relative">
-    <div class="container">
-        <!-- Page Header -->
-        <div class="section-header">
-            <div class="nexus-header" style="margin-bottom: 32px;">PERSONNEL FILE</div>
-            <h1 class="section-title" data-text="SUBJECT DOSSIER">
-                SUBJECT <span class="highlight">DOSSIER</span>
-            </h1>
+    <div class="container max-w-7xl mx-auto">
+        <!-- Page Header - Newstyle -->
+        <div class="mb-12">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1 h-6 bg-nexus-cyan"></div>
+                <h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Personal File: Bio</h1>
+            </div>
+            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">REF_ID: 0x88F2A // SUBJECT DOSSIER</p>
         </div>
 
-        <div class="hero-grid hero-grid-newstyle grid grid-cols-1 lg:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">
-            <!-- Left Column - Profile Data (newstyle) -->
-            <div class="col-span-12 lg:col-span-4">
-                <div class="nexus-profile-card relative mb-8">
+        <!-- Two Column Layout -->
+        <div style="display: grid; grid-template-columns: 320px 1fr; gap: 2rem;" class="about-grid">
+            <!-- Left Column - Profile, Interests, Contact -->
+            <div class="about-left-col space-y-6">
+                <!-- Profile Card -->
+                <div class="nexus-profile-card relative" style="background: rgba(10,10,10,0.85); border: 1px solid rgba(255,255,255,0.1);">
                     <div class="corner-accent-tl"></div>
                     <div class="corner-accent-br"></div>
-                    <div class="profile-card-inner">
-                        <div class="nexus-header flex items-center justify-between">
-                            <h2 class="font-nexus-display font-bold text-white tracking-widest uppercase m-0">DETAILED PROFILE</h2>
-                            <span class="material-symbols-outlined text-gray-500 text-sm" aria-hidden="true">fingerprint</span>
+                    <div class="p-1">
+                        <div class="flex items-center justify-between bg-black/50 px-3 py-2 border-b border-white/5 mb-1">
+                            <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Detailed Profile</h2>
+                            <span class="material-symbols-outlined text-gray-500 text-sm">fingerprint</span>
                         </div>
-                        <div class="profile-image relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
+                        <div class="relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
                             <img src="/static/images/Profile_Picture.jpg?v={{.Timestamp}}" alt="{{.Personal.Name}}" class="w-full h-full object-cover">
                         </div>
-                        <div class="threat-level bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between">
+                        <div class="bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between">
                             <span>THREAT LEVEL</span>
                             <span>MINIMAL</span>
                         </div>
-                        <div class="profile-content space-y-3 px-2 pb-4">
-                        <div class="data-grid space-y-3 text-xs">
-                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
-                                <span class="data-label">FULL NAME</span>
-                                <span class="col-span-2 data-value text-right">{{.Personal.Name}}</span>
+                        <div class="space-y-3 px-3 pb-4 text-xs">
+                            <div class="flex justify-between border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase">Full Name</span>
+                                <span class="text-white font-mono">{{.Personal.Name}}</span>
                             </div>
-                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
-                                <span class="data-label">PROFESSION</span>
-                                <span class="col-span-2 data-value text-right">{{.Personal.Title}}</span>
+                            <div class="flex justify-between border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase">Profession</span>
+                                <span class="text-white font-mono">{{.Personal.Title}}</span>
                             </div>
-                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
-                                <span class="data-label">LOCATION</span>
-                                <span class="col-span-2 data-value text-right">{{.Personal.Location}}</span>
+                            <div class="flex justify-between border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase">Location</span>
+                                <span class="text-white font-mono">{{.Personal.Location}}</span>
                             </div>
                             {{if .Personal.Email}}
-                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
-                                <span class="data-label">CONTACT</span>
-                                <span class="col-span-2 data-value text-right"><a href="mailto:{{.Personal.Email}}" class="data-link">{{.Personal.Email}}</a></span>
+                            <div class="flex justify-between border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase">Contact</span>
+                                <a href="mailto:{{.Personal.Email}}" class="text-nexus-cyan font-mono hover:underline text-right" style="word-break: break-all;">{{.Personal.Email}}</a>
                             </div>
                             {{end}}
-                            <div class="grid grid-cols-3 gap-2 border-b border-white/5 pb-2">
-                                <span class="data-label">CLEARANCE</span>
-                                <span class="col-span-2 data-value text-right status-online">AUTHORIZED</span>
+                            <div class="flex justify-between border-b border-white/5 pb-2">
+                                <span class="text-gray-500 uppercase">Clearance</span>
+                                <span class="text-nexus-cyan font-mono">AUTHORIZED</span>
                             </div>
-                            <div class="grid grid-cols-3 gap-2 pb-1">
-                                <span class="data-label">STATUS</span>
-                                <span class="col-span-2 data-value text-right status-online flex items-center justify-end gap-2"><span class="status-dot pulse"></span> ACTIVE</span>
-                            </div>
-                        </div>
-                        <!-- Statistics -->
-                        <div class="stats-grid mt-4 pt-4 border-t border-white/5">
-                            <div class="stat-item">
-                                <div class="stat-value stat-experience">{{len .Personal.Experience}}</div>
-                                <div class="stat-label">WORK EXPERIENCE</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value stat-projects">{{len .Projects}}</div>
-                                <div class="stat-label">PROJECTS</div>
+                            <div class="flex justify-between pb-1">
+                                <span class="text-gray-500 uppercase">Status</span>
+                                <span class="text-nexus-cyan font-mono flex items-center gap-2"><span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span> ACTIVE</span>
                             </div>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 px-3 pb-4 pt-2 border-t border-white/5">
+                            <div class="p-3 border border-white/5 text-center">
+                                <div class="text-nexus-cyan font-mono text-xl">{{len .Personal.Experience}}</div>
+                                <div class="text-[8px] text-gray-500 uppercase">Positions</div>
+                            </div>
+                            <div class="p-3 border border-white/5 text-center">
+                                <div class="text-nexus-cyan font-mono text-xl">{{len .Projects}}</div>
+                                <div class="text-[8px] text-gray-500 uppercase">Projects</div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Personal Interests -->
+                {{if .Personal.Interests}}
+                <div class="relative" style="background: rgba(10,10,10,0.85); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="corner-accent-tl"></div>
+                    <div class="flex items-center justify-between bg-black/50 px-3 py-2 border-b border-white/5">
+                        <h3 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Interests</h3>
+                        <span class="material-symbols-outlined text-gray-500 text-sm">interests</span>
+                    </div>
+                    <div class="p-3 interests-scroll" style="overflow-x: auto; overflow-y: hidden;">
+                        <div class="flex gap-2" style="width: max-content;">
+                            {{range .Personal.Interests}}
+                            <span class="text-[9px] font-mono text-nexus-cyan/80 bg-nexus-cyan/5 border border-nexus-cyan/20 px-2 py-1 uppercase whitespace-nowrap">{{.}}</span>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+
+                <!-- Initiate Contact Panel -->
+                <div class="relative" style="background: rgba(10,10,10,0.85); border: 1px solid rgba(255,255,255,0.1);">
+                    <div class="corner-accent-br"></div>
+                    <div class="flex items-center justify-between bg-black/50 px-3 py-2 border-b border-white/5">
+                        <h3 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Initiate Contact</h3>
+                        <span class="material-symbols-outlined text-nexus-cyan text-sm">cell_tower</span>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="space-y-2 text-[10px] font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">CHANNEL</span>
+                                <span class="text-nexus-cyan">SECURE</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">RESPONSE</span>
+                                <span class="text-white">&lt; 24H</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">STATUS</span>
+                                <span class="text-[#4ade80] flex items-center gap-1"><span class="w-1.5 h-1.5 bg-[#4ade80] animate-pulse"></span> ONLINE</span>
+                            </div>
+                        </div>
+                        <a href="/contact" class="nexus-btn-primary w-full flex items-center justify-center gap-2 no-underline text-sm py-2">
+                            <span class="material-symbols-outlined text-sm">send</span>
+                            <span>Send Message</span>
+                        </a>
                     </div>
                 </div>
             </div>
             
             <!-- Right Column - Detailed Information -->
-            <div class="col-span-12 lg:col-span-8 space-y-8">
+            <div class="about-right-col space-y-8">
                 <!-- Biography Panel -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">BIOGRAPHICAL DATA</div>
-                    <p class="bio-text">{{.Personal.Bio}}</p>
-                </div>
-
-                <!-- Experience Records -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">EMPLOYMENT HISTORY</div>
-                    
-                    <div class="experience-container">
-                        {{range .Personal.Experience}}
-                        <div class="experience-item">
-                            <div class="experience-timeline">
-                                <div class="timeline-dot"></div>
+                <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-2 h-8 bg-nexus-cyan"></div>
+                        <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Biographical Data</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2rem;" class="bio-grid">
+                        <div>
+                            <p class="text-lg text-white font-light italic border-l-2 border-nexus-cyan/30 pl-4 mb-6">
+                                "In the overlap between digital architecture and human perception lies the nexus of modern existence."
+                            </p>
+                            <p class="text-gray-400 leading-relaxed text-sm">{{.Personal.Bio}}</p>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="p-4 bg-white/5 border border-white/5">
+                                <h3 class="text-[10px] font-nexus-display text-nexus-cyan uppercase mb-2">Core Philosophy</h3>
+                                <p class="text-xs text-gray-500 font-mono">Design is the ultimate decryption tool. Complex systems should be elegantly exposed through logical visual hierarchy.</p>
                             </div>
-                            
-                            <div class="experience-card">
-                                <div class="experience-header">
-                                    <div class="experience-title-section">
-                                        <h3 class="experience-position">{{.Position}}</h3>
-                                        <p class="experience-company">{{.Company}}</p>
-                                    </div>
-                                    <div class="experience-dates">
-                                        {{.StartDate.Format "Jan 2006"}} - 
-                                        {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}CURRENT{{end}}
-                                    </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="p-3 border border-white/5 text-center">
+                                    <div class="text-nexus-cyan font-mono text-xl">{{len .Personal.Experience}}</div>
+                                    <div class="text-[8px] text-gray-600 uppercase">Positions</div>
                                 </div>
-                                
-                                <p class="experience-location">{{.Location}}</p>
-                                
-                                <ul class="experience-description">
-                                    {{range .Description}}
-                                    <li class="experience-bullet">{{.}}</li>
-                                    {{end}}
-                                </ul>
-                                
-                                {{if .Technologies}}
-                                <div class="experience-tech">
-                                    {{range .Technologies}}
-                                    <span class="tech-tag">{{.}}</span>
-                                    {{end}}
+                                <div class="p-3 border border-white/5 text-center">
+                                    <div class="text-nexus-cyan font-mono text-xl">{{len .Projects}}</div>
+                                    <div class="text-[8px] text-gray-600 uppercase">Projects</div>
                                 </div>
-                                {{end}}
                             </div>
                         </div>
-                        {{end}}
                     </div>
                 </div>
 
-                <!-- Education Records -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">EDUCATION RECORDS</div>
+                <!-- Employment History - Scrollable -->
+                <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-2 h-8 bg-nexus-cyan"></div>
+                        <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Employment History</h2>
+                    </div>
                     
-                    <div class="education-container">
-                        {{range .Personal.Education}}
-                        <div class="education-item">
-                            <div class="education-card">
-                                <div class="education-header">
-                                    <div class="education-title-section">
-                                        <h3 class="education-institution">{{.Institution}}</h3>
-                                        <p class="education-degree">{{.Degree}} in {{.Field}}</p>
+                    <!-- Scrollable Container -->
+                    <div style="max-height: 400px; overflow-y: auto; padding-right: 1rem;" class="custom-scrollbar">
+                        <div class="space-y-6">
+                            {{range .Personal.Experience}}
+                            <div class="relative pl-6 border-l-2 border-nexus-cyan/30">
+                                <!-- Timeline dot -->
+                                <div class="absolute -left-[5px] top-1 w-2 h-2 bg-nexus-cyan rounded-full"></div>
+                                
+                                <!-- Job Card -->
+                                <div class="bg-white/5 border border-white/10 p-5">
+                                    <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                                        <div>
+                                            <h3 class="text-lg font-nexus-display font-bold text-white uppercase tracking-tight">{{.Position}}</h3>
+                                            <p class="text-nexus-cyan font-mono text-sm">{{.Company}}</p>
+                                        </div>
+                                        <div class="text-[10px] font-mono text-gray-500 bg-black/40 px-2 py-1 border border-white/10">
+                                            {{.StartDate.Format "Jan 2006"}} - {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}<span class="text-nexus-cyan">CURRENT</span>{{end}}
+                                        </div>
                                     </div>
-                                    <div class="education-dates">
+                                    
+                                    <p class="text-[10px] text-gray-500 font-mono uppercase mb-4">{{.Location}}</p>
+                                    
+                                    <ul class="space-y-2 mb-4">
+                                        {{range .Description}}
+                                        <li class="text-sm text-gray-400 leading-relaxed pl-4 relative before:content-['▸'] before:absolute before:left-0 before:text-nexus-cyan before:text-xs">{{.}}</li>
+                                        {{end}}
+                                    </ul>
+                                    
+                                    {{if .Technologies}}
+                                    <div class="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+                                        {{range .Technologies}}
+                                        <span class="text-[9px] font-mono text-nexus-cyan/70 bg-nexus-cyan/5 border border-nexus-cyan/20 px-2 py-0.5">{{.}}</span>
+                                        {{end}}
+                                    </div>
+                                    {{end}}
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Records - Scrollable -->
+                <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-2 h-8 bg-nexus-cyan"></div>
+                        <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Education Records</h2>
+                    </div>
+                    
+                    <!-- Scrollable Container -->
+                    <div style="max-height: 300px; overflow-y: auto; padding-right: 1rem;" class="custom-scrollbar">
+                        <div class="space-y-4">
+                            {{range .Personal.Education}}
+                            <div class="bg-white/5 border border-white/10 p-5">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
+                                    <div>
+                                        <h3 class="text-lg font-nexus-display font-bold text-white uppercase tracking-tight">{{.Institution}}</h3>
+                                        <p class="text-nexus-cyan font-mono text-sm">{{.Degree}} in {{.Field}}</p>
+                                    </div>
+                                    <div class="text-[10px] font-mono text-gray-500 bg-black/40 px-2 py-1 border border-white/10">
                                         {{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}
                                     </div>
                                 </div>
-                                <p class="education-location">{{.Location}}</p>
+                                <p class="text-[10px] text-gray-500 font-mono uppercase">{{.Location}}</p>
                                 {{if .GPA}}
-                                <p class="education-gpa">GPA: {{.GPA}}</p>
+                                <p class="text-sm text-gray-400 mt-2">GPA: <span class="text-nexus-cyan font-mono">{{.GPA}}</span></p>
+                                {{end}}
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skillset Matrix -->
+                <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
+                    <div class="absolute top-0 right-0 p-4 opacity-20">
+                        <span class="material-symbols-outlined text-6xl text-white">grid_view</span>
+                    </div>
+                    <div class="flex items-center gap-3 mb-10">
+                        <div class="w-2 h-8 bg-nexus-cyan"></div>
+                        <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Skillset Matrix</h2>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem 3rem;" class="skills-matrix-grid">
+                        {{range $index, $skill := .Personal.Skills}}
+                        <div class="space-y-6">
+                            <div class="text-[10px] font-nexus-display text-nexus-cyan tracking-[0.2em] mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">{{if eq $skill.Category "Languages"}}terminal{{else if eq $skill.Category "Frameworks"}}code{{else if eq $skill.Category "Tools"}}build{{else if eq $skill.Category "Cloud"}}cloud{{else}}database{{end}}</span>
+                                {{$skill.Category}}
+                            </div>
+                            <div class="space-y-4">
+                                {{range $skill.Items}}
+                                <div>
+                                    <span class="text-xs font-nexus-display text-white/90 uppercase">{{.}}</span>
+                                </div>
                                 {{end}}
                             </div>
                         </div>
                         {{end}}
                     </div>
                 </div>
-
-                <!-- Skills Matrix -->
-                <div class="nexus-panel" style="margin-bottom: 32px;">
-                    <div class="panel-header">TECHNICAL COMPETENCIES</div>
-                    
-                    <div class="skills-grid" style="margin-top: 24px;">
-                        {{range .Personal.Skills}}
-                        <div class="skill-card">
-                            <div class="nexus-header">{{.Category}}</div>
-                            <div class="skill-content">
-                                {{range .Items}}
-                                <div class="skill-item">
-                                    <span>{{.}}</span>
-                                    <div class="skill-level">
-                                        <div class="skill-dot"></div>
-                                        <div class="skill-dot"></div>
-                                        <div class="skill-dot"></div>
-                                    </div>
-                                </div>
-                                {{end}}
-                                <div class="skill-item" style="border-bottom: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #333333;">
-                                    <span>STATUS:</span>
-                                    <span class="status-online">OPERATIONAL</span>
-                                </div>
-                            </div>
-                        </div>
-                        {{end}}
-                    </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap items-center gap-4 pt-4">
+                    <a href="/resume" class="nexus-btn-primary flex items-center gap-2 text-sm no-underline">
+                        <span class="material-symbols-outlined text-base">download</span>
+                        <span>Download Resume</span>
+                    </a>
+                    <a href="/projects" class="nexus-btn-secondary no-underline">View Projects</a>
                 </div>
-
-                <!-- Interests -->
-                {{if .Personal.Interests}}
-                <div class="nexus-panel">
-                    <div class="panel-header">PERSONAL INTERESTS</div>
-                    
-                    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px;">
-                        {{range .Personal.Interests}}
-                        <span class="tech-tag">{{.}}</span>
-                        {{end}}
-                    </div>
-                </div>
-                {{end}}
             </div>
         </div>
     </div>
 </section>
+
+<style>
+/* About page responsive grid */
+@media (max-width: 1279px) {
+    .about-grid {
+        grid-template-columns: 280px 1fr !important;
+    }
+}
+@media (max-width: 1023px) {
+    .about-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .bio-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .skills-matrix-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Custom scrollbar for containers */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 210, 255, 0.3);
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 210, 255, 0.5);
+}
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 210, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+
+/* Horizontal scrollbar for interests */
+.interests-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+.interests-scroll::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+.interests-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 210, 255, 0.4);
+    border-radius: 2px;
+}
+.interests-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 210, 255, 0.6);
+}
+.interests-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 210, 255, 0.4) rgba(255, 255, 255, 0.05);
+}
+</style>
 {{end}}
