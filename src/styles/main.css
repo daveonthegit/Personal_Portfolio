@@ -7,10 +7,14 @@
   html {
     scroll-behavior: smooth;
     @apply bg-black;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   
   body {
     @apply bg-black text-white font-nexus;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -71,6 +75,8 @@
   /* Main Content */
   .nexus-main {
     @apply mt-16 min-h-screen;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   
   /* Grid Background */

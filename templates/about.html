@@ -276,11 +276,25 @@
 </section>
 
 <style>
+/* Prevent horizontal overflow */
+.section {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
 /* Base grid styles */
 .about-grid {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 2rem;
+    max-width: 100%;
+}
+
+.about-left-col,
+.about-right-col {
+    min-width: 0;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .bio-grid {
@@ -293,6 +307,13 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+}
+
+/* Ensure images scale properly */
+.nexus-profile-card img,
+.about-left-col img {
+    max-width: 100%;
+    height: auto;
 }
 
 /* Large screens */
@@ -310,6 +331,7 @@
     .about-left-col {
         max-width: 400px;
         margin: 0 auto;
+        width: 100%;
     }
     .bio-grid {
         grid-template-columns: 1fr;
@@ -327,12 +349,13 @@
     }
     .about-left-col {
         max-width: 100%;
+        width: 100%;
     }
     .about-right-col {
         gap: 1.5rem;
     }
     .about-right-col > div {
-        padding: 1.25rem;
+        padding: 1rem;
     }
     .skills-matrix-grid {
         grid-template-columns: 1fr;
@@ -370,6 +393,11 @@
     .job-card-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+    /* Profile card mobile fix */
+    .nexus-profile-card {
+        max-width: 100%;
+        overflow: hidden;
     }
 }
 
