@@ -20,26 +20,12 @@
 \usepackage{tabularx}
 \input{glyphtounicode}
 
-
-%----------FONT OPTIONS----------
-% sans-serif
-% \usepackage[sfdefault]{FiraSans}
-% \usepackage[sfdefault]{roboto}
-% \usepackage[sfdefault]{noto-sans}
-% \usepackage[default]{sourcesanspro}
-
-% serif
-% \usepackage{CormorantGaramond}
-% \usepackage{charter}
-
-
 \pagestyle{fancy}
-\fancyhf{} % clear all header and footer fields
+\fancyhf{}
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
-% Adjust margins
 \addtolength{\oddsidemargin}{-0.5in}
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
@@ -47,164 +33,88 @@
 \addtolength{\textheight}{1.0in}
 
 \urlstyle{same}
-
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
 
-% Sections formatting
-\titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-% Ensure that generate pdf is machine readable/ATS parsable
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 \pdfgentounicode=1
 
-%-------------------------
-% Custom commands
-\newcommand{\resumeItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
-}
-
-\newcommand{\resumeSubheading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-      \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-7pt}
-}
-
-\newcommand{\resumeSubSubheading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \textit{\small#1} & \textit{\small #2} \\
-    \end{tabular*}\vspace{-7pt}
-}
-
-\newcommand{\resumeProjectHeading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & #2 \\
-    \end{tabular*}\vspace{-7pt}
-}
-
-\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
-
-\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-
+\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{-2pt}}}}
+\newcommand{\resumeSubheading}[4]{\vspace{-2pt}\item\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}\textbf{#1} & #2 \\ \textit{\small#3} & \textit{\small #4} \\ \end{tabular*}\vspace{-7pt}}
+\newcommand{\resumeProjectHeading}[2]{\item\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{-7pt}}
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 \newcommand{\resumeItemListStart}{\begin{itemize}}
 \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
-%-------------------------------------------
-%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
 \begin{document}
-
-%----------HEADING----------
-% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
-%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
-%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
-% \end{tabular*}
 
 \begin{center}
     \textbf{\Huge \scshape David Xiao} \\ \vspace{1pt}
-    \small 917-946-7086 $|$ \href{mailto:dxiao3043@gmail.com}{\underline{dxiao3043@gmail.com}} $|$ 
-    \href{https://linkedin.com/in/david-on-linked}{\underline{linkedin.com/in/david-on-linked}} $|$
-    \href{https://github.com/daveonthegit}{\underline{github.com/daveonthegit}} $|$
-    \href{http://davidx.tech}{\underline{davidx.tech}}
+    \small 917-946-7086 $|$ \href{mailto:dxiao3043@gmail.com}{dxiao3043@gmail.com} $|$ 
+    \href{https://linkedin.com/in/david-on-linked}{linkedin.com/in/david-on-linked} $|$
+    \href{https://github.com/daveonthegit}{github.com/daveonthegit} $|$
+    \href{http://davidx.tech}{davidx.tech}
 \end{center}
 
-%-----------Summary-----------
 \section{Summary}
-\small
-      Computer Science student and software engineer with hands-on experience in full-stack development, system architecture modernization, and security-focused programming. Skilled in JavaScript, PHP, API development, and Agile methodologies, with proven ability to transform legacy monolithic systems into scalable, modular applications for B2C and B2B environments. Experienced in developing task management platforms with role-based access controls, real-time functionality, and cross-organizational support. 
-      
+\small Software Engineering student graduating this semester with experience building and deploying production-ready backend and full-stack systems. Experienced in API design, authentication, relational data modeling, and CI/CD pipelines across Go and JavaScript-based stacks. Strong foundation in systems programming and security, with hands-on experience modernizing legacy platforms and shipping scalable applications.
 
-%-----------EDUCATION-----------
-\section{Education}
-  \resumeSubHeadingListStart
-    \resumeSubheading
-      {CUNY Hunter College}{New York, NY}
-      {Bachelor of Arts in Computer Science}{Aug. 2022 -- Present}
-  \resumeSubHeadingListEnd
-
-% -----------INTERNSHIPS-----------
 \section{Work Experience}
 \resumeSubHeadingListStart
-
-  \resumeSubheading
-    {Software Engineer Intern}{June 2025 -- August 2025}
-    {Unadat}{New York, NY}
-    \resumeItemListStart
-      \resumeItem{Re-architected legacy JS/PHP into modular components, cutting feature development time by 25\% and enabling B2C/B2B scalability}
-      \resumeItem{Added 6+ new features to legacy chores system, increasing usability and adoption across B2C/B2B users}
-      \resumeItem{Converted core components into reusable modals, improving UI consistency and cutting frontend development effort by 20\%}
-    \resumeItem{Refactored 10+ API endpoints with REST + automated tests, reducing response times by 15\% and supporting faster rollouts}
-    \resumeItemListEnd
-
+\resumeSubheading{Software Engineer Intern}{June 2025 -- August 2025}{Unadat}{New York, NY}
+\resumeItemListStart
+\resumeItem{Reduced feature delivery time by 25\% by decomposing a legacy JavaScript/PHP monolith into modular, reusable components used across B2C and B2B flows}
+\resumeItem{Increased active usage across B2C and B2B customers by shipping 6+ production features aligned with real user workflows}
+\resumeItem{Saved frontend engineering time by 20\% by refactoring shared UI logic into reusable components and standardizing interaction patterns}
+\resumeItem{Improved API response latency by 15\% by refactoring and adding automated tests to 10+ RESTful API endpoints}
+\resumeItemListEnd
 \resumeSubHeadingListEnd
 
-% -----------PROJECTS-----------
-\section{Technical Projects}
+\section{Projects}
 \resumeSubHeadingListStart
-  \resumeProjectHeading
-    {\textbf{B2B Task Management Platform} $|$ \emph{PHP, JavaScript, jQuery, MySQL, CSS, GCP}}{June 2025 - August 2025}
-    \resumeItemListStart
-        \resumeItem{Built a mobile-optimized task system for 100+ concurrent users with escalation logic and multi-round negotiation, cutting delays by 30\%}
-      \resumeItem{Implemented role-based access across multi-tier hierarchies, strengthening security and enabling efficient delegation}
-      \resumeItem{Unified B2C + B2B flows in one platform, reducing development overhead by 40\% while maintaining feature continuity}
-    \resumeItemListEnd
+\resumeProjectHeading{\textbf{B2B Task Management Platform} $|$ \emph{PHP, JavaScript, MySQL, GCP}}{June 2025 -- August 2025}
+\resumeItemListStart
+\resumeItem{Supported over 100 concurrent users by building a mobile-optimized task management system with escalation logic and multi-round negotiation workflows}
+\resumeItem{Reduced task turnaround time by 30\% by enabling delegated approvals and role-based task routing, removing manual handoffs and approval delays}
+\resumeItem{Reduced development and maintenance effort by 40\% by unifying B2C and B2B logic into a single extensible codebase}
+\resumeItemListEnd
 
+\resumeProjectHeading{\textbf{Kyarafit} $|$ \emph{Go, React.js, React Native, Next.js, PostgreSQL, Docker, FastAPI}}{August 2025 -- Present}
+\resumeItemListStart
+\resumeItem{Enabled cross-platform mobile and web access by architecting a distributed system with a Go (Fiber) REST API, Python FastAPI image service, and React.js / React Native clients}
+\resumeItem{Reduced cross-platform bugs by centralizing business logic in backend services shared by both web and mobile clients}
+\resumeItem{Reduced security risk and support overhead by implementing JWT-based authentication and middleware-protected RESTful APIs across all services}
+\resumeItem{Improved CI reliability by containerizing services with Docker to standardize local development and automated test environments}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{ForgeArena} $|$ \emph{React.js, TypeScript, Node.js, Express.js, CI/CD}}{August 2025 -- December 2025}
+\resumeItemListStart
+\resumeItem{Reduced feature delivery time by 20\% by unblocking teammates through stable backend APIs and faster CI feedback loops}
+\resumeItem{Reduced user workout planning time by 40\% by integrating Gemini-powered workout recommendations into backend REST APIs}
+\resumeItemListEnd
+
+\resumeProjectHeading{\textbf{RandCompile} $|$ \emph{C, Python, GCC, UNIX}}{February 2025 -- May 2025}
+\resumeItemListStart
+\resumeItem{Increased kernel resistance to forensic analysis by implementing compile-time ABI randomization and data structure obfuscation in a custom GCC plugin}
+\resumeItem{Maintained system performance within 5\% overhead while adding pointer encryption and hardened kernel data layouts}
+\resumeItemListEnd
 \resumeSubHeadingListEnd
 
-
-\section{Personal Projects}
+\section{Education}
 \resumeSubHeadingListStart
-
-  \resumeProjectHeading
-    {\textbf{ForgeArena} $|$ \emph{React, TypeScript, Node.js, Express.js, Firebase, Jenkins, GitHub Actions}}{Aug 2025 - Present}
-    \resumeItemListStart
-      \resumeItem{Built a gamified fitness platform with 5-layer architecture supporting avatar progression, quests, and raid boss mechanics}
-      \resumeItem{Integrated Gemini API for ML-powered workout recommendations, reducing user planning time by 40\%}
-      \resumeItem{Implemented CI/CD pipeline with Jenkins + GitHub Actions, achieving 95\% test coverage and automated Heroku deployments}
-    \resumeItemListEnd
-
-  \resumeProjectHeading
-    {\textbf{RandCompile: Kernel Hardening via Compile-Time Forensic Resistance} $|$ \emph{Python, C, GCC, UNIX}}{Feb 2025}
-    \resumeItemListStart
-      \resumeItem{Built a GCC plugin to add compile-time kernel hardening with ABI randomization and data structure obfuscation}
-      \resumeItem{Automated pointer encryption and modular ABI handling while ensuring compatibility with kernel modules}
-      \resumeItem{Maintained less than 5\% performance overhead while enhancing kernel security under malicious hypervisor threat models}
-    \resumeItemListEnd
-
-  \resumeProjectHeading
-    {\textbf{Campus Management System} $|$ \emph{React, Redux, Node.js, Express.js, PostgreSQL, Sequelize, Docker}}{Nov 2025}
-    \resumeItemListStart
-      \resumeItem{Architected multi-tenant PERN platform with 3-tier role-based access control supporting 15+ RESTful API endpoints}
-      \resumeItem{Implemented JWT authentication with bcrypt hashing, securing user sessions across isolated association data}
-      \resumeItem{Containerized full-stack deployment with Docker Compose and Nginx, reducing setup time by 80\% for new developers}
-    \resumeItemListEnd
+\resumeSubheading{CUNY Hunter College}{New York, NY}{B.A. in Computer Science}{August 2022 -- Present}
 \resumeSubHeadingListEnd
 
-
-
-
-%-----------PROGRAMMING SKILLS-----------
 \section{Skills}
- \begin{itemize}[leftmargin=0.15in, label={}]
-    \small{\item{
-     \textbf{Programming Languages}{: Java, Python, C/C++, JavaScript, PHP, SQL, MIPS Assembly, BASH} \\
-     \textbf{Web Technologies \& Frameworks}{: React, Node.js, Express.js, HTML/CSS, jQuery, RESTful APIs, PERN Stack} \\
-     \textbf{Databases \& Cloud}{: PostgreSQL, MySQL, GCP} \\
-     \textbf{Tools \& Methodologies}{: Git, VS Code, UNIX, Agile Scrum, Automated Testing} \\
-    }}
- \end{itemize}
+\begin{itemize}[leftmargin=0.15in, label={}]
+\small{\item{
+\textbf{Languages}: JavaScript, TypeScript, Go, Python, SQL, C/C++, PHP \\
+\textbf{Frameworks}: React.js, Node.js, Express.js, Next.js, Fiber, FastAPI \\
+\textbf{Databases}: PostgreSQL, MySQL \\
+\textbf{Cloud \& Tools}: Docker, Git, CI/CD (GitHub Actions, Jenkins), GCP
+}}
+\end{itemize}
 
-
-%-------------------------------------------
 \end{document}
