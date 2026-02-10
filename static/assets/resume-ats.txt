@@ -1,0 +1,42 @@
+David Xiao
+917-946-7086 | dxiao3043@gmail.com | linkedin.com/in/david-on-linked | github.com/daveonthegit | davidx.tech
+
+Summary
+Software engineering student graduating with experience building production-ready full-stack and backend systems. Skilled in API design, authentication, data modeling, and Continuous Integration / Continuous Deployment across Go and JavaScript. Hands-on experience modernizing legacy platforms and backend systems.
+
+Skills
+Languages: JavaScript, TypeScript, Go, Python, SQL, C, C++, PHP
+Frameworks: React.js, Node.js, Express.js, Next.js, Fiber, FastAPI
+Databases: PostgreSQL, MySQL
+Cloud and Tools: Docker, Git, Continuous Integration / Continuous Deployment (GitHub Actions, Jenkins), Google Cloud Platform, Linux
+
+Experience
+Software Engineer Intern | Unadat | New York, NY | June 2025 - August 2025
+- Re-architected legacy JavaScript/PHP monolith into modular components across business-to-consumer and business-to-business flows; cut feature delivery time by 25%
+- Shipped 6+ production features aligned with user workflows across business-to-consumer and business-to-business platforms
+- Converted core UI elements into reusable components and standardized interaction patterns across the platform
+- Refactored 10+ RESTful API endpoints with input validation and query optimization; accelerated API response times by 15%
+
+Projects
+B2B Task Management Platform | PHP, JavaScript, MySQL, Google Cloud Platform | June 2025 - August 2025
+- Built mobile-optimized task system with escalation logic and multi-round negotiation supporting 100+ concurrent users
+- Implemented role-based access controls and delegated approval routing; shortened task turnaround time by 30%
+- Unified business-to-consumer and business-to-business flows into single extensible codebase; reduced maintenance effort by 40%
+
+Kyarafit | Go, React.js, React Native, Next.js, PostgreSQL, Docker, FastAPI | August 2025 - Present
+- Architected cross-platform system with Go (Fiber) API, FastAPI image service, and React Native clients
+- Centralized business logic in shared backend services across web and mobile; eliminated cross-platform inconsistencies
+- Implemented JWT (JSON Web Token) authentication with middleware-protected endpoints across all services
+
+ForgeArena | React.js, TypeScript, Node.js, Express.js, Continuous Integration / Continuous Deployment | August 2025 - December 2025
+- Built gamified fitness platform with 5-layer architecture supporting avatar progression, quests, and raid boss mechanics
+- Integrated Gemini API for machine learning-powered workout recommendations; reduced user planning time by 40%
+- Implemented Continuous Integration / Continuous Deployment with Jenkins and GitHub Actions; achieved 95% test coverage and automated Heroku deployments
+
+RandCompile | C, Python, GCC, UNIX | February 2025 - May 2025
+- Implemented compile-time ABI randomization and struct obfuscation in GCC plugin to strengthen kernel forensic resistance under malicious hypervisor threat models
+- Automated pointer encryption and modular ABI handling while maintaining compatibility with existing kernel modules
+- Maintained sub-5% performance overhead by designing hardened data layouts with minimal runtime cost
+
+Education
+B.A. in Computer Science | CUNY Hunter College | New York, NY | August 2022 - Present
