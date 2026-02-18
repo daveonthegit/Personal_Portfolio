@@ -14,7 +14,7 @@
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{verbatim}
 \usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
+\usepackage[hidelinks,bookmarksopen,bookmarksnumbered,pdfstartview=FitH]{hyperref}
 \usepackage{fancyhdr}
 \usepackage[english]{babel}
 \usepackage{tabularx}
@@ -30,28 +30,29 @@
 \addtolength{\evensidemargin}{-0.5in}
 \addtolength{\textwidth}{1in}
 \addtolength{\topmargin}{-.5in}
-\addtolength{\textheight}{1.0in}
+\addtolength{\textheight}{1.15in}
+\setlength{\parskip}{0pt}
 
 \urlstyle{same}
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
 
-\titleformat{\section}{\vspace{2pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-3pt}]
+\titleformat{\section}{\vspace{-2pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
 \pdfgentounicode=1
 
 \newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{0pt}}}}
-\newcommand{\resumeSubheading}[4]{\vspace{0pt}\item\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}\textbf{#1} & #2 \\ \textit{\small#3} & \textit{\small #4} \\ \end{tabular*}\vspace{-5pt}}
-\newcommand{\resumeProjectHeading}[2]{\item\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{-5pt}}
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubheading}[4]{\vspace{0pt}\item\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}\textbf{#1}, \textit{\small#3} & #2 \\ \textit{\small#4} & \\ \end{tabular*}\vspace{2pt}}
+\newcommand{\resumeProjectHeading}[2]{\item\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{0pt}}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=4pt, topsep=0pt]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-2pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=2pt, topsep=1pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
 
 \begin{document}
 
 \begin{center}
-    \textbf{\Huge \scshape David Xiao} \\ \vspace{1pt}
+    \textbf{\Huge \scshape David Xiao} \\ \vspace{0pt}
     \small 917-946-7086 $|$ \href{mailto:dxiao3043@gmail.com}{dxiao3043@gmail.com} $|$ 
     \href{https://linkedin.com/in/david-on-linked}{linkedin.com/in/david-on-linked} $|$
     \href{https://github.com/daveonthegit}{github.com/daveonthegit} $|$
@@ -71,7 +72,7 @@
 \resumeItem{Refactored 10+ RESTful endpoints with input validation and query optimization, accelerating API response times by 15\%}
 \resumeItemListEnd
 \resumeSubHeadingListEnd
-
+\par
 \section{Projects}
 \resumeSubHeadingListStart
 \resumeProjectHeading{\textbf{B2B Task Management Platform} $|$ \emph{PHP, JavaScript, MySQL, GCP}}{June 2025 -- August 2025}
@@ -102,12 +103,12 @@
 \resumeItem{Maintained sub-5\% performance overhead by designing hardened data layouts with minimal runtime cost}
 \resumeItemListEnd
 \resumeSubHeadingListEnd
-
+\par
 \section{Education}
 \resumeSubHeadingListStart
-\resumeSubheading{CUNY Hunter College}{New York, NY}{B.A. in Computer Science}{August 2022 -- Present}
+\resumeSubheading{CUNY Hunter College}{New York, NY}{Bachelor of Arts in Computer Science}{May 2026}
 \resumeSubHeadingListEnd
-
+\par
 \section{Skills}
 \begin{itemize}[leftmargin=0.15in, label={}]
 \small{\item{
