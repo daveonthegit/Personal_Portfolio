@@ -42,7 +42,7 @@ func LoadProjects() []Project {
 			ID:           "forgearena",
 			Title:        "ForgeArena",
 			Description:  "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
-			Image:        "/static/images/forgearena.png",
+			Image:        "/static/images/Forgearena.png",
 			Technologies: []string{"TypeScript", "Go", "React", "PostgreSQL"},
 			Type:         "web",
 			GitHubURL:    "https://github.com/CSCI-40500-Fall-2025/ForgeArena",
