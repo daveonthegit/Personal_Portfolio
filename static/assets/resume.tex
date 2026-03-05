@@ -44,10 +44,10 @@
 \newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{0pt}}}}
 \newcommand{\resumeSubheading}[4]{\vspace{0pt}\item\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}\textbf{#1}, \textit{\small#3} & #2 \\ \textit{\small#4} & \\ \end{tabular*}\vspace{2pt}}
 \newcommand{\resumeProjectHeading}[2]{\item\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{0pt}}
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=4pt, topsep=0pt]}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=0pt, topsep=0pt]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=2pt, topsep=1pt]}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=1pt, topsep=1pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
 
 \begin{document}
 
@@ -82,11 +82,11 @@
 \resumeItem{Unified B2C and B2B flows into a single extensible codebase, reducing maintenance effort by 40\%}
 \resumeItemListEnd
 
-\resumeProjectHeading{\textbf{Kyarafit} $|$ \emph{Go, React.js, React Native, Next.js, PostgreSQL, Docker, FastAPI}}{August 2025 -- Present}
+\resumeProjectHeading{\textbf{Kyarafit} $|$ \emph{TypeScript, React Native, Next.js, Expo, Convex, FastAPI, Docker}}{August 2025 -- Present}
 \resumeItemListStart
-\resumeItem{Architected a cross-platform system with a Go (Fiber) API, FastAPI image service, and React Native clients}
-\resumeItem{Centralized business logic in shared backend services across web and mobile, eliminating cross-platform inconsistencies}
-\resumeItem{Implemented JWT authentication with middleware-protected endpoints across all services}
+\resumeItem{Architected the backend using Convex serverless, leveraging reactive queries for real-time UI sync across web and mobile without a dedicated API server}
+\resumeItem{Built a TypeScript monorepo with a Next.js web app and React Native/Expo mobile client sharing a design-system package and Convex backend}
+\resumeItem{Integrated Better Auth (Google OAuth + email/password) and offline-first SQLite on mobile with a Convex cloud-sync adapter}
 \resumeItemListEnd
 
 \resumeProjectHeading{\textbf{ForgeArena} $|$ \emph{React.js, TypeScript, Node.js, Express.js, CI/CD}}{August 2025 -- December 2025}
@@ -113,9 +113,9 @@
 \begin{itemize}[leftmargin=0.15in, label={}]
 \small{\item{
 \textbf{Languages}: JavaScript, TypeScript, Go, Python, SQL, C/C++, PHP \\
-\textbf{Frameworks}: React.js, Node.js, Express.js, Next.js, Fiber, FastAPI \\
+\textbf{Frameworks}: React.js, React Native, Node.js, Express.js, Next.js, FastAPI \\
 \textbf{Databases}: PostgreSQL, MySQL \\
-\textbf{Cloud \& Tools}: Docker, Git, CI/CD (GitHub Actions, Jenkins), GCP
+\textbf{Cloud \& Tools}: Docker, Git, CI/CD (GitHub Actions, Jenkins), GCP, Convex
 }}
 \end{itemize}
 

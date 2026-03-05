@@ -41,10 +41,10 @@ func LoadProjects() []Project {
 		{
 			ID:           "kyarafit",
 			Title:        "Kyarafit",
-			Description:  "A mobile-first cosplay wardrobe and coord planner. Track your builds, organize pieces, design outfits, and get restock alerts — all in one place. Built with TypeScript, Go, and PostgreSQL for a comprehensive cosplay community platform.",
+			Description:  "A cross-platform cosplay wardrobe and outfit planning app. Organize costume pieces in a digital closet, link them into character builds, plan conventions day by day, and auto-generate smart packing lists. Built as a TypeScript monorepo with a Next.js web app, React Native (Expo) mobile client, shared design system, and Convex serverless backend with real-time reactive queries. Features offline-first mobile storage via SQLite, Better Auth authentication with Google OAuth, tiered subscriptions via Stripe.",
 			Image:        "/static/images/Kyarafit.png",
-			Technologies: []string{"TypeScript", "Go", "PostgreSQL", "Shell", "Python", "CSS", "PLpgSQL"},
-			Type:         "web",
+			Technologies: []string{"TypeScript", "React Native", "Next.js", "Expo", "Convex", "FastAPI", "Python", "TailwindCSS", "Docker"},
+			Type:         "mobile",
 			GitHubURL:    "https://github.com/daveonthegit/Kyarafit",
 			LiveURL:      "https://www.kyarafit.com/",
 			DemoType:     "live",
