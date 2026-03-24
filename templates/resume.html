@@ -1,5 +1,5 @@
 {{define "resume-content"}}
-<div class="h-full w-full flex flex-col p-4 md:p-8 relative min-h-0 game-panel">
+<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
     <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
         <div class="flex items-center gap-3 md:gap-4 min-w-0">
             <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
@@ -15,10 +15,10 @@
             <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
         </div>
     </div>
-    <div class="flex-1 overflow-hidden min-h-0">
-<section class="section relative h-full flex flex-col md:flex-row gap-4 md:gap-6 pb-4 px-4">
+    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
+<section class="section relative flex-1 min-h-0 flex flex-col md:flex-row gap-3 md:gap-6 pb-2 md:pb-4 px-2 sm:px-4">
     <!-- Left Actions Column -->
-    <div class="flex-shrink-0 w-full md:w-[350px] flex flex-col gap-4 md:gap-6 overflow-y-auto custom-scrollbar pr-2 pb-4">
+    <div class="flex-shrink-0 w-full md:w-[350px] flex flex-col gap-3 md:gap-6 overflow-y-auto custom-scrollbar pr-1 sm:pr-2 pb-2 md:pb-4">
         <!-- Resume Actions Panel -->
         <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-6 backdrop-blur-md shrink-0">
             <div class="corner-accent-tl"></div>
@@ -92,10 +92,10 @@
             <span class="text-[9px] font-mono text-gray-500 hidden sm:block">DOC_ID: RES_{{.Year}}_001</span>
         </div>
         
-        <div class="flex-1 bg-[#1a1a1a] relative w-full h-full">
+        <div class="flex-1 bg-[#1a1a1a] relative w-full min-h-[min(55vh,480px)] md:min-h-0 h-full">
             <iframe 
                 src="/resume/pdf" 
-                class="absolute inset-0 w-full h-full border-0"
+                class="absolute inset-0 w-full h-full border-0 min-h-[min(55vh,480px)] md:min-h-0"
                 title="Resume Preview">
             </iframe>
         </div>

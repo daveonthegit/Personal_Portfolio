@@ -1,5 +1,5 @@
 {{define "projects-content"}}
-<div class="h-full w-full flex flex-col p-4 md:p-8 relative min-h-0 game-panel">
+<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
     <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
         <div class="flex items-center gap-3 md:gap-4 min-w-0">
             <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
@@ -15,9 +15,9 @@
             <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
         </div>
     </div>
-    <div class="flex-1 overflow-hidden min-h-0">
-<section class="section relative h-full flex flex-col">
-    <div class="container max-w-7xl mx-auto flex flex-col h-full overflow-hidden">
+    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
+<section class="section relative flex-1 min-h-0 flex flex-col">
+    <div class="container max-w-7xl mx-auto flex flex-col flex-1 min-h-0 overflow-hidden px-0 sm:px-2">
         <!-- Filter Controls - Newstyle -->
         <div class="flex flex-wrap gap-2 md:gap-3 mb-4 pb-4 border-b border-white/5 shrink-0">
             <button class="nexus-filter-btn filter-btn active" data-filter="all">ALL_PROJECTS</button>
@@ -56,8 +56,8 @@
                 
                 <!-- Icon/Image -->
                 {{if $project.Image}}
-                <div class="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-100 transition-opacity duration-500 grayscale group-hover:grayscale-0" style="background-image: url('{{$project.Image}}');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent group-hover:from-black/80 group-hover:via-transparent transition-all"></div>
+                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{$project.Image}}');"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none"></div>
                 {{else}}
                 <span class="material-symbols-outlined text-3xl md:text-4xl text-white/20 group-hover:text-nexus-cyan mb-2 group-hover:scale-110 transition-transform relative z-10">
                     {{if eq $project.Type "web"}}web{{else if eq $project.Type "security"}}security{{else if eq $project.Type "research"}}science{{else if eq $project.Type "tool"}}build{{else}}terminal{{end}}
@@ -95,8 +95,8 @@
 </section>
 
 <!-- Terminal Overlay for Project Expansion -->
-<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-300">
-    <div id="terminal-window" class="w-full max-w-5xl h-full max-h-[800px] border border-nexus-cyan bg-[#050505] flex flex-col relative transform scale-95 transition-transform duration-500 overflow-hidden shadow-[0_0_30px_rgba(0,210,255,0.15)]">
+<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-300 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+    <div id="terminal-window" class="w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] border border-nexus-cyan bg-[#050505] flex flex-col relative transform scale-95 transition-transform duration-500 overflow-hidden min-h-0 shadow-[0_0_30px_rgba(0,210,255,0.15)]">
         
         <!-- Terminal Header -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-nexus-cyan/50 bg-nexus-cyan/10 shrink-0 z-40 relative">
@@ -117,12 +117,11 @@
         </div>
 
         <!-- Terminal Body -->
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative z-40">
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative z-40 min-h-0">
             <!-- Left Side / Project Image & Quick Stats -->
             <div class="w-full md:w-2/5 border-b md:border-b-0 md:border-r border-nexus-cyan/20 p-4 md:p-6 flex flex-col bg-black/40 overflow-y-auto custom-scrollbar">
-                <div id="term-img-container" class="aspect-video w-full bg-black border border-white/10 mb-6 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
-                    <img id="term-project-img" src="" alt="Project Visual" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-700">
+                <div id="term-img-container" class="aspect-video w-full bg-black border border-white/10 mb-6 relative overflow-hidden">
+                    <img id="term-project-img" src="" alt="Project Visual" class="w-full h-full object-cover">
                     
                     <!-- HUD Overlays on image -->
                     <div class="absolute top-2 left-2 text-[8px] font-mono text-nexus-cyan bg-black/60 px-1 border border-nexus-cyan/30 z-20">VISUAL_DATA</div>

@@ -832,8 +832,13 @@ a.nexus-btn-secondary:hover {
   display: grid;
   grid-template-columns: minmax(260px, 320px) 1fr;
   grid-template-rows: 1fr auto;
+  /* Mobile browsers: dvh avoids address-bar jump; fallback chain */
   height: 100vh;
-  width: 100vw;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  width: 100%;
   max-width: 100%;
   position: relative;
   z-index: 10;
@@ -859,6 +864,7 @@ a.nexus-btn-secondary:hover {
   grid-column: 1 / 3;
   grid-row: 2 / 3;
   min-height: 52px;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
 }
 
 .game-hud-apps-btn {
@@ -914,11 +920,18 @@ a.nexus-btn-secondary:hover {
   .game-hud-right {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
+    min-height: 0;
   }
   .game-hud-bottom {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
   }
+}
+
+/* Main column must shrink on mobile so inner scroll regions work */
+#main-content {
+  min-height: 0;
+  min-width: 0;
 }
 
 .custom-scrollbar {
