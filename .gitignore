@@ -58,3 +58,6 @@ static/js/main.js.map
 # Temporary files
 *.tmp
 *.temp
+
+# Local reference frames for loading animation (not shipped with site)
+loadingsequence/
