@@ -951,3 +951,52 @@ a.nexus-btn-secondary:hover {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 210, 255, 0.55);
 }
+
+/* --- Game-like UI Enhancements --- */
+
+/* CRT Base Styling */
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 100;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Enhancing Hover States with Glow */
+a, button, .nexus-btn-primary, .nexus-btn-secondary, .hud-sidebar-link, .game-hud-apps-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover, button:hover, .hud-sidebar-link:hover {
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+}
+
+/* Give buttons a slight scale/glitch feel on hover */
+.nexus-btn-primary:active, .nexus-btn-secondary:active, .filter-btn:active {
+  transform: scale(0.98);
+}
+
+/* Selection text shadow */
+::selection {
+  background: var(--nexus-cyan);
+  color: #000;
+  text-shadow: none;
+}
+
+/* Subtle continuous pulse for interactive areas */
+@keyframes interact-pulse {
+  0% { box-shadow: inset 0 0 0 rgba(0, 210, 255, 0); }
+  50% { box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.1); }
+  100% { box-shadow: inset 0 0 0 rgba(0, 210, 255, 0); }
+}
+
+.game-hud-left {
+  animation: interact-pulse 4s infinite;
+}

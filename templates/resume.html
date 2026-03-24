@@ -15,87 +15,89 @@
             <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
         </div>
     </div>
-    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-3 min-h-0">
-<section class="section relative pb-8">
-    <div class="container max-w-5xl mx-auto">
+    <div class="flex-1 overflow-hidden min-h-0">
+<section class="section relative h-full flex flex-col md:flex-row gap-4 md:gap-6 pb-4 px-4">
+    <!-- Left Actions Column -->
+    <div class="flex-shrink-0 w-full md:w-[350px] flex flex-col gap-4 md:gap-6 overflow-y-auto custom-scrollbar pr-2 pb-4">
         <!-- Resume Actions Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md mb-8">
+        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-6 backdrop-blur-md shrink-0">
             <div class="corner-accent-tl"></div>
             <div class="corner-accent-br"></div>
             
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-2 h-8 bg-nexus-cyan"></div>
-                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Document Access</h2>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
+                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Document Access</h2>
             </div>
             
-            <div class="flex flex-wrap gap-4 justify-center mb-6">
-                <a href="/resume/download" class="nexus-btn-primary flex items-center gap-2 no-underline">
+            <div class="flex flex-col gap-3 mb-4">
+                <a href="/resume/download" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
                     <span class="material-symbols-outlined text-sm">download</span>
                     DOWNLOAD PDF
                 </a>
-                <button onclick="window.print()" class="nexus-btn-secondary flex items-center gap-2">
+                <button onclick="window.print()" class="nexus-btn-secondary flex items-center justify-center gap-2 py-2">
                     <span class="material-symbols-outlined text-sm">print</span>
                     PRINT DOCUMENT
                 </button>
             </div>
             
-            <div class="text-center text-[10px] font-mono text-gray-500 pt-4 border-t border-white/5">
-                Last Updated: {{.Year}}.01.15 | Version: 2.1 | Classification: <span class="text-[#4ade80]">PUBLIC</span>
-            </div>
-        </div>
-
-        <!-- Resume Preview Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-8 backdrop-blur-md mb-8">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-2 h-8 bg-nexus-cyan"></div>
-                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Resume Preview</h2>
-                <span class="ml-auto text-[10px] font-mono text-gray-500">DOCUMENT_ID: RES_{{.Year}}_001</span>
-            </div>
-            
-            <!-- PDF Display -->
-            <div class="bg-black/40 border border-white/10 p-4">
-                <iframe 
-                    src="/resume/pdf" 
-                    class="w-full border-0 bg-white"
-                    style="height: 800px;"
-                    title="Resume Preview">
-                </iframe>
+            <div class="text-center text-[10px] font-mono text-gray-500 pt-3 border-t border-white/5">
+                Updated: {{.Year}}.01.15 | Ver: 2.1<br>
+                Classification: <span class="text-[#4ade80]">PUBLIC</span>
             </div>
         </div>
 
         <!-- Contact CTA Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-8 backdrop-blur-md text-center">
+        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md text-center shrink-0">
             <div class="corner-accent-tl"></div>
             <div class="corner-accent-br"></div>
             
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <div class="w-2 h-8 bg-nexus-cyan"></div>
-                <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase">Initiate Contact</h2>
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
+                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Initiate Contact</h2>
             </div>
             
-            <p class="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+            <p class="text-gray-400 text-xs mb-4 max-w-md mx-auto">
                 Interested in collaboration or have project inquiries? Establish a secure communication channel.
             </p>
             
-            <a href="/contact" class="nexus-btn-primary inline-flex items-center gap-2 no-underline">
+            <a href="/contact" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
                 <span class="material-symbols-outlined text-sm">send</span>
                 GET IN TOUCH
             </a>
             
-            <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-3 gap-4 max-w-md mx-auto">
+            <div class="mt-4 pt-4 border-t border-white/5 grid grid-cols-3 gap-2 max-w-md mx-auto">
                 <div class="text-center">
-                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
-                    <div class="text-[#4ade80] font-mono text-sm">AVAILABLE</div>
+                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
+                    <div class="text-[#4ade80] font-mono text-[10px]">AVAILABLE</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
-                    <div class="text-nexus-cyan font-mono text-sm">24HR MAX</div>
+                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
+                    <div class="text-nexus-cyan font-mono text-[10px]">24HR MAX</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
-                    <div class="text-[#ff5500] font-mono text-sm">HIGH</div>
+                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
+                    <div class="text-[#ff5500] font-mono text-[10px]">HIGH</div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Right PDF Column -->
+    <div class="flex-1 flex flex-col nexus-panel relative bg-surface-translucent border border-white/10 p-0 backdrop-blur-md h-full min-h-0 overflow-hidden">
+        <div class="flex items-center justify-between p-3 md:p-4 bg-black/40 border-b border-white/5 shrink-0 z-10">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-nexus-cyan text-sm">description</span>
+                <h2 class="text-sm font-nexus-display font-bold text-white tracking-widest uppercase">Preview Mode</h2>
+            </div>
+            <span class="text-[9px] font-mono text-gray-500 hidden sm:block">DOC_ID: RES_{{.Year}}_001</span>
+        </div>
+        
+        <div class="flex-1 bg-[#1a1a1a] relative w-full h-full">
+            <iframe 
+                src="/resume/pdf" 
+                class="absolute inset-0 w-full h-full border-0"
+                title="Resume Preview">
+            </iframe>
         </div>
     </div>
 </section>

@@ -26,9 +26,9 @@
             <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
         </div>
     </div>
-    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-3 min-h-0">
-<main class="contact-main relative z-10">
-    <div class="contact-grid" style="display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; max-width: 80rem; margin: 0 auto; align-items: start;">
+    <div class="flex-1 overflow-hidden min-h-0">
+<main class="contact-main relative z-10 h-full flex items-center justify-center p-2 sm:p-4">
+    <div class="contact-grid h-full max-h-[800px] w-full max-w-7xl mx-auto" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: stretch;">
         <style>
             @media (min-width: 1024px) {
                 .contact-grid {
@@ -43,141 +43,119 @@
             }
         </style>
         <!-- Left Column - Direct Links & Status -->
-        <div class="contact-left flex flex-col gap-6" style="order: 2;">
+        <div class="contact-left flex flex-col gap-4 h-full" style="order: 2;">
             <!-- Direct Links Panel -->
-            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-4 md:p-6 backdrop-blur-md flex-1">
                 <div class="corner-accent-tl"></div>
-                <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-2">
+                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                     <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Direct Links</h2>
                     <span class="material-symbols-outlined text-nexus-cyan text-lg">hub</span>
                 </div>
-                <div class="space-y-4">
+                <div class="space-y-3">
                     {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                    <a href="mailto:{{.Personal.Email}}" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Secure_Mail</span>
                             <span class="material-symbols-outlined text-xs text-nexus-cyan">alternate_email</span>
                         </div>
-                        <div class="font-mono text-sm text-white">{{.Personal.Email}}</div>
+                        <div class="font-mono text-xs md:text-sm text-white truncate">{{.Personal.Email}}</div>
                     </a>
                     {{end}}
                     {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Github_Node</span>
                             <span class="material-symbols-outlined text-xs text-nexus-cyan">terminal</span>
                         </div>
-                        <div class="font-mono text-sm text-white">Code Repository</div>
+                        <div class="font-mono text-xs md:text-sm text-white truncate">Code Repository</div>
                     </a>
                     {{end}}
                     {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Signal_Alias</span>
                             <span class="material-symbols-outlined text-xs text-nexus-cyan">radar</span>
                         </div>
-                        <div class="font-mono text-sm text-white">Professional Network</div>
+                        <div class="font-mono text-xs md:text-sm text-white truncate">Professional Network</div>
                     </a>
                     {{end}}
                 </div>
             </div>
             
             <!-- Comm Status Panel -->
-            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
+            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-4 md:p-6 backdrop-blur-md shrink-0">
                 <div class="corner-accent-br"></div>
-                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+                <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
                     <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Comm Status</h2>
                     <span class="material-symbols-outlined text-nexus-cyan text-lg">sensors</span>
                 </div>
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Signal Strength</span>
+                        <span class="text-gray-500 uppercase tracking-tighter">Signal</span>
                         <span class="text-nexus-cyan">STABLE</span>
                     </div>
                     <div class="w-full bg-white/5 h-1">
                         <div class="bg-nexus-cyan h-full w-[94%]" style="box-shadow: 0 0 8px rgba(0,210,255,0.5);"></div>
                     </div>
                     <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Packet Loss</span>
+                        <span class="text-gray-500 uppercase tracking-tighter">Loss</span>
                         <span class="text-white">0.00%</span>
                     </div>
                     <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Encryption</span>
-                        <span class="text-white">AES-256-GCM</span>
+                        <span class="text-gray-500 uppercase tracking-tighter">Crypto</span>
+                        <span class="text-white">AES-256</span>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Right Column - Contact Form -->
-        <div class="contact-right" style="order: 1;">
-            <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
-                <div class="absolute top-0 right-0 p-4 opacity-10">
-                    <span class="material-symbols-outlined text-8xl text-white">cell_tower</span>
+        <div class="contact-right flex flex-col h-full overflow-hidden" style="order: 1;">
+            <div class="nexus-panel flex-1 relative bg-surface-translucent border-t-2 border-nexus-cyan p-4 md:p-8 backdrop-blur-md flex flex-col min-h-0">
+                <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                    <span class="material-symbols-outlined text-6xl md:text-8xl text-white">cell_tower</span>
                 </div>
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-2 h-8 bg-nexus-cyan"></div>
+                <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 shrink-0">
+                    <div class="w-2 h-6 md:h-8 bg-nexus-cyan"></div>
                     <div>
-                        <h2 class="text-xl md:text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none m-0">
+                        <h2 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none m-0">
                             Transmission Form
                         </h2>
-                        <p class="text-[10px] font-mono text-gray-500 mt-1 tracking-widest">ENCRYPTED CHANNEL</p>
+                        <p class="text-[9px] md:text-[10px] font-mono text-gray-500 mt-1 tracking-widest">ENCRYPTED CHANNEL</p>
                     </div>
                 </div>
                 
-                <form id="contact-form" class="space-y-6 relative z-10">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmitter ID (Email)</label>
-                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="SENDER@UNKNOWN.LOCAL">
+                <form id="contact-form" class="space-y-4 md:space-y-6 relative z-10 flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar pr-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 shrink-0">
+                        <div class="space-y-1 md:space-y-2">
+                            <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmitter ID</label>
+                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="SENDER@UNKNOWN.LOCAL">
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject Header</label>
-                            <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="OBJECTIVE_DESCRIPTION">
+                        <div class="space-y-1 md:space-y-2">
+                            <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject Header</label>
+                            <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="OBJECTIVE_DESCRIPTION">
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmission Data (Message)</label>
-                        <textarea id="message" name="message" rows="6" required class="nexus-input resize-none w-full bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="ENTER ENCRYPTED PAYLOAD..."></textarea>
+                    <div class="space-y-1 md:space-y-2 flex-1 flex flex-col min-h-[150px]">
+                        <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1 shrink-0">Transmission Data</label>
+                        <textarea id="message" name="message" required class="nexus-input flex-1 resize-none w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="ENTER ENCRYPTED PAYLOAD..."></textarea>
                     </div>
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-4 border-t border-white/5">
-                        <div class="flex items-center gap-4 text-[10px] font-mono text-gray-500">
-                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-nexus-cyan"></span> PROTOCOL_ACTIVE</span>
-                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#ff5500]"></span> IP_LOGGING_DISABLED</span>
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5 shrink-0">
+                        <div class="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-gray-500">
+                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-nexus-cyan"></span> SECURE</span>
+                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#ff5500]"></span> NO_LOGS</span>
                         </div>
-                        <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full md:w-auto flex items-center justify-center gap-2">
+                        <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full md:w-auto flex items-center justify-center gap-2 py-2">
                             <span class="material-symbols-outlined text-sm">send</span>
-                            SEND TRANSMISSION
+                            TRANSMIT
                         </button>
                     </div>
                 </form>
             </div>
             
             <!-- Response Status -->
-            <div id="form-message" class="form-message mt-6" style="display: none;">
+            <div id="form-message" class="form-message mt-2 md:mt-4 shrink-0" style="display: none;">
                 <!-- Messages will be dynamically inserted here by TypeScript handler -->
-            </div>
-            
-            <!-- Info Cards -->
-            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4 backdrop-blur-md">
-                    <div class="p-2 bg-nexus-cyan/10">
-                        <span class="material-symbols-outlined text-nexus-cyan">verified_user</span>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Security Protocol</div>
-                        <div class="text-sm font-mono text-white">End-to-End Encrypted</div>
-                    </div>
-                </div>
-                <div class="bg-surface-translucent border border-white/5 p-4 flex items-center gap-4 backdrop-blur-md">
-                    <div class="p-2 bg-[#ff5500]/10">
-                        <span class="material-symbols-outlined text-[#ff5500]">history</span>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-widest">Avg Response</div>
-                        <div class="text-sm font-mono text-white">&lt; 24 Standard Cycles</div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
