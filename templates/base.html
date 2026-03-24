@@ -36,13 +36,9 @@
     <!-- Styles -->
     <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
 </head>
-<body class="font-nexus selection:bg-nexus-cyan selection:text-black h-screen w-screen overflow-hidden relative bg-black text-white crt-screen">
-    <!-- CRT Overlay Effects -->
-    <div class="pointer-events-none fixed inset-0 z-[100] shadow-[inset_0_0_100px_rgba(0,0,0,0.9)]"></div>
-    
-    <!-- Background Grid + surveillance layer (unchanged) -->
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black h-screen w-screen overflow-hidden relative bg-black text-white">
+    <!-- Background Grid -->
     <div class="nexus-grid-bg"></div>
-    <div class="scan-line" aria-hidden="true"></div>
 
     <div class="game-ui-layout">
         <!-- Left HUD: profile + stats (hidden on small screens; use bottom bar + hub) -->

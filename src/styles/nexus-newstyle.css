@@ -347,19 +347,6 @@ body {
   display: none;
 }
 
-/* Scan line overlay */
-.scan-line {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.02) 51%, transparent 51%);
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 1;
-}
-
 /* Corner accents — used on profile cards and panels */
 .corner-accent-tl {
   position: absolute;
@@ -953,21 +940,6 @@ a.nexus-btn-secondary:hover {
 }
 
 /* --- Game-like UI Enhancements --- */
-
-/* CRT Base Styling */
-.crt-screen::before {
-  content: " ";
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 100;
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
-}
 
 /* Enhancing Hover States with Glow */
 a, button, .nexus-btn-primary, .nexus-btn-secondary, .hud-sidebar-link, .game-hud-apps-btn {
