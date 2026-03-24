@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CTOS Base Styles */
+/* xiaoOS Base Styles */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -23,7 +23,7 @@
   }
 }
 
-/* CTOS Components */
+/* xiaoOS Components */
 @layer components {
   /* Navigation */
   .nexus-nav {
@@ -106,7 +106,7 @@
     opacity: 0.2;
   }
   
-  /* CTOS Network Pattern Overlay */
+  /* xiaoOS Network Pattern Overlay */
   .nexus-grid-bg::after {
     content: '';
     position: absolute;
@@ -160,7 +160,7 @@
     overflow: hidden;
   }
   
-  /* Profile Card - CTOS Style */
+  /* Profile Card - xiaoOS Style */
   .nexus-profile-card {
     @apply bg-black relative p-0 z-10;
     border: 2px solid rgba(255, 255, 255, 0.8);
@@ -418,7 +418,7 @@
     filter: drop-shadow(0 0 5px rgba(147, 197, 253, 0.3));
   }
   
-  /* Panel - CTOS Style */
+  /* Panel - xiaoOS Style */
   .nexus-panel {
     @apply bg-black p-6 mb-8 relative z-10;
     border: 2px solid rgba(255, 255, 255, 0.6);
@@ -1532,7 +1532,7 @@
     overflow: hidden;
   }
   
-  /* CTOS Interface Elements */
+  /* xiaoOS Interface Elements */
   .nexus-status-bar {
     @apply bg-black/80 text-blue-400 px-3 py-1 font-mono text-xs;
     backdrop-filter: blur(10px);
@@ -3039,7 +3039,7 @@
   }
 }
 
-@keyframes ctosLoad {
+@keyframes xiaoosLoad {
   0% {
     opacity: 0;
     transform: translateY(15px) scale(0.98);
@@ -3113,7 +3113,7 @@
 
 /* Subtle Loading States */
 .nexus-load {
-  animation: ctosLoad 0.8s ease-out forwards;
+  animation: xiaoosLoad 0.8s ease-out forwards;
 }
 
 .fade-in-up {

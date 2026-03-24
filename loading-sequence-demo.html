@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xiaoOS Loading Sequence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        :root {
+            --bg: #000000;
+            --glow: #FFFFFF;
+            --text-muted: #888888;
+            --font: 'Fira Code', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--glow);
+            font-family: var(--font);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        .display-area {
+            position: relative;
+            width: 450px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transform: scale(1.5); /* Scale up entire center block */
+        }
+
+        /* 1. X Matrix Grid */
+        .x-grid {
+            position: absolute;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8px 12px;
+            font-size: 24px;
+            font-family: monospace;
+            font-weight: 500;
+        }
+        .x-item {
+            opacity: 0;
+            text-align: center;
+        }
+
+        /* 2. Strikeout Bars */
+        .strike-bars {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* Decreased gap to pack bars tighter */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 250px;
+            z-index: 5; /* Ensures bars are above the diamond */
+        }
+        .strike-bar {
+            width: 0%;
+            height: 28px; /* Increased height so they fully cover the 24px X's */
+            background: var(--glow);
+        }
+
+        /* Initial Transition Diamond (Behind Bars) */
+        .transition-diamond {
+            position: absolute;
+            width: 250px; /* Increased container to accommodate larger shapes */
+            height: 250px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            z-index: 1; /* Behind bars */
+        }
+        
+        .diamond-shape {
+            position: absolute;
+            width: 130px; /* Bigger diamond */
+            height: 130px; /* Bigger diamond */
+            border: 1.5px solid var(--glow); /* Skinnier lines */
+            transform: rotate(45deg);
+        }
+
+        /* The drawn X cutting through the diamond */
+        .diamond-x-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+        }
+        .x-line {
+            position: absolute;
+            background: var(--glow);
+            width: 1.5px; /* Skinnier lines */
+            height: 240px; /* Much larger lines so they extend past the diamond boundaries */
+            top: 50%;
+            left: 50%;
+        }
+        .x-line-1 { transform: translate(-50%, -50%) rotate(45deg); }
+        .x-line-2 { transform: translate(-50%, -50%) rotate(-45deg); }
+
+        /* 3. Geometric Shapes Container */
+        .shape-container {
+            position: absolute;
+            width: 250px; /* Increased from 150px to make shapes much larger */
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        svg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        
+        .shape-path {
+            fill: none;
+            stroke: var(--glow);
+            stroke-width: 1.5px; /* Skinnier lines */
+            stroke-linecap: square;
+            stroke-linejoin: miter;
+            transform-origin: center;
+        }
+
+        .shape-1, .shape-2, .shape-3, .shape-4, .shape-5 { opacity: 0; }
+
+        /* 4. System Loading Container */
+        .sys-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            width: 220px;
+        }
+        
+        .sys-blocks {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            opacity: 0;
+            width: 100%;
+        }
+        .sys-b1 { width: 30px; height: 22px; background: var(--glow); margin-bottom: 5px; } /* Thicker */
+        .sys-b2 { width: 0px; height: 22px; background: var(--glow); margin-bottom: 5px; } /* Thicker */
+        /* Position relative so the replacement bar can overlay exactly on top of the text */
+        .sys-text-container {
+            position: relative;
+            margin: 5px 0;
+            width: 230px; /* Slightly wider to encompass the text perfectly */
+            height: 28px; /* Matches exact text height */
+            display: flex;
+            align-items: center;
+        }
+        .sys-text { 
+            font-family: sans-serif; 
+            font-size: 28px; 
+            font-weight: 600; 
+            letter-spacing: -1px;
+            /* Added explicit line-height and margin to match exact positioning */
+            line-height: 1;
+            margin: 0;
+            padding: 0;
+        }
+        .sys-fast-bar-container {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 100%;
+            /* Increased height to fully cover the System Loading text */
+            height: 28px; 
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+        }
+        .sys-fast-bar {
+            height: 100%;
+            width: 85%;
+            background: var(--glow);
+        }
+
+        .sys-b3 { width: 0px; height: 22px; background: var(--glow); } /* Thicker */
+
+        /* Bottom UI */
+        .bottom-ui {
+            position: absolute;
+            bottom: 15%;
+            width: 700px; /* Wider to match larger scale */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            transform: scale(1.3); /* Scale up bottom text and bar */
+        }
+
+        .loading-text {
+            font-family: sans-serif;
+            font-size: 16px;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 3px; /* Slightly thicker */
+            background: rgba(255, 255, 255, 0.15);
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--glow);
+        }
+
+        .hint-text {
+            background: var(--glow);
+            color: var(--bg);
+            padding: 10px 20px;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .main-site {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #111;
+            z-index: 1;
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Geometric Reveal Elements */
+        .reveal-outline {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150vmax; height: 150vmax; /* 150vmax ensures it easily covers any screen when scaled */
+            border: 2px solid var(--glow);
+            transform: translate(-50%, -50%) rotate(45deg) scale(0);
+            z-index: 200;
+            pointer-events: none;
+        }
+        .reveal-solid {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150vmax; height: 150vmax;
+            background: var(--glow);
+            transform: translate(-50%, -50%) rotate(45deg) scale(0);
+            z-index: 199;
+            pointer-events: none;
+        }
+
+        .main-site-content {
+            opacity: 0;
+            transform: scale(1.05);
+            text-align: center;
+        }
+        .main-site h1 { font-size: 48px; letter-spacing: 2px; margin-bottom: 10px; font-weight: 300; font-family: sans-serif; }
+
+
+        .replay-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--glow);
+            font-family: var(--font);
+            padding: 8px 16px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        .replay-btn:hover {
+            border-color: var(--glow);
+            background: rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="display-area">
+        
+        <!-- 1. The X Matrix Grid -->
+        <div class="x-grid" id="x-grid"></div>
+
+        <!-- 2. Strikeout bars -->
+        <div class="strike-bars" id="strike-bars">
+            <div class="strike-bar"></div>
+            <div class="strike-bar"></div>
+            <div class="strike-bar"></div>
+        </div>
+
+        <!-- Initial Transition Diamond (Behind bars) -->
+        <div class="transition-diamond" id="transition-diamond">
+            <div class="diamond-shape" id="diamond-shape"></div>
+            <div class="diamond-x-lines" id="diamond-x-lines">
+                <div class="x-line x-line-1"></div>
+                <div class="x-line x-line-2"></div>
+            </div>
+        </div>
+
+        <!-- 3. Concentric Geometric Shapes -->
+        <div class="shape-container" id="shape-container">
+            
+            <!-- Shape 1: Just Diamond -->
+            <svg class="shape-1" viewBox="0 0 150 150">
+                <polygon points="75,10 140,75 75,140 10,75" class="shape-path" />
+            </svg>
+
+            <!-- Shape 2: Diamond + Triangle intersecting bottom -->
+            <svg class="shape-2" viewBox="0 0 150 150">
+                <polygon points="75,10 140,75 75,140 10,75" class="shape-path" />
+                <polygon points="10,50 140,50 75,140" class="shape-path" />
+            </svg>
+
+            <!-- Shape 3: Diamond + Circle inside -->
+            <svg class="shape-3" viewBox="0 0 150 150">
+                <polygon points="75,10 140,75 75,140 10,75" class="shape-path" />
+                <circle cx="75" cy="75" r="45" class="shape-path" />
+            </svg>
+
+            <!-- Shape 4: Circle + Previous Triangle -->
+            <svg class="shape-4" viewBox="0 0 150 150">
+                <circle cx="75" cy="75" r="45" class="shape-path" />
+                <polygon points="10,50 140,50 75,140" class="shape-path" />
+            </svg>
+
+            <!-- Shape 5: Circle + Triangle + Inner Triangle -->
+            <svg class="shape-5" viewBox="0 0 150 150">
+                <circle cx="75" cy="75" r="45" class="shape-path" />
+                <polygon points="10,50 140,50 75,140" class="shape-path" />
+                <polygon points="75,50 105,95 45,95" class="shape-path" />
+            </svg>
+        </div>
+
+        <!-- 4. System Loading -->
+        <div class="sys-container">
+            <div class="sys-blocks" id="sys-blocks">
+                <div class="sys-b1"></div>
+                <div class="sys-b2"></div>
+                
+                <div class="sys-text-container">
+                    <div class="sys-text" id="sys-text">System Loading</div>
+                    <div class="sys-fast-bar-container" id="sys-fast-bar-container">
+                        <div class="sys-fast-bar" id="sys-fast-bar"></div>
+                    </div>
+                </div>
+
+                <div class="sys-b3"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Progress Bar & Hint Text -->
+    <div class="bottom-ui" id="bottom-ui">
+        <div class="loading-text">Loading...</div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+        <div class="hint-text">
+            SYSTEM.TIP: Decrypting project archives. Navigate the interface to explore software engineering experience and deployed applications.
+        </div>
+    </div>
+
+    <div class="main-site" id="main-site">
+        <div class="reveal-outline" id="reveal-outline"></div>
+        <div class="reveal-solid" id="reveal-solid"></div>
+        
+        <div class="main-site-content" id="main-site-content">
+            <h1>PORTFOLIO LOADED</h1>
+        </div>
+    </div>
+
+    <button class="replay-btn" onclick="playAnimation()">REPLAY SEQUENCE</button>
+
+    <script>
+        // Generate the 3x10 grid of X's
+        const grid = document.getElementById('x-grid');
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 10; c++) {
+                const span = document.createElement('span');
+                span.className = 'x-item';
+                span.innerText = 'X';
+                grid.appendChild(span);
+            }
+        }
+
+        let tl;
+
+        function playAnimation() {
+            if(tl) tl.kill();
+
+            // Resets
+            gsap.set(".display-area", { display: "flex" });
+            gsap.set("#main-site", { opacity: 0, zIndex: 1 });
+            gsap.set("#reveal-outline", { scale: 0, opacity: 1 });
+            gsap.set("#reveal-solid", { scale: 0, opacity: 1 });
+            gsap.set("#main-site-content", { opacity: 0, scale: 1.05 });
+            
+            gsap.set(".x-item", { opacity: 0 });
+            gsap.set(".strike-bar", { width: "0%" });
+            gsap.set("#strike-bars", { opacity: 1 });
+            gsap.set("#transition-diamond", { opacity: 0 });
+            gsap.set("#diamond-shape", { scale: 1, opacity: 1 });
+            gsap.set("#diamond-x-lines", { opacity: 1 });
+            gsap.set(".shape-1, .shape-2, .shape-3, .shape-4", { opacity: 0, scale: 1 });
+            
+            gsap.set("#sys-blocks", { opacity: 0 });
+            gsap.set(".sys-b1", { opacity: 1 });
+            gsap.set(".sys-b2", { width: 0, opacity: 1 });
+            gsap.set(".sys-b3", { width: 0, opacity: 1 });
+            
+            gsap.set("#sys-fast-bar-container", { opacity: 0 });
+            gsap.set("#sys-fast-bar", { width: "85%" });
+            
+            gsap.set("#bottom-ui", { opacity: 0 });
+            gsap.set("#progress-bar", { width: "0%" });
+
+            tl = gsap.timeline();
+
+            // 0. Bottom UI begins loading immediately
+            tl.to("#bottom-ui", { opacity: 1, duration: 0.3 }, 0); 
+
+            // 1. Diagonal fill of X's (Slightly slower)
+            tl.to(".x-item", {
+                opacity: 1,
+                duration: 0.08,
+                stagger: {
+                    each: 0.06,
+                    grid: [3, 10],
+                    from: "start"
+                }
+            }, 0.3);
+
+            // 2. White Bars Strike Out the X's progressively
+            tl.to(".strike-bar", {
+                width: "100%",
+                duration: 0.4,
+                stagger: 0.1,
+                ease: "power2.inOut"
+            }, "+=0.3");
+
+            // 3. Diamond appears DURING the bars striking through
+            // X's disappear immediately behind it
+            tl.set(".x-item", { opacity: 0 }, "-=0.2")
+              .to("#transition-diamond", { opacity: 1, duration: 0.1 }, "-=0.2");
+
+            // 4. Diamond X constantly glitches in and out while Bars wait
+            // The X glitches rapidly repeatedly
+            tl.to("#diamond-x-lines", { opacity: 0, duration: 0.05, yoyo: true, repeat: 19 }, "+=0.1");
+
+            // 5. Bars disappear just before the diamond expansion ends
+            tl.to("#strike-bars", { opacity: 0, duration: 0.1 }, "-=0.3");
+
+            // 6. X disappears fully as Diamond Expands slightly
+            tl.set("#diamond-x-lines", { opacity: 0 }, "-=0.2") // Ensure X is gone completely
+              .to("#diamond-shape", { scale: 1.1, duration: 0.4, ease: "power2.out" }, "-=0.2") 
+              .to("#transition-diamond", { opacity: 0, duration: 0.05 }, "+=0.2"); 
+
+            // 7. Reappear just the large X quickly, then vanish
+            tl.to("#diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.1")
+              .to("#diamond-shape", { opacity: 0, duration: 0 }, "<") // ensure diamond remains hidden
+              .to("#transition-diamond", { opacity: 1, duration: 0.05 }) // show container again
+              .to("#transition-diamond", { opacity: 0, duration: 0.1 }, "+=0.15"); // disappear quickly
+
+            // Small gap of nothing
+            tl.to({}, { duration: 0.3 });
+
+            // 8. Concentric Shape Sequencing
+            // State 1: Just Diamond
+            tl.set(".shape-1", { opacity: 1 })
+              .set(".shape-1", { opacity: 0 }, "+=0.25") 
+              
+              // State 2: Diamond + Triangle intersecting bottom
+              .set(".shape-2", { opacity: 1 }, "+=0.1") 
+              .set(".shape-2", { opacity: 0 }, "+=0.25")
+              
+              // State 3: Diamond with Circle inside
+              .set(".shape-3", { opacity: 1 }, "+=0.1")
+              .set(".shape-3", { opacity: 0 }, "+=0.25")
+              
+              // State 4: Circle + Previous Triangle
+              .set(".shape-4", { opacity: 1 }, "+=0.1")
+              .set(".shape-4", { opacity: 0 }, "+=0.25")
+
+              // State 5: Circle + Triangle + Inner Triangle (or Diamond)
+              .set(".shape-5", { opacity: 1 }, "+=0.1")
+              .set(".shape-5", { opacity: 0 }, "+=0.25");
+
+            // Small gap of nothing
+            tl.to({}, { duration: 0.4 });
+
+            // 9. System Loading Text & Bars
+            // First, top bar is solid, other two start invisible
+            tl.set(".sys-b1", { width: 30 }) // Top bar already has size
+              .set(".sys-b2", { width: 140, opacity: 0 }) 
+              .set(".sys-b3", { width: 180, opacity: 0 })
+              .to("#sys-blocks", { opacity: 1, duration: 0.1 }); // Show block
+
+            // The two bottom bars briefly flicker on, off, and back on
+            tl.to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.05 }, "+=0.1")
+              .to(".sys-b2, .sys-b3", { opacity: 0, duration: 0.05 })
+              .to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.05 });
+
+            // Now reset their widths to 0, but keep them opaque, and let them progress
+            tl.set(".sys-b2, .sys-b3", { width: 0 })
+              .to(".sys-b2", { width: 140, duration: 1.2, ease: "power1.inOut" }, "+=0.1")
+              .to(".sys-b3", { width: 180, duration: 1.2, ease: "power1.inOut" }, "-=1.2");
+
+            // Blink and swap system loading text AND bars WITH the fast progress bar
+            // All other elements glitch out, leaving only the final progress bar
+            tl.to(".sys-text, .sys-b1, .sys-b2, .sys-b3", { opacity: 0, duration: 0.04, yoyo: true, repeat: 4 }) 
+              .to("#sys-fast-bar-container", { opacity: 1, duration: 0.04, yoyo: true, repeat: 4 }, "<") 
+              .set(".sys-text, .sys-b1, .sys-b2, .sys-b3", { visibility: "hidden" }); // Use visibility instead of display none to preserve layout
+
+            // 10. Fast progress bar finishes filling up completely alone
+            tl.to("#sys-fast-bar", { width: "100%", duration: 0.8, ease: "power3.inOut" })
+              .to("#sys-fast-bar-container", { opacity: 0, duration: 0.2 }, "+=0.2");
+
+            // Now calculate total duration so the bottom bar exactly matches the center animations
+            const totalDuration = tl.duration();
+            tl.to("#progress-bar", { width: "100%", duration: totalDuration, ease: "power1.inOut" }, 0);
+
+            // 11. Transition to main app exactly as the center sequence ends
+            tl.to("#bottom-ui", { opacity: 0, duration: 0.3 })
+              .to(".display-area", { display: "none" }, "<")
+              .to("#main-site", { opacity: 1, duration: 0 }, "<");
+
+            // 12. Main App Boot Animation
+            tl.to("#reveal-outline", { scale: 1, duration: 0.8, ease: "power3.inOut" })
+              .to("#reveal-solid", { scale: 1, duration: 0.6, ease: "power3.in" }, "-=0.6")
+              .to("#reveal-outline", { opacity: 0, duration: 0 }, "<") // Hide outline once solid covers it
+              .to("#main-site-content", { opacity: 1, scale: 1, duration: 0.1 }, "<") // Content appears behind white solid
+              .to("#reveal-solid", { opacity: 0, duration: 0.8, ease: "power2.out" }, "+=0.1"); // Solid fades to reveal content
+        }
+
+        // Start initial load
+        setTimeout(playAnimation, 500);
+
+    </script>
+</body>
+</html>

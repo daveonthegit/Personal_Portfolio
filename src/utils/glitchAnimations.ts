@@ -95,7 +95,7 @@ class GlitchAnimationController {
 export function createTerminalLoader(container: HTMLElement, messages: string[]): Promise<void> {
   return new Promise((resolve) => {
     const terminal = document.createElement('div');
-    terminal.className = 'ctos-terminal';
+    terminal.className = 'xiaoos-terminal';
     terminal.style.opacity = '0';
     container.appendChild(terminal);
 

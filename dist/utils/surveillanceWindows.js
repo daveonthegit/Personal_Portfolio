@@ -232,7 +232,7 @@ class SurveillanceSystem {
         }
     }
     getFallbackCameraStreams() {
-        // Custom surveillance videos from YouTube - perfect for CTOS system
+        // Custom surveillance videos from YouTube - perfect for xiaoOS system
         const cameraStreams = [
             // Your custom surveillance videos
             { id: 'surv-001', name: 'Surveillance Feed 001', streamUrl: 'https://www.youtube.com/embed/0vkld4n1a7o?autoplay=1&mute=1' },

@@ -8,7 +8,7 @@ import { initSurveillanceWindows } from './utils/surveillanceWindows';
 import './components/StartupAnimation';
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 CTOS Interface - Initializing...');
+    console.log('🚀 xiaoOS Interface - Initializing...');
     // Initialize smooth scrolling
     SmoothScroll.init();
     // Initialize scroll animations
@@ -23,6 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ContactFormHandler.init();
     // Initialize theme toggle
     initThemeHandler();
-    console.log('✅ CTOS Interface - All systems operational');
+    console.log('✅ xiaoOS Interface - All systems operational');
 });
 //# sourceMappingURL=main.js.map

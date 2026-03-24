@@ -44,7 +44,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // CTOS Neon Cyan/Blue
+        // xiaoOS Neon Cyan/Blue
         primary: {
           50: '#e6ffff',
           100: '#b3ffff',
@@ -57,7 +57,7 @@ module.exports = {
           800: '#004d4d',
           900: '#001a1a',
         },
-        // CTOS Orange/Amber Accent
+        // xiaoOS Orange/Amber Accent
         secondary: {
           50: '#fff7e6',
           100: '#ffecb3',
@@ -70,7 +70,7 @@ module.exports = {
           800: '#b36000',
           900: '#994d00',
         },
-        // Newstyle / CTOS dashboard
+        // Newstyle / xiaoOS dashboard
         'nexus-cyan': '#00d2ff',
         'nexus-orange': '#ff5500',
         surface: '#0a0a0a',

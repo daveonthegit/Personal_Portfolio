@@ -1,13 +1,13 @@
 # Personal Portfolio — Style Guide
 
-## Design Foundation: Watch Dogs CTOS
+## Design Foundation: xiaoOS xiaoOS
 
-This portfolio’s visual language is inspired by **CTOS (Central Operating System)** from the **Watch Dogs** series — the in-world operating system that controls city infrastructure, surveillance, and data. The site is framed as a personal “OS” (xiaoOS) that presents you as a connected, data-driven professional in a high-tech, command-center aesthetic.
+This portfolio’s visual language is inspired by **xiaoOS (Central Operating System)** from the **xiaoOS** series — the in-world operating system that controls city infrastructure, surveillance, and data. The site is framed as a personal “OS” (xiaoOS) that presents you as a connected, data-driven professional in a high-tech, command-center aesthetic.
 
-**CTOS references used:**
+**xiaoOS references used:**
 - **Map / Blume Complex UI** — Dark base, teal/cyan highlights, uppercase labels, restricted-area red, data overlays.
 - **Centralized control / city schematic** — Isometric feel, network lines, cyan callouts, “DOOR LOCK / CAMERAS / SECURITY” style labels.
-- **CTOS: Building Smart Cities** — Grayscale + electric blue/cyan accent, bold sans-serif headlines, minimal chrome.
+- **xiaoOS: Building Smart Cities** — Grayscale + electric blue/cyan accent, bold sans-serif headlines, minimal chrome.
 - **Traffic / data dashboards** — Black background, blue progress/numbers, circular stats, “VERIFIED OPERATIONS ONLINE” status.
 - **“We Are All Connected” / Blume** — Network-dot pattern, urban imagery, light cyan borders, strong headline typography.
 
@@ -27,7 +27,7 @@ The goal is a **sophisticated, high-tech, slightly surveillance/control-room** f
 
 ## Color Palette
 
-Aligned with CTOS and existing `tailwind.config.js` / `src/styles/main.css`.
+Aligned with xiaoOS and existing `tailwind.config.js` / `src/styles/main.css`.
 
 | Role | Hex | Usage |
 |------|-----|--------|
@@ -78,11 +78,11 @@ These map directly to `src/styles/main.css` and templates.
 ### Navigation
 - **Bar:** `nexus-nav` — fixed, top, with blur/border.
 - **Container:** `nexus-nav-container` — flex, centered, h-16.
-- **Logo:** `nexus-logo`, `nexus-logo-ct`, `nexus-logo-os` — “xiao” + “OS” (CTOS-style split).
+- **Logo:** `nexus-logo`, `nexus-logo-ct`, `nexus-logo-os` — “xiao” + “OS” (xiaoOS-style split).
 - **Links:** `nexus-nav-link` — uppercase; `active` + `::after` for accent underline.
 - **Mobile:** `nexus-mobile-toggle`, `nexus-mobile-menu` — same typography and accent in drawer.
 
-### Cards & Panels (CTOS “frames”)
+### Cards & Panels (xiaoOS “frames”)
 - **Profile / data card:** `nexus-profile-card` — black bg, white border, **corner accents** (small L-shape at top-left and bottom-right). Header: `nexus-header` (uppercase strip). Content: `profile-content`, `data-grid`, `data-label`, `data-value`.
 - **Generic panel:** `nexus-panel` — same idea: border, corner accents, `panel-header`, body (e.g. `bio-text`).
 - **Skill / project cards:** `skill-card`, `project-card` — same border + corner treatment; `project-visual`, `project-title`, `tech-tags`, `project-links`.
@@ -97,7 +97,7 @@ These map directly to `src/styles/main.css` and templates.
 
 ### Forms
 - **Inputs:** `form-input`, `form-textarea` — dark bg, light border, light text; focus: accent ring (`ring-blue-400` / cyan).
-- **Validation:** valid → green border, invalid → red; keep CTOS look (no heavy rounding).
+- **Validation:** valid → green border, invalid → red; keep xiaoOS look (no heavy rounding).
 - **Light mode:** `.light-mode .form-input` etc. switch to light bg and dark text; same structure.
 
 ### Buttons
@@ -123,7 +123,7 @@ These map directly to `src/styles/main.css` and templates.
 
 ## Component Requirements (Existing)
 
-Requirements for every **existing** component used in the site. New UI must follow these so the CTOS look stays consistent.
+Requirements for every **existing** component used in the site. New UI must follow these so the xiaoOS look stays consistent.
 
 ### Global layout
 | Component | Location | Requirements |
@@ -215,7 +215,7 @@ Requirements for every **existing** component used in the site. New UI must foll
 | **StartupAnimation** | `src/components/StartupAnimation.ts` | Creates `#startup-animation` overlay with class `startup-animation-overlay`; main terminal `startup-terminal startup-terminal-main main-terminal-base`; header “xiaoOS v2.1 - Main Terminal”; content div for typed lines. Runs OS loading sequence then removes overlay. |
 | **SmoothScroll** | `src/utils/smoothScroll.ts` | Smooth scroll behavior for in-page links. |
 | **AnimationObserver** | `src/utils/animationObserver.ts` | Scroll-triggered animations for content. |
-| **GlitchAnimations** | `src/utils/glitchAnimations.ts` | Glitch effects (used sparingly for CTOS feel). |
+| **GlitchAnimations** | `src/utils/glitchAnimations.ts` | Glitch effects (used sparingly for xiaoOS feel). |
 | **SurveillanceWindows** | `src/utils/surveillanceWindows.ts` | Surveillance-window effects; init after short delay. |
 
 ---
@@ -307,7 +307,7 @@ When adding or changing UI:
 
 - **Grid / network:** Low-opacity pulse or static grid (`nexus-grid-bg`, `networkPulse`) to suggest live data.
 - **Hover:** Subtle border glow (cyan) and light shadow on cards and buttons; avoid flashy motion.
-- **Loading / entry:** `nexus-load`, `fade-in-up`, `ctosLoad` — short, subtle (e.g. 0.5–0.8s).
+- **Loading / entry:** `nexus-load`, `fade-in-up`, `xiaoosLoad` — short, subtle (e.g. 0.5–0.8s).
 - **Terminal:** Typing/cursor and optional scanline/glitch for startup only; keep main content calm.
 - **Data flow:** Optional thin gradient lines (`connection-line`, `network-connection`) for “data stream” feel; keep opacity low so they don’t dominate.
 
@@ -318,12 +318,12 @@ When adding or changing UI:
 - **Contrast:** Ensure white/light text on dark and dark text on light meet WCAG AA where possible; accent (cyan) on black should be checked for focus/links.
 - **Focus:** Visible focus ring (accent color); never remove outline without a clear replacement.
 - **Touch:** Minimum ~44px tap targets for nav, buttons, and links on mobile.
-- **Breakpoints:** Follow existing `main.css` (e.g. 480px, 768px, 1024px) for nav collapse, grid columns, and font size; keep CTOS look (uppercase, borders) at all sizes.
+- **Breakpoints:** Follow existing `main.css` (e.g. 480px, 768px, 1024px) for nav collapse, grid columns, and font size; keep xiaoOS look (uppercase, borders) at all sizes.
 
 ---
 
-## Summary: “CTOS” in One Sentence
+## Summary: “xiaoOS” in One Sentence
 
-The portfolio presents you as a **personal operating system**: dark, high-contrast, data-oriented UI with cyan/teal accents, uppercase system labels, framed cards with corner accents, and status/terminal touches — all inspired by Watch Dogs’ CTOS so the site feels like a command center rather than a generic CV.
+The portfolio presents you as a **personal operating system**: dark, high-contrast, data-oriented UI with cyan/teal accents, uppercase system labels, framed cards with corner accents, and status/terminal touches — all inspired by xiaoOS’ xiaoOS so the site feels like a command center rather than a generic CV.
 
 Use this doc as the single source of truth for visual and interaction decisions; when in doubt, prefer clarity and system-like consistency over extra decoration.

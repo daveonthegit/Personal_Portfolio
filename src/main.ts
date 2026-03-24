@@ -9,7 +9,7 @@ import './components/StartupAnimation';
 
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 CTOS Interface - Initializing...');
+  console.log('🚀 xiaoOS Interface - Initializing...');
   
   // Initialize smooth scrolling
   SmoothScroll.init();
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme toggle
   initThemeHandler();
   
-  console.log('✅ CTOS Interface - All systems operational');
+  console.log('✅ xiaoOS Interface - All systems operational');
 });
 
 // Export types for use in templates

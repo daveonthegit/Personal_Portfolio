@@ -1,7 +1,245 @@
-/**
- * Nexus Newstyle — Component styles from newstyles/*.html
- * Applied after main.css component layer to rebuild site in dashboard/CTOS style.
- */
+/* --- xiaoOS Style Loading Sequence --- */
+
+.xiaoos-loader-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: 'Fira Code', monospace;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.xiaoos-display-area {
+    position: relative;
+    width: 450px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform: scale(1.5);
+}
+
+.xiaoos-x-grid {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px 12px;
+    font-size: 24px;
+    font-family: monospace;
+    font-weight: 500;
+}
+.xiaoos-x-item {
+    opacity: 0;
+    text-align: center;
+}
+
+.xiaoos-strike-bars {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 250px;
+    z-index: 5;
+}
+.xiaoos-strike-bar {
+    width: 0%;
+    height: 28px;
+    background: #FFFFFF;
+}
+
+.xiaoos-transition-diamond {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    z-index: 1;
+}
+
+.xiaoos-diamond-shape {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border: 1.5px solid #FFFFFF;
+    transform: rotate(45deg);
+}
+
+.xiaoos-diamond-x-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+}
+.xiaoos-x-line {
+    position: absolute;
+    background: #FFFFFF;
+    width: 1.5px;
+    height: 240px;
+    top: 50%;
+    left: 50%;
+}
+.xiaoos-x-line-1 { transform: translate(-50%, -50%) rotate(45deg); }
+.xiaoos-x-line-2 { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.xiaoos-shape-container {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.xiaoos-shape-container svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.xiaoos-shape-path {
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 1.5px;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    transform-origin: center;
+}
+
+.xiaoos-shape-1, .xiaoos-shape-2, .xiaoos-shape-3, .xiaoos-shape-4, .xiaoos-shape-5 { opacity: 0; }
+
+.xiaoos-sys-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 220px;
+}
+
+.xiaoos-sys-blocks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    opacity: 0;
+    width: 100%;
+}
+.xiaoos-sys-b1 { width: 30px; height: 22px; background: #FFFFFF; margin-bottom: 5px; }
+.xiaoos-sys-b2 { width: 0px; height: 22px; background: #FFFFFF; margin-bottom: 5px; }
+.xiaoos-sys-b3 { width: 0px; height: 22px; background: #FFFFFF; }
+
+.xiaoos-sys-text-container {
+    position: relative;
+    margin: 5px 0;
+    width: 230px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+}
+.xiaoos-sys-text { 
+    font-family: sans-serif; 
+    font-size: 28px; 
+    font-weight: 600; 
+    letter-spacing: -1px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF;
+}
+.xiaoos-sys-fast-bar-container {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 28px; 
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+}
+.xiaoos-sys-fast-bar {
+    height: 100%;
+    width: 85%;
+    background: #FFFFFF;
+}
+
+.xiaoos-bottom-ui {
+    position: absolute;
+    bottom: 15%;
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: scale(1.3);
+}
+
+.xiaoos-loading-text {
+    font-family: sans-serif;
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+}
+
+.xiaoos-progress-bar-bg {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.xiaoos-progress-bar-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background: #FFFFFF;
+}
+
+.xiaoos-hint-text {
+    background: #FFFFFF;
+    color: #000000;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.xiaoos-reveal-outline {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    border: 2px solid #FFFFFF;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+    z-index: 200;
+    pointer-events: none;
+}
+.xiaoos-reveal-solid {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    background: #FFFFFF;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+    z-index: 199;
+    pointer-events: none;
+}
 
 :root {
   --nexus-cyan: #00d2ff;

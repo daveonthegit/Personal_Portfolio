@@ -1,541 +1,289 @@
+import { gsap } from 'gsap';
+
 /**
  * Terminal Startup Animation Component
- * Matrix-style chaotic terminal explosion with overlapping windows
+ * xiaoOS style loading sequence
  */
 
 export class StartupAnimation {
   private container: HTMLElement | null = null;
   private isAnimating = false;
-  private mainTerminal: HTMLElement | null = null;
 
   constructor() {
-    console.log('StartupAnimation: Constructor called');
-    console.log('StartupAnimation: Document ready state:', document.readyState);
-    console.log('StartupAnimation: Document body exists:', !!document.body);
     this.init();
   }
 
   private init(): void {
-    console.log('StartupAnimation: Initializing...');
     this.createAnimationContainer();
     this.startAnimation();
   }
 
   private createAnimationContainer(): void {
-    console.log('StartupAnimation: Creating chaotic terminal container...');
-    // Create the startup animation overlay
     const overlay = document.createElement('div');
     overlay.id = 'startup-animation';
-    overlay.className = 'startup-animation-overlay';
+    overlay.className = 'xiaoos-loader-container';
     
-    // Create main terminal (this stays as the base)
-    this.mainTerminal = this.createMainTerminal();
-    overlay.appendChild(this.mainTerminal);
-    
-    // Add to body
+    overlay.innerHTML = `
+      <div class="xiaoos-display-area" id="xiaoos-display-area">
+          
+          <!-- 1. The X Matrix Grid -->
+          <div class="xiaoos-x-grid" id="xiaoos-x-grid"></div>
+
+          <!-- 2. Strikeout bars -->
+          <div class="xiaoos-strike-bars" id="xiaoos-strike-bars">
+              <div class="xiaoos-strike-bar"></div>
+              <div class="xiaoos-strike-bar"></div>
+              <div class="xiaoos-strike-bar"></div>
+          </div>
+
+          <!-- Initial Transition Diamond (Behind bars) -->
+          <div class="xiaoos-transition-diamond" id="xiaoos-transition-diamond">
+              <div class="xiaoos-diamond-shape" id="xiaoos-diamond-shape"></div>
+              <div class="xiaoos-diamond-x-lines" id="xiaoos-diamond-x-lines">
+                  <div class="xiaoos-x-line xiaoos-x-line-1"></div>
+                  <div class="xiaoos-x-line xiaoos-x-line-2"></div>
+              </div>
+          </div>
+
+          <!-- 3. Concentric Geometric Shapes -->
+          <div class="xiaoos-shape-container" id="xiaoos-shape-container">
+              
+              <!-- Shape 1: Just Diamond -->
+              <svg class="xiaoos-shape-1" viewBox="0 0 150 150">
+                  <polygon points="75,10 140,75 75,140 10,75" class="xiaoos-shape-path" />
+              </svg>
+
+              <!-- Shape 2: Diamond + Triangle intersecting bottom -->
+              <svg class="xiaoos-shape-2" viewBox="0 0 150 150">
+                  <polygon points="75,10 140,75 75,140 10,75" class="xiaoos-shape-path" />
+                  <polygon points="10,50 140,50 75,140" class="xiaoos-shape-path" />
+              </svg>
+
+              <!-- Shape 3: Diamond + Circle inside -->
+              <svg class="xiaoos-shape-3" viewBox="0 0 150 150">
+                  <polygon points="75,10 140,75 75,140 10,75" class="xiaoos-shape-path" />
+                  <circle cx="75" cy="75" r="45" class="xiaoos-shape-path" />
+              </svg>
+
+              <!-- Shape 4: Circle + Previous Triangle -->
+              <svg class="xiaoos-shape-4" viewBox="0 0 150 150">
+                  <circle cx="75" cy="75" r="45" class="xiaoos-shape-path" />
+                  <polygon points="10,50 140,50 75,140" class="xiaoos-shape-path" />
+              </svg>
+
+              <!-- Shape 5: Circle + Triangle + Inner Triangle -->
+              <svg class="xiaoos-shape-5" viewBox="0 0 150 150">
+                  <circle cx="75" cy="75" r="45" class="xiaoos-shape-path" />
+                  <polygon points="10,50 140,50 75,140" class="xiaoos-shape-path" />
+                  <polygon points="75,50 105,95 45,95" class="xiaoos-shape-path" />
+              </svg>
+          </div>
+
+          <!-- 4. System Loading -->
+          <div class="xiaoos-sys-container">
+              <div class="xiaoos-sys-blocks" id="xiaoos-sys-blocks">
+                  <div class="xiaoos-sys-b1"></div>
+                  <div class="xiaoos-sys-b2"></div>
+                  
+                  <div class="xiaoos-sys-text-container">
+                      <div class="xiaoos-sys-text" id="xiaoos-sys-text">System Loading</div>
+                      <div class="xiaoos-sys-fast-bar-container" id="xiaoos-sys-fast-bar-container">
+                          <div class="xiaoos-sys-fast-bar" id="xiaoos-sys-fast-bar"></div>
+                      </div>
+                  </div>
+
+                  <div class="xiaoos-sys-b3"></div>
+              </div>
+          </div>
+
+      </div>
+
+      <!-- Progress Bar & Hint Text -->
+      <div class="xiaoos-bottom-ui" id="xiaoos-bottom-ui">
+          <div class="xiaoos-loading-text">Loading...</div>
+          <div class="xiaoos-progress-bar-bg">
+              <div class="xiaoos-progress-bar-fill" id="xiaoos-progress-bar"></div>
+          </div>
+          <div class="xiaoos-hint-text">
+              SYSTEM.TIP: Decrypting project archives. Navigate the interface to explore software engineering experience and deployed applications.
+          </div>
+      </div>
+
+      <div class="xiaoos-reveal-outline" id="xiaoos-reveal-outline"></div>
+      <div class="xiaoos-reveal-solid" id="xiaoos-reveal-solid"></div>
+    `;
+
     document.body.appendChild(overlay);
     this.container = overlay;
-    console.log('StartupAnimation: Main terminal container created');
-  }
 
-  private createMainTerminal(): HTMLElement {
-    const terminal = document.createElement('div');
-    terminal.className = 'startup-terminal startup-terminal-main main-terminal-base';
-    terminal.id = 'main-terminal';
-    
-    // Create terminal header
-    const header = document.createElement('div');
-    header.className = 'startup-terminal-header';
-    header.innerHTML = `
-      <div class="startup-terminal-controls">
-        <div class="startup-terminal-control startup-terminal-control-close"></div>
-        <div class="startup-terminal-control startup-terminal-control-minimize"></div>
-        <div class="startup-terminal-control startup-terminal-control-maximize"></div>
-      </div>
-      <div class="startup-terminal-title">xiaoOS v2.1 - Main Terminal</div>
-    `;
-    
-    // Create terminal content
-    const content = document.createElement('div');
-    content.className = 'startup-terminal-content';
-    content.id = 'main-terminal-content';
-    
-    terminal.appendChild(header);
-    terminal.appendChild(content);
-    
-    return terminal;
+    // Generate the 3x10 grid of X's
+    const grid = document.getElementById('xiaoos-x-grid');
+    if (grid) {
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 10; c++) {
+                const span = document.createElement('span');
+                span.className = 'xiaoos-x-item';
+                span.innerText = 'X';
+                grid.appendChild(span);
+            }
+        }
+    }
   }
 
   private async startAnimation(): Promise<void> {
     if (this.isAnimating) return;
     this.isAnimating = true;
 
-    // Reset used positions for fresh animation
-    this.usedPositions.clear();
+    // Resets
+    gsap.set("#xiaoos-display-area", { display: "flex" });
+    gsap.set("#xiaoos-reveal-outline", { scale: 0, opacity: 1 });
+    gsap.set("#xiaoos-reveal-solid", { scale: 0, opacity: 1 });
+    
+    gsap.set(".xiaoos-x-item", { opacity: 0 });
+    gsap.set(".xiaoos-strike-bar", { width: "0%" });
+    gsap.set("#xiaoos-strike-bars", { opacity: 1 });
+    gsap.set("#xiaoos-transition-diamond", { opacity: 0 });
+    gsap.set("#xiaoos-diamond-shape", { scale: 1, opacity: 1 });
+    gsap.set("#xiaoos-diamond-x-lines", { opacity: 1 });
+    gsap.set(".xiaoos-shape-1, .xiaoos-shape-2, .xiaoos-shape-3, .xiaoos-shape-4, .xiaoos-shape-5", { opacity: 0, scale: 1 });
+    
+    gsap.set("#xiaoos-sys-blocks", { opacity: 0 });
+    gsap.set(".xiaoos-sys-b1", { opacity: 1 });
+    gsap.set(".xiaoos-sys-b2", { width: 0, opacity: 1 });
+    gsap.set(".xiaoos-sys-b3", { width: 0, opacity: 1 });
+    
+    gsap.set("#xiaoos-sys-fast-bar-container", { opacity: 0 });
+    gsap.set("#xiaoos-sys-fast-bar", { width: "85%" });
+    
+    gsap.set("#xiaoos-bottom-ui", { opacity: 0 });
+    gsap.set("#xiaoos-progress-bar", { width: "0%" });
 
-    const mainContent = document.getElementById('main-terminal-content');
-    if (!mainContent) return;
+    const tl = gsap.timeline();
 
-    // Phase 1: OS Loading Sequence
-    await this.executeOSLoadingSequence(mainContent);
-    
-    // Phase 2: User Interaction
-    await this.promptUserInteraction(mainContent);
-    
-    // Phase 3: Matrix-Style Terminal Explosion
-    await this.createMatrixTerminalExplosion();
-    
-    // Phase 4: Massive Text Storm
-    await this.executeMatrixTextStorm();
-    
-    // Phase 5: Redirect to home
-    this.redirectToHome();
-  }
+    // 0. Bottom UI begins loading immediately
+    tl.to("#xiaoos-bottom-ui", { opacity: 1, duration: 0.3 }, 0); 
 
-  private async executeOSLoadingSequence(content: HTMLElement): Promise<void> {
-    // Detect device type for reporting
-    const isLowEndDevice = this.detectLowEndDevice();
-    const deviceType = isLowEndDevice ? 'Low-Performance' : 'High-Performance';
-    const optimizationLevel = isLowEndDevice ? 'Performance Mode' : 'Full Experience';
-    
-    const osSteps = [
-      { delay: 0, text: 'Initializing portfolio system...', type: 'system' },
-      { delay: 300, text: 'Loading components...', type: 'loading' },
-      { delay: 600, text: 'Mounting file system...', type: 'system' },
-      { delay: 900, text: 'Starting network protocols...', type: 'loading' },
-      { delay: 1200, text: 'Activating security subsystems...', type: 'system' },
-      { delay: 1400, text: `Device profile: ${deviceType} hardware detected`, type: 'system' },
-      { delay: 1600, text: `Optimization: ${optimizationLevel} enabled`, type: 'system' },
-      { delay: 1800, text: 'Portfolio system ready for operation', type: 'success' },
-      { delay: 2000, text: '', type: 'prompt' }
-    ];
-
-    for (const step of osSteps) {
-      await this.wait(step.delay);
-      this.addTerminalLine(content, step.text, step.type, 'main');
-    }
-  }
-
-  private async promptUserInteraction(content: HTMLElement): Promise<void> {
-    // Add interactive prompt
-    const promptLine = document.createElement('div');
-    promptLine.className = 'terminal-line interactive-prompt';
-    promptLine.innerHTML = `
-      <span class="prompt">root@xiaoOS-main:~$</span> 
-      <span class="interactive-text">Enter target file to access:</span>
-      <span class="cursor-blink">_</span>
-    `;
-    content.appendChild(promptLine);
-    
-    // Auto-fill the target after a delay (like typing)
-    await this.wait(500);
-    await this.simulateTyping(content, 'DAVID_XIAO.portfolio');
-    
-    // Simulate pressing Enter
-    await this.wait(300);
-    this.addTerminalLine(content, 'Accessing portfolio: DAVID_XIAO.portfolio...', 'system', 'main');
-    
-    await this.wait(500);
-    this.addTerminalLine(content, 'Loading portfolio data...', 'success', 'main');
-  }
-
-  private async simulateTyping(content: HTMLElement, text: string): Promise<void> {
-    const cursorLine = content.querySelector('.cursor-blink');
-    if (!cursorLine) return;
-
-    let currentText = '';
-    for (let i = 0; i < text.length; i++) {
-      currentText += text[i];
-      cursorLine.textContent = currentText + '_';
-      await this.wait(50 + Math.random() * 100); // Random typing speed
-    }
-    
-    // Remove cursor after typing
-    cursorLine.textContent = currentText;
-  }
-
-  private async createMatrixTerminalExplosion(): Promise<void> {
-    if (!this.container) return;
-    
-    // Detect low-end device and adjust terminal count
-    const isLowEndDevice = this.detectLowEndDevice();
-    
-    // Create multiple overlapping terminals with random positions
-    const allTerminalConfigs = [
-      { id: 'surveillance-terminal', title: 'Portfolio Data', type: 'surveillance', delay: 0 },
-      { id: 'network-terminal', title: 'Network Scanner', type: 'network', delay: 150 },
-      { id: 'security-terminal', title: 'Security Check', type: 'security', delay: 300 },
-      { id: 'data-terminal', title: 'Data Processing', type: 'data', delay: 450 },
-      { id: 'analysis-terminal', title: 'Content Analysis', type: 'analysis', delay: 600 },
-      { id: 'access-terminal', title: 'Access Control', type: 'access', delay: 750 },
-      { id: 'crypto-terminal', title: 'Crypto Decoder', type: 'crypto', delay: 900 },
-      { id: 'monitor-terminal', title: 'System Monitor', type: 'monitor', delay: 1050 }
-    ];
-
-    // Reduce terminal count for low-end devices (50% fewer terminals)
-    const terminalConfigs = isLowEndDevice 
-      ? allTerminalConfigs.slice(0, 4)  // Only 4 terminals on low-end devices
-      : allTerminalConfigs;  // All 8 terminals on high-end devices
-
-    console.log(`Creating ${terminalConfigs.length} terminals for ${isLowEndDevice ? 'low-end' : 'high-end'} device`);
-    
-    // Create terminals with staggered timing and random positions
-    for (const config of terminalConfigs) {
-      setTimeout(() => {
-        this.createOverlappingTerminal(config);
-      }, config.delay);
-    }
-  }
-
-  private usedPositions = new Set<string>();
-
-  private createOverlappingTerminal(config: {id: string, title: string, type: string, delay: number}): void {
-    if (!this.container) return;
-    
-    const terminal = document.createElement('div');
-    terminal.className = `startup-terminal startup-terminal-${config.type} matrix-terminal-overlay`;
-    terminal.id = config.id;
-    
-    // Check if this is a low-end device
-    const isLowEndDevice = this.detectLowEndDevice();
-    
-    let position: { top: string; left: string; transform: string };
-    
-    if (isLowEndDevice) {
-      // Use predetermined placements for low-end devices (no random generation overhead)
-      const terminalIndex = this.usedPositions.size; // Use size as index since we're creating sequentially
-      const placementIndex = terminalIndex % this.lowEndPlacements.length;
-      const placement = this.lowEndPlacements[placementIndex];
-      
-      if (placement) {
-        position = {
-          top: placement.top,
-          left: placement.left,
-          transform: `rotate(${placement.rotation})`
-        };
-      } else {
-        // Fallback position for low-end devices
-        position = {
-          top: '10%',
-          left: '60%',
-          transform: 'rotate(2deg)'
-        };
-      }
-    } else {
-      // High-end devices: use the full random position system
-      const allPositions = [
-        // Top row
-        { top: '5%', left: '5%', transform: 'rotate(-1deg)' },
-        { top: '5%', left: '15%', transform: 'rotate(1deg)' },
-        { top: '5%', left: '25%', transform: 'rotate(-2deg)' },
-        { top: '5%', left: '35%', transform: 'rotate(1deg)' },
-        { top: '5%', left: '45%', transform: 'rotate(-1deg)' },
-        { top: '5%', left: '55%', transform: 'rotate(2deg)' },
-        { top: '5%', left: '65%', transform: 'rotate(-1deg)' },
-        { top: '5%', left: '75%', transform: 'rotate(1deg)' },
-        { top: '5%', left: '85%', transform: 'rotate(-2deg)' },
-        
-        // Second row
-        { top: '15%', left: '8%', transform: 'rotate(1deg)' },
-        { top: '15%', left: '18%', transform: 'rotate(-1deg)' },
-        { top: '15%', left: '28%', transform: 'rotate(2deg)' },
-        { top: '15%', left: '38%', transform: 'rotate(-1deg)' },
-        { top: '15%', left: '48%', transform: 'rotate(1deg)' },
-        { top: '15%', left: '58%', transform: 'rotate(-2deg)' },
-        { top: '15%', left: '68%', transform: 'rotate(1deg)' },
-        { top: '15%', left: '78%', transform: 'rotate(-1deg)' },
-        { top: '15%', left: '88%', transform: 'rotate(2deg)' },
-        
-        // Third row
-        { top: '25%', left: '3%', transform: 'rotate(-1deg)' },
-        { top: '25%', left: '13%', transform: 'rotate(1deg)' },
-        { top: '25%', left: '23%', transform: 'rotate(-2deg)' },
-        { top: '25%', left: '33%', transform: 'rotate(1deg)' },
-        { top: '25%', left: '43%', transform: 'rotate(-1deg)' },
-        { top: '25%', left: '53%', transform: 'rotate(2deg)' },
-        { top: '25%', left: '63%', transform: 'rotate(-1deg)' },
-        { top: '25%', left: '73%', transform: 'rotate(1deg)' },
-        { top: '25%', left: '83%', transform: 'rotate(-2deg)' },
-        
-        // Fourth row
-        { top: '35%', left: '6%', transform: 'rotate(1deg)' },
-        { top: '35%', left: '16%', transform: 'rotate(-1deg)' },
-        { top: '35%', left: '26%', transform: 'rotate(2deg)' },
-        { top: '35%', left: '36%', transform: 'rotate(-1deg)' },
-        { top: '35%', left: '46%', transform: 'rotate(1deg)' },
-        { top: '35%', left: '56%', transform: 'rotate(-2deg)' },
-        { top: '35%', left: '66%', transform: 'rotate(1deg)' },
-        { top: '35%', left: '76%', transform: 'rotate(-1deg)' },
-        { top: '35%', left: '86%', transform: 'rotate(2deg)' },
-        
-        // Fifth row
-        { top: '45%', left: '1%', transform: 'rotate(-1deg)' },
-        { top: '45%', left: '11%', transform: 'rotate(1deg)' },
-        { top: '45%', left: '21%', transform: 'rotate(-2deg)' },
-        { top: '45%', left: '31%', transform: 'rotate(1deg)' },
-        { top: '45%', left: '41%', transform: 'rotate(-1deg)' },
-        { top: '45%', left: '51%', transform: 'rotate(2deg)' },
-        { top: '45%', left: '61%', transform: 'rotate(-1deg)' },
-        { top: '45%', left: '71%', transform: 'rotate(1deg)' },
-        { top: '45%', left: '81%', transform: 'rotate(-2deg)' },
-        
-        // Sixth row
-        { top: '55%', left: '4%', transform: 'rotate(1deg)' },
-        { top: '55%', left: '14%', transform: 'rotate(-1deg)' },
-        { top: '55%', left: '24%', transform: 'rotate(2deg)' },
-        { top: '55%', left: '34%', transform: 'rotate(-1deg)' },
-        { top: '55%', left: '44%', transform: 'rotate(1deg)' },
-        { top: '55%', left: '54%', transform: 'rotate(-2deg)' },
-        { top: '55%', left: '64%', transform: 'rotate(1deg)' },
-        { top: '55%', left: '74%', transform: 'rotate(-1deg)' },
-        { top: '55%', left: '84%', transform: 'rotate(2deg)' },
-        
-        // Bottom row
-        { top: '65%', left: '7%', transform: 'rotate(-1deg)' },
-        { top: '65%', left: '17%', transform: 'rotate(1deg)' },
-        { top: '65%', left: '27%', transform: 'rotate(-2deg)' },
-        { top: '65%', left: '37%', transform: 'rotate(1deg)' },
-        { top: '65%', left: '47%', transform: 'rotate(-1deg)' },
-        { top: '65%', left: '57%', transform: 'rotate(2deg)' },
-        { top: '65%', left: '67%', transform: 'rotate(-1deg)' },
-        { top: '65%', left: '77%', transform: 'rotate(1deg)' },
-        { top: '65%', left: '87%', transform: 'rotate(-2deg)' }
-      ];
-      
-      // Find an available position
-      const availablePositions = allPositions.filter(pos => {
-        const positionKey = `${pos.top}-${pos.left}`;
-        return !this.usedPositions.has(positionKey);
-      });
-      
-      if (availablePositions.length > 0) {
-        const selectedPosition = availablePositions[Math.floor(Math.random() * availablePositions.length)];
-        if (selectedPosition) {
-          position = selectedPosition;
-          const positionKey = `${selectedPosition.top}-${selectedPosition.left}`;
-          this.usedPositions.add(positionKey);
-        } else {
-          // Fallback if selectedPosition is undefined
-          position = { top: '10%', left: '10%', transform: 'rotate(0deg)' };
+    // 1. Diagonal fill of X's (Slightly slower)
+    tl.to(".xiaoos-x-item", {
+        opacity: 1,
+        duration: 0.08,
+        stagger: {
+            each: 0.06,
+            grid: [3, 10],
+            from: "start"
         }
-      } else {
-        // Fallback if all positions are used (shouldn't happen with 8 terminals)
-        const fallbackPosition = allPositions[Math.floor(Math.random() * allPositions.length)];
-        position = fallbackPosition || { top: '10%', left: '10%', transform: 'rotate(0deg)' };
-      }
-    }
-    
-    // Apply position styling
-    terminal.style.position = 'absolute';
-    terminal.style.top = position.top;
-    terminal.style.left = position.left;
-    terminal.style.transform = position.transform;
-    terminal.style.zIndex = isLowEndDevice ? '15' : (Math.floor(Math.random() * 5) + 15).toString();
-    
-    // Create terminal header
-    const header = document.createElement('div');
-    header.className = 'startup-terminal-header';
-    header.innerHTML = `
-      <div class="startup-terminal-controls">
-        <div class="startup-terminal-control startup-terminal-control-close"></div>
-        <div class="startup-terminal-control startup-terminal-control-minimize"></div>
-        <div class="startup-terminal-control startup-terminal-control-maximize"></div>
-      </div>
-      <div class="startup-terminal-title">${config.title}</div>
-    `;
-    
-    // Create terminal content
-    const content = document.createElement('div');
-    content.className = 'startup-terminal-content';
-    content.id = `${config.id}-content`;
-    
-    terminal.appendChild(header);
-    terminal.appendChild(content);
-    
-    // Add dramatic entrance animation
-    terminal.style.opacity = '0';
-    if (position) {
-      terminal.style.transform = `${position.transform} scale(0.5)`;
-    }
-    
-    this.container.appendChild(terminal);
-    
-    // Animate in
-    setTimeout(() => {
-      terminal.style.transition = 'all 0.3s ease-out';
-      terminal.style.opacity = '1';
-      if (position) {
-        terminal.style.transform = position.transform;
-      }
-    }, 100);
-    
-    // Start generating rapid text for this terminal
-    this.generateMatrixText(`${config.id}-content`, config.type);
-  }
+    }, 0.3);
 
-  private async executeMatrixTextStorm(): Promise<void> {
-    // Generate massive amounts of rapid text across all terminals
-    const terminals = [
-      { id: 'main-terminal-content', type: 'main' },
-      { id: 'surveillance-terminal-content', type: 'surveillance' },
-      { id: 'network-terminal-content', type: 'network' },
-      { id: 'security-terminal-content', type: 'security' },
-      { id: 'data-terminal-content', type: 'data' },
-      { id: 'analysis-terminal-content', type: 'analysis' },
-      { id: 'access-terminal-content', type: 'access' },
-      { id: 'crypto-terminal-content', type: 'crypto' },
-      { id: 'monitor-terminal-content', type: 'monitor' }
-    ];
+    // 2. White Bars Strike Out the X's progressively
+    tl.to(".xiaoos-strike-bar", {
+        width: "100%",
+        duration: 0.4,
+        stagger: 0.1,
+        ease: "power2.inOut"
+    }, "+=0.3");
 
-    // Start rapid text generation for all terminals
-    terminals.forEach(terminal => this.generateMatrixText(terminal.id, terminal.type));
-    
-    // Wait for the matrix sequence
-    await this.wait(3000);
-    
-    // Add final success messages
-    this.addMatrixFinalMessages();
-  }
+    // 3. Diamond appears DURING the bars striking through
+    // X's disappear immediately behind it
+    tl.set(".xiaoos-x-item", { opacity: 0 }, "-=0.2")
+      .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.1 }, "-=0.2");
 
-  private generateMatrixText(contentId: string, terminalType: string): void {
-    const content = document.getElementById(contentId);
-    if (!content) return;
+    // 4. Diamond X constantly glitches in and out while Bars wait
+    tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.05, yoyo: true, repeat: 19 }, "+=0.1");
 
-    // Comprehensive device performance detection
-    const isLowEndDevice = this.detectLowEndDevice();
-    
-    // Use precreated messages for low-end devices, or full arrays for high-end devices
-    const texts = isLowEndDevice ? 
-      this.lowEndMessages[terminalType as keyof typeof this.lowEndMessages] || ['Processing...'] :
-      this.getHighEndMessages(terminalType);
-    
-    // Optimize text generation based on device performance
-    const generateText = () => {
-      // Dramatically reduce text generation for low-end devices
-      const lineCount = isLowEndDevice ? 6 : 25;  // Reduced from 8/50 to 6/25
-      const baseDelay = isLowEndDevice ? 100 : 30;  // Faster delays
-      const randomDelay = isLowEndDevice ? 150 : 50;  // Faster random delay
+    // 5. Bars disappear just before the diamond expansion ends
+    tl.to("#xiaoos-strike-bars", { opacity: 0, duration: 0.1 }, "-=0.3");
+
+    // 6. X disappears fully as Diamond Expands slightly
+    tl.set("#xiaoos-diamond-x-lines", { opacity: 0 }, "-=0.2") // Ensure X is gone completely
+      .to("#xiaoos-diamond-shape", { scale: 1.1, duration: 0.4, ease: "power2.out" }, "-=0.2") 
+      .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.05 }, "+=0.2"); 
+
+    // 7. Reappear just the large X quickly, then vanish
+    tl.to("#xiaoos-diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.1")
+      .to("#xiaoos-diamond-shape", { opacity: 0, duration: 0 }, "<") // ensure diamond remains hidden
+      .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.05 }) // show container again
+      .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.1 }, "+=0.15"); // disappear quickly
+
+    // Small gap of nothing
+    tl.to({}, { duration: 0.3 });
+
+    // 8. Concentric Shape Sequencing
+    // State 1: Just Diamond
+    tl.set(".xiaoos-shape-1", { opacity: 1 })
+      .set(".xiaoos-shape-1", { opacity: 0 }, "+=0.25") 
       
-      for (let i = 0; i < lineCount; i++) {
-        setTimeout(() => {
-          const randomText = texts[Math.floor(Math.random() * texts.length)] || 'Processing...';
-          this.addMatrixTerminalLine(content, randomText, 'matrix', terminalType);
-        }, i * (baseDelay + Math.random() * randomDelay));
-      }
-    };
-    
-    generateText();
-    
-    // Reduce number of text generation cycles for all devices
-    if (!isLowEndDevice) {
-      // High-end devices: 2 cycles instead of 3
-      setTimeout(() => generateText(), 1000);
-    } else {
-      // Low-end devices: single cycle only
-      setTimeout(() => generateText(), 2000);
-    }
-  }
+      // State 2: Diamond + Triangle intersecting bottom
+      .set(".xiaoos-shape-2", { opacity: 1 }, "+=0.1") 
+      .set(".xiaoos-shape-2", { opacity: 0 }, "+=0.25")
+      
+      // State 3: Diamond with Circle inside
+      .set(".xiaoos-shape-3", { opacity: 1 }, "+=0.1")
+      .set(".xiaoos-shape-3", { opacity: 0 }, "+=0.25")
+      
+      // State 4: Circle + Previous Triangle
+      .set(".xiaoos-shape-4", { opacity: 1 }, "+=0.1")
+      .set(".xiaoos-shape-4", { opacity: 0 }, "+=0.25")
 
-  private addMatrixTerminalLine(content: HTMLElement, text: string, type: string, terminalType: string): void {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${type} matrix-text-line`;
-    
-    const prompt = `root@xiaoOS-${terminalType}:~$`;
-    
-    if (type === 'matrix') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="matrix-text">${text}</span>`;
-    } else if (type === 'loading') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> ${text} <span class="loading-dots">...</span>`;
-    } else if (type === 'system') {
-      line.innerHTML = `<span class="system-prefix">[SYSTEM]</span> ${text}`;
-    } else if (type === 'success') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="success-text">${text}</span>`;
-    } else if (type === 'hack') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="hack-text">${text}</span>`;
-    } else if (type === 'prompt') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="cursor-blink">_</span>`;
-    } else {
-      line.textContent = text;
-    }
-    
-    content.appendChild(line);
-    
-    // Auto-scroll to bottom
-    content.scrollTop = content.scrollHeight;
-    
-    // Remove old lines to prevent memory issues
-    const lines = content.querySelectorAll('.matrix-text-line');
-    if (lines.length > 100) {
-      const firstLine = lines[0];
-      if (firstLine) {
-        firstLine.remove();
-      }
-    }
-  }
+      // State 5: Circle + Triangle + Inner Triangle (or Diamond)
+      .set(".xiaoos-shape-5", { opacity: 1 }, "+=0.1")
+      .set(".xiaoos-shape-5", { opacity: 0 }, "+=0.25");
 
-  private addMatrixFinalMessages(): void {
-    const terminals = [
-      'main-terminal-content',
-      'surveillance-terminal-content',
-      'network-terminal-content', 
-      'security-terminal-content',
-      'data-terminal-content',
-      'analysis-terminal-content',
-      'access-terminal-content',
-      'crypto-terminal-content',
-      'monitor-terminal-content'
-    ];
+    // Small gap of nothing
+    tl.to({}, { duration: 0.4 });
 
-    terminals.forEach(terminalId => {
-      const content = document.getElementById(terminalId);
-      if (content) {
-        this.addMatrixTerminalLine(content, 'PORTFOLIO LOADED', 'success', 'final');
-        this.addMatrixTerminalLine(content, 'DATA READY', 'success', 'final');
-      }
-    });
-  }
+    // 9. System Loading Text & Bars
+    // First, top bar is solid, other two start invisible
+    tl.set(".xiaoos-sys-b1", { width: 30 }) // Top bar already has size
+      .set(".xiaoos-sys-b2", { width: 140, opacity: 0 }) 
+      .set(".xiaoos-sys-b3", { width: 180, opacity: 0 })
+      .to("#xiaoos-sys-blocks", { opacity: 1, duration: 0.1 }); // Show block
 
-  private addTerminalLine(content: HTMLElement, text: string, type: string, terminalType: string): void {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${type}`;
-    
-    const prompt = `root@xiaoOS-${terminalType}:~$`;
-    
-    if (type === 'loading') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> ${text} <span class="loading-dots">...</span>`;
-    } else if (type === 'system') {
-      line.innerHTML = `<span class="system-prefix">[SYSTEM]</span> ${text}`;
-    } else if (type === 'success') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="success-text">${text}</span>`;
-    } else if (type === 'hack') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="hack-text">${text}</span>`;
-    } else if (type === 'prompt') {
-      line.innerHTML = `<span class="prompt">${prompt}</span> <span class="cursor-blink">_</span>`;
-    } else {
-      line.textContent = text;
-    }
-    
-    content.appendChild(line);
-    
-    // Auto-scroll to bottom
-    content.scrollTop = content.scrollHeight;
+    // The two bottom bars briefly flicker on, off, and back on
+    tl.to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.05 }, "+=0.1")
+      .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.05 })
+      .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.05 });
+
+    // Now reset their widths to 0, but keep them opaque, and let them progress
+    tl.set(".xiaoos-sys-b2, .xiaoos-sys-b3", { width: 0 })
+      .to(".xiaoos-sys-b2", { width: 140, duration: 1.2, ease: "power1.inOut" }, "+=0.1")
+      .to(".xiaoos-sys-b3", { width: 180, duration: 1.2, ease: "power1.inOut" }, "-=1.2");
+
+    // Blink and swap system loading text ONLY WITH the fast progress bar
+    tl.to(".xiaoos-sys-text", { opacity: 0, duration: 0.04, yoyo: true, repeat: 4 }) 
+      .to("#xiaoos-sys-fast-bar-container", { opacity: 1, duration: 0.04, yoyo: true, repeat: 4 }, "<") 
+      .set(".xiaoos-sys-text", { visibility: "hidden" }); // Use visibility instead of display none to preserve layout
+
+    // 10. Fast progress bar finishes filling up completely alone
+    tl.to("#xiaoos-sys-fast-bar", { width: "100%", duration: 0.8, ease: "power3.inOut" })
+      .to("#xiaoos-sys-fast-bar-container", { opacity: 0, duration: 0.2 }, "+=0.2");
+
+    // Hide the remaining top/bottom system bars right before the sequence ends
+    tl.to(".xiaoos-sys-b1, .xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.2 }, "-=0.2");
+
+    // Now calculate total duration so the bottom bar exactly matches the center animations
+    const totalDuration = tl.duration();
+    tl.to("#xiaoos-progress-bar", { width: "100%", duration: totalDuration, ease: "power1.inOut" }, 0);
+
+    // 11. Transition to main app exactly as the center sequence ends
+    tl.to("#xiaoos-bottom-ui", { opacity: 0, duration: 0.3 })
+      .to("#xiaoos-display-area", { display: "none" }, "<");
+
+    // 12. Main App Boot Animation
+    tl.to("#xiaoos-reveal-outline", { scale: 1, duration: 0.8, ease: "power3.inOut" })
+      .to("#xiaoos-reveal-solid", { scale: 1, duration: 0.6, ease: "power3.in" }, "-=0.6")
+      .to("#xiaoos-reveal-outline", { opacity: 0, duration: 0 }, "<") // Hide outline once solid covers it
+      .to("#xiaoos-reveal-solid", { opacity: 0, duration: 0.8, ease: "power2.out" }, "+=0.1") // Solid fades to reveal content
+      .add(() => {
+          this.redirectToHome();
+      });
   }
 
   private redirectToHome(): void {
     if (!this.container) return;
     
-    // Add final redirect message to main terminal
-    const mainContent = document.getElementById('main-terminal-content');
-    if (mainContent) {
-      const finalLine = document.createElement('div');
-      finalLine.className = 'terminal-line redirect';
-      finalLine.innerHTML = `<span class="prompt">root@xiaoOS-main:~$</span> <span class="redirect-text">Authentication protocol complete. Accessing DAVID_XIAO.portfolio...</span>`;
-      mainContent.appendChild(finalLine);
-    }
-    
-    // Fade out animation
+    // Fade out animation entirely
     this.container.style.opacity = '0';
-    this.container.style.transition = 'opacity 1.0s ease-out';
+    this.container.style.transition = 'opacity 0.5s ease-out';
     
     setTimeout(() => {
       if (this.container) {
@@ -546,11 +294,7 @@ export class StartupAnimation {
       // Redirect to home page
       window.location.href = '/home';
       this.isAnimating = false;
-    }, 1000);
-  }
-
-  private wait(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    }, 500);
   }
 
   // Public method to manually start animation (useful for testing)
@@ -564,219 +308,13 @@ export class StartupAnimation {
   public get isRunning(): boolean {
     return this.isAnimating;
   }
-
-  // Predetermined window placements for low-end devices (avoids random generation overhead)
-  private readonly lowEndPlacements = [
-    { top: '10%', left: '60%', rotation: '2deg' },
-    { top: '25%', left: '15%', rotation: '-1deg' },
-    { top: '45%', left: '70%', rotation: '1deg' },
-    { top: '60%', left: '25%', rotation: '-2deg' }
-  ];
-
-  // Precreated message arrays for low-end devices (more efficient than random generation)
-  private readonly lowEndMessages = {
-    surveillance: [
-      'SURVEILLANCE MODULE ACTIVE',
-      'Scanning network perimeter...',
-      'Target acquisition in progress',
-      'Biometric data collected',
-      'Security clearance verified',
-      'Access protocols engaged',
-      'Monitoring all channels',
-      'Data stream established'
-    ],
-    data: [
-      'DATA MINING INITIATED',
-      'Processing user profiles...',
-      'Extracting metadata',
-      'Cross-referencing databases',
-      'Pattern analysis complete',
-      'Information compiled',
-      'Data integrity verified',
-      'Archive synchronization'
-    ],
-    analysis: [
-      'BEHAVIORAL ANALYSIS RUNNING',
-      'Parsing digital footprint...',
-      'Social network mapping',
-      'Threat assessment active',
-      'Risk evaluation complete',
-      'Profile classification',
-      'Predictive modeling online',
-      'Analysis framework ready'
-    ],
-    access: [
-      'ACCESS CONTROL ENGAGED',
-      'Authentication protocols...',
-      'Permission matrix loaded',
-      'Security tokens verified',
-      'Encryption keys active',
-      'Firewall configuration',
-      'Access granted to user',
-      'Session established'
-    ],
-    crypto: [
-      'CRYPTOGRAPHIC MODULE',
-      'Initializing cipher suites...',
-      'Key exchange protocol',
-      'Hash verification active',
-      'Digital signatures valid',
-      'Secure channel open',
-      'Encryption layer active',
-      'Crypto operations ready'
-    ],
-    monitor: [
-      'SYSTEM MONITOR ONLINE',
-      'Resource utilization...',
-      'Performance metrics',
-      'Network traffic analysis',
-      'System health check',
-      'Process monitoring',
-      'Alert system active',
-      'Monitoring dashboard ready'
-    ]
-  };
-
-  private getHighEndMessages(terminalType: string): string[] {
-    const matrixTexts = {
-      main: [
-        'xiaoOS v2.1 online...',
-        'Matrix protocol activated...',
-        'Neural network initialized...',
-        'Quantum encryption loaded...',
-        'Target locked: DAVID_XIAO...'
-      ],
-      surveillance: [
-        'Scanning biometric signatures...',
-        'Processing facial recognition data...',
-        'Analyzing movement patterns...',
-        'Tracking digital footprint...',
-        'Monitoring communication channels...',
-        'Cross-referencing databases...',
-        'Building psychological profile...'
-      ],
-      network: [
-        'Penetrating firewall defenses...',
-        'Bypassing security protocols...',
-        'Establishing backdoor connections...',
-        'Intercepting data packets...',
-        'Mapping network topology...',
-        'Exploiting zero-day vulnerabilities...',
-        'Injecting malicious payloads...'
-      ],
-      security: [
-        'Exploiting buffer overflow...',
-        'Escalating privileges...',
-        'Bypassing authentication...',
-        'Accessing restricted areas...',
-        'Injecting SQL payloads...',
-        'Brute forcing credentials...',
-        'Social engineering attack...'
-      ],
-      data: [
-        'Extracting personal files...',
-        'Decrypting sensitive data...',
-        'Downloading contact lists...',
-        'Scanning social media profiles...',
-        'Compiling comprehensive dossier...',
-        'Analyzing behavioral patterns...',
-        'Cross-referencing multiple sources...'
-      ],
-      analysis: [
-        'Running behavioral analysis...',
-        'Building psychological profile...',
-        'Identifying key connections...',
-        'Assessing threat level...',
-        'Predicting future actions...',
-        'Analyzing communication patterns...',
-        'Mapping social networks...'
-      ],
-      access: [
-        'Overriding access controls...',
-        'Generating fake credentials...',
-        'Bypassing security checks...',
-        'Granting elevated permissions...',
-        'Establishing persistent access...',
-        'Creating backdoor accounts...',
-        'Modifying system logs...'
-      ],
-      crypto: [
-        'Breaking encryption algorithms...',
-        'Decrypting secure communications...',
-        'Cracking password hashes...',
-        'Analyzing cryptographic keys...',
-        'Exploiting weak ciphers...',
-        'Reverse engineering protocols...',
-        'Bypassing digital signatures...'
-      ],
-      monitor: [
-        'Monitoring system resources...',
-        'Tracking network traffic...',
-        'Analyzing system logs...',
-        'Detecting security breaches...',
-        'Monitoring user activities...',
-        'Tracking file access patterns...',
-        'Analyzing system performance...'
-      ]
-    };
-
-    return matrixTexts[terminalType as keyof typeof matrixTexts] || ['Processing...'];
-  }
-
-  private detectLowEndDevice(): boolean {
-    // Mobile device check (primary indicator) - includes tablets
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // If it's mobile, always use performance mode
-    if (isMobile) {
-      console.log('Mobile device detected - using Performance Mode');
-      return true;
-    }
-    
-    // For desktop devices, use more restrictive criteria
-    const desktopIndicators = {
-      // Very small screen size (likely windowed browser or very old monitor)
-      isVerySmallScreen: window.innerWidth <= 480 || window.innerHeight <= 480,
-      
-      // Hardware concurrency (CPU cores) - only single core systems
-      singleCore: navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 1,
-      
-      // Memory limitations (if available) - only very low memory systems
-      veryLowMemory: (navigator as any).deviceMemory && (navigator as any).deviceMemory <= 1,
-      
-      // Connection speed (if available) - only very slow connections
-      verySlowConnection: (navigator as any).connection && 
-                         ((navigator as any).connection.effectiveType === 'slow-2g' || 
-                          (navigator as any).connection.effectiveType === '2g'),
-      
-      // Very old browser versions (Chrome < 60, Firefox < 50, Safari < 600)
-      veryOldBrowser: /Chrome\/[1-5][0-9]\.|Firefox\/[1-4][0-9]\.|Safari\/[1-5][0-9][0-9]\./.test(navigator.userAgent)
-    };
-
-    // Count desktop performance issues
-    const desktopIssues = Object.values(desktopIndicators).filter(Boolean).length;
-    
-    // Log for debugging (can be removed in production)
-    console.log('Desktop performance indicators:', desktopIndicators);
-    console.log('Desktop performance issues:', desktopIssues, '/ 5');
-    
-    // Desktop is considered low-end only if it has 3+ serious performance issues
-    const isLowEndDesktop = desktopIssues >= 3;
-    
-    console.log(isLowEndDesktop ? 'Low-end desktop detected - using Performance Mode' : 'High-end desktop detected - using Full Experience');
-    
-    return isLowEndDesktop;
-  }
 }
 
 // Simple initialization
 function initStartupAnimation() {
-  console.log('StartupAnimation: Initializing... VERSION 2.1.0');
   const currentPath = window.location.pathname;
-  console.log('StartupAnimation: Current path:', currentPath);
   
   if (currentPath === '/') {
-    console.log('StartupAnimation: Root route - starting animation');
     try {
       new StartupAnimation();
     } catch (error) {
