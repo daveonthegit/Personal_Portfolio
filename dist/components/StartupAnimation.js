@@ -1,4 +1,10 @@
 import { gsap } from 'gsap';
+/** System bar target widths as % of `.xiaoos-sys-blocks` (matches 30/140/180 of 220px design) */
+const SYS_BAR = {
+    b1: '13.636363%',
+    b2: '63.636363%',
+    b3: '81.818181%',
+};
 /**
  * Terminal Startup Animation Component
  * xiaoOS style loading sequence
@@ -14,10 +20,7 @@ export class StartupAnimation {
         this.startAnimation();
     }
     createAnimationContainer() {
-        const overlay = document.createElement('div');
-        overlay.id = 'startup-animation';
-        overlay.className = 'xiaoos-loader-container';
-        overlay.innerHTML = `
+        const markup = `
       <div class="xiaoos-display-area" id="xiaoos-display-area">
           
           <!-- 1. The X Matrix Grid -->
@@ -106,7 +109,21 @@ export class StartupAnimation {
       <div class="xiaoos-reveal-outline" id="xiaoos-reveal-outline"></div>
       <div class="xiaoos-reveal-solid" id="xiaoos-reveal-solid"></div>
     `;
-        document.body.appendChild(overlay);
+        // Reuse terminal.html placeholder to avoid duplicate #startup-animation IDs (breaks mobile)
+        let overlay = document.getElementById('startup-animation');
+        if (overlay) {
+            overlay.className = 'xiaoos-loader-container';
+            overlay.style.opacity = '';
+            overlay.style.transition = '';
+            overlay.innerHTML = markup;
+        }
+        else {
+            overlay = document.createElement('div');
+            overlay.id = 'startup-animation';
+            overlay.className = 'xiaoos-loader-container';
+            overlay.innerHTML = markup;
+            document.body.appendChild(overlay);
+        }
         this.container = overlay;
         // Generate the 3x10 grid of X's
         const grid = document.getElementById('xiaoos-x-grid');
@@ -145,96 +162,81 @@ export class StartupAnimation {
         gsap.set("#xiaoos-bottom-ui", { opacity: 0 });
         gsap.set("#xiaoos-progress-bar", { width: "0%" });
         const tl = gsap.timeline();
+        // Timing scale ~0.5× vs original — same beats, faster pass
         // 0. Bottom UI begins loading immediately
-        tl.to("#xiaoos-bottom-ui", { opacity: 1, duration: 0.3 }, 0);
-        // 1. Diagonal fill of X's (Slightly slower)
+        tl.to("#xiaoos-bottom-ui", { opacity: 1, duration: 0.15 }, 0);
+        // 1. Diagonal fill of X's
         tl.to(".xiaoos-x-item", {
             opacity: 1,
-            duration: 0.08,
+            duration: 0.04,
             stagger: {
-                each: 0.06,
+                each: 0.028,
                 grid: [3, 10],
                 from: "start"
             }
-        }, 0.3);
+        }, 0.12);
         // 2. White Bars Strike Out the X's progressively
         tl.to(".xiaoos-strike-bar", {
             width: "100%",
-            duration: 0.4,
-            stagger: 0.1,
+            duration: 0.2,
+            stagger: 0.05,
             ease: "power2.inOut"
-        }, "+=0.3");
+        }, "+=0.12");
         // 3. Diamond appears DURING the bars striking through
-        // X's disappear immediately behind it
-        tl.set(".xiaoos-x-item", { opacity: 0 }, "-=0.2")
-            .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.1 }, "-=0.2");
-        // 4. Diamond X constantly glitches in and out while Bars wait
-        tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.05, yoyo: true, repeat: 19 }, "+=0.1");
+        tl.set(".xiaoos-x-item", { opacity: 0 }, "-=0.1")
+            .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.06 }, "-=0.1");
+        // 4. Diamond X glitches (fewer repeats, snappier)
+        tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.03, yoyo: true, repeat: 11 }, "+=0.04");
         // 5. Bars disappear just before the diamond expansion ends
-        tl.to("#xiaoos-strike-bars", { opacity: 0, duration: 0.1 }, "-=0.3");
-        // 6. X disappears fully as Diamond Expands slightly
-        tl.set("#xiaoos-diamond-x-lines", { opacity: 0 }, "-=0.2") // Ensure X is gone completely
-            .to("#xiaoos-diamond-shape", { scale: 1.1, duration: 0.4, ease: "power2.out" }, "-=0.2")
-            .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.05 }, "+=0.2");
-        // 7. Reappear just the large X quickly, then vanish
-        tl.to("#xiaoos-diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.1")
-            .to("#xiaoos-diamond-shape", { opacity: 0, duration: 0 }, "<") // ensure diamond remains hidden
-            .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.05 }) // show container again
-            .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.1 }, "+=0.15"); // disappear quickly
-        // Small gap of nothing
-        tl.to({}, { duration: 0.3 });
-        // 8. Concentric Shape Sequencing
-        // State 1: Just Diamond
+        tl.to("#xiaoos-strike-bars", { opacity: 0, duration: 0.06 }, "-=0.14");
+        // 6. X disappears fully as Diamond expands slightly
+        tl.set("#xiaoos-diamond-x-lines", { opacity: 0 }, "-=0.1")
+            .to("#xiaoos-diamond-shape", { scale: 1.1, duration: 0.22, ease: "power2.out" }, "-=0.1")
+            .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.03 }, "+=0.08");
+        // 7. Large X flash, then vanish
+        tl.to("#xiaoos-diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.04")
+            .to("#xiaoos-diamond-shape", { opacity: 0, duration: 0 }, "<")
+            .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.03 })
+            .to("#xiaoos-transition-diamond", { opacity: 0, duration: 0.06 }, "+=0.06");
+        tl.to({}, { duration: 0.12 });
+        // 8. Concentric shape sequencing (tighter holds)
         tl.set(".xiaoos-shape-1", { opacity: 1 })
-            .set(".xiaoos-shape-1", { opacity: 0 }, "+=0.25")
-            // State 2: Diamond + Triangle intersecting bottom
-            .set(".xiaoos-shape-2", { opacity: 1 }, "+=0.1")
-            .set(".xiaoos-shape-2", { opacity: 0 }, "+=0.25")
-            // State 3: Diamond with Circle inside
-            .set(".xiaoos-shape-3", { opacity: 1 }, "+=0.1")
-            .set(".xiaoos-shape-3", { opacity: 0 }, "+=0.25")
-            // State 4: Circle + Previous Triangle
-            .set(".xiaoos-shape-4", { opacity: 1 }, "+=0.1")
-            .set(".xiaoos-shape-4", { opacity: 0 }, "+=0.25")
-            // State 5: Circle + Triangle + Inner Triangle (or Diamond)
-            .set(".xiaoos-shape-5", { opacity: 1 }, "+=0.1")
-            .set(".xiaoos-shape-5", { opacity: 0 }, "+=0.25");
-        // Small gap of nothing
-        tl.to({}, { duration: 0.4 });
-        // 9. System Loading Text & Bars
-        // First, top bar is solid, other two start invisible
-        tl.set(".xiaoos-sys-b1", { width: 30 }) // Top bar already has size
-            .set(".xiaoos-sys-b2", { width: 140, opacity: 0 })
-            .set(".xiaoos-sys-b3", { width: 180, opacity: 0 })
-            .to("#xiaoos-sys-blocks", { opacity: 1, duration: 0.1 }); // Show block
-        // The two bottom bars briefly flicker on, off, and back on
-        tl.to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.05 }, "+=0.1")
-            .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.05 })
-            .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.05 });
-        // Now reset their widths to 0, but keep them opaque, and let them progress
+            .set(".xiaoos-shape-1", { opacity: 0 }, "+=0.12")
+            .set(".xiaoos-shape-2", { opacity: 1 }, "+=0.04")
+            .set(".xiaoos-shape-2", { opacity: 0 }, "+=0.12")
+            .set(".xiaoos-shape-3", { opacity: 1 }, "+=0.04")
+            .set(".xiaoos-shape-3", { opacity: 0 }, "+=0.12")
+            .set(".xiaoos-shape-4", { opacity: 1 }, "+=0.04")
+            .set(".xiaoos-shape-4", { opacity: 0 }, "+=0.12")
+            .set(".xiaoos-shape-5", { opacity: 1 }, "+=0.04")
+            .set(".xiaoos-shape-5", { opacity: 0 }, "+=0.12");
+        tl.to({}, { duration: 0.14 });
+        // 9. System Loading (% widths scale with narrow `.xiaoos-sys-container` on phones)
+        tl.set(".xiaoos-sys-b1", { width: SYS_BAR.b1 })
+            .set(".xiaoos-sys-b2", { width: SYS_BAR.b2, opacity: 0 })
+            .set(".xiaoos-sys-b3", { width: SYS_BAR.b3, opacity: 0 })
+            .to("#xiaoos-sys-blocks", { opacity: 1, duration: 0.05 });
+        tl.to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.03 }, "+=0.05")
+            .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.03 })
+            .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.03 });
         tl.set(".xiaoos-sys-b2, .xiaoos-sys-b3", { width: 0 })
-            .to(".xiaoos-sys-b2", { width: 140, duration: 1.2, ease: "power1.inOut" }, "+=0.1")
-            .to(".xiaoos-sys-b3", { width: 180, duration: 1.2, ease: "power1.inOut" }, "-=1.2");
-        // Blink and swap system loading text ONLY WITH the fast progress bar
-        tl.to(".xiaoos-sys-text", { opacity: 0, duration: 0.04, yoyo: true, repeat: 4 })
-            .to("#xiaoos-sys-fast-bar-container", { opacity: 1, duration: 0.04, yoyo: true, repeat: 4 }, "<")
-            .set(".xiaoos-sys-text", { visibility: "hidden" }); // Use visibility instead of display none to preserve layout
-        // 10. Fast progress bar finishes filling up completely alone
-        tl.to("#xiaoos-sys-fast-bar", { width: "100%", duration: 0.8, ease: "power3.inOut" })
-            .to("#xiaoos-sys-fast-bar-container", { opacity: 0, duration: 0.2 }, "+=0.2");
-        // Hide the remaining top/bottom system bars right before the sequence ends
-        tl.to(".xiaoos-sys-b1, .xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.2 }, "-=0.2");
-        // Now calculate total duration so the bottom bar exactly matches the center animations
+            .to(".xiaoos-sys-b2", { width: SYS_BAR.b2, duration: 0.55, ease: "power1.inOut" }, "+=0.04")
+            .to(".xiaoos-sys-b3", { width: SYS_BAR.b3, duration: 0.55, ease: "power1.inOut" }, "-=0.55");
+        tl.to(".xiaoos-sys-text", { opacity: 0, duration: 0.025, yoyo: true, repeat: 4 })
+            .to("#xiaoos-sys-fast-bar-container", { opacity: 1, duration: 0.025, yoyo: true, repeat: 4 }, "<")
+            .set(".xiaoos-sys-text", { visibility: "hidden" });
+        tl.to("#xiaoos-sys-fast-bar", { width: "100%", duration: 0.38, ease: "power3.inOut" })
+            .to("#xiaoos-sys-fast-bar-container", { opacity: 0, duration: 0.1 }, "+=0.06");
+        tl.to(".xiaoos-sys-b1, .xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.1 }, "-=0.1");
         const totalDuration = tl.duration();
         tl.to("#xiaoos-progress-bar", { width: "100%", duration: totalDuration, ease: "power1.inOut" }, 0);
-        // 11. Transition to main app exactly as the center sequence ends
-        tl.to("#xiaoos-bottom-ui", { opacity: 0, duration: 0.3 })
+        tl.to("#xiaoos-bottom-ui", { opacity: 0, duration: 0.14 })
             .to("#xiaoos-display-area", { display: "none" }, "<");
-        // 12. Main App Boot Animation
-        tl.to("#xiaoos-reveal-outline", { scale: 1, duration: 0.8, ease: "power3.inOut" })
-            .to("#xiaoos-reveal-solid", { scale: 1, duration: 0.6, ease: "power3.in" }, "-=0.6")
-            .to("#xiaoos-reveal-outline", { opacity: 0, duration: 0 }, "<") // Hide outline once solid covers it
-            .to("#xiaoos-reveal-solid", { opacity: 0, duration: 0.8, ease: "power2.out" }, "+=0.1") // Solid fades to reveal content
+        // 12. Geometric reveal into home
+        tl.to("#xiaoos-reveal-outline", { scale: 1, duration: 0.42, ease: "power3.inOut" })
+            .to("#xiaoos-reveal-solid", { scale: 1, duration: 0.32, ease: "power3.in" }, "-=0.32")
+            .to("#xiaoos-reveal-outline", { opacity: 0, duration: 0 }, "<")
+            .to("#xiaoos-reveal-solid", { opacity: 0, duration: 0.42, ease: "power2.out" }, "+=0.04")
             .add(() => {
             this.redirectToHome();
         });
@@ -244,16 +246,15 @@ export class StartupAnimation {
             return;
         // Fade out animation entirely
         this.container.style.opacity = '0';
-        this.container.style.transition = 'opacity 0.5s ease-out';
+        this.container.style.transition = 'opacity 0.28s ease-out';
         setTimeout(() => {
             if (this.container) {
                 document.body.removeChild(this.container);
                 this.container = null;
             }
-            // Redirect to home page
             window.location.href = '/home';
             this.isAnimating = false;
-        }, 500);
+        }, 280);
     }
     // Public method to manually start animation (useful for testing)
     restart() {

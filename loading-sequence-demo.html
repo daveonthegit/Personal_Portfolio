@@ -454,124 +454,93 @@
 
             tl = gsap.timeline();
 
-            // 0. Bottom UI begins loading immediately
-            tl.to("#bottom-ui", { opacity: 1, duration: 0.3 }, 0); 
+            // ~0.5× timing vs original (matches site StartupAnimation)
+            tl.to("#bottom-ui", { opacity: 1, duration: 0.15 }, 0);
 
-            // 1. Diagonal fill of X's (Slightly slower)
             tl.to(".x-item", {
                 opacity: 1,
-                duration: 0.08,
+                duration: 0.04,
                 stagger: {
-                    each: 0.06,
+                    each: 0.028,
                     grid: [3, 10],
                     from: "start"
                 }
-            }, 0.3);
+            }, 0.12);
 
-            // 2. White Bars Strike Out the X's progressively
             tl.to(".strike-bar", {
                 width: "100%",
-                duration: 0.4,
-                stagger: 0.1,
+                duration: 0.2,
+                stagger: 0.05,
                 ease: "power2.inOut"
-            }, "+=0.3");
+            }, "+=0.12");
 
-            // 3. Diamond appears DURING the bars striking through
-            // X's disappear immediately behind it
-            tl.set(".x-item", { opacity: 0 }, "-=0.2")
-              .to("#transition-diamond", { opacity: 1, duration: 0.1 }, "-=0.2");
+            tl.set(".x-item", { opacity: 0 }, "-=0.1")
+              .to("#transition-diamond", { opacity: 1, duration: 0.06 }, "-=0.1");
 
-            // 4. Diamond X constantly glitches in and out while Bars wait
-            // The X glitches rapidly repeatedly
-            tl.to("#diamond-x-lines", { opacity: 0, duration: 0.05, yoyo: true, repeat: 19 }, "+=0.1");
+            tl.to("#diamond-x-lines", { opacity: 0, duration: 0.03, yoyo: true, repeat: 11 }, "+=0.04");
 
-            // 5. Bars disappear just before the diamond expansion ends
-            tl.to("#strike-bars", { opacity: 0, duration: 0.1 }, "-=0.3");
+            tl.to("#strike-bars", { opacity: 0, duration: 0.06 }, "-=0.14");
 
-            // 6. X disappears fully as Diamond Expands slightly
-            tl.set("#diamond-x-lines", { opacity: 0 }, "-=0.2") // Ensure X is gone completely
-              .to("#diamond-shape", { scale: 1.1, duration: 0.4, ease: "power2.out" }, "-=0.2") 
-              .to("#transition-diamond", { opacity: 0, duration: 0.05 }, "+=0.2"); 
+            tl.set("#diamond-x-lines", { opacity: 0 }, "-=0.1")
+              .to("#diamond-shape", { scale: 1.1, duration: 0.22, ease: "power2.out" }, "-=0.1")
+              .to("#transition-diamond", { opacity: 0, duration: 0.03 }, "+=0.08");
 
-            // 7. Reappear just the large X quickly, then vanish
-            tl.to("#diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.1")
-              .to("#diamond-shape", { opacity: 0, duration: 0 }, "<") // ensure diamond remains hidden
-              .to("#transition-diamond", { opacity: 1, duration: 0.05 }) // show container again
-              .to("#transition-diamond", { opacity: 0, duration: 0.1 }, "+=0.15"); // disappear quickly
+            tl.to("#diamond-x-lines", { opacity: 1, duration: 0 }, "+=0.04")
+              .to("#diamond-shape", { opacity: 0, duration: 0 }, "<")
+              .to("#transition-diamond", { opacity: 1, duration: 0.03 })
+              .to("#transition-diamond", { opacity: 0, duration: 0.06 }, "+=0.06");
 
-            // Small gap of nothing
-            tl.to({}, { duration: 0.3 });
+            tl.to({}, { duration: 0.12 });
 
-            // 8. Concentric Shape Sequencing
-            // State 1: Just Diamond
             tl.set(".shape-1", { opacity: 1 })
-              .set(".shape-1", { opacity: 0 }, "+=0.25") 
-              
-              // State 2: Diamond + Triangle intersecting bottom
-              .set(".shape-2", { opacity: 1 }, "+=0.1") 
-              .set(".shape-2", { opacity: 0 }, "+=0.25")
-              
-              // State 3: Diamond with Circle inside
-              .set(".shape-3", { opacity: 1 }, "+=0.1")
-              .set(".shape-3", { opacity: 0 }, "+=0.25")
-              
-              // State 4: Circle + Previous Triangle
-              .set(".shape-4", { opacity: 1 }, "+=0.1")
-              .set(".shape-4", { opacity: 0 }, "+=0.25")
+              .set(".shape-1", { opacity: 0 }, "+=0.12")
+              .set(".shape-2", { opacity: 1 }, "+=0.04")
+              .set(".shape-2", { opacity: 0 }, "+=0.12")
+              .set(".shape-3", { opacity: 1 }, "+=0.04")
+              .set(".shape-3", { opacity: 0 }, "+=0.12")
+              .set(".shape-4", { opacity: 1 }, "+=0.04")
+              .set(".shape-4", { opacity: 0 }, "+=0.12")
+              .set(".shape-5", { opacity: 1 }, "+=0.04")
+              .set(".shape-5", { opacity: 0 }, "+=0.12");
 
-              // State 5: Circle + Triangle + Inner Triangle (or Diamond)
-              .set(".shape-5", { opacity: 1 }, "+=0.1")
-              .set(".shape-5", { opacity: 0 }, "+=0.25");
+            tl.to({}, { duration: 0.14 });
 
-            // Small gap of nothing
-            tl.to({}, { duration: 0.4 });
-
-            // 9. System Loading Text & Bars
-            // First, top bar is solid, other two start invisible
-            tl.set(".sys-b1", { width: 30 }) // Top bar already has size
-              .set(".sys-b2", { width: 140, opacity: 0 }) 
+            tl.set(".sys-b1", { width: 30 })
+              .set(".sys-b2", { width: 140, opacity: 0 })
               .set(".sys-b3", { width: 180, opacity: 0 })
-              .to("#sys-blocks", { opacity: 1, duration: 0.1 }); // Show block
+              .to("#sys-blocks", { opacity: 1, duration: 0.05 });
 
-            // The two bottom bars briefly flicker on, off, and back on
-            tl.to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.05 }, "+=0.1")
-              .to(".sys-b2, .sys-b3", { opacity: 0, duration: 0.05 })
-              .to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.05 });
+            tl.to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.03 }, "+=0.05")
+              .to(".sys-b2, .sys-b3", { opacity: 0, duration: 0.03 })
+              .to(".sys-b2, .sys-b3", { opacity: 1, duration: 0.03 });
 
-            // Now reset their widths to 0, but keep them opaque, and let them progress
             tl.set(".sys-b2, .sys-b3", { width: 0 })
-              .to(".sys-b2", { width: 140, duration: 1.2, ease: "power1.inOut" }, "+=0.1")
-              .to(".sys-b3", { width: 180, duration: 1.2, ease: "power1.inOut" }, "-=1.2");
+              .to(".sys-b2", { width: 140, duration: 0.55, ease: "power1.inOut" }, "+=0.04")
+              .to(".sys-b3", { width: 180, duration: 0.55, ease: "power1.inOut" }, "-=0.55");
 
-            // Blink and swap system loading text AND bars WITH the fast progress bar
-            // All other elements glitch out, leaving only the final progress bar
-            tl.to(".sys-text, .sys-b1, .sys-b2, .sys-b3", { opacity: 0, duration: 0.04, yoyo: true, repeat: 4 }) 
-              .to("#sys-fast-bar-container", { opacity: 1, duration: 0.04, yoyo: true, repeat: 4 }, "<") 
-              .set(".sys-text, .sys-b1, .sys-b2, .sys-b3", { visibility: "hidden" }); // Use visibility instead of display none to preserve layout
+            tl.to(".sys-text, .sys-b1, .sys-b2, .sys-b3", { opacity: 0, duration: 0.025, yoyo: true, repeat: 4 })
+              .to("#sys-fast-bar-container", { opacity: 1, duration: 0.025, yoyo: true, repeat: 4 }, "<")
+              .set(".sys-text, .sys-b1, .sys-b2, .sys-b3", { visibility: "hidden" });
 
-            // 10. Fast progress bar finishes filling up completely alone
-            tl.to("#sys-fast-bar", { width: "100%", duration: 0.8, ease: "power3.inOut" })
-              .to("#sys-fast-bar-container", { opacity: 0, duration: 0.2 }, "+=0.2");
+            tl.to("#sys-fast-bar", { width: "100%", duration: 0.38, ease: "power3.inOut" })
+              .to("#sys-fast-bar-container", { opacity: 0, duration: 0.1 }, "+=0.06");
 
-            // Now calculate total duration so the bottom bar exactly matches the center animations
             const totalDuration = tl.duration();
             tl.to("#progress-bar", { width: "100%", duration: totalDuration, ease: "power1.inOut" }, 0);
 
-            // 11. Transition to main app exactly as the center sequence ends
-            tl.to("#bottom-ui", { opacity: 0, duration: 0.3 })
+            tl.to("#bottom-ui", { opacity: 0, duration: 0.14 })
               .to(".display-area", { display: "none" }, "<")
               .to("#main-site", { opacity: 1, duration: 0 }, "<");
 
-            // 12. Main App Boot Animation
-            tl.to("#reveal-outline", { scale: 1, duration: 0.8, ease: "power3.inOut" })
-              .to("#reveal-solid", { scale: 1, duration: 0.6, ease: "power3.in" }, "-=0.6")
-              .to("#reveal-outline", { opacity: 0, duration: 0 }, "<") // Hide outline once solid covers it
-              .to("#main-site-content", { opacity: 1, scale: 1, duration: 0.1 }, "<") // Content appears behind white solid
-              .to("#reveal-solid", { opacity: 0, duration: 0.8, ease: "power2.out" }, "+=0.1"); // Solid fades to reveal content
+            tl.to("#reveal-outline", { scale: 1, duration: 0.42, ease: "power3.inOut" })
+              .to("#reveal-solid", { scale: 1, duration: 0.32, ease: "power3.in" }, "-=0.32")
+              .to("#reveal-outline", { opacity: 0, duration: 0 }, "<")
+              .to("#main-site-content", { opacity: 1, scale: 1, duration: 0.06 }, "<")
+              .to("#reveal-solid", { opacity: 0, duration: 0.42, ease: "power2.out" }, "+=0.04");
         }
 
         // Start initial load
-        setTimeout(playAnimation, 500);
+        setTimeout(playAnimation, 200);
 
     </script>
 </body>
