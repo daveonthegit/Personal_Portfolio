@@ -1,401 +1,88 @@
 {{define "home-content"}}
-<style>
-    .home-hero-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        width: 100%;
-        max-width: 80rem;
-        margin: 0 auto;
-        align-items: start;
-    }
-    @media (min-width: 1024px) {
-        .home-hero-grid {
-            grid-template-columns: 1fr 2fr;
-        }
-    }
-    .profile-data-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    @media (min-width: 768px) {
-        .profile-data-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-    .stat-boxes-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-    @media (min-width: 768px) {
-        .stat-boxes-grid {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-</style>
-<!-- Hero Section (newstyle) -->
-<section class="hero-section relative flex items-center justify-center p-6 md:p-12 lg:p-20">
-    <div class="absolute top-4 right-4 z-10 text-xs font-mono text-nexus-cyan space-y-1">
-        <div>SYSTEM_ID: 001</div>
-        <div>STATUS: <span class="text-green-400">OPERATIONAL</span></div>
-        <div>UPTIME: 99.9%</div>
-    </div>
-    
-    <div class="home-hero-grid">
-        <!-- Profile Card - Left (newstyle) -->
-        <div class="nexus-profile-card relative group">
-            <div class="corner-accent-tl"></div>
-            <div class="corner-accent-br"></div>
-            <div class="profile-card-inner">
-                <div class="flex items-center justify-between nexus-header">
-                    <h2 class="font-nexus-display text-lg font-bold text-white tracking-widest uppercase m-0">PROFILE</h2>
-                    <span class="material-symbols-outlined text-gray-500 text-sm" aria-hidden="true">fingerprint</span>
-                </div>
-                <div class="profile-image relative w-full aspect-[4/3] overflow-hidden mb-1 border border-white/5">
-                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover transition-all duration-500" src="/static/images/Profile_Picture.jpg?v={{.Timestamp}}">
-                </div>
-                <div class="bg-nexus-orange text-black font-nexus-display font-bold text-sm py-1 px-3 mb-4 flex items-center justify-between threat-level">
-                    <span>THREAT LEVEL</span>
-                    <span>MINIMAL</span>
-                </div>
-                <div class="space-y-3 px-2 pb-4">
-                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
-                        <span class="data-label">Name</span>
-                        <span class="col-span-2 data-value text-right">{{.Personal.Name}}</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
-                        <span class="data-label">Role</span>
-                        <span class="col-span-2 data-value text-right">{{.Personal.Title}}</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
-                        <span class="data-label">Status</span>
-                        <span class="col-span-2 data-value text-right flex items-center justify-end gap-2">
-                            <span class="status-dot pulse"></span> ONLINE
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-xs border-b border-white/5 pb-2">
-                        <span class="data-label">Location</span>
-                        <span class="col-span-2 data-value text-right">{{.Personal.Location}}</span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 text-xs pb-1">
-                        <span class="data-label">Focus</span>
-                        <span class="col-span-2 data-value text-right">FULL-STACK</span>
-                    </div>
-                </div>
+<div class="h-full w-full flex items-center justify-center p-4 sm:p-8 relative min-h-0">
+    <div class="game-nav-grid grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl z-10">
+        <a href="/about" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">navigation</span>
+                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">SUBJECT_INFO</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">ABOUT</span>
             </div>
-        </div>
-        
-        <!-- Main Content - Right (newstyle panel) -->
-        <div class="flex flex-col gap-6">
-            <div class="nexus-panel relative">
-                <div class="absolute top-0 right-0 p-4 opacity-20 pointer-events-none" aria-hidden="true">
-                    <span class="material-symbols-outlined text-6xl text-white">data_object</span>
-                </div>
-                <div class="panel-title-bar flex items-center gap-3 mb-8">
-                    <div class="title-accent w-2 h-8 bg-nexus-cyan"></div>
-                    <h1 class="text-3xl md:text-4xl font-nexus-display font-bold text-white tracking-tighter uppercase">Profile Data</h1>
-                </div>
-                <div class="profile-data-grid" style="margin-bottom: 2rem;">
-                    <p class="bio-text font-nexus text-gray-400 text-sm leading-relaxed m-0">
-                        {{.Personal.Bio}}
-                    </p>
-                    <div class="font-mono text-xs text-gray-500 space-y-4 border-l border-white/10 pl-6">
-                        <div>
-                            <div class="text-nexus-cyan mb-1">CURRENT_PROJECT</div>
-                            <div class="text-white">xiaoOS_DASHBOARD</div>
-                        </div>
-                        <div>
-                            <div class="text-nexus-cyan mb-1">STATUS</div>
-                            <div class="text-nexus-cyan">OPERATIONAL</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-wrap gap-4 mt-8 pt-6 border-t border-white/5">
-                    <a href="/" class="nexus-btn-primary flex items-center gap-2 no-underline">
-                        <span class="material-symbols-outlined text-sm">terminal</span>
-                        Initialize Shell
-                    </a>
-                    <a href="/projects" class="nexus-btn-secondary no-underline">View Source</a>
-                    <a href="/contact" class="nexus-btn-secondary no-underline">Contact Subject</a>
-                </div>
-            </div>
-            
-            <!-- Stat Boxes - Newstyle -->
-            <div class="stat-boxes-grid">
-                <div class="border border-white/10 p-6 flex items-center justify-between" style="background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px);">
-                    <div>
-                        <div class="text-xs font-nexus-display text-gray-500 uppercase tracking-widest mb-2">Projects Active</div>
-                        <div class="text-3xl font-mono text-white">{{len .Projects}}<span class="text-nexus-cyan">/</span>{{len .Projects}}</div>
-                    </div>
-                    <span class="material-symbols-outlined text-nexus-cyan text-4xl">extension</span>
-                </div>
-                <div class="border border-white/10 p-6 flex items-center justify-between" style="background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px);">
-                    <div>
-                        <div class="text-xs font-nexus-display text-gray-500 uppercase tracking-widest mb-2">Network Latency</div>
-                        <div class="text-3xl font-mono text-white">12<span class="text-sm text-gray-500 ml-1">ms</span></div>
-                    </div>
-                    <div class="flex gap-1 items-end h-10">
-                        <div class="w-1.5 bg-nexus-cyan h-3"></div>
-                        <div class="w-1.5 bg-nexus-cyan h-5"></div>
-                        <div class="w-1.5 bg-nexus-cyan h-8"></div>
-                        <div class="w-1.5 bg-nexus-cyan h-5"></div>
-                        <div class="w-1.5 bg-nexus-cyan h-6"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+        </a>
 
-<!-- Skills Section - Skillset Matrix -->
-<section class="section">
-    <div class="container max-w-7xl mx-auto">
-        <!-- Section Header - Newstyle -->
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-1 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Skillset Matrix</h2>
+        <a href="/projects" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">folder</span>
+                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">MODULES</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">PROJECTS</span>
             </div>
-            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">SYSTEM COMPETENCIES & EXPERTISE</p>
-        </div>
-        
-        <!-- Skillset Matrix Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md">
-            <div class="absolute top-0 right-0 p-4 opacity-20">
-                <span class="material-symbols-outlined text-6xl text-white">grid_view</span>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                {{range $index, $skill := .Personal.Skills}}
-                <div class="space-y-6">
-                    <div class="text-[10px] font-nexus-display text-nexus-cyan tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">{{if eq $skill.Category "Languages"}}terminal{{else if eq $skill.Category "Frameworks"}}code{{else if eq $skill.Category "Tools"}}build{{else if eq $skill.Category "Cloud"}}cloud{{else}}database{{end}}</span>
-                        {{$skill.Category}}
-                    </div>
-                    <div class="space-y-4">
-                        {{range $skill.Items}}
-                        <div class="skill-item">
-                            <span class="text-xs font-nexus-display text-white/90 uppercase">{{.}}</span>
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
-                {{end}}
-            </div>
-        </div>
-    </div>
-</section>
+        </a>
 
-<!-- Projects Section -->
-<section class="section">
-    <div class="container">
-        <!-- Section Header - Newstyle -->
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-1 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Operational Modules</h2>
+        <a href="/resume" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">tune</span>
+                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">DOSSIER</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">RESUME</span>
             </div>
-            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">FEATURED PROJECT DIRECTORY</p>
-        </div>
-        
-        <!-- Featured Projects Grid - Newstyle -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {{range $index, $project := .Projects}}
-            {{if lt $index 3}}
-            <div class="project-card nexus-panel relative bg-surface-translucent border border-white/10 group transition-all duration-300 hover:border-nexus-cyan/40">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <!-- Project Header -->
-                <div class="p-1 border-b border-white/10 bg-black/40 flex justify-between items-center px-4 py-2">
-                    <span class="text-[9px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase">FEATURED PROJECT</span>
-                    <span class="material-symbols-outlined text-[12px] text-nexus-cyan">folder_open</span>
-                </div>
-                
-                <div class="p-6">
-                    <!-- Project Visual -->
-                    <div class="aspect-video bg-black/60 border border-white/5 relative overflow-hidden mb-6 flex items-center justify-center">
-                        {{if $project.Image}}
-                        <img src="{{$project.Image}}" alt="{{$project.Title}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        {{else}}
-                        <span class="material-symbols-outlined text-6xl text-white/5 group-hover:scale-110 transition-transform duration-700">terminal</span>
-                        {{end}}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                    </div>
-                    
-                    <!-- Project Title -->
-                    <h3 class="text-xl font-nexus-display font-bold text-white tracking-tight uppercase group-hover:text-nexus-cyan transition-colors mb-2">{{$project.Title}}</h3>
-                    
-                    <!-- Project Description -->
-                    <p class="text-xs text-gray-400 leading-relaxed font-nexus mb-6">{{$project.Description}}</p>
-                    
-                    <!-- Technologies -->
-                    <div class="flex flex-wrap gap-1.5 mb-6 max-h-16 overflow-hidden">
-                        {{range $project.Technologies}}
-                        <span class="text-[8px] font-mono text-nexus-cyan/70 bg-nexus-cyan/5 border border-nexus-cyan/20 px-1.5 py-0.5 whitespace-nowrap">{{.}}</span>
-                        {{end}}
-                    </div>
-                    
-                    <!-- Project Links -->
-                    <div class="flex gap-2">
-                        {{if $project.GitHubURL}}
-                        <a href="{{$project.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
-                            Repository
-                        </a>
-                        {{end}}
-                        {{if $project.LiveURL}}
-                        <a href="{{$project.LiveURL}}" target="_blank" rel="noopener noreferrer" class="nexus-btn-secondary flex-1 text-center no-underline">
-                            Live Demo
-                        </a>
-                        {{end}}
-                        {{if eq $project.DemoType "hosted"}}
-                        <a href="{{$project.DemoURL}}" class="nexus-btn-secondary flex-1 text-center no-underline">
-                            View Demo
-                        </a>
-                        {{end}}
-                    </div>
-                </div>
-            </div>
-            {{end}}
-            {{end}}
-        </div>
-        
-        <!-- View All Projects -->
-        <div style="text-align: center; margin-top: 3rem; padding-bottom: 2rem;">
-            <a href="/projects" class="nexus-btn nexus-btn-primary">
-                VIEW ALL PROJECTS
-            </a>
-        </div>
-    </div>
-</section>
+        </a>
 
-<!-- Secure Communications Section - Newstyle -->
-<section class="section">
-    <div class="container max-w-7xl mx-auto">
-        <style>
-            .comm-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            @media (min-width: 1024px) {
-                .comm-grid {
-                    grid-template-columns: 1fr 1fr;
-                }
-            }
-        </style>
-        <div class="comm-grid">
-            <!-- Left Panel - Communication Info -->
-            <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-8 backdrop-blur-md" style="overflow: visible;">
-                <div class="corner-accent-tl"></div>
-                <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                    <span class="material-symbols-outlined text-8xl text-white">cell_tower</span>
-                </div>
-                
-                <!-- Header -->
-                <div class="flex items-center gap-3" style="margin-bottom: 1.5rem;">
-                    <div class="w-2 h-8 bg-nexus-cyan"></div>
-                    <div>
-                        <h2 class="text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none" style="margin: 0;">Secure Communications</h2>
-                        <p class="text-[10px] font-mono text-nexus-cyan tracking-widest" style="margin: 0.25rem 0 0 0;">ESTABLISHING TUNNEL: NEXUS_CONTACT_V4.0</p>
-                    </div>
-                </div>
-                
-                <p class="text-gray-400 text-sm leading-relaxed" style="margin: 0 0 1.5rem 0;">
-                    Always interested in new opportunities and collaborative development projects. 
-                    Available for freelance work, full-time positions, and exciting partnerships.
-                </p>
-                
-                <!-- Status Terminal -->
-                <div class="bg-black/60 border border-white/10 p-4 font-mono text-sm" style="margin-bottom: 1.5rem;">
-                    <div class="text-gray-500" style="margin-bottom: 0.5rem;">&gt; system_check</div>
-                    <div class="text-gray-400">&gt; new_projects: <span class="text-nexus-cyan">WELCOME</span></div>
-                    <div class="text-gray-400">&gt; collaborations: <span class="text-nexus-cyan">OPEN</span></div>
-                    <div class="text-gray-400">&gt; contact_status: <span class="text-nexus-cyan animate-pulse">READY</span></div>
-                </div>
-                
-                <!-- Action Button -->
-                <a href="/contact" class="nexus-btn-primary inline-flex items-center gap-2 no-underline">
-                    <span class="material-symbols-outlined text-sm">send</span>
-                    INITIATE CONTACT
-                </a>
+        <a href="/contact" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/40 border border-nexus-cyan/40 backdrop-blur-md transition-all duration-300 group-hover:bg-nexus-cyan/10 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-nexus-cyan/80 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">call</span>
+                <span class="absolute top-3 right-3 bg-nexus-cyan text-black text-[9px] font-bold px-1.5 py-0.5 font-mono">1</span>
+                <span class="font-nexus-display font-bold text-nexus-cyan tracking-widest uppercase text-xs sm:text-sm text-center">COMMS_LINK</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">CONTACT</span>
             </div>
-            
-            <!-- Right Panel - Status & Links -->
-            <div class="flex flex-col gap-6">
-                <!-- Status Panel -->
-                <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
-                    <div class="corner-accent-br"></div>
-                    <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-2">
-                        <h3 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Comm Status</h3>
-                        <span class="material-symbols-outlined text-nexus-cyan text-lg">sensors</span>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center text-[10px] font-mono">
-                            <span class="text-gray-500 uppercase tracking-tighter">Availability</span>
-                            <span class="text-[#4ade80]">OPEN TO WORK</span>
-                        </div>
-                        <div class="w-full bg-white/5 h-1">
-                            <div class="bg-nexus-cyan h-full w-[94%]" style="box-shadow: 0 0 8px rgba(0,210,255,0.5);"></div>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] font-mono">
-                            <span class="text-gray-500 uppercase tracking-tighter">Response Time</span>
-                            <span class="text-white">&lt; 24 Hours</span>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] font-mono">
-                            <span class="text-gray-500 uppercase tracking-tighter">Priority Level</span>
-                            <span class="text-[#ff5500]">HIGH</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md">
-                    <div class="corner-accent-tl"></div>
-                    <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-                        <h3 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Direct Links</h3>
-                        <span class="material-symbols-outlined text-nexus-cyan text-lg">hub</span>
-                    </div>
-                    <div class="space-y-3">
-                        {{if .Personal.Email}}
-                        <a href="mailto:{{.Personal.Email}}" class="group block p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Email</span>
-                                    <div class="font-mono text-sm text-white">{{.Personal.Email}}</div>
-                                </div>
-                                <span class="material-symbols-outlined text-nexus-cyan text-sm">arrow_forward</span>
-                            </div>
-                        </a>
-                        {{end}}
-                        {{if .Personal.GitHub}}
-                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="group block p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">GitHub</span>
-                                    <div class="font-mono text-sm text-white">Code Repository</div>
-                                </div>
-                                <span class="material-symbols-outlined text-nexus-cyan text-sm">arrow_forward</span>
-                            </div>
-                        </a>
-                        {{end}}
-                        {{if .Personal.LinkedIn}}
-                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="group block p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">LinkedIn</span>
-                                    <div class="font-mono text-sm text-white">Professional Network</div>
-                                </div>
-                                <span class="material-symbols-outlined text-nexus-cyan text-sm">arrow_forward</span>
-                            </div>
-                        </a>
-                        {{end}}
-                    </div>
-                </div>
+        </a>
+
+        {{if .Personal.GitHub}}
+        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">public</span>
+                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">NETWORK</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">GITHUB</span>
+            </div>
+        </a>
+        {{end}}
+
+        {{if .Personal.Email}}
+        <a href="mailto:{{.Personal.Email}}" class="game-nav-btn group no-underline">
+            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/40 border border-nexus-cyan/40 backdrop-blur-md transition-all duration-300 group-hover:bg-nexus-cyan/10 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
+                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <span class="material-symbols-outlined text-3xl sm:text-4xl text-nexus-cyan/80 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">mail</span>
+                <span class="absolute top-3 right-3 bg-nexus-cyan text-black text-[9px] font-bold px-1.5 py-0.5 font-mono">2</span>
+                <span class="font-nexus-display font-bold text-nexus-cyan tracking-widest uppercase text-xs sm:text-sm text-center">MESSAGES</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">EMAIL</span>
+            </div>
+        </a>
+        {{end}}
+    </div>
+
+    <div class="absolute bottom-20 sm:bottom-8 left-4 right-4 sm:left-8 sm:right-auto flex flex-col gap-2 z-20 pointer-events-none max-w-md">
+        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
+            <span class="material-symbols-outlined text-sm shrink-0">bolt</span>
+            <div class="flex flex-col min-w-0">
+                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">SYSTEM</span>
+                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase truncate">CONNECT YOUR CHARGER</span>
+            </div>
+        </div>
+        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
+            <span class="material-symbols-outlined text-sm shrink-0">call_missed</span>
+            <div class="flex flex-col min-w-0">
+                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">COMM LINK</span>
+                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase">1 MISSED SIGNAL</span>
             </div>
         </div>
     </div>
-</section>
+</div>
 {{end}}

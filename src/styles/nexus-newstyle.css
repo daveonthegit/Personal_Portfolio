@@ -839,3 +839,115 @@ a.nexus-btn-secondary:hover {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* --- Game HUD / hub layout (surveillance OS) --- */
+.game-ui-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.game-hud-left {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  min-width: 0;
+}
+
+.game-hud-right {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.game-hud-bottom {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  min-height: 52px;
+}
+
+.game-hud-apps-btn {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.game-nav-btn .btn-inner {
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+
+.game-alert-box {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.12) 3px,
+    rgba(0, 0, 0, 0.12) 5px
+  );
+}
+
+.game-panel {
+  animation: game-panel-in 0.35s ease-out;
+}
+
+@keyframes game-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .game-ui-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  .game-hud-left {
+    display: none;
+  }
+  .game-hud-right {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  .game-hud-bottom {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 210, 255, 0.35) rgba(255, 255, 255, 0.06);
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.35);
+  border-radius: 0;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.55);
+}

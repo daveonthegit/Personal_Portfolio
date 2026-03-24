@@ -36,173 +36,136 @@
     <!-- Styles -->
     <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
 </head>
-<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-screen flex flex-col relative overflow-x-hidden">
-    <!-- Background Grid -->
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black h-screen w-screen overflow-hidden relative bg-black text-white">
+    <!-- Background Grid + surveillance layer (unchanged) -->
     <div class="nexus-grid-bg"></div>
     <div class="scan-line" aria-hidden="true"></div>
-    
-    <!-- Navigation - Newstyle -->
-    <header class="nexus-nav fixed top-0 left-0 right-0 w-full z-50 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5 bg-surface-translucent backdrop-blur-sm" id="main-nav">
-        <div class="flex items-center gap-2">
-            <a href="/home" class="nexus-logo flex items-center gap-0 no-underline">
-                <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
-            </a>
-        </div>
-        
-        <nav class="nexus-nav-links hidden md:flex items-center gap-8 text-[10px] font-nexus-display font-bold tracking-[0.2em] text-gray-400">
-            <a href="/home" class="nexus-nav-link {{if eq .TemplateName "home"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "home"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>HOME</span>
-            </a>
-            <a href="/about" class="nexus-nav-link {{if eq .TemplateName "about"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "about"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>ABOUT</span>
-            </a>
-            <a href="/projects" class="nexus-nav-link {{if eq .TemplateName "projects"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "projects"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>PROJECTS</span>
-            </a>
-            <a href="/resume" class="nexus-nav-link {{if eq .TemplateName "resume"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "resume"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>RESUME</span>
-            </a>
-            <a href="/contact" class="nexus-nav-link {{if eq .TemplateName "contact"}}active text-nexus-cyan{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "contact"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>CONTACT</span>
-            </a>
-        </nav>
-        
-        <div class="flex items-center gap-4">
-            <button class="theme-toggle hidden" id="theme-toggle" aria-label="Toggle theme">
-                <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                </svg>
-                <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                </svg>
-            </button>
-            <div class="nav-status hidden md:flex items-center gap-2">
-                <span class="text-[10px] font-mono text-nexus-cyan animate-pulse">NET_ACTIVE</span>
-                <span class="material-symbols-outlined text-gray-400 text-sm" aria-hidden="true">wifi</span>
+
+    <div class="game-ui-layout">
+        <!-- Left HUD: profile + stats (hidden on small screens; use bottom bar + hub) -->
+        <aside class="game-hud-left border-r border-white/10 bg-black/60 backdrop-blur-md flex flex-col relative z-20">
+            <div class="p-4 border-b border-white/10 flex justify-between items-center">
+                <a href="/home" class="no-underline text-xl font-nexus-display font-bold text-white tracking-widest uppercase flex items-center gap-0">
+                    <span class="text-nexus-cyan">xiao</span>OS
+                </a>
+                <div class="text-xs font-mono text-nexus-cyan tabular-nums" id="hud-time">00:00:00</div>
             </div>
-            <button class="nexus-mobile-toggle md:hidden text-gray-400 hover:text-white" id="mobile-toggle" aria-label="Toggle mobile menu">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
-        </div>
-    </header>
 
-    <!-- Mobile Menu - Newstyle -->
-    <div class="nexus-mobile-menu hidden fixed top-16 left-0 right-0 z-40 bg-surface-translucent backdrop-blur-md border-b border-white/5" id="mobile-menu">
-        <nav class="flex flex-col p-4 space-y-4">
-            <a href="/home" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "home"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "home"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>HOME</span>
-            </a>
-            <a href="/about" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "about"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "about"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>ABOUT</span>
-            </a>
-            <a href="/projects" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "projects"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "projects"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>PROJECTS</span>
-            </a>
-            <a href="/resume" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "resume"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "resume"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>RESUME</span>
-            </a>
-            <a href="/contact" class="nexus-nav-link text-[10px] font-nexus-display font-bold tracking-[0.2em] {{if eq .TemplateName "contact"}}text-nexus-cyan{{else}}text-gray-400{{end}} hover:text-nexus-cyan transition-colors no-underline flex items-center gap-2">
-                {{if eq .TemplateName "contact"}}<span class="w-1.5 h-1.5 bg-nexus-cyan block"></span>{{end}}
-                <span>CONTACT</span>
-            </a>
-        </nav>
-    </div>
+            <div class="p-4 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar min-h-0">
+                <div class="relative w-full aspect-[4/5] border border-white/20 overflow-hidden hud-profile-img">
+                    <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay"></div>
+                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125" src="/static/images/Profile_Picture.jpg?v={{.Timestamp}}">
+                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
+                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
+                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
+                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
+                </div>
 
-    <!-- Main Content -->
-    <main class="nexus-main" id="main-content">
-        {{if eq .TemplateName "home"}}
-            {{template "home-content" .}}
-        {{else if eq .TemplateName "about"}}
-            {{template "about-content" .}}
-        {{else if eq .TemplateName "projects"}}
-            {{template "projects-content" .}}
-        {{else if eq .TemplateName "contact"}}
-            {{template "contact-content" .}}
-        {{else if eq .TemplateName "resume"}}
-            {{template "resume-content" .}}
-        {{else}}
-            {{template "home-content" .}}
-        {{end}}
-    </main>
+                <div class="space-y-4">
+                    <div class="hud-alert bg-red-500/10 border-l-2 border-red-500 p-2 flex items-center gap-3">
+                        <span class="material-symbols-outlined text-red-500 text-sm">warning</span>
+                        <div class="text-[10px] font-mono tracking-widest text-red-400 uppercase leading-tight">
+                            SYSTEM ACTIVE<br>
+                            <span class="text-white">THREAT: MINIMAL</span>
+                        </div>
+                    </div>
 
-    <!-- Footer - Newstyle Minimal -->
-    <footer class="nexus-footer relative z-10 mt-auto p-6 border-t border-white/5 bg-black/40 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-[10px] font-mono text-gray-500 tracking-widest text-center md:text-left">
-                <div>© {{.Year}} {{.Personal.Name}} // <span class="text-nexus-cyan">xiaoOS</span> // ALL RIGHTS RESERVED</div>
-                <div class="mt-1">SYSTEM_STATUS: <span class="text-[#4ade80]">STABLE</span> | ENCRYPTION: AES-256-GCM</div>
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <div class="hidden md:block text-[10px] font-mono text-nexus-cyan">v2.1.{{.Year}}</div>
-                <div class="flex gap-4">
-                    {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="Email">
-                        EMAIL
-                    </a>
-                    {{end}}
-                    {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="LinkedIn">
-                        LINKEDIN
-                    </a>
-                    {{end}}
-                    {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-nexus-cyan transition-colors text-[10px] font-mono tracking-widest" title="GitHub">
-                        GITHUB
-                    </a>
-                    {{end}}
+                    <div class="space-y-2 text-xs font-mono text-gray-400">
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span>SUBJECT</span> <span class="text-white truncate ml-2">{{.Personal.Name}}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span>ROLE</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Title}}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span>LOC</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Location}}</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/5 pb-1">
+                            <span>STATUS</span> <span class="text-nexus-cyan">ONLINE</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex flex-col gap-2">
+                        {{if .Personal.Email}}
+                        <a href="mailto:{{.Personal.Email}}" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">EMAIL</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">mail</span>
+                        </a>
+                        {{end}}
+                        {{if .Personal.GitHub}}
+                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">GITHUB</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">code</span>
+                        </a>
+                        {{end}}
+                        {{if .Personal.LinkedIn}}
+                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">LINKEDIN</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan">work</span>
+                        </a>
+                        {{end}}
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </aside>
 
-    <!-- Scripts -->
-    <!-- HLS.js for video streaming support -->
+        <!-- Main / hub or page content -->
+        <main class="game-hud-right relative overflow-hidden z-10 min-h-0" id="main-content">
+            {{if eq .TemplateName "home"}}
+                {{template "home-content" .}}
+            {{else if eq .TemplateName "about"}}
+                {{template "about-content" .}}
+            {{else if eq .TemplateName "projects"}}
+                {{template "projects-content" .}}
+            {{else if eq .TemplateName "contact"}}
+                {{template "contact-content" .}}
+            {{else if eq .TemplateName "resume"}}
+                {{template "resume-content" .}}
+            {{else}}
+                {{template "home-content" .}}
+            {{end}}
+        </main>
+
+        <!-- Bottom HUD bar -->
+        <footer class="game-hud-bottom border-t border-white/10 bg-black/80 backdrop-blur-md flex justify-between items-center px-3 sm:px-4 py-2 z-20 gap-2">
+            <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+                <a href="/home" class="w-9 h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Apps menu" title="Hub">
+                    <span class="material-symbols-outlined text-sm">apps</span>
+                </a>
+                <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto game-hud-nav-mini no-scrollbar">
+                    <a href="/about" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">ABOUT</a>
+                    <a href="/projects" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">PROJECTS</a>
+                    <a href="/resume" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">RESUME</a>
+                    <a href="/contact" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">CONTACT</a>
+                </nav>
+            </div>
+            <div class="hidden sm:flex items-center gap-4 text-[10px] font-mono text-gray-500 shrink-0">
+                <div class="flex items-center gap-2 border-r border-white/10 pr-4">
+                    <span class="material-symbols-outlined text-xs text-nexus-cyan">mic</span>
+                    <span class="hidden lg:inline">VOICE RECOGNITION ACTIVE</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-nexus-cyan block animate-pulse"></span>
+                    <span>NET_LINK: STABLE</span>
+                </div>
+            </div>
+            <div class="text-[9px] sm:text-[10px] font-mono text-nexus-cyan uppercase truncate text-right max-w-[40%] sm:max-w-none">
+                {{.TemplateName}}
+            </div>
+        </footer>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="/static/js/main.js?v={{.Timestamp}}"></script>
     <script>
-        // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
-            const mobileToggle = document.getElementById('mobile-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            if (mobileToggle && mobileMenu) {
-                mobileToggle.addEventListener('click', function() {
-                    mobileMenu.classList.toggle('hidden');
-                    mobileMenu.classList.toggle('show');
-                });
-                
-                // Close mobile menu when clicking on a link
-                const mobileLinks = mobileMenu.querySelectorAll('a');
-                mobileLinks.forEach(link => {
-                    link.addEventListener('click', function() {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenu.classList.remove('show');
-                    });
-                });
-                
-                // Close mobile menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!mobileToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
-                        mobileMenu.classList.add('hidden');
-                        mobileMenu.classList.remove('show');
-                    }
-                });
+            function updateTime() {
+                var el = document.getElementById('hud-time');
+                if (!el) return;
+                el.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
             }
-            
-            // Clean xiaoOS interface - no excessive effects
+            setInterval(updateTime, 1000);
+            updateTime();
         });
     </script>
 </body>

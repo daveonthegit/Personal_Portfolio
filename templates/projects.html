@@ -20,17 +20,25 @@
     scrollbar-color: rgba(0, 210, 255, 0.4) rgba(255, 255, 255, 0.05);
 }
 </style>
-<section class="section relative">
-    <div class="container max-w-7xl mx-auto">
-        <!-- Page Header - Newstyle -->
-        <div class="mb-12">
-            <div class="flex items-center gap-3 mb-2">
-                <div class="w-1 h-6 bg-nexus-cyan"></div>
-                <h1 class="text-3xl font-nexus-display font-bold text-white tracking-tighter uppercase">Operational Modules</h1>
+<div class="h-full w-full flex flex-col p-4 md:p-8 relative min-h-0 game-panel">
+    <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
+        <div class="flex items-center gap-3 md:gap-4 min-w-0">
+            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
+                <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
+            </a>
+            <div class="min-w-0">
+                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">Operational Modules</h1>
+                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">SELECT PROJECT DIRECTORY TO INITIALIZE INTERFACE</p>
             </div>
-            <p class="text-xs text-gray-500 font-mono tracking-widest uppercase ml-4">SELECT PROJECT DIRECTORY TO INITIALIZE INTERFACE</p>
         </div>
-
+        <div class="hidden md:flex items-center gap-2 shrink-0">
+            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
+            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
+        </div>
+    </div>
+    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 md:pr-3 min-h-0">
+<section class="section relative pb-8">
+    <div class="container max-w-7xl mx-auto">
         <!-- Filter Controls - Newstyle -->
         <div class="flex flex-wrap gap-3 mb-8 pb-6 border-b border-white/5">
             <button class="nexus-filter-btn filter-btn active" data-filter="all">ALL_PROJECTS</button>
@@ -177,6 +185,8 @@
         </div>
     </div>
 </section>
+    </div>
+</div>
 
 <script>
 // Project Filter Functionality
