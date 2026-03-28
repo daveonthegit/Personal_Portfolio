@@ -306,23 +306,13 @@ export class StartupAnimation {
   }
 }
 
-// Simple initialization
-function initStartupAnimation() {
+/** Call from terminal entry only (loads GSAP on the boot route). */
+export function initStartupAnimation(): void {
   const currentPath = window.location.pathname;
-  
-  if (currentPath === '/') {
-    try {
-      new StartupAnimation();
-    } catch (error) {
-      console.error('StartupAnimation: Error:', error);
-    }
+  if (currentPath !== '/') return;
+  try {
+    new StartupAnimation();
+  } catch (error) {
+    console.error('StartupAnimation: Error:', error);
   }
-}
-
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initStartupAnimation);
-} else {
-  // DOM is already loaded
-  initStartupAnimation();
 }

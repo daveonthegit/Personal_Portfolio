@@ -6,9 +6,11 @@
     <title>{{.Title}}</title>
     <meta name="description" content="{{.Description}}">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/static/css/main.css?v={{.Timestamp}}">
+    <link rel="stylesheet" href="/static/css/main.css?v={{.AssetVersion}}">
 </head>
 <body class="h-full bg-black text-white font-mono overflow-hidden">
+    <a href="/home" class="skip-intro-link fixed top-3 right-3 z-[100] text-[11px] font-mono uppercase tracking-widest px-3 py-2 border border-nexus-cyan/60 bg-black/80 text-nexus-cyan hover:bg-nexus-cyan/10 no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nexus-cyan">Skip intro</a>
+
     <!-- Terminal Startup Animation Container -->
     <div id="startup-animation" class="startup-animation-overlay">
         <!-- Animation will be created by JavaScript -->
@@ -51,11 +53,11 @@
                     </p>
                     <div class="nexus-hero-actions">
                         <a href="/home" class="nexus-btn nexus-btn-primary">
-                            <span class="nexus-btn-text">Enter Portfolio</span>
+                            <span class="nexus-btn-text">Enter portfolio</span>
                             <span class="nexus-btn-icon">→</span>
                         </a>
                         <a href="/about" class="nexus-btn nexus-btn-secondary">
-                            <span class="nexus-btn-text">About Me</span>
+                            <span class="nexus-btn-text">About me</span>
                             <span class="nexus-btn-icon">ℹ</span>
                         </a>
                     </div>
@@ -64,24 +66,6 @@
         </div>
     </main>
 
-    <!-- Scripts -->
-    <script>
-        console.log('=== xiaoOS TERMINAL INITIALIZATION ===');
-        console.log('Loading main.js with timestamp to bypass cache...');
-        
-        // Add timestamp to force fresh load
-        const script = document.createElement('script');
-        script.src = '/static/js/main.js?v={{.Timestamp}}';
-        
-        script.onload = () => {
-            console.log('✅ Script loaded successfully');
-        };
-        
-        script.onerror = (e) => {
-            console.error('❌ Script failed to load:', e);
-        };
-        
-        document.head.appendChild(script);
-    </script>
+    <script src="/static/js/terminal-boot.js?v={{.AssetVersion}}"></script>
 </body>
 </html>

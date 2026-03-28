@@ -16,6 +16,8 @@ export interface ContactFormData {
   email: string;
   subject: string;
   message: string;
+  /** Honeypot — must stay empty */
+  website?: string;
 }
 
 export interface ApiResponse<T = any> {

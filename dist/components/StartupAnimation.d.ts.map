@@ -1,1 +1,0 @@
-{"version":3,"file":"StartupAnimation.d.ts","sourceRoot":"","sources":["../../src/components/StartupAnimation.ts"],"names":[],"mappings":"AASA;;;GAGG;AAEH,qBAAa,gBAAgB;IAC3B,OAAO,CAAC,SAAS,CAA4B;IAC7C,OAAO,CAAC,WAAW,CAAS;;IAM5B,OAAO,CAAC,IAAI;IAKZ,OAAO,CAAC,wBAAwB;YAyHlB,cAAc;IAiI5B,OAAO,CAAC,cAAc;IAmBf,OAAO,IAAI,IAAI;IAOtB,IAAW,SAAS,IAAI,OAAO,CAE9B;CACF"}

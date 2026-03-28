@@ -4,8 +4,6 @@ import { AnimationObserver } from './utils/animationObserver';
 import { ContactFormHandler } from './components/ContactFormHandler';
 import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
-import { initSurveillanceWindows } from './utils/surveillanceWindows';
-import './components/StartupAnimation';
 
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,16 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize subtle loading animations
   initGlitchAnimations();
   
-  // Initialize surveillance windows
-  setTimeout(() => {
-    initSurveillanceWindows();
-  }, 500);
-  
   // Initialize contact form
   ContactFormHandler.init();
   
   // Initialize theme toggle
   initThemeHandler();
+
+  const hudTime = document.getElementById('hud-time');
+  if (hudTime) {
+    const tick = () => {
+      hudTime.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
   
   console.log('✅ xiaoOS Interface - All systems operational');
 });

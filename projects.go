@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"sort"
+	"strings"
 	"time"
 )
 
@@ -390,19 +393,44 @@ func GetProjectsByType(projectType string) []Project {
 
 // GetAvailableTypes returns all unique project types
 func GetAvailableTypes() []string {
+	return GetAvailableTypesSorted()
+}
+
+// GetAvailableTypesSorted returns unique project types sorted for stable UI.
+func GetAvailableTypesSorted() []string {
 	allProjects := LoadProjects()
 	typeMap := make(map[string]bool)
-
 	for _, project := range allProjects {
-		typeMap[project.Type] = true
+		if project.Type != "" {
+			typeMap[project.Type] = true
+		}
 	}
-
-	var types []string
-	for projectType := range typeMap {
-		types = append(types, projectType)
+	types := make([]string, 0, len(typeMap))
+	for t := range typeMap {
+		types = append(types, t)
 	}
-
+	sort.Strings(types)
 	return types
+}
+
+const projectImagePlaceholder = "/static/images/wip-default.svg"
+
+// EnsureProjectImages replaces missing image files with a placeholder path.
+func EnsureProjectImages(projects []Project) []Project {
+	out := make([]Project, len(projects))
+	copy(out, projects)
+	for i := range out {
+		img := strings.TrimSpace(out[i].Image)
+		if img == "" {
+			out[i].Image = projectImagePlaceholder
+			continue
+		}
+		fsPath := strings.TrimPrefix(img, "/")
+		if _, err := os.Stat(fsPath); err != nil {
+			out[i].Image = projectImagePlaceholder
+		}
+	}
+	return out
 }
 
 // GetProjectsByTypeAndStatus returns projects filtered by both type and status

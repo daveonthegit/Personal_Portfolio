@@ -12,17 +12,17 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://davidxiao.dev/">
+    <meta property="og:url" content="{{.SiteURL}}/">
     <meta property="og:title" content="{{.Title}}">
     <meta property="og:description" content="{{.Description}}">
-    <meta property="og:image" content="/static/images/Profile_Picture.jpg?v={{.Timestamp}}">
+    <meta property="og:image" content="{{.SiteURL}}/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://davidxiao.dev/">
+    <meta property="twitter:url" content="{{.SiteURL}}/">
     <meta property="twitter:title" content="{{.Title}}">
     <meta property="twitter:description" content="{{.Description}}">
-    <meta property="twitter:image" content="/static/images/Profile_Picture.jpg?v={{.Timestamp}}">
+    <meta property="twitter:image" content="{{.SiteURL}}/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
@@ -34,9 +34,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="/static/css/main.css?v={{.Timestamp}}" rel="stylesheet">
+    <link href="/static/css/main.css?v={{.AssetVersion}}" rel="stylesheet">
 </head>
-<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-hidden relative bg-black text-white">
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-auto relative bg-black text-white">
     <!-- Background Grid -->
     <div class="nexus-grid-bg"></div>
 
@@ -53,7 +53,7 @@
             <div class="p-4 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar min-h-0">
                 <div class="relative w-full aspect-[4/5] border border-white/20 overflow-hidden hud-profile-img group">
                     <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
-                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="/static/images/Profile_Picture.jpg?v={{.Timestamp}}">
+                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
                     <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
                     <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
                     <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
@@ -71,13 +71,13 @@
 
                     <div class="space-y-2 text-xs font-mono text-gray-400">
                         <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>SUBJECT</span> <span class="text-white truncate ml-2">{{.Personal.Name}}</span>
+                            <span>Name</span> <span class="text-white truncate ml-2">{{.Personal.Name}}</span>
                         </div>
                         <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>ROLE</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Title}}</span>
+                            <span>Role</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Title}}</span>
                         </div>
                         <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>LOC</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Location}}</span>
+                            <span>Location</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Location}}</span>
                         </div>
                         <div class="flex justify-between border-b border-white/5 pb-1">
                             <span>STATUS</span> <span class="text-nexus-cyan">ONLINE</span>
@@ -131,11 +131,11 @@
                 <a href="/home" class="w-9 h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Apps menu" title="Hub">
                     <span class="material-symbols-outlined text-sm">apps</span>
                 </a>
-                <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto game-hud-nav-mini no-scrollbar">
-                    <a href="/about" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">ABOUT</a>
-                    <a href="/projects" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">PROJECTS</a>
-                    <a href="/resume" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">RESUME</a>
-                    <a href="/contact" class="text-[9px] sm:text-[10px] font-mono text-gray-500 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">CONTACT</a>
+                <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto game-hud-nav-mini no-scrollbar" aria-label="Primary">
+                    <a href="/about" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">About</a>
+                    <a href="/projects" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Projects</a>
+                    <a href="/resume" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Resume</a>
+                    <a href="/contact" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Contact</a>
                 </nav>
             </div>
             <div class="hidden sm:flex items-center gap-4 text-[10px] font-mono text-gray-500 shrink-0">
@@ -154,18 +154,6 @@
         </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="/static/js/main.js?v={{.Timestamp}}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function updateTime() {
-                var el = document.getElementById('hud-time');
-                if (!el) return;
-                el.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
-            }
-            setInterval(updateTime, 1000);
-            updateTime();
-        });
-    </script>
+    <script src="/static/js/main.js?v={{.AssetVersion}}"></script>
 </body>
 </html>

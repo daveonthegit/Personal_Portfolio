@@ -645,9 +645,21 @@ a.nexus-btn-secondary:hover {
 .form-input:focus,
 .form-textarea:focus,
 .nexus-input:focus {
-  outline: none;
   border-color: var(--nexus-cyan) !important;
   box-shadow: none;
+}
+.form-input:focus:not(:focus-visible),
+.form-textarea:focus:not(:focus-visible),
+.nexus-input:focus:not(:focus-visible) {
+  outline: none;
+}
+.form-input:focus-visible,
+.form-textarea:focus-visible,
+.nexus-input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--nexus-cyan);
+  outline-offset: 2px;
 }
 
 /* Terminal */
@@ -670,6 +682,12 @@ a.nexus-btn-secondary:hover {
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   backdrop-filter: blur(12px);
   transition: border-color 0.3s;
+}
+button.project-card {
+  font-family: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .project-card:hover {
   border-color: rgba(0, 210, 255, 0.4) !important;

@@ -125,25 +125,34 @@
                     </div>
                 </div>
                 
-                <form id="contact-form" class="space-y-4 md:space-y-6 relative z-10 flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar pr-2">
+                <form id="contact-form" method="post" action="/contact" class="space-y-4 md:space-y-6 relative z-10 flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Honeypot: leave hidden; bots often fill visible-off-screen fields -->
+                    <div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+                        <label for="contact-website">Company website</label>
+                        <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 shrink-0">
                         <div class="space-y-1 md:space-y-2">
-                            <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Transmitter ID</label>
-                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="SENDER@UNKNOWN.LOCAL">
+                            <label for="contact-name" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Your name</label>
+                            <input type="text" id="contact-name" name="name" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="Jane Doe">
                         </div>
                         <div class="space-y-1 md:space-y-2">
-                            <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject Header</label>
-                            <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="OBJECTIVE_DESCRIPTION">
+                            <label for="email" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Email</label>
+                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="you@example.com">
                         </div>
                     </div>
+                    <div class="space-y-1 md:space-y-2 shrink-0">
+                        <label for="subject" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject</label>
+                        <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="What is this about?">
+                    </div>
                     <div class="space-y-1 md:space-y-2 flex-1 flex flex-col min-h-[150px]">
-                        <label class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1 shrink-0">Transmission Data</label>
-                        <textarea id="message" name="message" required class="nexus-input flex-1 resize-none w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="ENTER ENCRYPTED PAYLOAD..."></textarea>
+                        <label for="message" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1 shrink-0">Message</label>
+                        <textarea id="message" name="message" required class="nexus-input flex-1 resize-none w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="Your message..."></textarea>
                     </div>
                     <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5 shrink-0">
                         <div class="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-gray-500">
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-nexus-cyan"></span> SECURE</span>
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-[#ff5500]"></span> NO_LOGS</span>
+                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-nexus-cyan"></span> HTTPS</span>
+                            <span class="flex items-center gap-1 max-w-[14rem] leading-tight">Form posts over a secure connection when the site is served over HTTPS.</span>
                         </div>
                         <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full md:w-auto flex items-center justify-center gap-2 py-2">
                             <span class="material-symbols-outlined text-sm">send</span>

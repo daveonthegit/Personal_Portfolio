@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -19,9 +21,14 @@ import (
 )
 
 type Server struct {
-	templates   *template.Template
-	projects    []Project
-	emailConfig EmailConfig
+	templates                 *template.Template
+	projects                  []Project
+	emailConfig               EmailConfig
+	assetVersion              string
+	siteURL                   string
+	contactAllowedOrigins     []string
+	contactLimiter            *contactIPLimiter
+	disableRuntimeResumeBuild bool
 }
 
 type EmailConfig struct {
@@ -38,16 +45,19 @@ type ContactForm struct {
 	Email   string `json:"email"`
 	Subject string `json:"subject"`
 	Message string `json:"message"`
+	Website string `json:"website"` // honeypot — must be empty
 }
 
 type PageData struct {
 	Title        string
 	Description  string
 	Projects     []Project
+	ProjectTypes []string
 	Personal     config.PersonalInfo
 	Year         int
 	TemplateName string
-	Timestamp    int64
+	AssetVersion string
+	SiteURL      string
 }
 
 func NewServer() *Server {
@@ -57,8 +67,17 @@ func NewServer() *Server {
 		log.Fatal("Error parsing templates:", err)
 	}
 
-	// Load projects data
-	projects := LoadProjects()
+	// Load projects data and fix missing image paths
+	projects := EnsureProjectImages(LoadProjects())
+
+	assetVer := getEnv("ASSET_VERSION", "")
+	if assetVer == "" {
+		assetVer = getEnv("GIT_COMMIT", "")
+	}
+	if assetVer == "" {
+		assetVer = "dev"
+	}
+	siteURL := strings.TrimSuffix(getEnv("SITE_URL", "https://www.davidxiao.dev"), "/")
 
 	// Initialize email configuration from environment variables
 	emailConfig := EmailConfig{
@@ -70,20 +89,23 @@ func NewServer() *Server {
 		ToEmail:   getEnv("TO_EMAIL", ""),
 	}
 
-	// Debug: Log email configuration status
-	log.Printf("Email config loaded - SMTP: %s:%d, Username: %s, From: %s, To: %s",
-		emailConfig.SMTPHost, emailConfig.SMTPPort,
-		emailConfig.Username, emailConfig.FromEmail, emailConfig.ToEmail)
-
 	if emailConfig.Username == "" || emailConfig.Password == "" || emailConfig.ToEmail == "" {
 		log.Printf("⚠️  Email configuration incomplete - please check your .env file")
 		log.Printf("Required: SMTP_USERNAME, SMTP_PASSWORD, TO_EMAIL")
 	}
 
+	allowedOrigins := parseListEnv("ALLOWED_ORIGINS")
+	disableResume := strings.EqualFold(getEnv("DISABLE_RUNTIME_RESUME_BUILD", ""), "true")
+
 	return &Server{
-		templates:   templates,
-		projects:    projects,
-		emailConfig: emailConfig,
+		templates:                 templates,
+		projects:                  projects,
+		emailConfig:               emailConfig,
+		assetVersion:              assetVer,
+		siteURL:                   siteURL,
+		contactAllowedOrigins:     allowedOrigins,
+		contactLimiter:            newContactIPLimiter(15*time.Minute, 10),
+		disableRuntimeResumeBuild: disableResume,
 	}
 }
 
@@ -95,7 +117,8 @@ func (s *Server) terminalHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "terminal",
-		Timestamp:    time.Now().Unix(),
+		AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "terminal.html", data); err != nil {
@@ -113,7 +136,8 @@ func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "home",
-		Timestamp:    time.Now().Unix(),
+		AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -131,7 +155,8 @@ func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "about",
-		Timestamp:    time.Now().Unix(),
+		AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -146,10 +171,12 @@ func (s *Server) projectsHandler(w http.ResponseWriter, r *http.Request) {
 		Title:        "Projects - " + personal.Name,
 		Description:  "Explore my portfolio of web applications, software projects, and creative work.",
 		Projects:     s.projects,
+		ProjectTypes: GetAvailableTypesSorted(),
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "projects",
-		Timestamp:    time.Now().Unix(),
+		AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -168,7 +195,8 @@ func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
 			Personal:     personal,
 			Year:         time.Now().Year(),
 			TemplateName: "contact",
-			Timestamp:    time.Now().Unix(),
+			AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 		}
 
 		if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -194,7 +222,8 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 		Personal:     personal,
 		Year:         time.Now().Year(),
 		TemplateName: "resume",
-		Timestamp:    time.Now().Unix(),
+		AssetVersion: s.assetVersion,
+		SiteURL:      s.siteURL,
 	}
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
@@ -206,6 +235,18 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
 	texPath := "./static/assets/resume.tex"
 	pdfPath := "./static/assets/resume.pdf"
+
+	if s.disableRuntimeResumeBuild {
+		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
+			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
+			return
+		}
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, pdfPath)
+		return
+	}
 
 	// Check if LaTeX file exists
 	if _, err := os.Stat(texPath); os.IsNotExist(err) {
@@ -251,6 +292,18 @@ func (s *Server) resumeDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	texPath := "./static/assets/resume.tex"
 	pdfPath := "./static/assets/resume.pdf"
 
+	if s.disableRuntimeResumeBuild {
+		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
+			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
+			return
+		}
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+		http.ServeFile(w, r, pdfPath)
+		return
+	}
+
 	// Check if LaTeX file exists
 	if _, err := os.Stat(texPath); os.IsNotExist(err) {
 		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
@@ -292,21 +345,14 @@ func (s *Server) resumeDownloadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
-	// Change to the assets directory
-	originalDir, err := os.Getwd()
+	assetsDir, err := filepath.Abs(filepath.Dir(texPath))
 	if err != nil {
-		return fmt.Errorf("failed to get current directory: %v", err)
+		return fmt.Errorf("resolve assets directory: %w", err)
 	}
 
-	if err := os.Chdir("./static/assets"); err != nil {
-		return fmt.Errorf("failed to change to assets directory: %v", err)
-	}
-	defer os.Chdir(originalDir)
-
-	// Try different LaTeX engines in order of preference
 	engines := []struct {
 		name string
-		cmd  []string
+		args []string
 	}{
 		{"latexmk", []string{"latexmk", "-pdf", "-interaction=nonstopmode", "resume.tex"}},
 		{"lualatex", []string{"lualatex", "-interaction=nonstopmode", "resume.tex"}},
@@ -316,31 +362,31 @@ func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
 
 	var lastErr error
 	for _, engine := range engines {
-		if _, err := exec.LookPath(engine.name); err != nil {
-			continue // Skip if engine not found
+		bin := engine.args[0]
+		if _, err := exec.LookPath(bin); err != nil {
+			continue
 		}
 
-		// Try the engine
-		cmd := exec.Command(engine.cmd[0], engine.cmd[1:]...)
-		output, err := cmd.CombinedOutput()
+		run := func() ([]byte, error) {
+			cmd := exec.Command(engine.args[0], engine.args[1:]...)
+			cmd.Dir = assetsDir
+			return cmd.CombinedOutput()
+		}
 
+		output, err := run()
 		if err == nil {
-			// Success! Clean up and return
-			s.cleanupAuxFiles()
-			if _, err := os.Stat("resume.pdf"); err == nil {
+			s.cleanupAuxFilesInDir(assetsDir)
+			if _, err := os.Stat(filepath.Join(assetsDir, "resume.pdf")); err == nil {
 				return nil
 			}
 		}
-
 		lastErr = fmt.Errorf("%s failed: %v\nOutput: %s", engine.name, err, string(output))
 
-		// For engines that need multiple passes, try again
 		if engine.name == "lualatex" || engine.name == "xelatex" || engine.name == "pdflatex" {
-			cmd = exec.Command(engine.cmd[0], engine.cmd[1:]...)
-			_, err = cmd.CombinedOutput()
+			_, err = run()
 			if err == nil {
-				s.cleanupAuxFiles()
-				if _, err := os.Stat("resume.pdf"); err == nil {
+				s.cleanupAuxFilesInDir(assetsDir)
+				if _, err := os.Stat(filepath.Join(assetsDir, "resume.pdf")); err == nil {
 					return nil
 				}
 			}
@@ -350,16 +396,25 @@ func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
 	return fmt.Errorf("all LaTeX engines failed. Last error: %v", lastErr)
 }
 
-func (s *Server) cleanupAuxFiles() {
-	auxFiles := []string{"resume.aux", "resume.log", "resume.out", "resume.fdb_latexmk", "resume.fls", "resume.synctex.gz", "resume.toc", "resume.nav", "resume.snm"}
-	for _, file := range auxFiles {
-		os.Remove(file)
+func (s *Server) cleanupAuxFilesInDir(dir string) {
+	names := []string{"resume.aux", "resume.log", "resume.out", "resume.fdb_latexmk", "resume.fls", "resume.synctex.gz", "resume.toc", "resume.nav", "resume.snm"}
+	for _, name := range names {
+		_ = os.Remove(filepath.Join(dir, name))
 	}
 }
 
 func (s *Server) buildPDFUsingScript() error {
-	// Try using the existing build script
-	cmd := exec.Command("scripts/build-resume.bat")
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("get working directory: %w", err)
+	}
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command(filepath.Join(wd, "scripts", "build-resume.bat"))
+	} else {
+		cmd = exec.Command("bash", filepath.Join(wd, "scripts", "build-resume.sh"))
+	}
+	cmd.Dir = wd
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("build script failed: %v\nOutput: %s", err, string(output))
@@ -392,6 +447,15 @@ func (s *Server) createHTMLFallback(texPath, pdfPath string) error {
 func (s *Server) resumeHTMLHandler(w http.ResponseWriter, r *http.Request) {
 	texPath := "./static/assets/resume.tex"
 	htmlPath := "./static/assets/resume.html"
+
+	if s.disableRuntimeResumeBuild {
+		if _, err := os.Stat(htmlPath); os.IsNotExist(err) {
+			http.Error(w, "Resume HTML is not available (built at deploy time).", http.StatusServiceUnavailable)
+			return
+		}
+		http.ServeFile(w, r, htmlPath)
+		return
+	}
 
 	// Check if LaTeX file exists
 	if _, err := os.Stat(texPath); os.IsNotExist(err) {
@@ -525,42 +589,54 @@ func (s *Server) convertLaTeXToHTML(texContent string) string {
 }
 
 func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	writeJSON := func(code int, status, msg string) {
+		w.WriteHeader(code)
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": status, "message": msg})
+	}
+
+	if !s.contactLimiter.allow(clientIP(r)) {
+		writeJSON(http.StatusTooManyRequests, "error", "Too many requests. Please try again later.")
+		return
+	}
+
+	if !contactOriginAllowed(r, s.contactAllowedOrigins) {
+		writeJSON(http.StatusForbidden, "error", "Request not allowed.")
+		return
+	}
+
+	body := http.MaxBytesReader(w, r.Body, maxContactBodyBytes)
+	defer body.Close()
+
 	var form ContactForm
-
-	if err := json.NewDecoder(r.Body).Decode(&form); err != nil {
-		http.Error(w, "Invalid form data", http.StatusBadRequest)
+	if err := json.NewDecoder(body).Decode(&form); err != nil {
+		writeJSON(http.StatusBadRequest, "error", "Invalid form data.")
 		return
 	}
 
-	// Validate required fields
+	if strings.TrimSpace(form.Website) != "" {
+		writeJSON(http.StatusBadRequest, "error", "Invalid request.")
+		return
+	}
+
+	form.Name = strings.TrimSpace(form.Name)
+	form.Email = strings.TrimSpace(form.Email)
+	form.Subject = strings.TrimSpace(form.Subject)
+	form.Message = strings.TrimSpace(form.Message)
+
 	if form.Name == "" || form.Email == "" || form.Message == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Name, email, and message are required fields.",
-		})
+		writeJSON(http.StatusBadRequest, "error", "Name, email, and message are required fields.")
 		return
 	}
-
-	// Log the contact form submission
-	log.Printf("Contact form submission from %s (%s): %s", form.Name, form.Email, form.Subject)
 
 	// Send email
 	if err := s.sendEmail(form); err != nil {
-		log.Printf("Failed to send email: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Failed to send message. Please try again or contact me directly.",
-		})
+		log.Printf("Failed to send contact email: %v", err)
+		writeJSON(http.StatusInternalServerError, "error", "Failed to send message. Please try again or contact me directly.")
 		return
 	}
 
-	// Success response
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
+	_ = json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
 		"message": "Thank you for your message! I'll get back to you soon.",
 	})
@@ -590,6 +666,22 @@ func getEnvInt(key string, defaultValue int) int {
 	return defaultValue
 }
 
+func parseListEnv(key string) []string {
+	raw := strings.TrimSpace(os.Getenv(key))
+	if raw == "" {
+		return nil
+	}
+	parts := strings.Split(raw, ",")
+	var out []string
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
 // Email sending function
 func (s *Server) sendEmail(form ContactForm) error {
 	// Check if email configuration is properly set
@@ -601,7 +693,11 @@ func (s *Server) sendEmail(form ContactForm) error {
 	m := mail.NewMessage()
 	m.SetHeader("From", s.emailConfig.FromEmail)
 	m.SetHeader("To", s.emailConfig.ToEmail)
-	m.SetHeader("Subject", fmt.Sprintf("Portfolio Contact: %s", form.Subject))
+	subj := form.Subject
+	if subj == "" {
+		subj = "(no subject)"
+	}
+	m.SetHeader("Subject", fmt.Sprintf("Portfolio Contact: %s", subj))
 
 	// Create email body
 	body := fmt.Sprintf(`
@@ -657,32 +753,6 @@ func (s *Server) projectsByStatusAPIHandler(w http.ResponseWriter, r *http.Reque
 	json.NewEncoder(w).Encode(filteredProjects)
 }
 
-// HTTPS redirect middleware
-func httpsRedirectMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if we're in production (not localhost)
-		if r.Host != "localhost:8080" && r.Host != "127.0.0.1:8080" {
-			// Check if the request is HTTP (not HTTPS)
-			if r.Header.Get("X-Forwarded-Proto") != "https" && r.TLS == nil {
-				// Redirect to HTTPS www version
-				httpsURL := "https://www." + r.Host + r.RequestURI
-				http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
-				return
-			}
-
-			// Check if the request is to apex domain (without www)
-			if !strings.HasPrefix(r.Host, "www.") {
-				// Redirect to www version
-				wwwURL := "https://www." + r.Host + r.RequestURI
-				http.Redirect(w, r, wwwURL, http.StatusMovedPermanently)
-				return
-			}
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 func main() {
 	// Load .env file if it exists
 	if err := godotenv.Load(); err != nil {
@@ -704,11 +774,6 @@ func main() {
 	r.HandleFunc("/resume/download", server.resumeDownloadHandler).Methods("GET")
 	r.HandleFunc("/resume/html", server.resumeHTMLHandler).Methods("GET")
 
-	// Debug route for animation troubleshooting
-	r.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "debug-animation.html")
-	})
-
 	// API routes for project filtering
 	r.HandleFunc("/api/projects", server.projectsAPIHandler).Methods("GET")
 	r.HandleFunc("/api/projects/type/{type}", server.projectsByTypeAPIHandler).Methods("GET")
@@ -729,8 +794,20 @@ func main() {
 	log.Printf("Server starting on port %s", port)
 	log.Printf("Visit http://localhost:%s to view your portfolio", port)
 
-	// Wrap the router with HTTPS redirect middleware
-	handler := httpsRedirectMiddleware(r)
+	enableHSTS := strings.EqualFold(os.Getenv("ENABLE_HSTS"), "true")
+	redirectCfg := redirectConfig{
+		CanonicalHost: strings.TrimSpace(strings.ToLower(os.Getenv("CANONICAL_HOST"))),
+		ApexHost:      strings.TrimSpace(strings.ToLower(os.Getenv("APEX_HOST"))),
+	}
+	handler := securityHeadersMiddleware(enableHSTS, httpsRedirectMiddleware(redirectCfg, r))
 
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	srv := &http.Server{
+		Addr:              ":" + port,
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		IdleTimeout:       120 * time.Second,
+	}
+	log.Fatal(srv.ListenAndServe())
 }

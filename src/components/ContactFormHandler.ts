@@ -22,11 +22,17 @@ export class ContactFormHandler {
 
     const formData = new FormData(this.form);
     const data: ContactFormData = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      subject: formData.get('subject') as string,
-      message: formData.get('message') as string,
+      name: (formData.get('name') as string)?.trim() ?? '',
+      email: (formData.get('email') as string)?.trim() ?? '',
+      subject: (formData.get('subject') as string)?.trim() ?? '',
+      message: (formData.get('message') as string)?.trim() ?? '',
+      website: (formData.get('website') as string)?.trim() ?? '',
     };
+
+    if (data.website) {
+      this.showMessage('Unable to send. Please try again.', 'error');
+      return;
+    }
 
     // Basic validation
     if (!data.name || !data.email || !data.message) {
@@ -39,9 +45,10 @@ export class ContactFormHandler {
       return;
     }
 
-    // Show loading state
+    const defaultBtnHtml =
+      '<span class="material-symbols-outlined text-sm">send</span> TRANSMIT';
     this.submitButton.disabled = true;
-    this.submitButton.textContent = 'Sending...';
+    this.submitButton.innerHTML = 'Sending...';
 
     try {
       const response = await fetch('/contact', {
@@ -65,7 +72,7 @@ export class ContactFormHandler {
       this.showMessage('Network error. Please check your connection and try again.', 'error');
     } finally {
       this.submitButton.disabled = false;
-      this.submitButton.textContent = 'TRANSMIT MESSAGE';
+      this.submitButton.innerHTML = defaultBtnHtml;
     }
   }
 

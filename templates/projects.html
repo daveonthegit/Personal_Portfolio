@@ -19,20 +19,18 @@
 <section class="section relative flex-1 min-h-0 flex flex-col">
     <div class="container max-w-7xl mx-auto flex flex-col flex-1 min-h-0 overflow-hidden px-0 sm:px-2">
         <!-- Filter Controls - Newstyle -->
-        <div class="flex flex-wrap gap-2 md:gap-3 mb-4 pb-4 border-b border-white/5 shrink-0">
-            <button class="nexus-filter-btn filter-btn active" data-filter="all">ALL_PROJECTS</button>
-            <button class="nexus-filter-btn filter-btn" data-filter="web">WEB_DEV</button>
-            <button class="nexus-filter-btn filter-btn" data-filter="academic">ACADEMIC</button>
-            <button class="nexus-filter-btn filter-btn" data-filter="security">SECURITY</button>
-            <button class="nexus-filter-btn filter-btn" data-filter="research">RESEARCH</button>
-            <button class="nexus-filter-btn filter-btn" data-filter="tool">TOOLS</button>
+        <div class="flex flex-wrap gap-2 md:gap-3 mb-4 pb-4 border-b border-white/5 shrink-0" role="toolbar" aria-label="Filter projects by type">
+            <button type="button" class="nexus-filter-btn filter-btn active" data-filter="all">All</button>
+            {{range $t := .ProjectTypes}}
+            <button type="button" class="nexus-filter-btn filter-btn uppercase" data-filter="{{$t}}">{{$t}}</button>
+            {{end}}
         </div>
 
         <!-- Projects Grid - Dense Node Matrix Layout -->
         <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-2 pb-4">
             <div class="projects-matrix grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 w-full max-w-full">
                 {{range $index, $project := .Projects}}
-            <div class="project-card relative bg-black/40 border border-white/10 group transition-all duration-300 hover:border-nexus-cyan/80 hover:bg-nexus-cyan/10 hover:shadow-[0_0_15px_rgba(0,210,255,0.2)] cursor-pointer aspect-square flex flex-col items-center justify-center p-3 text-center overflow-hidden" data-category="{{$project.ID}}" data-type="{{$project.Type}}" data-status="{{$project.Status}}" data-demo="{{$project.DemoType}}">
+            <button type="button" class="project-card relative bg-black/40 border border-white/10 group transition-all duration-300 hover:border-nexus-cyan/80 hover:bg-nexus-cyan/10 hover:shadow-[0_0_15px_rgba(0,210,255,0.2)] cursor-pointer aspect-square flex flex-col items-center justify-center p-3 text-center overflow-hidden font-inherit text-left w-full" data-category="{{$project.ID}}" data-type="{{$project.Type}}" data-status="{{$project.Status}}" data-demo="{{$project.DemoType}}">
                 <!-- Storing data for JS to use easily without parsing HTML -->
                 <div class="hidden project-data-store" 
                      data-title="{{$project.Title}}" 
@@ -54,15 +52,8 @@
                 <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 
-                <!-- Icon/Image -->
-                {{if $project.Image}}
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{$project.Image}}');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none"></div>
-                {{else}}
-                <span class="material-symbols-outlined text-3xl md:text-4xl text-white/20 group-hover:text-nexus-cyan mb-2 group-hover:scale-110 transition-transform relative z-10">
-                    {{if eq $project.Type "web"}}web{{else if eq $project.Type "security"}}security{{else if eq $project.Type "research"}}science{{else if eq $project.Type "tool"}}build{{else}}terminal{{end}}
-                </span>
-                {{end}}
                 
                 <!-- Info -->
                 <h3 class="text-[10px] md:text-xs font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-widest leading-tight line-clamp-2 w-full relative z-10">{{$project.Title}}</h3>
@@ -70,7 +61,7 @@
                 
                 <!-- Status Dot -->
                 <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full z-10 {{if eq $project.Status "active"}}bg-[#4ade80]{{else if eq $project.Status "in-development"}}bg-[#ff5500]{{else}}bg-nexus-cyan{{end}}">                </div>
-            </div>
+            </button>
             {{end}}
             </div>
         </div>
@@ -95,8 +86,8 @@
 </section>
 
 <!-- Terminal Overlay for Project Expansion -->
-<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-300 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-    <div id="terminal-window" class="w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] border border-nexus-cyan bg-[#050505] flex flex-col relative transform scale-95 transition-transform duration-500 overflow-hidden min-h-0 shadow-[0_0_30px_rgba(0,210,255,0.15)]">
+<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-300 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]" role="presentation">
+    <div id="terminal-window" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="term-project-title" class="w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] border border-nexus-cyan bg-[#050505] flex flex-col relative transform scale-95 transition-transform duration-500 overflow-hidden min-h-0 shadow-[0_0_30px_rgba(0,210,255,0.15)] outline-none focus-visible:ring-2 focus-visible:ring-nexus-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-black">
         
         <!-- Terminal Header -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-nexus-cyan/50 bg-nexus-cyan/10 shrink-0 z-40 relative">
@@ -110,8 +101,8 @@
                     <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
                     <span class="w-2 h-2 bg-nexus-cyan/30"></span>
                 </div>
-                <button id="close-terminal-btn" class="text-white/50 hover:text-nexus-cyan transition-colors" title="Close Terminal">
-                    <span class="material-symbols-outlined text-lg">close</span>
+                <button type="button" id="close-terminal-btn" class="text-white/50 hover:text-nexus-cyan transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nexus-cyan rounded" title="Close" aria-label="Close project details">
+                    <span class="material-symbols-outlined text-lg" aria-hidden="true">close</span>
                 </button>
             </div>
         </div>
@@ -186,37 +177,26 @@
 </div>
 
 <script>
-// Project Filter Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
-    
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Update active state
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            
             const filter = this.getAttribute('data-filter');
-            
             projectCards.forEach(card => {
                 const cardType = card.getAttribute('data-type');
-                if (filter === 'all' || cardType === filter) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = (filter === 'all' || cardType === filter) ? '' : 'none';
             });
         });
     });
 
-    // Terminal Overlay Functionality
     const overlay = document.getElementById('project-terminal-overlay');
     const terminalWindow = document.getElementById('terminal-window');
     const closeBtn = document.getElementById('close-terminal-btn');
     const contentArea = document.getElementById('term-content-area');
-    
-    // UI Elements
     const termTitle = document.getElementById('term-project-title');
     const termDesc = document.getElementById('term-project-desc');
     const termImg = document.getElementById('term-project-img');
@@ -228,102 +208,94 @@ document.addEventListener('DOMContentLoaded', function() {
     const termCmdTarget = document.getElementById('term-cmd-target');
     const termHeaderTitle = document.getElementById('term-header-title');
 
-    // Prevent clicks on card links from opening the terminal
-    const preventCardLinkClick = (e) => {
-        if(e.target.closest('a')) {
-            e.stopPropagation();
-        }
-    };
+    let lastFocus = null;
 
-    projectCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            if(e.target.closest('a')) return; // Ignore link clicks
-            
-            // Extract data
-            const dataStore = this.querySelector('.project-data-store');
-            const techStore = this.querySelector('.project-tech-store');
-            
-            const categoryId = this.getAttribute('data-category');
-            const type = this.getAttribute('data-type');
-            const status = this.getAttribute('data-status');
-            const demoType = this.getAttribute('data-demo');
-            
-            const title = dataStore.getAttribute('data-title');
-            const desc = dataStore.getAttribute('data-desc');
-            const imgUrl = dataStore.getAttribute('data-img');
-            const githubUrl = dataStore.getAttribute('data-github');
-            const liveUrl = dataStore.getAttribute('data-live');
-            const demoUrl = dataStore.getAttribute('data-demo-url');
-            
-            // Populate data
-            termTitle.textContent = title;
-            termDesc.textContent = desc;
-            termImg.src = imgUrl;
-            termId.textContent = categoryId;
-            termType.textContent = type;
-            termStatus.textContent = status === 'active' ? 'ACTIVE' : (status === 'in-development' ? 'IN DEV' : 'DEPLOYED');
-            termCmdTarget.textContent = `mod_${categoryId}`;
-            termHeaderTitle.textContent = `sys_override://${categoryId}`;
-
-            // Populate Tech
-            termTech.innerHTML = '';
-            if (techStore) {
-                const techSpans = techStore.querySelectorAll('span');
-                techSpans.forEach(span => {
-                    const el = document.createElement('span');
-                    el.className = "text-[10px] font-mono text-black bg-nexus-cyan px-2 py-0.5 whitespace-nowrap uppercase";
-                    el.textContent = span.textContent;
-                    termTech.appendChild(el);
-                });
-            }
-
-            // Populate Links
-            termLinks.innerHTML = '';
-            if (githubUrl) {
-                termLinks.innerHTML += `<a href="${githubUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">> SOURCE_CODE</span><span class="material-symbols-outlined text-sm text-nexus-cyan">code</span></a>`;
-            }
-            if (liveUrl || demoUrl) {
-                const targetUrl = liveUrl || demoUrl;
-                const label = liveUrl ? '> LIVE_DEPLOYMENT' : '> EXECUTE_DEMO';
-                const icon = liveUrl ? 'public' : 'play_arrow';
-                termLinks.innerHTML += `<a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group mt-2"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">${label}</span><span class="material-symbols-outlined text-sm text-nexus-cyan">${icon}</span></a>`;
-            }
-
-            // Show overlay
-            overlay.classList.remove('hidden');
-            // Small delay to allow display:block to apply before animating opacity
-            setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-                terminalWindow.classList.remove('scale-95');
-                terminalWindow.classList.add('scale-100');
-                
-                // Animate content appearance after window expands
-                setTimeout(() => {
-                    contentArea.classList.remove('opacity-0');
-                }, 400);
-            }, 50);
-        });
-    });
+    function onEscape(e) {
+        if (e.key !== 'Escape') return;
+        if (overlay.classList.contains('hidden')) return;
+        e.preventDefault();
+        closeTerminal();
+    }
+    document.addEventListener('keydown', onEscape);
 
     const closeTerminal = () => {
         contentArea.classList.add('opacity-0');
         overlay.classList.add('opacity-0');
         terminalWindow.classList.remove('scale-100');
         terminalWindow.classList.add('scale-95');
-        
         setTimeout(() => {
             overlay.classList.add('hidden');
-            termImg.src = ''; // Clear image to prevent ghosting
+            termImg.src = '';
+            if (lastFocus && typeof lastFocus.focus === 'function') {
+                lastFocus.focus();
+            }
+            lastFocus = null;
         }, 300);
     };
 
+    projectCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('a')) return;
+            const dataStore = this.querySelector('.project-data-store');
+            const techStore = this.querySelector('.project-tech-store');
+            const categoryId = this.getAttribute('data-category');
+            const type = this.getAttribute('data-type');
+            const status = this.getAttribute('data-status');
+            const title = dataStore.getAttribute('data-title');
+            const desc = dataStore.getAttribute('data-desc');
+            const imgUrl = dataStore.getAttribute('data-img');
+            const githubUrl = dataStore.getAttribute('data-github');
+            const liveUrl = dataStore.getAttribute('data-live');
+            const demoUrl = dataStore.getAttribute('data-demo-url');
+
+            termTitle.textContent = title;
+            termDesc.textContent = desc;
+            termImg.src = imgUrl;
+            termImg.alt = title ? title + ' preview' : 'Project preview';
+            termId.textContent = categoryId;
+            termType.textContent = type;
+            termStatus.textContent = status === 'active' ? 'ACTIVE' : (status === 'in-development' ? 'IN DEV' : 'DEPLOYED');
+            termCmdTarget.textContent = 'mod_' + categoryId;
+            termHeaderTitle.textContent = 'sys_override://' + categoryId;
+
+            termTech.innerHTML = '';
+            if (techStore) {
+                techStore.querySelectorAll('span').forEach(span => {
+                    const el = document.createElement('span');
+                    el.className = 'text-[10px] font-mono text-black bg-nexus-cyan px-2 py-0.5 whitespace-nowrap uppercase';
+                    el.textContent = span.textContent;
+                    termTech.appendChild(el);
+                });
+            }
+
+            termLinks.innerHTML = '';
+            if (githubUrl) {
+                termLinks.innerHTML += '<a href="' + githubUrl + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">Source code</span><span class="material-symbols-outlined text-sm text-nexus-cyan">code</span></a>';
+            }
+            if (liveUrl || demoUrl) {
+                const targetUrl = liveUrl || demoUrl;
+                const label = liveUrl ? 'Live deployment' : 'Run demo';
+                const icon = liveUrl ? 'public' : 'play_arrow';
+                termLinks.innerHTML += '<a href="' + targetUrl + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group mt-2"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">' + label + '</span><span class="material-symbols-outlined text-sm text-nexus-cyan">' + icon + '</span></a>';
+            }
+
+            lastFocus = document.activeElement;
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                terminalWindow.classList.remove('scale-95');
+                terminalWindow.classList.add('scale-100');
+                setTimeout(() => {
+                    contentArea.classList.remove('opacity-0');
+                    closeBtn.focus();
+                }, 400);
+            }, 50);
+        });
+    });
+
     closeBtn.addEventListener('click', closeTerminal);
-    
-    // Close on overlay click
     overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) {
-            closeTerminal();
-        }
+        if (e.target === overlay) closeTerminal();
     });
 });
 </script>
