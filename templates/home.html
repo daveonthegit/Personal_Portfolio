@@ -1,87 +1,90 @@
 {{define "home-content"}}
-<div class="h-full w-full flex flex-col sm:flex-row items-center justify-center p-4 sm:p-8 relative min-h-0 overflow-y-auto sm:overflow-y-visible">
-    <div class="game-nav-grid grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 w-full max-w-4xl z-10 min-h-0 shrink-0">
-        <a href="/about" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">navigation</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">SUBJECT_INFO</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">ABOUT</span>
-            </div>
-        </a>
+<div class="shell-page shell-page-home game-panel">
+    <div class="home-ambient-layer" aria-hidden="true"></div>
 
-        <a href="/projects" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">folder</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">MODULES</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">PROJECTS</span>
+    <div class="home-layout">
+        <section class="shell-panel home-summary-panel">
+            <div class="home-summary-top">
+                <span class="page-status page-status--ok">System online</span>
+                <span class="home-summary-location">{{.Personal.Location}}</span>
             </div>
-        </a>
+            <h1 class="home-title">{{.Personal.Name}}</h1>
+            <p class="home-subtitle">{{.Personal.Title}}</p>
+            <p class="home-copy">{{.Personal.Bio}}</p>
 
-        <a href="/resume" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">tune</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">DOSSIER</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">RESUME</span>
-            </div>
-        </a>
+            <dl class="home-fact-grid">
+                <div>
+                    <dt>Primary stack</dt>
+                    <dd>Go, TypeScript, React</dd>
+                </div>
+                <div>
+                    <dt>Current focus</dt>
+                    <dd>Full-stack systems and product builds</dd>
+                </div>
+                <div>
+                    <dt>Response</dt>
+                    <dd>Usually within 24 hours</dd>
+                </div>
+                <div>
+                    <dt>Status</dt>
+                    <dd class="text-nexus-cyan">Available</dd>
+                </div>
+            </dl>
 
-        <a href="/contact" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/40 border border-nexus-cyan/40 backdrop-blur-md transition-all duration-300 group-hover:bg-nexus-cyan/10 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-nexus-cyan/80 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">call</span>
-                <span class="absolute top-3 right-3 bg-nexus-cyan text-black text-[9px] font-bold px-1.5 py-0.5 font-mono">1</span>
-                <span class="font-nexus-display font-bold text-nexus-cyan tracking-widest uppercase text-xs sm:text-sm text-center">COMMS_LINK</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">CONTACT</span>
+            <div class="page-actions">
+                <a href="/projects" class="nexus-btn-primary no-underline">View projects</a>
+                <a href="/contact" class="nexus-btn-secondary no-underline">Contact me</a>
             </div>
-        </a>
+        </section>
 
-        {{if .Personal.GitHub}}
-        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">public</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">NETWORK</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">GITHUB</span>
+        <section class="home-command-section">
+            <div class="page-section-heading">
+                <h2>Explore the portfolio</h2>
+                <p>Choose a section to see work, background, or contact details.</p>
             </div>
-        </a>
-        {{end}}
 
-        {{if .Personal.LinkedIn}}
-        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">work</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">WORK_LINK</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest">LINKEDIN</span>
-            </div>
-        </a>
-        {{end}}
-    </div>
+            <div class="home-command-grid">
+                <a href="/about" class="hub-card no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">person</span>
+                    <span class="hub-card-title">About</span>
+                    <span class="hub-card-copy">Profile, background, and technical experience.</span>
+                </a>
 
-    <div class="relative w-full max-w-md mt-6 sm:mt-0 sm:absolute sm:bottom-8 sm:left-8 sm:right-auto flex flex-col gap-2 z-20 pointer-events-none shrink-0">
-        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
-            <span class="material-symbols-outlined text-sm shrink-0">bolt</span>
-            <div class="flex flex-col min-w-0">
-                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">SYSTEM</span>
-                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase truncate">CONNECT YOUR CHARGER</span>
+                <a href="/projects" class="hub-card no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">folder_open</span>
+                    <span class="hub-card-title">Projects</span>
+                    <span class="hub-card-copy">A cleaner archive of product, academic, and research work.</span>
+                </a>
+
+                <a href="/resume" class="hub-card no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">description</span>
+                    <span class="hub-card-title">Resume</span>
+                    <span class="hub-card-copy">Preview and download the current resume.</span>
+                </a>
+
+                <a href="/contact" class="hub-card hub-card-accent no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">call</span>
+                    <span class="hub-card-title">Contact</span>
+                    <span class="hub-card-copy">Reach out for roles, projects, or collaboration.</span>
+                </a>
+
+                {{if .Personal.GitHub}}
+                <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hub-card no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">code</span>
+                    <span class="hub-card-title">GitHub</span>
+                    <span class="hub-card-copy">Source code, experiments, and public repositories.</span>
+                </a>
+                {{end}}
+
+                {{if .Personal.LinkedIn}}
+                <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hub-card no-underline">
+                    <span class="material-symbols-outlined hub-card-icon" aria-hidden="true">work</span>
+                    <span class="hub-card-title">LinkedIn</span>
+                    <span class="hub-card-copy">Professional history and current profile.</span>
+                </a>
+                {{end}}
             </div>
-        </div>
-        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
-            <span class="material-symbols-outlined text-sm shrink-0">call_missed</span>
-            <div class="flex flex-col min-w-0">
-                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">COMM LINK</span>
-                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase">1 MISSED SIGNAL</span>
-            </div>
-        </div>
+        </section>
     </div>
 </div>
 {{end}}

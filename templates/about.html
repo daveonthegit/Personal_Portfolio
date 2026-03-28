@@ -1,263 +1,163 @@
 {{define "about-content"}}
-<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
-    <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
-        <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
-                <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
+<div class="shell-page shell-page-scroll game-panel">
+    <header class="page-header">
+        <div class="page-header-main">
+            <a href="/home" class="page-back-link no-underline" aria-label="Back to home">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
             </a>
-            <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">About Me</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">Personal Info and Details</p>
+            <div class="page-title-stack">
+                <h1>About</h1>
+                <p>Profile, background, and experience.</p>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
-        </div>
-    </div>
-    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<section class="section relative flex-1 min-h-0 flex flex-col md:flex-row gap-3 md:gap-4 px-1 sm:px-2 md:px-4 pb-2 md:pb-4">
-    
-    <!-- Left Navigation Column -->
-    <div class="w-full md:w-[240px] shrink-0 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-y-auto no-scrollbar pb-1 md:pb-0 z-20 -mx-1 px-1 sm:mx-0 sm:px-0">
-        <button class="about-nav-btn active flex items-center gap-3 p-3 bg-white/5 border border-nexus-cyan/40 text-left transition-colors hover:bg-nexus-cyan/10 whitespace-nowrap md:whitespace-normal" data-target="profile">
-            <span class="material-symbols-outlined text-nexus-cyan text-sm">person</span>
-            <div>
-                <div class="text-xs font-nexus-display font-bold text-white tracking-wider">Profile</div>
-            </div>
-        </button>
-        <button class="about-nav-btn flex items-center gap-3 p-3 bg-white/5 border border-white/10 text-left transition-colors hover:bg-white/10 hover:border-nexus-cyan/40 whitespace-nowrap md:whitespace-normal" data-target="bio">
-            <span class="material-symbols-outlined text-gray-400 text-sm">subject</span>
-            <div>
-                <div class="text-xs font-nexus-display font-bold text-gray-300 tracking-wider">Biography</div>
-            </div>
-        </button>
-        <button class="about-nav-btn flex items-center gap-3 p-3 bg-white/5 border border-white/10 text-left transition-colors hover:bg-white/10 hover:border-nexus-cyan/40 whitespace-nowrap md:whitespace-normal" data-target="experience">
-            <span class="material-symbols-outlined text-gray-400 text-sm">work</span>
-            <div>
-                <div class="text-xs font-nexus-display font-bold text-gray-300 tracking-wider">Experience</div>
-            </div>
-        </button>
-        <button class="about-nav-btn flex items-center gap-3 p-3 bg-white/5 border border-white/10 text-left transition-colors hover:bg-white/10 hover:border-nexus-cyan/40 whitespace-nowrap md:whitespace-normal" data-target="education">
-            <span class="material-symbols-outlined text-gray-400 text-sm">school</span>
-            <div>
-                <div class="text-xs font-nexus-display font-bold text-gray-300 tracking-wider">Education & Skills</div>
-            </div>
-        </button>
-    </div>
+        <div class="page-status">Available</div>
+    </header>
 
-    <!-- Right Content Area -->
-    <div class="flex-1 relative nexus-panel bg-surface-translucent border-t-2 border-nexus-cyan backdrop-blur-md overflow-hidden flex flex-col min-h-0">
-        
-        <!-- Profile Section -->
-        <div id="section-profile" class="about-section h-full flex flex-col p-4 md:p-6 overflow-y-auto custom-scrollbar pr-2">
-            <div class="flex items-center gap-2 mb-6 shrink-0">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">My Profile</h2>
-            </div>
-            
-            <div class="flex flex-col md:flex-row gap-6 max-w-4xl">
-                <!-- Image -->
-                <div class="w-full md:w-1/3 shrink-0">
-                    <div class="relative w-full aspect-[4/3] overflow-hidden border border-white/10 group">
-                        <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors"></div>
-                        <img src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}" alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500">
-                    </div>
-                </div>
-                
-                <!-- Details -->
-                <div class="flex-1 space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-                        <div class="border-b border-white/5 pb-2">
-                            <span class="text-gray-500 uppercase block text-[10px] mb-1">Name</span>
-                            <span class="text-white font-mono">{{.Personal.Name}}</span>
-                        </div>
-                        <div class="border-b border-white/5 pb-2">
-                            <span class="text-gray-500 uppercase block text-[10px] mb-1">Role</span>
-                            <span class="text-white font-mono">{{.Personal.Title}}</span>
-                        </div>
-                        <div class="border-b border-white/5 pb-2">
-                            <span class="text-gray-500 uppercase block text-[10px] mb-1">Location</span>
-                            <span class="text-white font-mono">{{.Personal.Location}}</span>
-                        </div>
-                        <div class="border-b border-white/5 pb-2">
-                            <span class="text-gray-500 uppercase block text-[10px] mb-1">Status</span>
-                            <span class="text-[#4ade80] font-mono flex items-center gap-2"><span class="w-2 h-2 bg-[#4ade80] animate-pulse"></span> Available</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                        <a href="/resume" class="nexus-btn-primary text-xs no-underline flex-1 text-center py-3 sm:py-2">View Resume</a>
-                        <a href="/contact" class="nexus-btn-secondary text-xs no-underline flex-1 text-center py-3 sm:py-2">Contact Me</a>
-                    </div>
-                </div>
-            </div>
+    <section class="about-layout">
+        <div class="about-tab-bar" role="tablist" aria-label="About sections">
+            <button type="button" class="about-tab active" data-about-tab="profile" role="tab" aria-selected="true">Profile</button>
+            <button type="button" class="about-tab" data-about-tab="bio" role="tab" aria-selected="false">Biography</button>
+            <button type="button" class="about-tab" data-about-tab="experience" role="tab" aria-selected="false">Experience</button>
+            <button type="button" class="about-tab" data-about-tab="education" role="tab" aria-selected="false">Education & skills</button>
         </div>
 
-        <!-- Biography Section -->
-        <div id="section-bio" class="about-section hidden h-full flex flex-col p-4 md:p-6 overflow-y-auto custom-scrollbar pr-2">
-            <div class="flex items-center gap-2 mb-6 shrink-0">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Biography</h2>
-            </div>
-            
-            <div class="max-w-3xl space-y-6 text-sm">
-                <p class="text-white font-light italic border-l-2 border-nexus-cyan/30 pl-4 py-1">
-                    "In the overlap between digital architecture and human perception lies the nexus of modern existence."
-                </p>
-                <div class="text-gray-300 leading-relaxed space-y-4">
-                    {{.Personal.Bio}}
+        <div class="shell-panel about-panel">
+            <section class="about-pane" id="section-profile" data-about-pane="profile">
+                <div class="about-profile-grid">
+                    <div class="about-profile-media">
+                        <div class="about-portrait-frame">
+                            <img src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}" alt="{{.Personal.Name}}" class="about-portrait-image">
+                        </div>
+                    </div>
+                    <div class="about-profile-content">
+                        <div class="page-section-heading">
+                            <h2>{{.Personal.Name}}</h2>
+                            <p>{{.Personal.Title}} based in {{.Personal.Location}}</p>
+                        </div>
+                        <p class="about-lead">{{.Personal.Bio}}</p>
+                        <dl class="about-detail-grid">
+                            <div>
+                                <dt>Email</dt>
+                                <dd>{{.Personal.Email}}</dd>
+                            </div>
+                            <div>
+                                <dt>Location</dt>
+                                <dd>{{.Personal.Location}}</dd>
+                            </div>
+                            <div>
+                                <dt>Focus</dt>
+                                <dd>Secure, maintainable product work</dd>
+                            </div>
+                            <div>
+                                <dt>Status</dt>
+                                <dd class="text-nexus-cyan">Available</dd>
+                            </div>
+                        </dl>
+                        <div class="page-actions">
+                            <a href="/resume" class="nexus-btn-primary no-underline">View resume</a>
+                            <a href="/contact" class="nexus-btn-secondary no-underline">Contact me</a>
+                        </div>
+                    </div>
                 </div>
-                
+            </section>
+
+            <section class="about-pane hidden" id="section-bio" data-about-pane="bio" hidden>
+                <div class="page-section-heading">
+                    <h2>Biography</h2>
+                    <p>What I’m building and where I’m headed.</p>
+                </div>
+                <div class="about-copy-stack">
+                    <p>{{.Personal.Bio}}</p>
+                </div>
                 {{if .Personal.Interests}}
-                <div class="pt-6 border-t border-white/5">
-                    <h3 class="text-xs font-nexus-display text-gray-500 uppercase mb-3">Interests & Hobbies</h3>
-                    <div class="flex flex-wrap gap-2">
+                <div class="about-subsection">
+                    <h3>Interests</h3>
+                    <div class="chip-list">
                         {{range .Personal.Interests}}
-                        <span class="text-xs font-mono text-nexus-cyan/80 bg-nexus-cyan/5 border border-nexus-cyan/20 px-2 py-1">{{.}}</span>
+                        <span class="info-chip">{{.}}</span>
                         {{end}}
                     </div>
                 </div>
                 {{end}}
-            </div>
-        </div>
+            </section>
 
-        <!-- Experience Section -->
-        <div id="section-experience" class="about-section hidden h-full flex flex-col p-4 md:p-6 overflow-y-auto custom-scrollbar pr-2">
-            <div class="flex items-center gap-2 mb-6 shrink-0">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Experience</h2>
-            </div>
-            
-            <div class="max-w-4xl space-y-6">
-                {{range .Personal.Experience}}
-                <div class="relative pl-6 border-l-2 border-white/10 hover:border-nexus-cyan/50 transition-colors">
-                    <div class="absolute -left-[5px] top-1 w-2 h-2 bg-nexus-cyan rounded-full"></div>
-                    <div class="bg-black/40 border border-white/5 p-4 md:p-5 hover:border-nexus-cyan/30 transition-colors">
-                        <div class="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3">
+            <section class="about-pane hidden" id="section-experience" data-about-pane="experience" hidden>
+                <div class="page-section-heading">
+                    <h2>Experience</h2>
+                    <p>Recent work across software, systems, and team operations.</p>
+                </div>
+                <div class="experience-stack">
+                    {{range .Personal.Experience}}
+                    <article class="experience-entry">
+                        <div class="experience-entry-head">
                             <div>
-                                <h3 class="text-base font-nexus-display font-bold text-white">{{.Position}}</h3>
-                                <p class="text-nexus-cyan font-mono text-sm">{{.Company}}</p>
+                                <h3>{{.Position}}</h3>
+                                <p>{{.Company}} · {{.Location}}</p>
                             </div>
-                            <div class="text-[10px] font-mono text-gray-500 bg-black px-2 py-1 border border-white/10 text-right">
-                                {{.StartDate.Format "Jan 2006"}} - {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}<span class="text-[#4ade80]">Present</span>{{end}}
+                            <div class="experience-date">
+                                {{.StartDate.Format "Jan 2006"}} - {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}Present{{end}}
                             </div>
                         </div>
-                        <ul class="space-y-2 mb-4">
+                        <ul class="experience-points">
                             {{range .Description}}
-                            <li class="text-xs text-gray-400 leading-relaxed pl-3 relative before:content-['>'] before:absolute before:left-0 before:text-nexus-cyan before:text-xs">{{.}}</li>
+                            <li>{{.}}</li>
                             {{end}}
                         </ul>
                         {{if .Technologies}}
-                        <div class="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+                        <div class="chip-list">
                             {{range .Technologies}}
-                            <span class="text-[9px] font-mono text-gray-400 bg-white/5 border border-white/10 px-1.5 py-0.5">{{.}}</span>
+                            <span class="info-chip">{{.}}</span>
                             {{end}}
                         </div>
                         {{end}}
-                    </div>
+                    </article>
+                    {{end}}
                 </div>
-                {{end}}
-            </div>
-        </div>
+            </section>
 
-        <!-- Education & Skills Section -->
-        <div id="section-education" class="about-section hidden h-full flex flex-col p-4 md:p-6 overflow-y-auto custom-scrollbar pr-2">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl">
-                <!-- Education -->
-                <div>
-                    <div class="flex items-center gap-2 mb-6 shrink-0">
-                        <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                        <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Education</h2>
-                    </div>
-                    <div class="space-y-4">
-                        {{range .Personal.Education}}
-                        <div class="bg-black/40 border border-white/5 p-4">
-                            <h3 class="text-base font-nexus-display font-bold text-white">{{.Institution}}</h3>
-                            <p class="text-nexus-cyan font-mono text-xs mb-2">{{.Degree}} in {{.Field}}</p>
-                            <div class="flex justify-between text-[10px] font-mono text-gray-500">
-                                <span>{{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}</span>
-                                {{if .GPA}}<span class="text-gray-400">GPA: {{.GPA}}</span>{{end}}
-                            </div>
+            <section class="about-pane hidden" id="section-education" data-about-pane="education" hidden>
+                <div class="about-two-column">
+                    <div>
+                        <div class="page-section-heading">
+                            <h2>Education</h2>
+                            <p>Academic background and coursework context.</p>
                         </div>
-                        {{end}}
-                    </div>
-                </div>
-
-                <!-- Skills -->
-                <div>
-                    <div class="flex items-center gap-2 mb-6 shrink-0">
-                        <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                        <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Skills</h2>
-                    </div>
-                    <div class="space-y-6">
-                        {{range $index, $skill := .Personal.Skills}}
-                        <div>
-                            <div class="text-[10px] font-nexus-display text-gray-400 uppercase tracking-widest border-b border-white/10 pb-2 mb-3">
-                                {{$skill.Category}}
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                {{range $skill.Items}}
-                                <span class="text-[11px] font-mono text-white bg-white/5 px-2 py-1 border border-white/10 hover:border-nexus-cyan/50 hover:text-nexus-cyan transition-colors">{{.}}</span>
-                                {{end}}
-                            </div>
+                        <div class="education-stack">
+                            {{range .Personal.Education}}
+                            <article class="education-entry">
+                                <h3>{{.Institution}}</h3>
+                                <p>{{.Degree}} in {{.Field}}</p>
+                                <div class="education-meta">
+                                    <span>{{.StartDate.Format "2006"}} - {{.EndDate.Format "2006"}}</span>
+                                    {{if .Location}}<span>{{.Location}}</span>{{end}}
+                                    {{if .GPA}}<span>GPA {{.GPA}}</span>{{end}}
+                                </div>
+                            </article>
+                            {{end}}
                         </div>
-                        {{end}}
+                    </div>
+
+                    <div>
+                        <div class="page-section-heading">
+                            <h2>Skills</h2>
+                            <p>Languages, frameworks, tools, and workflows.</p>
+                        </div>
+                        <div class="skills-stack-refined">
+                            {{range .Personal.Skills}}
+                            <section class="skill-group">
+                                <h3>{{.Category}}</h3>
+                                <div class="chip-list">
+                                    {{range .Items}}
+                                    <span class="info-chip">{{.}}</span>
+                                    {{end}}
+                                </div>
+                            </section>
+                            {{end}}
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-
-    </div>
-</section>
-    </div>
+    </section>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const navBtns = document.querySelectorAll('.about-nav-btn');
-    const sections = document.querySelectorAll('.about-section');
-
-    navBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update buttons
-            navBtns.forEach(b => {
-                b.classList.remove('border-nexus-cyan/40', 'bg-nexus-cyan/10');
-                b.classList.add('border-white/10', 'bg-white/5');
-                const icon = b.querySelector('.material-symbols-outlined');
-                const title = b.querySelector('.font-bold');
-                icon.classList.remove('text-nexus-cyan');
-                icon.classList.add('text-gray-400');
-                title.classList.remove('text-white');
-                title.classList.add('text-gray-300');
-            });
-            
-            btn.classList.add('border-nexus-cyan/40', 'bg-nexus-cyan/10');
-            btn.classList.remove('border-white/10', 'bg-white/5');
-            const activeIcon = btn.querySelector('.material-symbols-outlined');
-            const activeTitle = btn.querySelector('.font-bold');
-            activeIcon.classList.add('text-nexus-cyan');
-            activeIcon.classList.remove('text-gray-400');
-            activeTitle.classList.add('text-white');
-            activeTitle.classList.remove('text-gray-300');
-
-            // Update sections
-            const targetId = `section-${btn.dataset.target}`;
-            sections.forEach(section => {
-                if (section.id === targetId) {
-                    section.classList.remove('hidden');
-                    // Add subtle fade in
-                    section.style.opacity = '0';
-                    setTimeout(() => {
-                        section.style.transition = 'opacity 0.3s ease';
-                        section.style.opacity = '1';
-                    }, 10);
-                } else {
-                    section.classList.add('hidden');
-                }
-            });
-        });
-    });
-});
-</script>
 {{end}}

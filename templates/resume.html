@@ -1,137 +1,70 @@
 {{define "resume-content"}}
-<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
-    <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
-        <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
-                <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
+<div class="shell-page shell-page-scroll game-panel">
+    <header class="page-header">
+        <div class="page-header-main">
+            <a href="/home" class="page-back-link no-underline" aria-label="Back to home">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
             </a>
-            <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">Personnel Documentation</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">PROFESSIONAL RESUME // CLEARANCE: PUBLIC</p>
+            <div class="page-title-stack">
+                <h1>Resume</h1>
+                <p>Preview the current resume or download a copy.</p>
             </div>
         </div>
-        <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
-        </div>
-    </div>
-    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<section class="section relative flex-1 min-h-0 flex flex-col md:flex-row gap-3 md:gap-6 pb-2 md:pb-4 px-2 sm:px-4">
-    <!-- Left Actions Column -->
-    <div class="flex-shrink-0 w-full md:w-[350px] flex flex-col gap-3 md:gap-6 overflow-y-auto custom-scrollbar pr-1 sm:pr-2 pb-2 md:pb-4">
-        <!-- Resume Actions Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-6 backdrop-blur-md shrink-0">
-            <div class="corner-accent-tl"></div>
-            <div class="corner-accent-br"></div>
-            
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Document Access</h2>
+        <div class="page-status">Public</div>
+    </header>
+
+    <section class="resume-layout">
+        <div class="shell-panel resume-preview-panel">
+            <div class="resume-preview-header">
+                <div>
+                    <h2>Preview</h2>
+                    <p>Current version of the resume.</p>
+                </div>
+                <span class="resume-doc-id">RES_{{.Year}}_001</span>
             </div>
-            
-            <div class="flex flex-col gap-3 mb-4">
-                <a href="/resume/download" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
-                    <span class="material-symbols-outlined text-sm">download</span>
-                    DOWNLOAD PDF
-                </a>
-                <button onclick="window.print()" class="nexus-btn-secondary flex items-center justify-center gap-2 py-2">
-                    <span class="material-symbols-outlined text-sm">print</span>
-                    PRINT DOCUMENT
-                </button>
-            </div>
-            
-            <div class="text-center text-[10px] font-mono text-gray-500 pt-3 border-t border-white/5">
-                Updated: {{.Year}}.01.15 | Ver: 2.1<br>
-                Classification: <span class="text-[#4ade80]">PUBLIC</span>
+            <div class="resume-frame-wrap">
+                <iframe src="/resume/pdf" class="resume-frame" title="Resume Preview"></iframe>
             </div>
         </div>
 
-        <!-- Contact CTA Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md text-center shrink-0">
-            <div class="corner-accent-tl"></div>
-            <div class="corner-accent-br"></div>
-            
-            <div class="flex items-center justify-center gap-2 mb-4">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Initiate Contact</h2>
+        <div class="resume-side">
+            <div class="shell-panel resume-actions-panel">
+                <div class="page-section-heading">
+                    <h2>Actions</h2>
+                    <p>Download, print, or share the document.</p>
+                </div>
+                <div class="resume-action-list">
+                    <a href="/resume/download" class="nexus-btn-primary no-underline">Download PDF</a>
+                    <button type="button" class="nexus-btn-secondary" data-resume-print>Print</button>
+                </div>
+                <dl class="about-detail-grid">
+                    <div>
+                        <dt>Updated</dt>
+                        <dd>{{.Year}}.01.15</dd>
+                    </div>
+                    <div>
+                        <dt>Version</dt>
+                        <dd>2.1</dd>
+                    </div>
+                    <div>
+                        <dt>Classification</dt>
+                        <dd class="text-nexus-cyan">Public</dd>
+                    </div>
+                    <div>
+                        <dt>Status</dt>
+                        <dd>Ready to share</dd>
+                    </div>
+                </dl>
             </div>
-            
-            <p class="text-gray-400 text-xs mb-4 max-w-md mx-auto">
-                Interested in collaboration or have project inquiries? Establish a secure communication channel.
-            </p>
-            
-            <a href="/contact" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
-                <span class="material-symbols-outlined text-sm">send</span>
-                GET IN TOUCH
-            </a>
-            
-            <div class="mt-4 pt-4 border-t border-white/5 grid grid-cols-3 gap-2 max-w-md mx-auto">
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
-                    <div class="text-[#4ade80] font-mono text-[10px]">AVAILABLE</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
-                    <div class="text-nexus-cyan font-mono text-[10px]">24HR MAX</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
-                    <div class="text-[#ff5500] font-mono text-[10px]">HIGH</div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Right PDF Column -->
-    <div class="flex-1 flex flex-col nexus-panel relative bg-surface-translucent border border-white/10 p-0 backdrop-blur-md h-full min-h-0 overflow-hidden">
-        <div class="flex items-center justify-between p-3 md:p-4 bg-black/40 border-b border-white/5 shrink-0 z-10">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-nexus-cyan text-sm">description</span>
-                <h2 class="text-sm font-nexus-display font-bold text-white tracking-widest uppercase">Preview Mode</h2>
+            <div class="shell-panel resume-contact-panel">
+                <div class="page-section-heading">
+                    <h2>Working together</h2>
+                    <p>For roles, collaborations, or product work, send a message directly.</p>
+                </div>
+                <a href="/contact" class="nexus-btn-primary no-underline">Get in touch</a>
             </div>
-            <span class="text-[9px] font-mono text-gray-500 hidden sm:block">DOC_ID: RES_{{.Year}}_001</span>
         </div>
-        
-        <div class="flex-1 bg-[#1a1a1a] relative w-full min-h-[min(55vh,480px)] md:min-h-0 h-full">
-            <iframe 
-                src="/resume/pdf" 
-                class="absolute inset-0 w-full h-full border-0 min-h-[min(55vh,480px)] md:min-h-0"
-                title="Resume Preview">
-            </iframe>
-        </div>
-    </div>
-</section>
-    </div>
+    </section>
 </div>
-
-<style>
-@media print {
-    .game-hud-left,
-    .game-hud-bottom,
-    .nexus-nav,
-    .nexus-footer {
-        display: none !important;
-    }
-    
-    .section {
-        padding: 0 !important;
-    }
-    
-    .nexus-panel {
-        background: white !important;
-        border: none !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-    }
-    
-    body {
-        background: white !important;
-        color: black !important;
-    }
-    
-    .resume-content {
-        page-break-inside: avoid;
-    }
-}
-</style>
 {{end}}

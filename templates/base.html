@@ -36,74 +36,73 @@
     <!-- Styles -->
     <link href="/static/css/main.css?v={{.AssetVersion}}" rel="stylesheet">
 </head>
-<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-auto relative bg-black text-white">
+<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-auto relative bg-black text-white template-{{.TemplateName}}" data-template="{{.TemplateName}}">
     <!-- Background Grid -->
     <div class="nexus-grid-bg"></div>
 
     <div class="game-ui-layout">
         <!-- Left HUD: profile + stats (hidden on small screens; use bottom bar + hub) -->
-        <aside class="game-hud-left border-r border-white/10 bg-black/60 backdrop-blur-md flex flex-col relative z-20">
-            <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                <a href="/home" class="nexus-logo no-underline inline-flex items-center gap-0" aria-label="xiaoOS home">
-                    <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
-                </a>
-                <div class="text-xs font-mono text-nexus-cyan tabular-nums" id="hud-time">00:00:00</div>
-            </div>
-
-            <div class="p-4 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar min-h-0">
-                <div class="relative w-full aspect-[4/5] border border-white/20 overflow-hidden hud-profile-img group">
-                    <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
-                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
-                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
+        <aside class="game-hud-left">
+            <div class="hud-shell">
+                <div class="hud-brand-row">
+                    <a href="/home" class="nexus-logo no-underline inline-flex items-center gap-0" aria-label="xiaoOS home">
+                        <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
+                    </a>
+                    <div class="hud-clock" id="hud-time">00:00:00</div>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="hud-alert bg-red-500/10 border-l-2 border-red-500 p-2 flex items-center gap-3">
-                        <span class="material-symbols-outlined text-red-500 text-sm">warning</span>
-                        <div class="text-[10px] font-mono tracking-widest text-red-400 uppercase leading-tight">
-                            SYSTEM ACTIVE<br>
-                            <span class="text-white">THREAT: MINIMAL</span>
-                        </div>
+                <div class="hud-primary-card">
+                    <div class="hud-portrait-frame">
+                        <img alt="{{.Personal.Name}}" class="hud-portrait-image" src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
                     </div>
+                    <div class="hud-identity">
+                        <div class="hud-name">{{.Personal.Name}}</div>
+                        <div class="hud-role">{{.Personal.Title}}</div>
+                    </div>
+                    <div class="hud-status-line">
+                        <span class="hud-status-indicator"></span>
+                        <span>Available for projects</span>
+                    </div>
+                </div>
 
-                    <div class="space-y-2 text-xs font-mono text-gray-400">
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Name</span> <span class="text-white truncate ml-2">{{.Personal.Name}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Role</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Title}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Location</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Location}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>STATUS</span> <span class="text-nexus-cyan">ONLINE</span>
-                        </div>
+                <dl class="hud-facts">
+                    <div class="hud-fact-row">
+                        <dt>Location</dt>
+                        <dd>{{.Personal.Location}}</dd>
                     </div>
+                    <div class="hud-fact-row">
+                        <dt>Focus</dt>
+                        <dd>Full-stack apps</dd>
+                    </div>
+                    <div class="hud-fact-row">
+                        <dt>Primary</dt>
+                        <dd>Go + TypeScript</dd>
+                    </div>
+                    <div class="hud-fact-row">
+                        <dt>Status</dt>
+                        <dd class="text-nexus-cyan">Online</dd>
+                    </div>
+                </dl>
 
-                    <div class="pt-2 flex flex-col gap-2">
-                        {{if .Personal.Email}}
-                        <a href="mailto:{{.Personal.Email}}" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">EMAIL</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">mail</span>
-                        </a>
-                        {{end}}
-                        {{if .Personal.GitHub}}
-                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">GITHUB</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">code</span>
-                        </a>
-                        {{end}}
-                        {{if .Personal.LinkedIn}}
-                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">LINKEDIN</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">work</span>
-                        </a>
-                        {{end}}
-                    </div>
+                <div class="hud-links-section">
+                    {{if .Personal.Email}}
+                    <a href="mailto:{{.Personal.Email}}" class="hud-quick-link no-underline">
+                        <span>Email</span>
+                        <span class="material-symbols-outlined" aria-hidden="true">mail</span>
+                    </a>
+                    {{end}}
+                    {{if .Personal.GitHub}}
+                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-quick-link no-underline">
+                        <span>GitHub</span>
+                        <span class="material-symbols-outlined" aria-hidden="true">code</span>
+                    </a>
+                    {{end}}
+                    {{if .Personal.LinkedIn}}
+                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-quick-link no-underline">
+                        <span>LinkedIn</span>
+                        <span class="material-symbols-outlined" aria-hidden="true">work</span>
+                    </a>
+                    {{end}}
                 </div>
             </div>
         </aside>
@@ -126,30 +125,21 @@
         </main>
 
         <!-- Bottom HUD bar -->
-        <footer class="game-hud-bottom border-t border-white/10 bg-black/80 backdrop-blur-md flex justify-between items-center px-3 sm:px-4 py-2 z-20 gap-2">
-            <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-                <a href="/home" class="w-9 h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Apps menu" title="Hub">
+        <footer class="game-hud-bottom">
+            <div class="hud-bottom-left">
+                <a href="/home" class="game-hud-apps-btn no-underline" aria-label="Go to home hub" title="Hub">
                     <span class="material-symbols-outlined text-sm">apps</span>
                 </a>
-                <nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto game-hud-nav-mini no-scrollbar" aria-label="Primary">
-                    <a href="/about" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">About</a>
-                    <a href="/projects" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Projects</a>
-                    <a href="/resume" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Resume</a>
-                    <a href="/contact" class="text-[10px] sm:text-[11px] font-mono text-gray-400 hover:text-nexus-cyan whitespace-nowrap no-underline px-1">Contact</a>
+                <nav class="game-hud-nav-mini no-scrollbar" aria-label="Primary">
+                    <a href="/about" class="game-hud-link {{if eq .TemplateName "about"}}active{{end}} no-underline">About</a>
+                    <a href="/projects" class="game-hud-link {{if eq .TemplateName "projects"}}active{{end}} no-underline">Projects</a>
+                    <a href="/resume" class="game-hud-link {{if eq .TemplateName "resume"}}active{{end}} no-underline">Resume</a>
+                    <a href="/contact" class="game-hud-link {{if eq .TemplateName "contact"}}active{{end}} no-underline">Contact</a>
                 </nav>
             </div>
-            <div class="hidden sm:flex items-center gap-4 text-[10px] font-mono text-gray-500 shrink-0">
-                <div class="flex items-center gap-2 border-r border-white/10 pr-4">
-                    <span class="material-symbols-outlined text-xs text-nexus-cyan">mic</span>
-                    <span class="hidden lg:inline">VOICE RECOGNITION ACTIVE</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-nexus-cyan block animate-pulse"></span>
-                    <span>NET_LINK: STABLE</span>
-                </div>
-            </div>
-            <div class="text-[9px] sm:text-[10px] font-mono text-nexus-cyan uppercase truncate text-right max-w-[40%] sm:max-w-none">
-                {{.TemplateName}}
+            <div class="hud-bottom-right">
+                <span class="hud-bottom-status">Network stable</span>
+                <span class="hud-bottom-context">{{.TemplateName}}</span>
             </div>
         </footer>
     </div>

@@ -45,8 +45,7 @@ export class ContactFormHandler {
       return;
     }
 
-    const defaultBtnHtml =
-      '<span class="material-symbols-outlined text-sm">send</span> TRANSMIT';
+    const defaultBtnHtml = 'Send message';
     this.submitButton.disabled = true;
     this.submitButton.innerHTML = 'Sending...';
 
@@ -80,18 +79,14 @@ export class ContactFormHandler {
     if (!this.messageContainer) return;
 
     const isSuccess = type === 'success';
-    const borderColor = isSuccess ? '#00ff00' : '#ff0000';
-    const bgColor = isSuccess ? '#00ff00' : '#ff0000';
-    const textColor = isSuccess ? '#000000' : '#ffffff';
-    const messageColor = isSuccess ? '#00ff00' : '#ff0000';
-    const statusText = isSuccess ? 'TRANSMISSION STATUS' : 'TRANSMISSION ERROR';
+    const statusText = isSuccess ? 'Message sent' : 'Unable to send';
 
     this.messageContainer.innerHTML = `
-      <div style="background-color: #222222; border: 1px solid ${borderColor}; padding: 16px;">
-        <div style="background-color: ${bgColor}; color: ${textColor}; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
+      <div class="contact-feedback ${isSuccess ? 'contact-feedback-success' : 'contact-feedback-error'}">
+        <div class="contact-feedback-label">
           ${statusText}
         </div>
-        <p style="color: ${messageColor}; font-size: 14px;">
+        <p class="contact-feedback-message">
           ${message}
         </p>
       </div>

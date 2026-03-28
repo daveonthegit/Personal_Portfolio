@@ -4,6 +4,7 @@ import { AnimationObserver } from './utils/animationObserver';
 import { ContactFormHandler } from './components/ContactFormHandler';
 import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
+import { initPageControllers } from './utils/pageControllers';
 
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize theme toggle
   initThemeHandler();
+
+  // Initialize page-specific UI behavior
+  initPageControllers();
 
   const hudTime = document.getElementById('hud-time');
   if (hudTime) {
