@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timeline Rift — Gate Regressor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #070a12;
+      --panel: #0f1525;
+      --line: #2a3f6b;
+      --text: #dce4f5;
+      --muted: #7a8bad;
+      --gate: #3d9eff;
+      --gate-glow: rgba(61, 158, 255, 0.35);
+      --danger: #ff4d6d;
+      --warn: #ffc14d;
+      --safe: #5ce1a3;
+      --memory: #c4a7ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Noto Sans KR", "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #1a2744 0%, var(--void) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 1rem;
+    }
+    h1 {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.35rem, 4vw, 1.85rem);
+      letter-spacing: -0.02em;
+    }
+    h1 span { color: var(--gate); }
+    .tagline { font-size: 0.85rem; color: var(--muted); max-width: 28rem; }
+    .hud {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.6rem;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.8rem;
+    }
+    .stat strong { display: block; font-family: Syne, sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.2rem; }
+    .stat .val { font-size: 1.05rem; font-weight: 700; }
+    .divergence-bar {
+      height: 8px;
+      background: #1a2235;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+    .divergence-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease, background 0.4s;
+      background: linear-gradient(90deg, var(--safe), var(--warn) 60%, var(--danger));
+    }
+    .sync { color: var(--memory); font-size: 0.75rem; margin-top: 0.35rem; }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 720px) {
+      main { grid-template-columns: 1fr 220px; }
+    }
+    .log {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+      min-height: 280px;
+      max-height: min(52vh, 420px);
+      overflow-y: auto;
+      font-size: 0.92rem;
+      box-shadow: 0 0 40px var(--gate-glow) inset;
+    }
+    .log p { margin-bottom: 0.85rem; }
+    .log p:last-child { margin-bottom: 0; }
+    .log .em { color: var(--gate); font-weight: 600; }
+    .log .fracture { color: var(--danger); border-left: 3px solid var(--danger); padding-left: 0.65rem; margin: 0.5rem 0; }
+    .log .memory { color: var(--memory); font-style: italic; }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    button {
+      font-family: Syne, sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #151c2e;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    }
+    button:hover:not(:disabled) {
+      border-color: var(--gate);
+      background: #1a2540;
+    }
+    button:active:not(:disabled) { transform: scale(0.98); }
+    button:disabled { opacity: 0.35; cursor: not-allowed; }
+    button.primary { border-color: var(--gate); background: linear-gradient(135deg, #1a3a5c, #152238); }
+    button.danger { border-color: var(--danger); color: #ffb3c0; }
+    button.small { font-size: 0.72rem; padding: 0.45rem 0.55rem; }
+    .combat {
+      margin-top: 0.75rem;
+      padding: 0.85rem;
+      background: #0a0e18;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+    .combat .row { display: flex; justify-content: space-between; margin-bottom: 0.35rem; font-size: 0.85rem; }
+    .saves {
+      font-size: 0.75rem;
+      color: var(--muted);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .saves div { padding: 0.25rem 0; border-bottom: 1px solid #1a2235; }
+    footer { font-size: 0.72rem; color: var(--muted); text-align: center; padding-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Timeline <span>Rift</span></h1>
+        <p class="tagline">A tower-hunter regressor RPG. Anchor save points, rewind freely — but twist the story too far and reality stops matching your memories.</p>
+      </div>
+    </header>
+
+    <div class="hud" id="hud"></div>
+
+    <main>
+      <section class="log" id="log" aria-live="polite"></section>
+      <aside class="sidebar">
+        <div class="actions" id="actions"></div>
+        <div>
+          <strong style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;">Anchors</strong>
+          <div class="saves" id="saves"></div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>Inspired by tower / portal hunter fiction — original setting, no series assets.</footer>
+  </div>
+
+  <script>
+(function () {
+  const STORAGE = "timelineRift_save_v1";
+
+  const CANON = {
+    gate7Scout: "alive",
+    floor1Boss: { key: "slime", name: "Gelatinous Overlord", hp: 42, atk: 6 },
+    shopkeepMood: "neutral",
+    duskRitual: "pending"
+  };
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+  function defaultState() {
+    return {
+      phase: "intro",
+      hp: 100,
+      hpMax: 100,
+      atk: 12,
+      floor: 0,
+      gold: 30,
+      divergence: 0,
+      regressions: 0,
+      canon: clone(CANON),
+      reality: clone(CANON),
+      flags: {},
+      combat: null,
+      anchors: [],
+      log: []
+    };
+  }
+
+  let state = defaultState();
+
+  function divergenceTier(d) {
+    if (d < 22) return 0;
+    if (d < 45) return 1;
+    if (d < 70) return 2;
+    return 3;
+  }
+
+  function applyButterflyEffects() {
+    const t = divergenceTier(state.divergence);
+    const r = state.reality;
+    const c = state.canon;
+
+    if (t >= 1 && r.shopkeepMood === c.shopkeepMood) {
+      r.shopkeepMood = Math.random() > 0.5 ? "hostile" : "eager";
+    }
+    if (t >= 2 && r.floor1Boss.key === c.floor1Boss.key) {
+      r.floor1Boss = {
+        key: "wraith",
+        name: "Shiverborn Wraith",
+        hp: 68,
+        atk: 11
+      };
+      pushLog("A fracture runs through your memories. The first gate's guardian was supposed to be sluggish gel — instead, cold hunger coils in the dark.", "fracture");
+    }
+    if (t >= 3 && r.gate7Scout === "alive") {
+      r.gate7Scout = "missing";
+      pushLog("You distinctly remember the scout at Gate 7. The plaza is empty where they stood. The timeline has rewritten itself around you.", "fracture");
+    }
+  }
+
+  function addDivergence(n, reason) {
+    state.divergence = Math.min(100, state.divergence + n);
+    if (reason) pushLog(reason, "memory");
+    applyButterflyEffects();
+  }
+
+  function pushLog(text, cls) {
+    state.log.push({ text, cls });
+  }
+
+  function renderLog() {
+    const el = document.getElementById("log");
+    el.innerHTML = state.log.slice(-48).map(entry => {
+      const c = entry.cls === "fracture" ? "fracture" : entry.cls === "memory" ? "memory" : "";
+      return `<p class="${c}">${entry.text}</p>`;
+    }).join("");
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function renderHUD() {
+    const t = divergenceTier(state.divergence);
+    const tierLabel = ["Stable", "Drift", "Fracture", "Rewrite"][t];
+    const sync = Math.max(0, 100 - state.divergence);
+    document.getElementById("hud").innerHTML = `
+      <div class="stat"><strong>Hunter</strong><span class="val">${state.hp} / ${state.hpMax} HP</span></div>
+      <div class="stat"><strong>Attack</strong><span class="val">${state.atk}</span></div>
+      <div class="stat"><strong>Gold</strong><span class="val">${state.gold}</span></div>
+      <div class="stat"><strong>Regressions</strong><span class="val">${state.regressions}</span></div>
+      <div class="stat" style="grid-column: span 2;">
+        <strong>Butterfly / Divergence</strong>
+        <span class="val">${state.divergence}% — ${tierLabel}</span>
+        <div class="divergence-bar"><div class="divergence-fill" style="width:${state.divergence}%"></div></div>
+        <div class="sync">Memory sync with your "first life": ~${sync}%</div>
+      </div>
+    `;
+  }
+
+  function renderSaves() {
+    const el = document.getElementById("saves");
+    if (!state.anchors.length) {
+      el.textContent = "No anchors yet. Create one at the plaza or before a gate boss.";
+      return;
+    }
+    el.innerHTML = state.anchors.map((a, i) =>
+      `<div>● ${a.label} <button type="button" class="small" data-regress="${i}" style="float:right;margin-top:-2px;">Regress</button></div>`
+    ).join("");
+    el.querySelectorAll("[data-regress]").forEach(btn => {
+      btn.addEventListener("click", () => regress(Number(btn.getAttribute("data-regress"))));
+    });
+  }
+
+  function createAnchor(label) {
+    const data = clone(state);
+    state.anchors.push({ label, data });
+    pushLog(`<span class="em">Anchor set:</span> ${label}. Regress from the sidebar anytime — no limit.`, null);
+  }
+
+  function regress(index) {
+    const a = state.anchors[index];
+    if (!a) return;
+    state = clone(a.data);
+    state.regressions += 1;
+    pushLog(`<span class="em">Regression.</span> Timeline snaps to "${a.label}". You keep your mind; the world matches that moment.`, null);
+    renderAll();
+    resumeFromState();
+  }
+
+  function resumeFromState() {
+    if (state.combat && state.combat.enemyHp > 0) {
+      combatUI();
+      return;
+    }
+    if (state.phase === "plaza") {
+      plazaChoices();
+      return;
+    }
+    if (state.phase === "after1") {
+      endFloor1();
+      return;
+    }
+    if (state.phase === "floor2") {
+      if (state.flags.floor2Wrapped) wrapFloor2();
+      else floor2Event();
+      return;
+    }
+    if (state.phase === "floor1" && !state.combat) {
+      state.phase = "plaza";
+      plazaChoices();
+      return;
+    }
+    gate7Scene();
+  }
+
+  function renderAll() {
+    renderHUD();
+    renderLog();
+    renderSaves();
+  }
+
+  function setActions(buttons) {
+    const el = document.getElementById("actions");
+    el.innerHTML = "";
+    buttons.forEach(b => {
+      const btn = document.createElement("button");
+      btn.textContent = b.text;
+      if (b.primary) btn.classList.add("primary");
+      if (b.danger) btn.classList.add("danger");
+      btn.disabled = !!b.disabled;
+      btn.addEventListener("click", b.onClick);
+      el.appendChild(btn);
+    });
+  }
+
+  function startIntro() {
+    state.log = [];
+    pushLog("You died at the top of the Red Spire — rankers laughing as the world went white. Then the System offered what it never should: <span class='em'>infinite regressions</span> from anchors you choose.", null);
+    pushLog("You remember how the story <span class='memory'>should</span> go: Gate 7 opens at dusk, the first boss is a slow slime, and Scout Yuna always waits by the fountain.", null);
+    pushLog("Change too much and those memories become lies. The tower feeds on inconsistency.", null);
+    setActions([
+      { text: "Accept the contract — wake at Hunter Plaza", primary: true, onClick: () => { state.phase = "plaza"; renderAll(); plazaChoices(); } }
+    ]);
+    renderAll();
+  }
+
+  function plazaChoices() {
+    setActions([
+      {
+        text: "Approach Gate 7 (main story)",
+        primary: true,
+        onClick: () => {
+          pushLog("Violet light leaks from Gate 7. Your muscles remember a hundred failed clears.", null);
+          gate7Scene();
+        }
+      },
+      {
+        text: "Visit the supply stall (memory check)",
+        onClick: () => {
+          const mood = state.reality.shopkeepMood;
+          const expected = state.canon.shopkeepMood;
+          if (mood !== expected) {
+            pushLog(`The shopkeep greets you with a ${mood} tone — not the ${expected} one you remember. Small wrongness.`, "fracture");
+          } else {
+            pushLog("Prices match your memories. The timeline still tolerates you.", null);
+          }
+          if (state.gold >= 15) {
+            state.gold -= 15;
+            state.hp = Math.min(state.hpMax, state.hp + 25);
+            pushLog("You buy a recovery ration. (+25 HP)", null);
+          } else pushLog("You're short on gold for the good stuff.", null);
+          renderAll();
+          plazaChoices();
+        }
+      },
+      {
+        text: "Create anchor — Hunter Plaza fountain",
+        onClick: () => {
+          createAnchor("Plaza fountain");
+          renderAll();
+          plazaChoices();
+        }
+      },
+      {
+        text: "Check Gate 7 scout (canon: Yuna alive)",
+        onClick: () => {
+          if (state.reality.gate7Scout === "alive") {
+            pushLog("Scout Yuna waves. \"Dusk ritual in three hours. Don't rush in alone.\"", null);
+          } else {
+            pushLog("No scout. Only scratched concrete and a fading mana stain. Your memory screams that someone should be here.", "fracture");
+          }
+          renderAll();
+          plazaChoices();
+        }
+      }
+    ]);
+    renderHUD();
+    renderLog();
+    renderSaves();
+  }
+
+  function gate7Scene() {
+    setActions([
+      {
+        text: "Wait for dusk ritual (canon route, stable timeline)",
+        primary: true,
+        onClick: () => {
+          pushLog("You wait. Hunters gather; the gate stabilizes. This is how your first life went.", null);
+          state.flags.waitedDusk = true;
+          enterFloor1();
+        }
+      },
+      {
+        text: "Force the gate open now (arrogant — major butterfly)",
+        danger: true,
+        onClick: () => {
+          addDivergence(28, "<span class='memory'>Memory:</span> The gate was never forced early. You just changed the prologue.");
+          state.flags.forcedGate = true;
+          pushLog("You overload the runes. The portal screams open — easier climb tonight, but something downstream will not forgive you.", "fracture");
+          enterFloor1();
+        }
+      },
+      {
+        text: "Set anchor before entering",
+        onClick: () => {
+          createAnchor("Before Gate 7 breach");
+          renderAll();
+          gate7Scene();
+        }
+      }
+    ]);
+    renderAll();
+  }
+
+  function enterFloor1() {
+    state.floor = 1;
+    state.phase = "floor1";
+    state.flags.floor1Cleared = false;
+    const boss = state.reality.floor1Boss;
+    pushLog(`Floor 1 condenses into a boss chamber. Your memories said "<span class='memory'>${state.canon.floor1Boss.name}</span>."`, null);
+    pushLog(`Reality presents: <span class="em">${boss.name}</span>.`, boss.key !== state.canon.floor1Boss.key ? "fracture" : null);
+    startCombat(boss);
+  }
+
+  function startCombat(enemy) {
+    state.combat = {
+      enemyName: enemy.name,
+      enemyHp: enemy.hp,
+      enemyHpMax: enemy.hp,
+      enemyAtk: enemy.atk,
+      turn: 0
+    };
+    combatUI();
+  }
+
+  function combatUI() {
+    const c = state.combat;
+    if (!c || c.enemyHp <= 0) return;
+
+    const frac = `
+      <div class="combat">
+        <div class="row"><span>${c.enemyName}</span><span>${c.enemyHp} / ${c.enemyHpMax} HP</span></div>
+        <div class="row"><span>You</span><span>${state.hp} HP</span></div>
+      </div>`;
+
+    setActions([
+      {
+        text: "Strike — commit to the fight",
+        primary: true,
+        onClick: () => combatTurn("strike")
+      },
+      {
+        text: "Observe weakness (safer, lower damage)",
+        onClick: () => combatTurn("observe")
+      },
+      {
+        text: "Anchor here mid-fight (save current timeline)",
+        onClick: () => {
+          createAnchor(`Mid-fight vs ${c.enemyName}`);
+          renderAll();
+          combatUI();
+        }
+      }
+    ]);
+
+    document.getElementById("log").innerHTML = state.log.slice(-48).map(entry => {
+      const cl = entry.cls === "fracture" ? "fracture" : entry.cls === "memory" ? "memory" : "";
+      return `<p class="${cl}">${entry.text}</p>`;
+    }).join("") + frac;
+
+    renderHUD();
+    renderSaves();
+  }
+
+  function combatTurn(mode) {
+    const c = state.combat;
+    if (!c) return;
+
+    let dmg = mode === "strike" ? state.atk + Math.floor(Math.random() * 5) : Math.floor(state.atk * 0.55);
+    c.enemyHp -= dmg;
+    c.turn += 1;
+    pushLog(`You hit for ${dmg}.`, null);
+
+    if (c.enemyHp <= 0) {
+      state.gold += 40 + Math.floor(Math.random() * 20);
+      state.combat = null;
+      const slimePath = c.enemyName.includes("Gelatinous") || state.reality.floor1Boss.key === "slime";
+      if (slimePath) {
+        pushLog("The slime core shatters. This matches what you studied — unless you've fractured too far.", null);
+        if (state.flags.forcedGate && !state.flags.spareOffer) {
+          setActions([{
+            text: "Finish the core (canon: mercy was possible)",
+            onClick: () => {
+              addDivergence(12, "<span class='memory'>Memory:</span> You could have stabilized the core for research. You chose destruction.");
+              endFloor1();
+              persist();
+            }
+          }, {
+            text: "Stabilize core — spare extra damage (+timeline care)",
+            primary: true,
+            onClick: () => {
+              state.flags.spareOffer = true;
+              pushLog("You bleed mana into the core. Hunters will talk. The story shifts — slightly toward kindness.", null);
+              endFloor1();
+              persist();
+            }
+          }]);
+          renderAll();
+          return;
+        }
+        endFloor1();
+      } else {
+        pushLog("The wraith disperses into needles of cold light. That was not in your notes.", "fracture");
+        endFloor1();
+      }
+      renderAll();
+      persist();
+      return;
+    }
+
+    const incoming = c.enemyAtk + Math.floor(Math.random() * 4);
+    state.hp -= incoming;
+    pushLog(`${c.enemyName} strikes for ${incoming}.`, null);
+
+    if (state.hp <= 0) {
+      state.hp = 0;
+      pushLog("You fall. Regress from an anchor in the sidebar, or reset if you have none.", "fracture");
+      state.combat = null;
+      setActions([
+        {
+          text: state.anchors.length
+            ? "Regress using an anchor (sidebar)"
+            : "Reset — new contract (no anchors)",
+          primary: true,
+          onClick: () => {
+            if (!state.anchors.length) {
+              localStorage.removeItem(STORAGE);
+              state = defaultState();
+              persist();
+              startIntro();
+            }
+          }
+        }
+      ]);
+      if (!state.anchors.length) {
+        pushLog("No anchor set. The only exit is a blank slate.", "fracture");
+      }
+      renderAll();
+      persist();
+      return;
+    }
+
+    combatUI();
+    renderHUD();
+    renderSaves();
+  }
+
+  function endFloor1() {
+    state.phase = "after1";
+    if (!state.flags.floor1Cleared) {
+      pushLog("Floor 1 clears. Higher gates wait — each choice stacks butterfly pressure.", null);
+      if (state.divergence >= 45) {
+        pushLog("Whispers in the System UI: <span class='em'>Predictive model desync. New encounters may spawn.</span>", "fracture");
+      }
+      state.flags.floor1Cleared = true;
+    }
+    setActions([
+      {
+        text: "Return to plaza — plan the climb",
+        primary: true,
+        onClick: () => {
+          state.phase = "plaza";
+          state.floor = 0;
+          renderAll();
+          plazaChoices();
+        }
+      },
+      {
+        text: "Push to Floor 2 now (reckless — butterfly)",
+        danger: true,
+        onClick: () => {
+          addDivergence(18, "<span class='memory'>Memory:</span> You rested a day between floors in your first life.");
+          state.phase = "floor2";
+          state.flags.floor2Wrapped = false;
+          state.flags.inFloor2Choice = false;
+          floor2Event();
+        }
+      }
+    ]);
+    renderAll();
+  }
+
+  function floor2Event() {
+    if (!state.flags.inFloor2Choice) {
+      pushLog("Floor 2 isn't a single room in your memory — it's a shifting corridor. Divergence made the tower improvising.", "fracture");
+      const hazard = state.divergence >= 55 ? "A ranker phantom" : "A rune trap";
+      pushLog(`You face: ${hazard}.`, null);
+      state.flags.inFloor2Choice = true;
+    }
+    setActions([
+      {
+        text: "Burn gold to bribe the ambient spirits (30g)",
+        onClick: () => {
+          if (state.gold >= 30) {
+            state.gold -= 30;
+            addDivergence(8, "Wealth changed hands in a way your past self never tried.");
+          } else pushLog("Not enough gold. You take the hit.", null);
+          state.hp = Math.max(1, state.hp - (state.divergence >= 55 ? 35 : 18));
+          wrapFloor2();
+        }
+      },
+      {
+        text: "Tank it with skill (HP loss)",
+        primary: true,
+        onClick: () => {
+          state.hp = Math.max(1, state.hp - (state.divergence >= 55 ? 28 : 15));
+          wrapFloor2();
+        }
+      }
+    ]);
+    renderAll();
+  }
+
+  function wrapFloor2() {
+    if (!state.flags.floor2Wrapped) {
+      pushLog("You scrape through. The Spire feels like a different novel than the one you memorized.", null);
+      state.flags.floor2Wrapped = true;
+    }
+    state.flags.inFloor2Choice = false;
+    setActions([{
+      text: "Climb back to sanity — plaza",
+      primary: true,
+      onClick: () => {
+        state.phase = "plaza";
+        state.floor = 0;
+        renderAll();
+        plazaChoices();
+      }
+    }]);
+    renderAll();
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE, JSON.stringify(state));
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadPersisted() {
+    try {
+      const raw = localStorage.getItem(STORAGE);
+      if (!raw) return false;
+      const o = JSON.parse(raw);
+      if (o && typeof o === "object" && o.phase) {
+        state = o;
+        return true;
+      }
+    } catch (e) { /* ignore */ }
+    return false;
+  }
+
+  document.getElementById("actions").addEventListener("click", () => {
+    setTimeout(persist, 0);
+  });
+
+  if (loadPersisted() && state.phase && state.phase !== "intro") {
+    pushLog("<span class='em'>Continued timeline</span> loaded from browser storage.", null);
+    renderAll();
+    resumeFromState();
+  } else {
+    startIntro();
+  }
+})();
+  </script>
+</body>
+</html>
