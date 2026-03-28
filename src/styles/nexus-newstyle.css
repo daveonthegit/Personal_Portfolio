@@ -387,13 +387,16 @@ body {
   font-weight: 700;
   font-size: 1.25rem;
   letter-spacing: -0.02em;
+  text-transform: none;
 }
 .nexus-logo-os {
   color: #fff !important;
-  font-weight: 300;
+  font-weight: 700;
   font-size: 1.25rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
+
 .nexus-nav-link {
   font-size: 10px;
   font-weight: 700;
