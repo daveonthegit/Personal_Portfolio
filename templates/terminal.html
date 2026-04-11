@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{.Title}}</title>
     <meta name="description" content="{{.Description}}">
-    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/static/css/main.css?v={{.AssetVersion}}">
+    <link rel="icon" href="{{asset "/static/favicon.svg"}}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{asset "/static/css/main.css"}}">
 </head>
 <body class="h-full bg-black text-white font-mono overflow-hidden">
     <a href="/home" class="skip-intro-link fixed top-3 right-3 z-[100] text-[11px] font-mono uppercase tracking-widest px-3 py-2 border border-nexus-cyan/60 bg-black/80 text-nexus-cyan hover:bg-nexus-cyan/10 no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nexus-cyan">Skip intro</a>
@@ -66,6 +66,6 @@
         </div>
     </main>
 
-    <script src="/static/js/terminal-boot.js?v={{.AssetVersion}}"></script>
+    <script src="{{asset "/static/js/terminal-boot.js"}}"></script>
 </body>
 </html>

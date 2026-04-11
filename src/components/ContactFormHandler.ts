@@ -4,15 +4,34 @@ export class ContactFormHandler {
   private static form: HTMLFormElement | null = null;
   private static submitButton: HTMLButtonElement | null = null;
   private static messageContainer: HTMLDivElement | null = null;
+  private static boundSubmit: ((e: Event) => void) | null = null;
 
-  static init() {
+  /** Bind to #contact-form if present (initial load or SPA navigation to contact). */
+  static bind() {
+    this.unbind();
     this.form = document.getElementById('contact-form') as HTMLFormElement;
     this.submitButton = document.getElementById('submit-btn') as HTMLButtonElement;
     this.messageContainer = document.getElementById('form-message') as HTMLDivElement;
 
     if (this.form) {
-      this.form.addEventListener('submit', this.handleSubmit.bind(this));
+      this.boundSubmit = this.handleSubmit.bind(this);
+      this.form.addEventListener('submit', this.boundSubmit);
     }
+  }
+
+  static unbind() {
+    if (this.form && this.boundSubmit) {
+      this.form.removeEventListener('submit', this.boundSubmit);
+    }
+    this.boundSubmit = null;
+    this.form = null;
+    this.submitButton = null;
+    this.messageContainer = null;
+  }
+
+  /** @deprecated Use {@link bind} — kept for call sites that expect init(). */
+  static init() {
+    this.bind();
   }
 
   private static async handleSubmit(event: Event) {

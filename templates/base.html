@@ -7,25 +7,25 @@
     <meta name="description" content="{{.Description}}">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="{{asset "/static/favicon.svg"}}">
+    <link rel="icon" type="image/x-icon" href="{{asset "/static/favicon.ico"}}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{.SiteURL}}/">
     <meta property="og:title" content="{{.Title}}">
     <meta property="og:description" content="{{.Description}}">
-    <meta property="og:image" content="{{.SiteURL}}/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
+    <meta property="og:image" content="{{asset (printf "%s/static/images/Profile_Picture.jpg" .SiteURL)}}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{.SiteURL}}/">
     <meta property="twitter:title" content="{{.Title}}">
     <meta property="twitter:description" content="{{.Description}}">
-    <meta property="twitter:image" content="{{.SiteURL}}/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
+    <meta property="twitter:image" content="{{asset (printf "%s/static/images/Profile_Picture.jpg" .SiteURL)}}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="{{asset "/static/favicon.ico"}}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="/static/css/main.css?v={{.AssetVersion}}" rel="stylesheet">
+    <link href="{{asset "/static/css/main.css"}}" rel="stylesheet">
 </head>
 <body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-auto relative bg-black text-white">
     <a href="#main-content" class="xiaoos-skip-link">Skip to main content</a>
@@ -54,7 +54,7 @@
             <div class="p-4 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar min-h-0">
                 <div class="relative w-full aspect-[4/5] border border-white/20 overflow-hidden hud-profile-img group">
                     <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
-                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="/static/images/Profile_Picture.jpg?v={{.AssetVersion}}">
+                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{asset "/static/images/Profile_Picture.jpg"}}">
                     <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
                     <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
                     <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
@@ -151,11 +151,11 @@
             </div>
             <div class="text-[10px] sm:text-[11px] font-mono truncate text-right max-w-[45%] sm:max-w-none" title="Current page">
                 <span class="text-gray-500 normal-case">Page</span>
-                <span class="text-nexus-cyan uppercase ml-1">{{.TemplateName}}</span>
+                <span id="spa-page-label" class="text-nexus-cyan uppercase ml-1">{{.TemplateName}}</span>
             </div>
         </footer>
     </div>
 
-    <script src="/static/js/main.js?v={{.AssetVersion}}"></script>
+    <script src="{{asset "/static/js/main.js"}}"></script>
 </body>
 </html>

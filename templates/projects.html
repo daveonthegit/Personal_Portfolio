@@ -35,7 +35,7 @@
                 <div class="hidden project-data-store"
                      data-title="{{.Title}}"
                      data-desc="{{.Description}}"
-                     data-img="{{if .Image}}{{.Image}}{{else}}/static/images/wip-default.svg{{end}}"
+                     data-img="{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
                      data-github="{{.GitHubURL}}"
                      data-live="{{.LiveURL}}"
                      data-demo-url="{{.DemoURL}}">
@@ -46,7 +46,7 @@
                     {{end}}
                 </div>
                 <div class="relative w-full sm:w-[42%] min-h-[11rem] sm:min-h-0 shrink-0 bg-black/50">
-                    <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-95" style="background-image: url('{{.Image}}');"></div>
+                    <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-95" style="background-image: url('{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}');"></div>
                     <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/25 to-transparent pointer-events-none sm:bg-gradient-to-t sm:from-black/80 sm:via-black/20"></div>
                 </div>
                 <div class="relative flex-1 flex flex-col justify-center p-4 md:p-6 z-10 min-w-0">
@@ -74,7 +74,7 @@
                 <div class="hidden project-data-store" 
                      data-title="{{.Title}}" 
                      data-desc="{{.Description}}" 
-                     data-img="{{if .Image}}{{.Image}}{{else}}/static/images/wip-default.svg{{end}}"
+                     data-img="{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
                      data-github="{{.GitHubURL}}"
                      data-live="{{.LiveURL}}"
                      data-demo-url="{{.DemoURL}}">
@@ -91,7 +91,7 @@
                 <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{.Image}}');"></div>
+                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none"></div>
                 
                 <!-- Info -->
@@ -206,140 +206,4 @@
 
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const projectCards = document.querySelectorAll('.project-card');
-
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            const filter = this.getAttribute('data-filter');
-            projectCards.forEach(card => {
-                const cardType = card.getAttribute('data-type');
-                card.style.display = (filter === 'all' || cardType === filter) ? '' : 'none';
-            });
-        });
-    });
-
-    const overlay = document.getElementById('project-terminal-overlay');
-    const terminalWindow = document.getElementById('terminal-window');
-    const closeBtn = document.getElementById('close-terminal-btn');
-    const contentArea = document.getElementById('term-content-area');
-    const termTitle = document.getElementById('term-project-title');
-    const termDesc = document.getElementById('term-project-desc');
-    const termImg = document.getElementById('term-project-img');
-    const termTech = document.getElementById('term-project-tech');
-    const termId = document.getElementById('term-project-id');
-    const termType = document.getElementById('term-project-type');
-    const termStatus = document.getElementById('term-project-status');
-    const termLinks = document.getElementById('term-project-links');
-    const termCmdTarget = document.getElementById('term-cmd-target');
-    const termHeaderTitle = document.getElementById('term-header-title');
-    const termImgCaption = document.getElementById('term-img-id');
-
-    let lastFocus = null;
-
-    function onEscape(e) {
-        if (e.key !== 'Escape') return;
-        if (overlay.classList.contains('hidden')) return;
-        e.preventDefault();
-        closeTerminal();
-    }
-    document.addEventListener('keydown', onEscape);
-
-    const closeTerminal = () => {
-        contentArea.classList.add('opacity-0');
-        overlay.classList.add('opacity-0');
-        terminalWindow.classList.remove('scale-100');
-        terminalWindow.classList.add('scale-95');
-        setTimeout(() => {
-            overlay.classList.add('hidden');
-            termImg.src = '';
-            if (lastFocus && typeof lastFocus.focus === 'function') {
-                lastFocus.focus();
-            }
-            lastFocus = null;
-        }, 180);
-    };
-
-    projectCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.closest('a')) return;
-            const dataStore = this.querySelector('.project-data-store');
-            const techStore = this.querySelector('.project-tech-store');
-            const categoryId = this.getAttribute('data-category');
-            const type = this.getAttribute('data-type');
-            const status = this.getAttribute('data-status');
-            const title = dataStore.getAttribute('data-title');
-            const desc = dataStore.getAttribute('data-desc');
-            const imgUrl = dataStore.getAttribute('data-img');
-            const githubUrl = dataStore.getAttribute('data-github');
-            const liveUrl = dataStore.getAttribute('data-live');
-            const demoUrl = dataStore.getAttribute('data-demo-url');
-
-            termTitle.textContent = title;
-            termDesc.textContent = desc;
-            termImg.src = imgUrl;
-            termImg.alt = title ? title + ' preview' : 'Project preview';
-            termId.textContent = categoryId;
-            termType.textContent = (type || '—').toUpperCase();
-            termStatus.textContent = status === 'active' ? 'ACTIVE' : (status === 'in-development' ? 'IN DEV' : 'DEPLOYED');
-            termStatus.className = 'project-modal__meta-value project-modal__meta-value--status';
-            if (status === 'active') {
-                termStatus.classList.add('project-modal__status--active');
-            } else if (status === 'in-development') {
-                termStatus.classList.add('project-modal__status--dev');
-            } else {
-                termStatus.classList.add('project-modal__status--neutral');
-            }
-            termCmdTarget.textContent = 'mod_' + categoryId;
-            termHeaderTitle.textContent = 'Registry · ' + categoryId;
-            if (termImgCaption) {
-                termImgCaption.textContent = categoryId.replace(/-/g, ' · ');
-            }
-
-            termTech.innerHTML = '';
-            if (techStore) {
-                techStore.querySelectorAll('span').forEach(span => {
-                    const el = document.createElement('span');
-                    el.className = 'project-modal__tech-tag';
-                    el.textContent = span.textContent;
-                    termTech.appendChild(el);
-                });
-            }
-
-            termLinks.innerHTML = '';
-            if (githubUrl) {
-                termLinks.innerHTML += '<a href="' + githubUrl + '" target="_blank" rel="noopener noreferrer" class="project-modal__link"><span class="project-modal__link-label">Source code</span><span class="material-symbols-outlined project-modal__link-icon" aria-hidden="true">code</span></a>';
-            }
-            if (liveUrl || demoUrl) {
-                const targetUrl = liveUrl || demoUrl;
-                const label = liveUrl ? 'Live deployment' : 'Run demo';
-                const icon = liveUrl ? 'public' : 'play_arrow';
-                termLinks.innerHTML += '<a href="' + targetUrl + '" target="_blank" rel="noopener noreferrer" class="project-modal__link"><span class="project-modal__link-label">' + label + '</span><span class="material-symbols-outlined project-modal__link-icon" aria-hidden="true">' + icon + '</span></a>';
-            }
-
-            lastFocus = document.activeElement;
-            overlay.classList.remove('hidden');
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    overlay.classList.remove('opacity-0');
-                    terminalWindow.classList.remove('scale-95');
-                    terminalWindow.classList.add('scale-100');
-                    contentArea.classList.remove('opacity-0');
-                    closeBtn.focus();
-                });
-            });
-        });
-    });
-
-    closeBtn.addEventListener('click', closeTerminal);
-    overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) closeTerminal();
-    });
-});
-</script>
 {{end}}

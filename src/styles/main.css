@@ -697,6 +697,23 @@
     @apply border-white/20 text-gray-300 bg-transparent hover:border-white/35 hover:text-white;
   }
 
+  /* About — employer-first single column (no tab rail) */
+  .about-page-kicker {
+    @apply text-[10px] font-mono uppercase tracking-[0.2em] text-nexus-cyan/85 m-0;
+  }
+
+  .about-page-cta-btn {
+    @apply inline-flex items-center justify-center py-2.5 px-4 text-[11px] font-nexus-display font-bold uppercase tracking-[0.12em] border transition-colors duration-150 active:scale-[0.99] sm:min-w-0;
+  }
+
+  .about-page-cta-btn--primary {
+    @apply border-nexus-cyan text-nexus-cyan bg-nexus-cyan/[0.08] hover:bg-nexus-cyan/15;
+  }
+
+  .about-page-cta-btn--ghost {
+    @apply border-white/20 text-gray-300 bg-transparent hover:border-white/40 hover:text-white;
+  }
+
   /* Projects — module detail overlay (dossier record, not neon terminal) */
   .project-modal {
     background: color-mix(in oklch, oklch(0.1 0.012 250) 96%, black);
