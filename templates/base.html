@@ -87,21 +87,21 @@
 
                     <div class="pt-2 flex flex-col gap-2">
                         {{if .Personal.Email}}
-                        <a href="mailto:{{.Personal.Email}}" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">EMAIL</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">mail</span>
+                        <a href="mailto:{{.Personal.Email}}" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="Send email to {{.Personal.Name}}">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">Email me</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">mail</span>
                         </a>
                         {{end}}
                         {{if .Personal.GitHub}}
-                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">GITHUB</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">code</span>
+                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="View GitHub profile and repositories (opens in new tab)">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">GitHub</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">code</span>
                         </a>
                         {{end}}
                         {{if .Personal.LinkedIn}}
-                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">LINKEDIN</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">work</span>
+                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="Open LinkedIn profile (opens in new tab)">
+                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">LinkedIn</span>
+                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">work</span>
                         </a>
                         {{end}}
                     </div>
@@ -129,11 +129,11 @@
         <!-- Bottom HUD bar -->
         <footer class="game-hud-bottom border-t border-white/10 bg-black/80 backdrop-blur-md flex justify-between items-center px-3 sm:px-4 py-2 z-20 gap-2">
             <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-                <a href="/home" class="w-11 h-11 sm:w-9 sm:h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Open hub home" title="Hub home">
+                <a href="/home" class="w-11 h-11 sm:w-9 sm:h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Portfolio home — main menu" title="Portfolio home">
                     <span class="material-symbols-outlined text-sm" aria-hidden="true">apps</span>
                 </a>
                 <nav class="flex items-center gap-0.5 sm:gap-1 overflow-x-auto game-hud-nav-mini no-scrollbar" aria-label="Primary navigation">
-                    <a href="/about" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">About</a>
+                    <a href="/about" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">About me</a>
                     <a href="/projects" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Projects</a>
                     <a href="/resume" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Resume</a>
                     <a href="/contact" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Contact</a>

@@ -1,190 +1,137 @@
 {{define "contact-content"}}
-<style>
-/* Contact page layout (hub panel) */
-.contact-main {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    min-height: 0;
-    padding: 0;
-    width: 100%;
-}
-</style>
 <div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
     <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
         <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
+            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to portfolio home" aria-label="Back to portfolio home">
                 <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
             </a>
             <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">Secure Communications</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">ESTABLISHING TUNNEL: NEXUS_CONTACT_V4.0</p>
+                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-[0.14em] uppercase truncate">Secure communications</h1>
+                <p class="text-[9px] md:text-[10px] font-mono text-gray-500 tracking-[0.18em] truncate">Contact dossier / TLS when available</p>
             </div>
         </div>
         <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
+            <span class="w-1.5 h-1.5 rounded-sm bg-nexus-cyan/90"></span>
+            <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Index</span>
         </div>
     </div>
     <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<main class="contact-main relative z-10 h-full min-h-0 flex items-stretch justify-center p-1 sm:p-2 md:p-4">
-    <div class="contact-grid h-full min-h-0 w-full max-w-7xl mx-auto lg:max-h-[800px]" style="display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: stretch;">
-        <style>
-            @media (min-width: 1024px) {
-                .contact-grid {
-                    grid-template-columns: 1fr 2fr !important;
-                }
-                .contact-left {
-                    order: 1 !important;
-                }
-                .contact-right {
-                    order: 2 !important;
-                }
-            }
-        </style>
-        <!-- Left Column - Direct Links & Status -->
-        <div class="contact-left flex flex-col gap-4 h-full" style="order: 2;">
-            <!-- Direct Links Panel -->
-            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-4 md:p-6 backdrop-blur-md flex-1">
-                <div class="corner-accent-tl"></div>
-                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-                    <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Direct Links</h2>
-                    <span class="material-symbols-outlined text-nexus-cyan text-lg">hub</span>
+        <main class="relative z-10 h-full min-h-0 flex flex-col p-1 sm:p-0">
+            <div class="contact-layout h-full min-h-0 w-full max-w-7xl mx-auto lg:max-h-[800px]">
+                <div class="contact-left flex flex-col gap-3 md:gap-4 h-full min-h-0 order-2 lg:order-1">
+                    <div class="dossier-block dossier-block--pad flex-1 min-h-0 flex flex-col">
+                        <header class="dossier-section-head">
+                            <span class="dossier-section-idx">01</span>
+                            <h2>Direct links</h2>
+                            <span class="dossier-section-slug">routes.cfg</span>
+                        </header>
+                        <div class="flex flex-col min-h-0">
+                            {{if .Personal.Email}}
+                            <a href="mailto:{{.Personal.Email}}" class="dossier-link-row group">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-[0.12em]">Secure mail</span>
+                                    <span class="material-symbols-outlined text-nexus-cyan/80 text-base" aria-hidden="true">alternate_email</span>
+                                </div>
+                                <span class="font-mono text-xs md:text-sm text-white truncate">{{.Personal.Email}}</span>
+                            </a>
+                            {{end}}
+                            {{if .Personal.GitHub}}
+                            <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="dossier-link-row group">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-[0.12em]">GitHub</span>
+                                    <span class="material-symbols-outlined text-nexus-cyan/80 text-base" aria-hidden="true">terminal</span>
+                                </div>
+                                <span class="font-mono text-xs md:text-sm text-gray-300">Code repository</span>
+                            </a>
+                            {{end}}
+                            {{if .Personal.LinkedIn}}
+                            <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="dossier-link-row group">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-[0.12em]">LinkedIn</span>
+                                    <span class="material-symbols-outlined text-nexus-cyan/80 text-base" aria-hidden="true">radar</span>
+                                </div>
+                                <span class="font-mono text-xs md:text-sm text-gray-300">Professional network</span>
+                            </a>
+                            {{end}}
+                        </div>
+                    </div>
+
+                    <div class="dossier-block dossier-block--pad shrink-0">
+                        <header class="dossier-section-head">
+                            <span class="dossier-section-idx">02</span>
+                            <h2>Link quality</h2>
+                            <span class="dossier-section-slug">link_diag.log</span>
+                        </header>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center text-[10px] font-mono">
+                                <span class="text-gray-500 uppercase tracking-tighter">Signal</span>
+                                <span class="text-nexus-cyan">Stable</span>
+                            </div>
+                            <div class="dossier-signal-track" role="presentation" aria-hidden="true">
+                                <div class="dossier-signal-fill"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] font-mono">
+                                <span class="text-gray-500 uppercase tracking-tighter">Loss</span>
+                                <span class="text-white">0.00%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] font-mono">
+                                <span class="text-gray-500 uppercase tracking-tighter">Crypto</span>
+                                <span class="text-white">AES-256</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="space-y-3">
-                    {{if .Personal.Email}}
-                    <a href="mailto:{{.Personal.Email}}" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Secure_Mail</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">alternate_email</span>
+
+                <div class="contact-right flex flex-col h-full min-h-0 overflow-hidden order-1 lg:order-2">
+                    <div class="dossier-viewport flex-1 flex flex-col p-4 md:p-7 min-h-0 relative">
+                        <div class="absolute top-3 right-3 md:top-4 md:right-5 opacity-[0.07] pointer-events-none" aria-hidden="true">
+                            <span class="material-symbols-outlined text-6xl md:text-7xl text-white">cell_tower</span>
                         </div>
-                        <div class="font-mono text-xs md:text-sm text-white truncate">{{.Personal.Email}}</div>
-                    </a>
-                    {{end}}
-                    {{if .Personal.GitHub}}
-                    <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Github_Node</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">terminal</span>
-                        </div>
-                        <div class="font-mono text-xs md:text-sm text-white truncate">Code Repository</div>
-                    </a>
-                    {{end}}
-                    {{if .Personal.LinkedIn}}
-                    <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="group block cursor-pointer p-2 md:p-3 bg-white/5 border border-white/5 hover:border-nexus-cyan transition-all no-underline">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-[10px] font-nexus-display text-gray-500 uppercase tracking-tighter">Signal_Alias</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan">radar</span>
-                        </div>
-                        <div class="font-mono text-xs md:text-sm text-white truncate">Professional Network</div>
-                    </a>
-                    {{end}}
+                        <header class="dossier-section-head relative z-10">
+                            <span class="dossier-section-idx">03</span>
+                            <h2>Message</h2>
+                            <span class="dossier-section-slug">compose.enc</span>
+                        </header>
+
+                        <form id="contact-form" method="post" action="/contact" class="relative z-10 flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar pr-1 gap-4 md:gap-5">
+                            <div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+                                <label for="contact-website">Company website</label>
+                                <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 shrink-0">
+                                <div class="space-y-1.5">
+                                    <label for="contact-name" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-[0.14em] uppercase">Your name</label>
+                                    <input type="text" id="contact-name" name="name" required class="nexus-input w-full bg-black/50 border border-white/[0.1] px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-[border-color] duration-200 placeholder:text-white/25" placeholder="Your name" autocomplete="name">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label for="email" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-[0.14em] uppercase">Email</label>
+                                    <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/50 border border-white/[0.1] px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-[border-color] duration-200 placeholder:text-white/25" placeholder="you@example.com" autocomplete="email">
+                                </div>
+                            </div>
+                            <div class="space-y-1.5 shrink-0">
+                                <label for="subject" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-[0.14em] uppercase">Subject</label>
+                                <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/50 border border-white/[0.1] px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-[border-color] duration-200 placeholder:text-white/25" placeholder="What is this about?">
+                            </div>
+                            <div class="space-y-1.5 flex-1 flex flex-col min-h-[140px] md:min-h-[160px]">
+                                <label for="message" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-[0.14em] uppercase shrink-0">Message</label>
+                                <textarea id="message" name="message" required class="nexus-input flex-1 resize-none w-full min-h-[120px] bg-black/50 border border-white/[0.1] px-3 py-2.5 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-[border-color] duration-200 placeholder:text-white/25" placeholder="Your message"></textarea>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-2 border-t border-white/[0.06] shrink-0">
+                                <div class="flex items-start gap-2 text-[9px] md:text-[10px] font-mono text-gray-500 max-w-md">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-nexus-cyan shrink-0 mt-0.5" aria-hidden="true"></span>
+                                    <span>HTTPS: form posts over a secure connection when the site is served over HTTPS.</span>
+                                </div>
+                                <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full sm:w-auto flex items-center justify-center gap-2 py-2.5 px-6 text-xs active:scale-[0.98] transition-transform duration-100 shrink-0">
+                                    <span class="material-symbols-outlined text-sm" aria-hidden="true">send</span>
+                                    Send
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="form-message" class="form-message mt-2 md:mt-3 shrink-0" style="display: none;"></div>
                 </div>
             </div>
-            
-            <!-- Comm Status Panel -->
-            <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-4 md:p-6 backdrop-blur-md shrink-0">
-                <div class="corner-accent-br"></div>
-                <div class="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
-                    <h2 class="font-nexus-display text-sm font-bold text-white tracking-widest uppercase">Comm Status</h2>
-                    <span class="material-symbols-outlined text-nexus-cyan text-lg">sensors</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Signal</span>
-                        <span class="text-nexus-cyan">STABLE</span>
-                    </div>
-                    <div class="w-full bg-white/5 h-1">
-                        <div class="bg-nexus-cyan h-full w-[94%]" style="box-shadow: 0 0 8px rgba(0,210,255,0.5);"></div>
-                    </div>
-                    <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Loss</span>
-                        <span class="text-white">0.00%</span>
-                    </div>
-                    <div class="flex justify-between items-center text-[10px] font-mono">
-                        <span class="text-gray-500 uppercase tracking-tighter">Crypto</span>
-                        <span class="text-white">AES-256</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Right Column - Contact Form -->
-        <div class="contact-right flex flex-col h-full overflow-hidden" style="order: 1;">
-            <div class="nexus-panel flex-1 relative bg-surface-translucent border-t-2 border-nexus-cyan p-4 md:p-8 backdrop-blur-md flex flex-col min-h-0">
-                <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-                    <span class="material-symbols-outlined text-6xl md:text-8xl text-white">cell_tower</span>
-                </div>
-                <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 shrink-0">
-                    <div class="w-2 h-6 md:h-8 bg-nexus-cyan"></div>
-                    <div>
-                        <h2 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-tighter uppercase leading-none m-0">
-                            Transmission Form
-                        </h2>
-                        <p class="text-[9px] md:text-[10px] font-mono text-gray-500 mt-1 tracking-widest">ENCRYPTED CHANNEL</p>
-                    </div>
-                </div>
-                
-                <form id="contact-form" method="post" action="/contact" class="space-y-4 md:space-y-6 relative z-10 flex-1 flex flex-col min-h-0 overflow-y-auto custom-scrollbar pr-2">
-                    <!-- Honeypot: leave hidden; bots often fill visible-off-screen fields -->
-                    <div class="absolute -left-[9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
-                        <label for="contact-website">Company website</label>
-                        <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 shrink-0">
-                        <div class="space-y-1 md:space-y-2">
-                            <label for="contact-name" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Your name</label>
-                            <input type="text" id="contact-name" name="name" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="Jane Doe">
-                        </div>
-                        <div class="space-y-1 md:space-y-2">
-                            <label for="email" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Email</label>
-                            <input type="email" id="email" name="email" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="you@example.com">
-                        </div>
-                    </div>
-                    <div class="space-y-1 md:space-y-2 shrink-0">
-                        <label for="subject" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1">Subject</label>
-                        <input type="text" id="subject" name="subject" required class="nexus-input w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="What is this about?">
-                    </div>
-                    <div class="space-y-1 md:space-y-2 flex-1 flex flex-col min-h-[150px]">
-                        <label for="message" class="text-[9px] md:text-[10px] font-nexus-display font-bold text-gray-500 tracking-widest uppercase ml-1 shrink-0">Message</label>
-                        <textarea id="message" name="message" required class="nexus-input flex-1 resize-none w-full bg-black/40 border border-white/10 px-3 py-2 md:px-4 md:py-3 font-mono text-xs md:text-sm text-white focus:outline-none focus:border-nexus-cyan transition-colors placeholder:text-white/20" placeholder="Your message..."></textarea>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5 shrink-0">
-                        <div class="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-gray-500">
-                            <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-nexus-cyan"></span> HTTPS</span>
-                            <span class="flex items-center gap-1 max-w-[14rem] leading-tight">Form posts over a secure connection when the site is served over HTTPS.</span>
-                        </div>
-                        <button type="submit" id="submit-btn" class="nexus-btn-primary group w-full md:w-auto flex items-center justify-center gap-2 py-2">
-                            <span class="material-symbols-outlined text-sm">send</span>
-                            TRANSMIT
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Response Status -->
-            <div id="form-message" class="form-message mt-2 md:mt-4 shrink-0" style="display: none;">
-                <!-- Messages will be dynamically inserted here by TypeScript handler -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Decorative Elements -->
-    <div class="absolute bottom-10 right-10 hidden lg:block opacity-50 pointer-events-none">
-        <div class="text-[10px] font-mono text-right text-nexus-cyan mb-1 uppercase">comms_uplink_active</div>
-        <div class="flex gap-1 justify-end">
-            <div class="w-1 h-3 bg-nexus-cyan animate-pulse"></div>
-            <div class="w-1 h-3 bg-white/20"></div>
-            <div class="w-1 h-3 bg-nexus-cyan"></div>
-            <div class="w-1 h-3 bg-white/20"></div>
-        </div>
-    </div>
-    <div class="absolute top-1/2 left-8 -translate-y-1/2 hidden xl:flex flex-col gap-8 opacity-20 pointer-events-none">
-        <span class="material-symbols-outlined text-white text-xs">add</span>
-        <span class="material-symbols-outlined text-nexus-cyan text-xs">close</span>
-        <span class="material-symbols-outlined text-white text-xs">add</span>
-    </div>
-</main>
+        </main>
     </div>
 </div>
 {{end}}

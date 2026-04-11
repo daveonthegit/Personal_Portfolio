@@ -2,105 +2,92 @@
 <div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
     <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
         <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
+            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to portfolio home" aria-label="Back to portfolio home">
                 <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
             </a>
             <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">Personnel Documentation</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">PROFESSIONAL RESUME // CLEARANCE: PUBLIC</p>
+                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-[0.14em] uppercase truncate">Personnel documentation</h1>
+                <p class="text-[9px] md:text-[10px] font-mono text-gray-500 tracking-[0.18em] truncate">Resume dossier / clearance public</p>
             </div>
         </div>
         <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
+            <span class="w-1.5 h-1.5 rounded-sm bg-nexus-cyan/90"></span>
+            <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Index</span>
         </div>
     </div>
     <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<section class="section relative flex-1 min-h-0 flex flex-col md:flex-row gap-3 md:gap-6 pb-2 md:pb-4 px-2 sm:px-4">
-    <!-- Left Actions Column -->
-    <div class="flex-shrink-0 w-full md:w-[350px] flex flex-col gap-3 md:gap-6 overflow-y-auto custom-scrollbar pr-1 sm:pr-2 pb-2 md:pb-4">
-        <!-- Resume Actions Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border-t-2 border-nexus-cyan p-6 backdrop-blur-md shrink-0">
-            <div class="corner-accent-tl"></div>
-            <div class="corner-accent-br"></div>
-            
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Document Access</h2>
-            </div>
-            
-            <div class="flex flex-col gap-3 mb-4">
-                <a href="/resume/download" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
-                    <span class="material-symbols-outlined text-sm">download</span>
-                    DOWNLOAD PDF
-                </a>
-                <button onclick="window.print()" class="nexus-btn-secondary flex items-center justify-center gap-2 py-2">
-                    <span class="material-symbols-outlined text-sm">print</span>
-                    PRINT DOCUMENT
-                </button>
-            </div>
-            
-            <div class="text-center text-[10px] font-mono text-gray-500 pt-3 border-t border-white/5">
-                Updated: {{.Year}}.01.15 | Ver: 2.1<br>
-                Classification: <span class="text-[#4ade80]">PUBLIC</span>
-            </div>
-        </div>
+        <div class="resume-layout">
+            <aside class="resume-aside" aria-label="Resume actions">
+                <div class="dossier-block dossier-block--pad shrink-0">
+                    <header class="dossier-section-head">
+                        <span class="dossier-section-idx">01</span>
+                        <h2>Document access</h2>
+                        <span class="dossier-section-slug">resume.pdf</span>
+                    </header>
+                    <div class="flex flex-col gap-2">
+                        <a href="/resume/download" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
+                            <span class="material-symbols-outlined text-sm" aria-hidden="true">download</span>
+                            Download PDF
+                        </a>
+                        <button type="button" onclick="window.print()" class="nexus-btn-secondary flex items-center justify-center gap-2 py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
+                            <span class="material-symbols-outlined text-sm" aria-hidden="true">print</span>
+                            Print
+                        </button>
+                    </div>
+                    <p class="text-center text-[10px] font-mono text-gray-500 pt-4 mt-4 border-t border-white/[0.06] leading-relaxed">
+                        Updated {{.Year}}.01.15 / ver 2.1<br>
+                        <span class="text-gray-600">Classification</span> <span class="text-[#4ade80]">PUBLIC</span>
+                    </p>
+                </div>
 
-        <!-- Contact CTA Panel -->
-        <div class="nexus-panel relative bg-surface-translucent border border-white/10 p-6 backdrop-blur-md text-center shrink-0">
-            <div class="corner-accent-tl"></div>
-            <div class="corner-accent-br"></div>
-            
-            <div class="flex items-center justify-center gap-2 mb-4">
-                <div class="w-1.5 h-6 bg-nexus-cyan"></div>
-                <h2 class="text-xl font-nexus-display font-bold text-white tracking-tighter uppercase">Initiate Contact</h2>
-            </div>
-            
-            <p class="text-gray-400 text-xs mb-4 max-w-md mx-auto">
-                Interested in collaboration or have project inquiries? Establish a secure communication channel.
-            </p>
-            
-            <a href="/contact" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2">
-                <span class="material-symbols-outlined text-sm">send</span>
-                GET IN TOUCH
-            </a>
-            
-            <div class="mt-4 pt-4 border-t border-white/5 grid grid-cols-3 gap-2 max-w-md mx-auto">
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
-                    <div class="text-[#4ade80] font-mono text-[10px]">AVAILABLE</div>
+                <div class="dossier-block dossier-block--pad shrink-0">
+                    <header class="dossier-section-head">
+                        <span class="dossier-section-idx">02</span>
+                        <h2>Outbound</h2>
+                        <span class="dossier-section-slug">contact.req</span>
+                    </header>
+                    <p class="text-gray-400 text-xs leading-relaxed mb-4 max-w-none">
+                        Hiring or collaboration: open a channel from the contact surface.
+                    </p>
+                    <a href="/contact" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
+                        <span class="material-symbols-outlined text-sm" aria-hidden="true">send</span>
+                        Email me
+                    </a>
+                    <div class="dossier-kv-footer">
+                        <div>
+                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
+                            <div class="text-[#4ade80] font-mono text-[10px]">Available</div>
+                        </div>
+                        <div>
+                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
+                            <div class="text-nexus-cyan font-mono text-[10px]">24h max</div>
+                        </div>
+                        <div>
+                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
+                            <div class="text-[#e8a030] font-mono text-[10px]">High</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
-                    <div class="text-nexus-cyan font-mono text-[10px]">24HR MAX</div>
-                </div>
-                <div class="text-center">
-                    <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
-                    <div class="text-[#ff5500] font-mono text-[10px]">HIGH</div>
-                </div>
-            </div>
-        </div>
-    </div>
+            </aside>
 
-    <!-- Right PDF Column -->
-    <div class="flex-1 flex flex-col nexus-panel relative bg-surface-translucent border border-white/10 p-0 backdrop-blur-md h-full min-h-0 overflow-hidden">
-        <div class="flex items-center justify-between p-3 md:p-4 bg-black/40 border-b border-white/5 shrink-0 z-10">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-nexus-cyan text-sm">description</span>
-                <h2 class="text-sm font-nexus-display font-bold text-white tracking-widest uppercase">Preview Mode</h2>
+            <div class="dossier-viewport flex-1 min-h-0 flex flex-col">
+                <div class="flex items-center justify-between gap-3 px-3 md:px-4 py-3 border-b border-white/[0.06] shrink-0 bg-black/30">
+                    <header class="dossier-section-head mb-0 pb-0 border-0 flex-1 min-w-0">
+                        <span class="dossier-section-idx">03</span>
+                        <h2 class="truncate">Preview</h2>
+                        <span class="dossier-section-slug hidden sm:inline">viewer.bin</span>
+                    </header>
+                    <span class="text-[9px] font-mono text-gray-600 shrink-0 tabular-nums">RES_{{.Year}}_001</span>
+                </div>
+                <div class="flex-1 bg-[#141414] relative w-full min-h-[min(55vh,480px)] md:min-h-0">
+                    <iframe
+                        src="/resume/pdf"
+                        class="absolute inset-0 w-full h-full border-0 min-h-[min(55vh,480px)] md:min-h-0"
+                        title="Resume preview">
+                    </iframe>
+                </div>
             </div>
-            <span class="text-[9px] font-mono text-gray-500 hidden sm:block">DOC_ID: RES_{{.Year}}_001</span>
         </div>
-        
-        <div class="flex-1 bg-[#1a1a1a] relative w-full min-h-[min(55vh,480px)] md:min-h-0 h-full">
-            <iframe 
-                src="/resume/pdf" 
-                class="absolute inset-0 w-full h-full border-0 min-h-[min(55vh,480px)] md:min-h-0"
-                title="Resume Preview">
-            </iframe>
-        </div>
-    </div>
-</section>
     </div>
 </div>
 
@@ -112,23 +99,23 @@
     .nexus-footer {
         display: none !important;
     }
-    
-    .section {
+
+    .resume-layout {
         padding: 0 !important;
     }
-    
-    .nexus-panel {
+
+    .dossier-block,
+    .dossier-viewport {
         background: white !important;
         border: none !important;
         box-shadow: none !important;
-        margin: 0 !important;
     }
-    
+
     body {
         background: white !important;
         color: black !important;
     }
-    
+
     .resume-content {
         page-break-inside: avoid;
     }

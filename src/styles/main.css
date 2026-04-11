@@ -507,6 +507,562 @@
   .nexus-btn-secondary:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
+
+  /* About — top rail (menu bar) + viewport; ledger profile sheet */
+  .about-rail.about-manifest {
+    @apply flex flex-row w-full shrink-0 overflow-x-auto no-scrollbar border border-white/[0.08] backdrop-blur-md;
+    background: color-mix(in oklch, oklch(0.14 0.02 250) 88%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 1px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .about-manifest-item {
+    @apply relative flex flex-col items-center justify-center gap-0.5 flex-1 min-w-[5.25rem] sm:min-w-[6.5rem] py-2.5 px-1.5 sm:px-3 border-0 border-r border-white/[0.06] last:border-r-0 bg-transparent cursor-pointer text-center;
+    font: inherit;
+    transition:
+      background-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+      transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: inset 0 -2px 0 transparent;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .about-manifest-item:hover:not(.about-manifest-item--active) {
+      @apply bg-white/[0.03];
+    }
+  }
+
+  .about-manifest-item:active {
+    transform: scale(0.985);
+  }
+
+  .about-manifest-item--active {
+    @apply bg-nexus-cyan/[0.07];
+    box-shadow: inset 0 -2px 0 0 var(--nexus-cyan);
+  }
+
+  .about-manifest-idx {
+    @apply font-mono text-[9px] sm:text-[10px] tabular-nums text-gray-500 shrink-0;
+  }
+
+  .about-manifest-item--active .about-manifest-idx {
+    @apply text-nexus-cyan;
+  }
+
+  .about-manifest-label {
+    @apply text-[10px] sm:text-[11px] font-nexus-display font-bold tracking-[0.12em] sm:tracking-[0.14em] uppercase text-gray-400 min-w-0 leading-tight;
+  }
+
+  .about-manifest-item--active .about-manifest-label {
+    @apply text-white;
+  }
+
+  .about-viewport {
+    @apply relative overflow-hidden flex flex-col min-h-0 flex-1 border border-white/[0.08] backdrop-blur-md;
+    background: color-mix(in oklch, oklch(0.12 0.022 250) 92%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  .about-quote {
+    @apply text-white/90 font-light italic border border-white/[0.1] bg-white/[0.02] px-4 py-3 text-sm leading-relaxed;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .about-exp-row {
+    @apply grid grid-cols-1 sm:grid-cols-[minmax(0,6.5rem)_1fr] gap-4 sm:gap-6 items-start;
+  }
+
+  .about-exp-meta {
+    @apply font-mono text-[9px] sm:text-[10px] text-gray-500 leading-snug tabular-nums pt-0.5 sm:text-right sm:pt-1 border-b border-white/[0.06] sm:border-b-0 sm:border-r sm:border-white/[0.06] sm:pr-4 pb-3 sm:pb-0;
+  }
+
+  .about-exp-card {
+    @apply border border-white/[0.08] bg-black/25 p-4 md:p-5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition:
+      border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .about-exp-card:hover {
+      @apply border-nexus-cyan/20 bg-black/35;
+    }
+  }
+
+  .about-edu-stack {
+    @apply border border-white/[0.08] divide-y divide-white/[0.06] overflow-hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .about-edu-item {
+    @apply p-4 bg-transparent;
+  }
+
+  /* Profile: portrait + single-column ledger (not a 2×2 card grid) */
+  .about-profile-sheet {
+    @apply grid max-w-4xl gap-6 md:gap-8 md:grid-cols-[minmax(0,13rem)_1fr] md:items-start;
+  }
+
+  .about-profile-visual {
+    @apply flex flex-col gap-2 w-full max-w-[16rem] md:max-w-none mx-auto md:mx-0;
+  }
+
+  .about-profile-visual-tag {
+    @apply font-mono text-[9px] tracking-[0.22em] uppercase text-gray-600 m-0;
+  }
+
+  .about-profile-frame {
+    @apply aspect-[3/4] w-full;
+  }
+
+  .about-profile-img {
+    @apply w-full h-full object-cover grayscale contrast-125 transition-all duration-500;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .about-profile-frame:hover .about-profile-img {
+      filter: grayscale(0) contrast(1.05);
+    }
+  }
+
+  .about-profile-visual-meta {
+    @apply font-mono text-[9px] text-gray-600 tracking-widest uppercase m-0;
+  }
+
+  .about-profile-body {
+    @apply flex flex-col gap-0 min-w-0;
+  }
+
+  .about-record-strip {
+    @apply flex flex-row items-center gap-2 w-full mb-4 pb-1;
+  }
+
+  .about-record-strip-label {
+    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-gray-500 shrink-0;
+  }
+
+  .about-record-strip-rule {
+    @apply flex-1 min-w-[2rem] h-px border-b border-dotted border-white/15 self-center opacity-80;
+  }
+
+  .about-record-strip-meta {
+    @apply font-mono text-[9px] uppercase tracking-widest text-gray-600 shrink-0;
+  }
+
+  .about-ledger {
+    @apply m-0 border border-white/[0.08] overflow-hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .about-ledger-row {
+    @apply grid grid-cols-1 sm:grid-cols-[minmax(6.5rem,9rem)_1fr] gap-1 sm:gap-4 items-baseline px-3 py-3 sm:px-4 sm:py-3.5 border-b border-white/[0.06] last:border-b-0 bg-black/[0.18];
+  }
+
+  .about-ledger-row:nth-child(even) {
+    @apply bg-black/[0.12];
+  }
+
+  .about-ledger-row dt {
+    @apply m-0 font-mono text-[9px] uppercase tracking-[0.18em] text-gray-500;
+  }
+
+  .about-ledger-row dd {
+    @apply m-0 font-mono text-sm text-white tabular-nums;
+  }
+
+  .about-ledger-row--status dd {
+    @apply text-[#4ade80] flex items-center gap-2 font-mono text-sm;
+  }
+
+  .about-status-dot {
+    @apply inline-block w-1.5 h-1.5 bg-[#4ade80] rounded-[1px] shrink-0;
+  }
+
+  .about-profile-actions {
+    @apply flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6 w-full sm:max-w-xl;
+  }
+
+  .about-action-btn {
+    @apply flex-1 text-center py-2.5 px-4 text-[11px] font-nexus-display font-bold uppercase tracking-[0.14em] border transition-colors duration-150 active:scale-[0.99];
+  }
+
+  .about-action-btn--primary {
+    @apply border-nexus-cyan text-nexus-cyan bg-nexus-cyan/[0.06] hover:bg-nexus-cyan/15;
+  }
+
+  .about-action-btn--ghost {
+    @apply border-white/20 text-gray-300 bg-transparent hover:border-white/35 hover:text-white;
+  }
+
+  /* Projects — module detail overlay (dossier record, not neon terminal) */
+  .project-modal {
+    background: color-mix(in oklch, oklch(0.1 0.012 250) 96%, black);
+    box-shadow:
+      0 28px 72px rgba(0, 0, 0, 0.58),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .project-modal__head {
+    @apply flex flex-row items-center justify-between gap-3 px-3 sm:px-4 py-2.5 border-b border-white/[0.1] shrink-0 bg-black/35;
+  }
+
+  .project-modal__kicker {
+    @apply block font-mono text-[9px] uppercase tracking-[0.22em] text-gray-600;
+  }
+
+  .project-modal__path {
+    @apply m-0 font-mono text-[11px] sm:text-xs text-gray-400 tracking-wide;
+  }
+
+  .project-modal__head-actions {
+    @apply flex items-center gap-3 shrink-0;
+  }
+
+  .project-modal__pulse {
+    @apply hidden sm:block w-1.5 h-1.5 rounded-[1px] bg-nexus-cyan/50;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .project-modal__close {
+    @apply flex items-center justify-center w-9 h-9 text-gray-500 hover:text-white hover:bg-white/[0.06] transition-colors rounded-sm;
+  }
+
+  .project-modal__body {
+    @apply flex flex-1 flex-col md:flex-row min-h-0 overflow-hidden;
+  }
+
+  .project-modal__aside {
+    @apply w-full md:w-[min(100%,17rem)] lg:w-[18.5rem] shrink-0 flex flex-col gap-4 p-4 md:p-5 border-b md:border-b-0 md:border-r border-white/[0.08] bg-black/25 overflow-y-auto;
+  }
+
+  .project-modal__figure {
+    @apply m-0 flex flex-col gap-2;
+  }
+
+  .project-modal__figure-label {
+    @apply font-mono text-[9px] uppercase tracking-[0.2em] text-gray-600;
+  }
+
+  .project-modal__img-wrap {
+    @apply aspect-video w-full overflow-hidden border border-white/[0.1] bg-black relative;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .project-modal__img {
+    @apply w-full h-full object-cover;
+  }
+
+  .project-modal__figure-id {
+    @apply font-mono text-[9px] text-gray-600 tracking-widest uppercase text-right m-0;
+  }
+
+  .project-modal__meta {
+    @apply m-0 border border-white/[0.08] overflow-hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .project-modal__meta-row {
+    @apply grid grid-cols-[minmax(0,5.5rem)_1fr] gap-x-3 gap-y-0.5 items-baseline px-3 py-2.5 border-b border-white/[0.06] last:border-b-0 bg-black/[0.15];
+  }
+
+  .project-modal__meta-row:nth-child(even) {
+    @apply bg-black/[0.08];
+  }
+
+  .project-modal__meta-row dt {
+    @apply m-0 font-mono text-[9px] uppercase tracking-[0.16em] text-gray-500;
+  }
+
+  .project-modal__meta-value {
+    @apply m-0 font-mono text-[11px] text-white text-right uppercase;
+  }
+
+  .project-modal__meta-value--status.project-modal__status--active {
+    @apply text-[#4ade80];
+  }
+
+  .project-modal__meta-value--status.project-modal__status--dev {
+    @apply text-[#e8a030];
+  }
+
+  .project-modal__meta-value--status.project-modal__status--neutral {
+    @apply text-gray-300;
+  }
+
+  .project-modal__links {
+    @apply flex flex-col gap-2 pt-1;
+  }
+
+  .project-modal__link {
+    @apply flex items-center justify-between gap-3 px-3 py-2.5 border border-white/[0.1] bg-white/[0.03] no-underline transition-colors duration-150 active:scale-[0.99];
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-modal__link:hover {
+      @apply border-white/20 bg-white/[0.06];
+    }
+
+    .project-modal__link:hover .project-modal__link-label {
+      @apply text-white;
+    }
+
+    .project-modal__link:hover .project-modal__link-icon {
+      @apply text-nexus-cyan/90;
+    }
+  }
+
+  .project-modal__link-label {
+    @apply text-[10px] font-mono uppercase tracking-[0.14em] text-gray-400;
+  }
+
+  .project-modal__link-icon {
+    @apply text-base text-gray-500 shrink-0;
+  }
+
+  .project-modal__main {
+    @apply flex-1 min-w-0 min-h-0 overflow-y-auto p-4 md:p-6 md:pl-7 bg-[#060607];
+  }
+
+  .project-modal__inner {
+    @apply max-w-[52rem] font-mono text-sm;
+  }
+
+  .project-modal__context {
+    @apply flex flex-wrap items-baseline gap-x-2 gap-y-1 mb-5 pb-3 border-b border-white/[0.07];
+  }
+
+  .project-modal__context-label {
+    @apply text-[9px] uppercase tracking-[0.2em] text-gray-600;
+  }
+
+  .project-modal__context-key {
+    @apply text-[11px] text-gray-400;
+  }
+
+  .project-modal__titleblock {
+    @apply mb-2;
+  }
+
+  .project-modal__section-label {
+    @apply block font-mono text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-1.5;
+  }
+
+  .project-modal__title {
+    @apply text-xl md:text-2xl lg:text-[1.65rem] font-nexus-display font-bold text-white tracking-[0.06em] uppercase leading-tight m-0;
+  }
+
+  .project-modal__verify {
+    @apply font-mono text-[10px] text-gray-600 mb-6 m-0;
+  }
+
+  .project-modal__block {
+    @apply mb-7 last:mb-0;
+  }
+
+  .project-modal__block--tech {
+    @apply mb-5;
+  }
+
+  .project-modal__desc-wrap {
+    @apply border border-white/[0.08] bg-black/30 p-4 md:p-5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .project-modal__desc {
+    @apply text-gray-300 leading-[1.65] text-[13px] md:text-sm m-0;
+  }
+
+  .project-modal__tech {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .project-modal__tech-tag {
+    @apply inline-flex items-center font-mono text-[10px] uppercase tracking-wider px-2 py-1 border border-white/15 text-gray-300 bg-white/[0.04] whitespace-nowrap;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-modal__tech-tag:hover {
+      @apply border-nexus-cyan/35 text-nexus-cyan/95 bg-nexus-cyan/[0.06];
+    }
+  }
+
+  .project-modal__foot {
+    @apply mt-8 pt-4 border-t border-white/[0.06] font-mono text-[10px] text-gray-600 tracking-wide m-0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-manifest-item:active {
+      transform: none;
+    }
+  }
+
+  .about-layout {
+    @apply relative flex-1 min-h-0 flex flex-col gap-3 md:gap-4 px-1 sm:px-2 md:px-4 pb-2 md:pb-4;
+  }
+
+  /* Shared dossier chrome (resume / contact / projects — same language as About) */
+  .dossier-block {
+    @apply relative border border-white/[0.08] backdrop-blur-md overflow-hidden;
+    background: color-mix(in oklch, oklch(0.14 0.02 250) 88%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 1px 0 rgba(0, 0, 0, 0.45);
+  }
+
+  .dossier-block--pad {
+    @apply p-4 md:p-5;
+  }
+
+  .dossier-viewport {
+    @apply relative flex flex-col min-h-0 flex-1 border border-white/[0.08] backdrop-blur-md overflow-hidden;
+    background: color-mix(in oklch, oklch(0.12 0.022 250) 92%, transparent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  .dossier-section-head {
+    @apply flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-4 pb-3 border-b border-white/[0.08] shrink-0;
+  }
+
+  .about-section-head {
+    @apply flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-6 pb-3 border-b border-white/[0.08] shrink-0;
+  }
+
+  .dossier-section-idx,
+  .about-section-idx {
+    @apply font-mono text-[10px] tabular-nums text-nexus-cyan/90 tracking-[0.2em] uppercase;
+  }
+
+  .dossier-section-head h2 {
+    @apply text-sm md:text-base font-nexus-display font-bold text-white tracking-[0.12em] uppercase m-0;
+  }
+
+  .about-section-head h2 {
+    @apply text-base md:text-lg font-nexus-display font-bold text-white tracking-[0.12em] uppercase m-0;
+  }
+
+  .dossier-section-slug {
+    @apply w-full text-[10px] font-mono text-gray-500 tracking-widest ml-0 sm:ml-auto sm:w-auto mt-1 sm:mt-0;
+  }
+
+  .about-section-head .about-section-slug {
+    @apply w-full text-[10px] font-mono text-gray-500 tracking-widest ml-0 sm:ml-auto sm:w-auto mt-1 sm:mt-0;
+  }
+
+  .dossier-link-row {
+    @apply flex flex-col gap-1 py-3 px-1 -mx-1 border-b border-white/[0.06] last:border-b-0 text-left no-underline rounded-sm;
+    transition: background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .dossier-link-row:hover {
+      @apply bg-white/[0.04];
+    }
+  }
+
+  .dossier-link-row:active {
+    transform: scale(0.992);
+  }
+
+  .dossier-kv-footer {
+    @apply grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-white/[0.06] text-center;
+  }
+
+  .dossier-signal-track {
+    @apply h-1 w-full bg-white/[0.06] overflow-hidden rounded-[1px];
+  }
+
+  .dossier-signal-fill {
+    @apply h-full bg-nexus-cyan/90 rounded-[1px];
+    width: 94%;
+  }
+
+  .resume-layout {
+    @apply relative flex-1 min-h-0 flex flex-col lg:flex-row gap-3 md:gap-5 px-1 sm:px-2 md:px-4 pb-2 md:pb-4;
+  }
+
+  .resume-aside {
+    @apply w-full lg:w-[min(100%,17rem)] shrink-0 flex flex-col gap-3 md:gap-4 overflow-y-auto custom-scrollbar pr-1 pb-2 lg:max-h-full;
+  }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 0.75rem;
+    min-height: 0;
+    height: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .contact-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      gap: 1rem;
+    }
+  }
+
+  .projects-shell {
+    @apply relative flex-1 min-h-0 flex flex-col px-1 sm:px-2 md:px-4 pb-2 md:pb-4;
+  }
+
+  .projects-toolbar {
+    @apply flex flex-wrap gap-2 items-center py-3 px-3 mb-3 border border-white/[0.08] shrink-0;
+    background: color-mix(in oklch, oklch(0.11 0.018 250) 95%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .project-tile--feature {
+    @apply relative w-full overflow-hidden text-left cursor-pointer border border-white/[0.1] rounded-sm;
+    background: color-mix(in oklch, oklch(0.1 0.02 250) 94%, transparent);
+    min-height: clamp(11rem, 28vw, 15rem);
+    transition:
+      border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+      background-color 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-tile--feature:hover {
+      @apply border-nexus-cyan/35 bg-black/30;
+    }
+  }
+
+  .project-tile--feature:active {
+    transform: scale(0.995);
+  }
+
+  .projects-matrix-asymmetric {
+    @apply grid w-full gap-2 md:gap-3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .projects-matrix-asymmetric {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .projects-matrix-asymmetric {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .projects-matrix-asymmetric .project-tile-grid:hover {
+      @apply border-nexus-cyan/30 bg-nexus-cyan/[0.06];
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dossier-link-row:active,
+    .project-tile--feature:active {
+      transform: none;
+    }
+  }
   
   /* Sections */
   .section {

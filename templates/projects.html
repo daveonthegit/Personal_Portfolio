@@ -2,46 +2,85 @@
 <div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
     <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
         <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to hub">
+            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to portfolio home" aria-label="Back to portfolio home">
                 <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
             </a>
             <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-widest uppercase truncate">Operational Modules</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-nexus-cyan tracking-widest truncate">SELECT PROJECT DIRECTORY TO INITIALIZE INTERFACE</p>
+                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-[0.14em] uppercase truncate">Projects</h1>
+                <p class="text-[9px] md:text-[10px] font-mono text-gray-500 tracking-[0.18em] truncate">Project index / module registry</p>
             </div>
         </div>
         <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-            <span class="text-[10px] font-mono text-gray-500 uppercase tracking-widest">LIVE</span>
+            <span class="w-1.5 h-1.5 rounded-sm bg-nexus-cyan/90"></span>
+            <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Index</span>
         </div>
     </div>
     <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<section class="section relative flex-1 min-h-0 flex flex-col">
-    <div class="container max-w-7xl mx-auto flex flex-col flex-1 min-h-0 overflow-hidden px-0 sm:px-2">
-        <!-- Filter Controls - Newstyle -->
-        <div class="flex flex-wrap gap-2 md:gap-3 mb-4 pb-4 border-b border-white/5 shrink-0" role="toolbar" aria-label="Filter projects by type">
+<section class="projects-shell relative flex-1 min-h-0 flex flex-col">
+    <div class="w-full max-w-7xl mx-auto flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div class="projects-toolbar" role="toolbar" aria-label="Filter projects by type">
+            <span class="text-[9px] font-mono text-gray-600 uppercase tracking-[0.15em] mr-1 hidden sm:inline">Filter</span>
             <button type="button" class="nexus-filter-btn filter-btn active" data-filter="all">All</button>
             {{range $t := .ProjectTypes}}
             <button type="button" class="nexus-filter-btn filter-btn uppercase" data-filter="{{$t}}">{{$t}}</button>
             {{end}}
         </div>
 
-        <!-- Projects Grid - Dense Node Matrix Layout -->
-        <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-2 pb-4">
-            <div class="projects-matrix grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 w-full max-w-full">
-                {{range $index, $project := .Projects}}
-            <button type="button" class="project-card relative bg-black/40 border border-white/10 group transition-all duration-300 hover:border-nexus-cyan/80 hover:bg-nexus-cyan/10 hover:shadow-[0_0_15px_rgba(0,210,255,0.2)] cursor-pointer aspect-square flex flex-col items-center justify-center p-3 text-center overflow-hidden font-inherit text-left w-full" data-category="{{$project.ID}}" data-type="{{$project.Type}}" data-status="{{$project.Status}}" data-demo="{{$project.DemoType}}">
-                <!-- Storing data for JS to use easily without parsing HTML -->
-                <div class="hidden project-data-store" 
-                     data-title="{{$project.Title}}" 
-                     data-desc="{{$project.Description}}" 
-                     data-img="{{if $project.Image}}{{$project.Image}}{{else}}/static/images/wip-default.svg{{end}}"
-                     data-github="{{$project.GitHubURL}}"
-                     data-live="{{$project.LiveURL}}"
-                     data-demo-url="{{$project.DemoURL}}">
+        <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-1 sm:pr-2 pb-4">
+            {{ $featuredID := "kyarafit" }}
+            <div class="flex flex-col gap-3 md:gap-4">
+                {{range .Projects}}
+                {{if eq .ID $featuredID}}
+                <button type="button" class="project-card project-tile--feature group relative flex flex-col sm:flex-row sm:items-stretch text-left w-full font-inherit overflow-hidden" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
+                <div class="hidden project-data-store"
+                     data-title="{{.Title}}"
+                     data-desc="{{.Description}}"
+                     data-img="{{if .Image}}{{.Image}}{{else}}/static/images/wip-default.svg{{end}}"
+                     data-github="{{.GitHubURL}}"
+                     data-live="{{.LiveURL}}"
+                     data-demo-url="{{.DemoURL}}">
                 </div>
                 <div class="hidden project-tech-store">
-                    {{range $project.Technologies}}
+                    {{range .Technologies}}
+                    <span>{{.}}</span>
+                    {{end}}
+                </div>
+                <div class="relative w-full sm:w-[42%] min-h-[11rem] sm:min-h-0 shrink-0 bg-black/50">
+                    <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-95" style="background-image: url('{{.Image}}');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/25 to-transparent pointer-events-none sm:bg-gradient-to-t sm:from-black/80 sm:via-black/20"></div>
+                </div>
+                <div class="relative flex-1 flex flex-col justify-center p-4 md:p-6 z-10 min-w-0">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="font-mono text-[9px] text-nexus-cyan/90 tracking-[0.2em] uppercase">00 featured</span>
+                        <span class="h-px flex-1 bg-white/[0.08] min-w-[2rem]"></span>
+                    </div>
+                    <h3 class="text-base md:text-lg font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-[0.1em] leading-snug mb-2">{{.Title}}</h3>
+                    <p class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-3">{{.ID}}</p>
+                    <div class="mt-auto flex items-center gap-2 text-[9px] font-mono text-gray-600">
+                        <span>Open dossier</span>
+                        <span class="material-symbols-outlined text-sm text-nexus-cyan/80" aria-hidden="true">chevron_right</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-3 right-3 w-2 h-2 rounded-full z-20 {{if eq .Status "active"}}bg-[#4ade80]{{else if eq .Status "in-development"}}bg-[#e8a030]{{else}}bg-nexus-cyan{{end}}" title="Status" aria-hidden="true"></div>
+                </button>
+                {{end}}
+                {{end}}
+
+                <div class="projects-matrix-asymmetric">
+                {{range .Projects}}
+                {{if ne .ID $featuredID}}
+            <button type="button" class="project-card project-tile-grid relative bg-black/30 border border-white/[0.1] group cursor-pointer aspect-square flex flex-col items-center justify-center p-2 md:p-3 text-center overflow-hidden font-inherit text-left w-full transition-[border-color,background-color] duration-200" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
+                <!-- Storing data for JS to use easily without parsing HTML -->
+                <div class="hidden project-data-store" 
+                     data-title="{{.Title}}" 
+                     data-desc="{{.Description}}" 
+                     data-img="{{if .Image}}{{.Image}}{{else}}/static/images/wip-default.svg{{end}}"
+                     data-github="{{.GitHubURL}}"
+                     data-live="{{.LiveURL}}"
+                     data-demo-url="{{.DemoURL}}">
+                </div>
+                <div class="hidden project-tech-store">
+                    {{range .Technologies}}
                     <span>{{.}}</span>
                     {{end}}
                 </div>
@@ -52,17 +91,19 @@
                 <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
                 
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{$project.Image}}');"></div>
+                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{.Image}}');"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none"></div>
                 
                 <!-- Info -->
-                <h3 class="text-[10px] md:text-xs font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-widest leading-tight line-clamp-2 w-full relative z-10">{{$project.Title}}</h3>
-                <div class="mt-2 text-[8px] font-mono text-gray-500 uppercase relative z-10">{{$project.ID}}</div>
+                <h3 class="text-[10px] md:text-xs font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-widest leading-tight line-clamp-2 w-full relative z-10">{{.Title}}</h3>
+                <div class="mt-2 text-[8px] font-mono text-gray-500 uppercase relative z-10">{{.ID}}</div>
                 
                 <!-- Status Dot -->
-                <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full z-10 {{if eq $project.Status "active"}}bg-[#4ade80]{{else if eq $project.Status "in-development"}}bg-[#ff5500]{{else}}bg-nexus-cyan{{end}}">                </div>
+                <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full z-10 {{if eq .Status "active"}}bg-[#4ade80]{{else if eq .Status "in-development"}}bg-[#e8a030]{{else}}bg-nexus-cyan{{end}}"></div>
             </button>
             {{end}}
+            {{end}}
+                </div>
             </div>
         </div>
 
@@ -85,88 +126,78 @@
     </div>
 </section>
 
-<!-- Terminal Overlay for Project Expansion -->
-<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-300 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]" role="presentation">
-    <div id="terminal-window" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="term-project-title" class="w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] border border-nexus-cyan bg-[#050505] flex flex-col relative transform scale-95 transition-transform duration-500 overflow-hidden min-h-0 shadow-[0_0_30px_rgba(0,210,255,0.15)] outline-none focus-visible:ring-2 focus-visible:ring-nexus-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-        
-        <!-- Terminal Header -->
-        <div class="flex items-center justify-between px-4 py-2 border-b border-nexus-cyan/50 bg-nexus-cyan/10 shrink-0 z-40 relative">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined text-nexus-cyan text-sm">terminal</span>
-                <span id="term-header-title" class="font-mono text-xs text-nexus-cyan tracking-widest uppercase">sys_override://project_details</span>
+<!-- Project detail overlay (dossier / module record — not neon terminal) -->
+<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/88 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-150 ease-out pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]" role="presentation">
+    <div id="terminal-window" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="term-project-title" class="project-modal w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] flex flex-col relative transform scale-95 transition-transform duration-200 ease-out overflow-hidden min-h-0 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/25">
+
+        <header class="project-modal__head">
+            <div class="project-modal__head-text min-w-0">
+                <span class="project-modal__kicker">Module dossier</span>
+                <p id="term-header-title" class="project-modal__path truncate">registry · project</p>
             </div>
-            <div class="flex gap-4 items-center">
-                <div class="hidden sm:flex gap-1">
-                    <span class="w-2 h-2 bg-nexus-cyan"></span>
-                    <span class="w-2 h-2 bg-nexus-cyan animate-pulse"></span>
-                    <span class="w-2 h-2 bg-nexus-cyan/30"></span>
-                </div>
-                <button type="button" id="close-terminal-btn" class="text-white/50 hover:text-nexus-cyan transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nexus-cyan rounded" title="Close" aria-label="Close project details">
+            <div class="project-modal__head-actions">
+                <span class="project-modal__pulse" aria-hidden="true"></span>
+                <button type="button" id="close-terminal-btn" class="project-modal__close" title="Close" aria-label="Close project details">
                     <span class="material-symbols-outlined text-lg" aria-hidden="true">close</span>
                 </button>
             </div>
-        </div>
+        </header>
 
-        <!-- Terminal Body -->
-        <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative z-40 min-h-0">
-            <!-- Left Side / Project Image & Quick Stats -->
-            <div class="w-full md:w-2/5 border-b md:border-b-0 md:border-r border-nexus-cyan/20 p-4 md:p-6 flex flex-col bg-black/40 overflow-y-auto custom-scrollbar">
-                <div id="term-img-container" class="aspect-video w-full bg-black border border-white/10 mb-6 relative overflow-hidden">
-                    <img id="term-project-img" src="" alt="Project Visual" class="w-full h-full object-cover">
-                    
-                    <!-- HUD Overlays on image -->
-                    <div class="absolute top-2 left-2 text-[8px] font-mono text-nexus-cyan bg-black/60 px-1 border border-nexus-cyan/30 z-20">VISUAL_DATA</div>
-                    <div class="absolute bottom-2 right-2 text-[8px] font-mono text-nexus-cyan bg-black/60 px-1 border border-nexus-cyan/30 z-20" id="term-img-id">IMG_01</div>
-                </div>
+        <div class="project-modal__body">
+            <aside class="project-modal__aside">
+                <figure class="project-modal__figure">
+                    <span class="project-modal__figure-label">Asset preview</span>
+                    <div id="term-img-container" class="project-modal__img-wrap">
+                        <img id="term-project-img" src="" alt="" class="project-modal__img">
+                    </div>
+                    <figcaption id="term-img-id" class="project-modal__figure-id">—</figcaption>
+                </figure>
 
-                <div class="space-y-4 font-mono text-xs text-gray-400">
-                    <div class="flex justify-between border-b border-white/5 pb-1">
-                        <span class="text-nexus-cyan">> ID:</span> 
-                        <span id="term-project-id" class="text-white text-right">---</span>
+                <dl class="project-modal__meta">
+                    <div class="project-modal__meta-row">
+                        <dt>Identifier</dt>
+                        <dd id="term-project-id" class="project-modal__meta-value">—</dd>
                     </div>
-                    <div class="flex justify-between border-b border-white/5 pb-1">
-                        <span class="text-nexus-cyan">> TYPE:</span> 
-                        <span id="term-project-type" class="text-white text-right uppercase">---</span>
+                    <div class="project-modal__meta-row">
+                        <dt>Type</dt>
+                        <dd id="term-project-type" class="project-modal__meta-value">—</dd>
                     </div>
-                    <div class="flex justify-between border-b border-white/5 pb-1">
-                        <span class="text-nexus-cyan">> STATUS:</span> 
-                        <span id="term-project-status" class="text-white text-right uppercase">---</span>
+                    <div class="project-modal__meta-row">
+                        <dt>Status</dt>
+                        <dd id="term-project-status" class="project-modal__meta-value project-modal__meta-value--status">—</dd>
                     </div>
-                    
-                    <div class="pt-4 space-y-2" id="term-project-links">
-                        <!-- Links injected via JS -->
-                    </div>
-                </div>
-            </div>
+                </dl>
 
-            <!-- Right Side / Console Output -->
-            <div class="w-full md:w-3/5 p-4 md:p-6 bg-[#030303] overflow-y-auto font-mono text-sm relative custom-scrollbar">
-                <div id="term-content-area" class="opacity-0 transition-opacity duration-500">
-                    <div class="text-nexus-cyan mb-6">
-                        <span class="opacity-70">xiaoOS@davidxiao:~$</span> ./extract_module_data.sh --target="<span id="term-cmd-target"></span>"
-                    </div>
-                    
-                    <h2 id="term-project-title" class="text-2xl md:text-4xl font-nexus-display font-bold text-white tracking-wider uppercase mb-2 border-l-4 border-nexus-cyan pl-4">Title</h2>
-                    <p class="text-nexus-cyan/70 text-xs mb-8 pl-5">EXECUTING DECRYPTION... <span class="text-[#4ade80]">SUCCESS</span></p>
+                <div id="term-project-links" class="project-modal__links"></div>
+            </aside>
 
-                    <div class="mb-8">
-                        <div class="text-nexus-cyan mb-2 opacity-70">>> DESCRIPTION_LOG</div>
-                        <p id="term-project-desc" class="text-gray-300 leading-relaxed bg-white/5 border border-white/10 p-4 border-l-2 border-l-white/30 text-sm">
-                            Description goes here...
-                        </p>
+            <div class="project-modal__main custom-scrollbar">
+                <div id="term-content-area" class="project-modal__inner opacity-0 transition-opacity duration-150 ease-out">
+                    <p class="project-modal__context">
+                        <span class="project-modal__context-label">Registry key</span>
+                        <span id="term-cmd-target" class="project-modal__context-key font-mono">mod_—</span>
+                    </p>
+
+                    <div class="project-modal__titleblock">
+                        <span class="project-modal__section-label">Module</span>
+                        <h2 id="term-project-title" class="project-modal__title">Title</h2>
                     </div>
 
-                    <div>
-                        <div class="text-nexus-cyan mb-3 opacity-70">>> TECH_STACK_MATRIX</div>
-                        <div id="term-project-tech" class="flex flex-wrap gap-2">
-                            <!-- Tech injected here -->
+                    <p class="project-modal__verify"><span class="text-[#4ade80]">Record loaded</span></p>
+
+                    <section class="project-modal__block" aria-labelledby="term-desc-label">
+                        <h3 id="term-desc-label" class="project-modal__section-label">Summary</h3>
+                        <div class="project-modal__desc-wrap">
+                            <p id="term-project-desc" class="project-modal__desc">Description goes here…</p>
                         </div>
-                    </div>
-                    
-                    <div class="mt-12 text-nexus-cyan/50 text-xs flex items-center gap-2">
-                        <span class="w-2 h-3 bg-nexus-cyan animate-pulse inline-block"></span>
-                        AWAITING INPUT...
-                    </div>
+                    </section>
+
+                    <section class="project-modal__block project-modal__block--tech" aria-labelledby="term-tech-label">
+                        <h3 id="term-tech-label" class="project-modal__section-label">Technologies</h3>
+                        <div id="term-project-tech" class="project-modal__tech"></div>
+                    </section>
+
+                    <p class="project-modal__foot">Esc or outside click to close</p>
                 </div>
             </div>
         </div>
@@ -207,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const termLinks = document.getElementById('term-project-links');
     const termCmdTarget = document.getElementById('term-cmd-target');
     const termHeaderTitle = document.getElementById('term-header-title');
+    const termImgCaption = document.getElementById('term-img-id');
 
     let lastFocus = null;
 
@@ -230,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 lastFocus.focus();
             }
             lastFocus = null;
-        }, 300);
+        }, 180);
     };
 
     projectCards.forEach(card => {
@@ -253,16 +285,27 @@ document.addEventListener('DOMContentLoaded', function() {
             termImg.src = imgUrl;
             termImg.alt = title ? title + ' preview' : 'Project preview';
             termId.textContent = categoryId;
-            termType.textContent = type;
+            termType.textContent = (type || '—').toUpperCase();
             termStatus.textContent = status === 'active' ? 'ACTIVE' : (status === 'in-development' ? 'IN DEV' : 'DEPLOYED');
+            termStatus.className = 'project-modal__meta-value project-modal__meta-value--status';
+            if (status === 'active') {
+                termStatus.classList.add('project-modal__status--active');
+            } else if (status === 'in-development') {
+                termStatus.classList.add('project-modal__status--dev');
+            } else {
+                termStatus.classList.add('project-modal__status--neutral');
+            }
             termCmdTarget.textContent = 'mod_' + categoryId;
-            termHeaderTitle.textContent = 'sys_override://' + categoryId;
+            termHeaderTitle.textContent = 'Registry · ' + categoryId;
+            if (termImgCaption) {
+                termImgCaption.textContent = categoryId.replace(/-/g, ' · ');
+            }
 
             termTech.innerHTML = '';
             if (techStore) {
                 techStore.querySelectorAll('span').forEach(span => {
                     const el = document.createElement('span');
-                    el.className = 'text-[10px] font-mono text-black bg-nexus-cyan px-2 py-0.5 whitespace-nowrap uppercase';
+                    el.className = 'project-modal__tech-tag';
                     el.textContent = span.textContent;
                     termTech.appendChild(el);
                 });
@@ -270,26 +313,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
             termLinks.innerHTML = '';
             if (githubUrl) {
-                termLinks.innerHTML += '<a href="' + githubUrl + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">Source code</span><span class="material-symbols-outlined text-sm text-nexus-cyan">code</span></a>';
+                termLinks.innerHTML += '<a href="' + githubUrl + '" target="_blank" rel="noopener noreferrer" class="project-modal__link"><span class="project-modal__link-label">Source code</span><span class="material-symbols-outlined project-modal__link-icon" aria-hidden="true">code</span></a>';
             }
             if (liveUrl || demoUrl) {
                 const targetUrl = liveUrl || demoUrl;
                 const label = liveUrl ? 'Live deployment' : 'Run demo';
                 const icon = liveUrl ? 'public' : 'play_arrow';
-                termLinks.innerHTML += '<a href="' + targetUrl + '" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 border border-white/10 hover:border-nexus-cyan bg-white/5 transition-colors no-underline group mt-2"><span class="text-xs font-mono text-gray-300 group-hover:text-white uppercase tracking-widest">' + label + '</span><span class="material-symbols-outlined text-sm text-nexus-cyan">' + icon + '</span></a>';
+                termLinks.innerHTML += '<a href="' + targetUrl + '" target="_blank" rel="noopener noreferrer" class="project-modal__link"><span class="project-modal__link-label">' + label + '</span><span class="material-symbols-outlined project-modal__link-icon" aria-hidden="true">' + icon + '</span></a>';
             }
 
             lastFocus = document.activeElement;
             overlay.classList.remove('hidden');
-            setTimeout(() => {
-                overlay.classList.remove('opacity-0');
-                terminalWindow.classList.remove('scale-95');
-                terminalWindow.classList.add('scale-100');
-                setTimeout(() => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    overlay.classList.remove('opacity-0');
+                    terminalWindow.classList.remove('scale-95');
+                    terminalWindow.classList.add('scale-100');
                     contentArea.classList.remove('opacity-0');
                     closeBtn.focus();
-                }, 400);
-            }, 50);
+                });
+            });
         });
     });
 
