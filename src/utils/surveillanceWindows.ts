@@ -1,4 +1,4 @@
-// Surveillance Windows - xiaoOS Style Background Surveillance
+// Ambient desktop widgets — floating preview windows (xiaoOS background layer)
 interface SurveillanceWindow {
   id: string;
   element: HTMLElement;
@@ -6,7 +6,7 @@ interface SurveillanceWindow {
   y: number;
   width: number;
   height: number;
-  type: 'camera' | 'data' | 'security' | 'system';
+  type: 'camera' | 'data' | 'security' | 'system'; /* display channel kinds */
   isActive: boolean;
   createdAt: number;
 }
@@ -30,7 +30,7 @@ class SurveillanceSystem {
   }
 
   public initSurveillance(): void {
-    console.log('🔍 xiaoOS Surveillance System - Initializing...');
+    console.log('xiaoOS ambient displays — initializing…');
     this.isActive = true;
     this.createSurveillanceOverlay();
     this.startWindowGeneration();
@@ -41,25 +41,25 @@ class SurveillanceSystem {
     const overlay = document.createElement('div');
     overlay.className = 'fixed inset-0 pointer-events-none z-0 overflow-hidden';
     overlay.innerHTML = `
-      <!-- Surveillance Grid Background - Newstyle cyan -->
+      <!-- Ambient grid — cyan reference -->
       <div class="absolute inset-0 opacity-10" style="background-image: 
         radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
         linear-gradient(rgba(0, 210, 255, 0.05) 1px, transparent 1px), 
         linear-gradient(90deg, rgba(0, 210, 255, 0.05) 1px, transparent 1px);
         background-size: 30px 30px, 100px 100px, 100px 100px;"></div>
       
-      <!-- Blur Layer Over Surveillance Windows -->
+      <!-- Blur layer over widget stack -->
       <div class="absolute inset-0 backdrop-blur-sm" style="z-index: 2; background: rgba(0,0,0,0.1);"></div>
       
-      <!-- Surveillance Windows Container -->
+      <!-- Widget container -->
       <div class="surveillance-windows-container" style="z-index: 1;"></div>
       
-      <!-- System Status Overlay - Newstyle -->
-      <div class="absolute top-20 left-4 text-xs font-mono bg-black/60 border border-white/10 p-3 backdrop-blur-md" style="border-left: 2px solid #00d2ff;">
-        <div class="text-[#00d2ff] font-bold tracking-widest mb-2" style="font-family: 'JetBrains Mono', monospace;">xiaoOS SURVEILLANCE</div>
+      <!-- Desktop status overlay -->
+      <div class="absolute top-20 left-4 text-xs font-mono bg-black/60 border border-[#00d2ff]/35 p-3 backdrop-blur-md rounded-sm">
+        <div class="text-[#00d2ff] font-bold tracking-widest mb-2" style="font-family: 'IBM Plex Mono', monospace;">xiaoOS DESKTOP</div>
         <div class="text-gray-400 space-y-1">
-          <div>CAMERAS: <span id="camera-count" class="text-[#00d2ff]">0</span> | DATA: <span id="data-count" class="text-[#00d2ff]">0</span></div>
-          <div>SECURITY: <span id="security-count" class="text-[#00d2ff]">0</span> | SYSTEM: <span id="system-count" class="text-[#00d2ff]">0</span></div>
+          <div>FEEDS: <span id="camera-count" class="text-[#00d2ff]">0</span> | DATA: <span id="data-count" class="text-[#00d2ff]">0</span></div>
+          <div>NET: <span id="security-count" class="text-[#00d2ff]">0</span> | SYS: <span id="system-count" class="text-[#00d2ff]">0</span></div>
         </div>
       </div>
     `;
@@ -67,7 +67,7 @@ class SurveillanceSystem {
   }
 
   private startWindowGeneration(): void {
-    console.log('🎥 Starting surveillance window generation...');
+    console.log('Starting ambient widget generation…');
     
     const generateWindow = () => {
       if (this.isActive && this.windows.length < 12) {
@@ -154,7 +154,7 @@ class SurveillanceSystem {
     // Find a valid position that doesn't overlap with existing windows
     const position = this.findValidPosition(width, height);
     if (!position) {
-      console.log('❌ No valid position found for new surveillance window');
+      console.log('No slot for new ambient window');
       return;
     }
     
@@ -251,7 +251,7 @@ class SurveillanceSystem {
       this.removeWindow(id);
     }, Math.random() * 15000 + 15000);
     
-    console.log(`📹 Created ${randomType} surveillance window: ${id}`);
+    console.log(`Created ${randomType} ambient window: ${id}`);
   }
 
   private async fetch511NYCameras(): Promise<Array<{id: string, name: string, streamUrl: string}>> {
@@ -281,20 +281,20 @@ class SurveillanceSystem {
     // Custom surveillance videos from YouTube - perfect for xiaoOS system
     const cameraStreams = [
       // Your custom surveillance videos
-      { id: 'surv-001', name: 'Surveillance Feed 001', streamUrl: 'https://www.youtube.com/embed/0vkld4n1a7o?autoplay=1&mute=1' },
-      { id: 'surv-002', name: 'Surveillance Feed 002', streamUrl: 'https://www.youtube.com/embed/CZnY66m0Xiw?autoplay=1&mute=1' },
-      { id: 'surv-003', name: 'Surveillance Feed 003', streamUrl: 'https://www.youtube.com/embed/pFebijydkDM?autoplay=1&mute=1' },
-      { id: 'surv-004', name: 'Surveillance Feed 004', streamUrl: 'https://www.youtube.com/embed/5o59zyi7EyA?autoplay=1&mute=1' },
-      { id: 'surv-005', name: 'Surveillance Feed 005', streamUrl: 'https://www.youtube.com/embed/nNkSMJP0Tyg?autoplay=1&mute=1' },
-      { id: 'surv-006', name: 'Surveillance Feed 006', streamUrl: 'https://www.youtube.com/embed/MusSS4R9SPw?autoplay=1&mute=1' },
-      { id: 'surv-007', name: 'Surveillance Feed 007', streamUrl: 'https://www.youtube.com/embed/xn7t5kQ21Es?autoplay=1&mute=1' },
-      { id: 'surv-008', name: 'Surveillance Feed 008', streamUrl: 'https://www.youtube.com/embed/EcM9m7Eo0u4?autoplay=1&mute=1' },
-      { id: 'surv-009', name: 'Surveillance Feed 009', streamUrl: 'https://www.youtube.com/embed/slJKmz9XsIU?autoplay=1&mute=1' },
-      { id: 'surv-010', name: 'Surveillance Feed 010', streamUrl: 'https://www.youtube.com/embed/KaEU5MNdrp4?autoplay=1&mute=1' },
-      { id: 'surv-011', name: 'Surveillance Feed 011', streamUrl: 'https://www.youtube.com/embed/7mnbtXqdmr0?autoplay=1&mute=1' },
-      { id: 'surv-012', name: 'Surveillance Feed 012', streamUrl: 'https://www.youtube.com/embed/k57aOn5JluY?autoplay=1&mute=1' },
-      { id: 'surv-013', name: 'Surveillance Feed 013', streamUrl: 'https://www.youtube.com/embed/PI63KrE3UGo?autoplay=1&mute=1' },
-      { id: 'surv-014', name: 'Surveillance Feed 014', streamUrl: 'https://www.youtube.com/embed/VSiQ7BLkZHw?autoplay=1&mute=1' }
+      { id: 'surv-001', name: 'Preview channel 001', streamUrl: 'https://www.youtube.com/embed/0vkld4n1a7o?autoplay=1&mute=1' },
+      { id: 'surv-002', name: 'Preview channel 002', streamUrl: 'https://www.youtube.com/embed/CZnY66m0Xiw?autoplay=1&mute=1' },
+      { id: 'surv-003', name: 'Preview channel 003', streamUrl: 'https://www.youtube.com/embed/pFebijydkDM?autoplay=1&mute=1' },
+      { id: 'surv-004', name: 'Preview channel 004', streamUrl: 'https://www.youtube.com/embed/5o59zyi7EyA?autoplay=1&mute=1' },
+      { id: 'surv-005', name: 'Preview channel 005', streamUrl: 'https://www.youtube.com/embed/nNkSMJP0Tyg?autoplay=1&mute=1' },
+      { id: 'surv-006', name: 'Preview channel 006', streamUrl: 'https://www.youtube.com/embed/MusSS4R9SPw?autoplay=1&mute=1' },
+      { id: 'surv-007', name: 'Preview channel 007', streamUrl: 'https://www.youtube.com/embed/xn7t5kQ21Es?autoplay=1&mute=1' },
+      { id: 'surv-008', name: 'Preview channel 008', streamUrl: 'https://www.youtube.com/embed/EcM9m7Eo0u4?autoplay=1&mute=1' },
+      { id: 'surv-009', name: 'Preview channel 009', streamUrl: 'https://www.youtube.com/embed/slJKmz9XsIU?autoplay=1&mute=1' },
+      { id: 'surv-010', name: 'Preview channel 010', streamUrl: 'https://www.youtube.com/embed/KaEU5MNdrp4?autoplay=1&mute=1' },
+      { id: 'surv-011', name: 'Preview channel 011', streamUrl: 'https://www.youtube.com/embed/7mnbtXqdmr0?autoplay=1&mute=1' },
+      { id: 'surv-012', name: 'Preview channel 012', streamUrl: 'https://www.youtube.com/embed/k57aOn5JluY?autoplay=1&mute=1' },
+      { id: 'surv-013', name: 'Preview channel 013', streamUrl: 'https://www.youtube.com/embed/PI63KrE3UGo?autoplay=1&mute=1' },
+      { id: 'surv-014', name: 'Preview channel 014', streamUrl: 'https://www.youtube.com/embed/VSiQ7BLkZHw?autoplay=1&mute=1' }
     ];
     
     return cameraStreams;
@@ -357,9 +357,9 @@ class SurveillanceSystem {
         } catch (error) {
           // Fallback to custom surveillance videos if API fails
           const fallbackStreams = [
-            { id: 'surv-001', name: 'Surveillance Feed 001', url: 'https://www.youtube.com/embed/0vkld4n1a7o?autoplay=1&mute=1' },
-            { id: 'surv-002', name: 'Surveillance Feed 002', url: 'https://www.youtube.com/embed/CZnY66m0Xiw?autoplay=1&mute=1' },
-            { id: 'surv-003', name: 'Surveillance Feed 003', url: 'https://www.youtube.com/embed/pFebijydkDM?autoplay=1&mute=1' }
+            { id: 'surv-001', name: 'Preview channel 001', url: 'https://www.youtube.com/embed/0vkld4n1a7o?autoplay=1&mute=1' },
+            { id: 'surv-002', name: 'Preview channel 002', url: 'https://www.youtube.com/embed/CZnY66m0Xiw?autoplay=1&mute=1' },
+            { id: 'surv-003', name: 'Preview channel 003', url: 'https://www.youtube.com/embed/pFebijydkDM?autoplay=1&mute=1' }
           ];
           
           // Filter out already used videos
@@ -546,7 +546,7 @@ class SurveillanceSystem {
             window.element.remove();
             this.windows.splice(windowIndex, 1);
             this.updateStatusCounts();
-            console.log(`🗑️ Removed surveillance window: ${id}`);
+            console.log(`Removed ambient window: ${id}`);
           }
         }, 400);
       }
@@ -622,32 +622,20 @@ class SurveillanceSystem {
 }
 
 export function initSurveillanceWindows(): void {
-  console.log('🔍 xiaoOS Surveillance System - Initializing...');
-  console.log('Current path:', window.location.pathname);
-  
-  // Skip terminal page
+  // Skip terminal / root — no ambient layer behind boot UI
   if (window.location.pathname === '/terminal' || window.location.pathname === '/') {
-    console.log('⏭️ Skipping surveillance windows for terminal/root page');
     return;
   }
 
-  // Add surveillance system to main content area
-  const mainContent = document.querySelector('.nexus-main');
-  console.log('Main content found:', !!mainContent);
-  
+  const mainContent =
+    document.querySelector('#main-content') ??
+    document.querySelector('.game-hud-right') ??
+    document.querySelector('.nexus-main');
   if (mainContent) {
     const existingSurveillance = mainContent.querySelector('.surveillance-windows-container');
-    console.log('Existing surveillance found:', !!existingSurveillance);
-    
     if (!existingSurveillance) {
-      console.log('🎯 Creating xiaoOS Surveillance System...');
       const surveillance = new SurveillanceSystem(mainContent as HTMLElement);
       surveillance.initSurveillance();
-      console.log('✅ xiaoOS Surveillance System created successfully');
-    } else {
-      console.log('⚠️ Surveillance system already exists, skipping creation');
     }
-  } else {
-    console.log('❌ Main content not found!');
   }
 }

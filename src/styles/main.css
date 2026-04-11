@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* xiaoOS design tokens — dark default; .light-mode overrides where needed */
+:root {
+  color-scheme: dark;
+  --color-bg: oklch(0.12 0.02 250);
+  --color-text: oklch(0.96 0.01 250);
+  --color-muted: oklch(0.62 0.02 250);
+  --color-border: oklch(0.38 0.03 250);
+  --accent-interactive: oklch(0.78 0.12 210);
+  --accent-status: oklch(0.72 0.14 50);
+  --accent-data: oklch(0.72 0.1 200);
+  --surface-translucent: rgba(10, 10, 12, 0.92);
+  --nexus-cyan: #00d2ff;
+  --nexus-orange: #ff5500;
+  --font-nexus-display: 'IBM Plex Mono', ui-monospace, monospace;
+  --z-base: 0;
+  --z-hud: 10;
+  --z-content: 15;
+  --z-nav: 40;
+  --z-modal: 50;
+  --z-boot: 100;
+}
+
+.light-mode {
+  color-scheme: light;
+}
+
 /* xiaoOS Base Styles */
 @layer base {
   html {
@@ -19,7 +45,7 @@
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-nexus font-bold text-white;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    text-shadow: none;
   }
 }
 
@@ -392,21 +418,15 @@
     @apply font-nexus-display text-5xl font-bold mb-4 text-white uppercase;
     position: relative;
     z-index: 10;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(59, 130, 246, 0.5);
     letter-spacing: 0.1em;
-    background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+    color: #f8fafc;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.12);
   }
   
   .nexus-title .highlight {
-    background: linear-gradient(135deg, #60a5fa 0%, #06b6d4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 15px rgba(96, 165, 250, 0.6));
+    @apply text-nexus-cyan;
+    color: var(--accent-interactive, #00d2ff);
+    font-weight: 700;
   }
   
   .nexus-subtitle {
@@ -414,8 +434,7 @@
     position: relative;
     z-index: 10;
     letter-spacing: 0.05em;
-    text-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
-    filter: drop-shadow(0 0 5px rgba(147, 197, 253, 0.3));
+    text-shadow: none;
   }
   
   /* Panel - xiaoOS Style */
@@ -1068,18 +1087,7 @@
     @apply text-gray-300 text-sm;
   }
 
-  /* Security Notice */
-  .security-notice {
-    @apply bg-black border border-orange-500 p-4;
-  }
-
-  .security-notice-header {
-    @apply bg-orange-500 text-white px-2 py-1 font-bold text-xs uppercase mb-3 inline-block;
-  }
-
-  .security-notice-text {
-    @apply text-gray-300 text-sm leading-relaxed;
-  }
+  /* .security-notice: defined in merged block at end of this file */
 
   /* Theme Toggle */
   .nav-controls {
@@ -3146,3 +3154,1014 @@
   transition: transform 0.3s ease;
 }
 
+
+
+/* ========== Merged from nexus-newstyle.css (single PostCSS pipeline) ========== */
+
+/* --- xiaoOS Style Loading Sequence --- */
+
+.xiaoos-loader-container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: 'Fira Code', ui-monospace, monospace;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
+    box-sizing: border-box;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+    isolation: isolate;
+}
+
+.xiaoos-display-area {
+    position: relative;
+    width: 450px;
+    max-width: calc(100vw - 24px);
+    height: 300px;
+    max-height: min(300px, 55vh);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transform-origin: center center;
+    /* Scale down on narrow viewports so 450×1.5 layout fits phones */
+    transform: scale(min(1.5, calc((100vw - 32px) / 450)));
+    flex-shrink: 0;
+}
+
+.xiaoos-x-grid {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px 12px;
+    font-size: 24px;
+    font-family: monospace;
+    font-weight: 500;
+}
+.xiaoos-x-item {
+    opacity: 0;
+    text-align: center;
+}
+
+.xiaoos-strike-bars {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 250px;
+    z-index: 5;
+}
+.xiaoos-strike-bar {
+    width: 0%;
+    height: 28px;
+    background: #FFFFFF;
+}
+
+.xiaoos-transition-diamond {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    z-index: 1;
+}
+
+.xiaoos-diamond-shape {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border: 1.5px solid #FFFFFF;
+    transform: rotate(45deg);
+}
+
+.xiaoos-diamond-x-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+}
+.xiaoos-x-line {
+    position: absolute;
+    background: #FFFFFF;
+    width: 1.5px;
+    height: 240px;
+    top: 50%;
+    left: 50%;
+}
+.xiaoos-x-line-1 { transform: translate(-50%, -50%) rotate(45deg); }
+.xiaoos-x-line-2 { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.xiaoos-shape-container {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.xiaoos-shape-container svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.xiaoos-shape-path {
+    fill: none;
+    stroke: #FFFFFF;
+    stroke-width: 1.5px;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    transform-origin: center;
+}
+
+.xiaoos-shape-1, .xiaoos-shape-2, .xiaoos-shape-3, .xiaoos-shape-4, .xiaoos-shape-5 { opacity: 0; }
+
+.xiaoos-sys-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: min(220px, 100%);
+    max-width: calc(100% - 8px);
+    box-sizing: border-box;
+}
+
+.xiaoos-sys-blocks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    opacity: 0;
+    width: 100%;
+}
+.xiaoos-sys-b1 { width: 30px; height: 22px; background: #FFFFFF; margin-bottom: 5px; }
+.xiaoos-sys-b2 { width: 0px; height: 22px; background: #FFFFFF; margin-bottom: 5px; }
+.xiaoos-sys-b3 { width: 0px; height: 22px; background: #FFFFFF; }
+
+.xiaoos-sys-text-container {
+    position: relative;
+    margin: 5px 0;
+    width: min(230px, 100%);
+    min-height: 28px;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+.xiaoos-sys-text { 
+    font-family: sans-serif; 
+    font-size: clamp(16px, 5.5vw, 28px); 
+    font-weight: 600; 
+    letter-spacing: -1px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF;
+    white-space: nowrap;
+}
+.xiaoos-sys-fast-bar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    min-height: 28px;
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 0;
+}
+.xiaoos-sys-fast-bar {
+    height: 100%;
+    width: 85%;
+    background: #FFFFFF;
+}
+
+.xiaoos-bottom-ui {
+    position: absolute;
+    left: 50%;
+    bottom: max(12%, env(safe-area-inset-bottom, 0px));
+    width: min(700px, calc(100vw - 24px));
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(-50%) scale(1.3);
+    transform-origin: center bottom;
+    padding: 0 max(12px, env(safe-area-inset-left, 0px)) 0 max(12px, env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+}
+
+.xiaoos-loading-text {
+    font-family: sans-serif;
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+}
+
+.xiaoos-progress-bar-bg {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.xiaoos-progress-bar-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 0%;
+    background: #FFFFFF;
+}
+
+.xiaoos-hint-text {
+    background: #FFFFFF;
+    color: #000000;
+    padding: 10px 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    max-width: min(600px, 100%);
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.xiaoos-reveal-outline {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    border: 2px solid #FFFFFF;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+    z-index: 200;
+    pointer-events: none;
+}
+.xiaoos-reveal-solid {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 150vmax; height: 150vmax;
+    background: #FFFFFF;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0);
+    z-index: 199;
+    pointer-events: none;
+}
+
+/* Mobile / small viewports: keep loader readable and on-screen */
+@media (max-width: 640px) {
+    .xiaoos-bottom-ui {
+        transform: translateX(-50%) scale(1);
+        bottom: max(6%, env(safe-area-inset-bottom, 0px), 12px);
+    }
+    .xiaoos-x-grid {
+        gap: 4px 6px;
+        font-size: clamp(13px, 3.8vw, 22px);
+    }
+    .xiaoos-strike-bars {
+        width: min(250px, 88vw);
+    }
+    .xiaoos-strike-bar {
+        height: clamp(20px, 5.5vw, 28px);
+    }
+    .xiaoos-transition-diamond,
+    .xiaoos-shape-container {
+        width: min(250px, 72vw);
+        height: min(250px, 72vw);
+    }
+    .xiaoos-diamond-shape {
+        width: min(130px, 38vw);
+        height: min(130px, 38vw);
+    }
+    .xiaoos-x-line {
+        height: min(240px, 70vw);
+    }
+    .xiaoos-loading-text {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+    .xiaoos-progress-bar-bg {
+        margin-bottom: 14px;
+    }
+    .xiaoos-hint-text {
+        font-size: 12px;
+        padding: 8px 12px;
+        line-height: 1.45;
+    }
+    .xiaoos-display-area {
+        max-height: min(280px, 52svh, 52vh);
+    }
+}
+
+@media (max-width: 380px) {
+    .xiaoos-sys-b1,
+    .xiaoos-sys-b2,
+    .xiaoos-sys-b3 {
+        height: 18px;
+    }
+}
+
+:root {
+  --nexus-cyan: #00d2ff;
+  --nexus-orange: #ff5500;
+  --surface: #0a0a0a;
+  --surface-translucent: rgba(10, 10, 10, 0.85);
+}
+
+/* Base */
+body {
+  background-color: #050505 !important;
+  color: #e5e7eb;
+}
+
+/* Grid background — newstyle */
+.nexus-grid-bg {
+  opacity: 1;
+  background-image:
+    radial-gradient(rgba(0, 210, 255, 0.15) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px, 100px 100px, 100px 100px;
+}
+.nexus-grid-bg::before,
+.nexus-grid-bg::after {
+  display: none;
+}
+
+/* Corner accents — used on profile cards and panels */
+.corner-accent-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid var(--nexus-cyan);
+  border-left: 2px solid var(--nexus-cyan);
+  z-index: 10;
+}
+.corner-accent-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid var(--nexus-cyan);
+  border-right: 2px solid var(--nexus-cyan);
+  z-index: 10;
+}
+
+/* Nav — newstyle dark bar */
+.nexus-nav {
+  background: var(--surface-translucent) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+}
+.nexus-logo {
+  color: inherit;
+}
+.nexus-logo-ct {
+  background: #fff !important;
+  color: #000 !important;
+  padding: 0.125rem 0.5rem;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.nexus-logo-os {
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nexus-nav-link {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #9ca3af !important;
+}
+.nexus-nav-link:hover {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-nav-link.active {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-nav-link.active::after {
+  display: none;
+}
+.nexus-nav-link.active .nav-link-dot,
+.nexus-nav-link.active .nav-link-dot {
+  display: inline-block;
+}
+
+/* Buttons — newstyle outline cyan / secondary */
+.nexus-btn-primary,
+.nexus-btn.nexus-btn-primary,
+a.nexus-btn-primary {
+  background-color: transparent !important;
+  border: 1px solid var(--nexus-cyan) !important;
+  color: var(--nexus-cyan) !important;
+  text-transform: uppercase;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  transition: all 0.2s ease;
+}
+.nexus-btn-primary:hover,
+.nexus-btn.nexus-btn-primary:hover,
+a.nexus-btn-primary:hover {
+  background-color: var(--nexus-cyan) !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+}
+.nexus-btn-secondary,
+.nexus-btn.nexus-btn-secondary,
+a.nexus-btn-secondary {
+  background-color: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-transform: uppercase;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-size: 0.8rem;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s ease;
+}
+.nexus-btn-secondary:hover,
+.nexus-btn.nexus-btn-secondary:hover,
+a.nexus-btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Filter / tertiary buttons (projects) */
+.nexus-filter-btn,
+.nexus-btn-tertiary {
+  padding: 0.25rem 1rem;
+  font-size: 10px;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  background: transparent;
+  transition: all 0.2s;
+}
+.nexus-filter-btn:hover,
+.nexus-btn-tertiary:hover {
+  border-color: var(--nexus-cyan);
+  color: var(--nexus-cyan);
+}
+.nexus-filter-btn.active,
+.nexus-btn-tertiary.active {
+  border-color: var(--nexus-cyan);
+  color: var(--nexus-cyan);
+  background: rgba(0, 210, 255, 0.05);
+}
+
+/* Profile card — newstyle surface-translucent, corner accents */
+.nexus-profile-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative;
+}
+.nexus-profile-card .profile-card-inner {
+  background: var(--surface-translucent);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px;
+  backdrop-filter: blur(12px);
+}
+.nexus-profile-card .nexus-header {
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.nexus-profile-card .profile-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0 0 0.25rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  max-width: none;
+}
+.nexus-profile-card .profile-image img {
+  filter: grayscale(1) contrast(1.25) brightness(0.9);
+  transition: filter 0.5s;
+}
+.nexus-profile-card:hover .profile-image img {
+  filter: none;
+}
+.threat-level {
+  background: var(--nexus-orange) !important;
+  color: #000 !important;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.nexus-profile-card .data-grid {
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5rem;
+  padding: 0 0.5rem 1rem;
+  margin-bottom: 0;
+  font-size: 0.75rem;
+}
+.nexus-profile-card .data-label {
+  color: #6b7280;
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  text-transform: uppercase;
+  margin-bottom: 0;
+  text-shadow: none;
+  filter: none;
+}
+.nexus-profile-card .data-value {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: 0;
+  text-align: right;
+  font-size: 0.75rem;
+}
+.nexus-profile-card .data-value.status-online {
+  color: var(--nexus-cyan);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--nexus-cyan);
+  flex-shrink: 0;
+}
+.status-dot.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Panel — newstyle border-t-2 nexus-cyan or border white/10 */
+.nexus-panel {
+  background: var(--surface-translucent) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-top: 2px solid var(--nexus-cyan) !important;
+  padding: 2rem !important;
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+  position: relative;
+}
+.nexus-panel::before,
+.nexus-panel::after {
+  display: none;
+}
+.nexus-panel .panel-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin: -2rem -2rem 1.5rem -2rem;
+  padding: 0.5rem 0 0.5rem 0;
+  font-size: 0.75rem;
+}
+.panel-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+.panel-title-bar .title-accent {
+  width: 8px;
+  height: 2rem;
+  background: var(--nexus-cyan);
+  flex-shrink: 0;
+}
+.panel-title-bar h1 {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  text-shadow: none;
+}
+
+/* Bio text */
+.bio-text {
+  color: #9ca3af;
+  line-height: 1.6;
+  font-size: 0.875rem;
+}
+
+/* Form input — newstyle */
+.form-input,
+.form-textarea,
+.nexus-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  padding: 0.75rem 1rem;
+  font-family: Courier New, monospace;
+  font-size: 0.875rem;
+  transition: border-color 0.2s;
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+.form-input:focus,
+.form-textarea:focus,
+.nexus-input:focus {
+  border-color: var(--nexus-cyan) !important;
+  box-shadow: none;
+}
+.form-input:focus:not(:focus-visible),
+.form-textarea:focus:not(:focus-visible),
+.nexus-input:focus:not(:focus-visible) {
+  outline: none;
+}
+.form-input:focus-visible,
+.form-textarea:focus-visible,
+.nexus-input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--nexus-cyan);
+  outline-offset: 2px;
+}
+
+/* Terminal */
+.nexus-terminal {
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  font-family: Courier New, monospace;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+.terminal-line { margin: 0.25rem 0; }
+.terminal-prompt { color: var(--nexus-cyan); }
+.terminal-success { color: #4ade80; }
+.terminal-highlight { color: var(--nexus-cyan); }
+
+/* Project card — newstyle */
+.project-card {
+  background: var(--surface-translucent) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.3s;
+}
+button.project-card {
+  font-family: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.project-card:hover {
+  border-color: rgba(0, 210, 255, 0.4) !important;
+}
+.project-card .nexus-header {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: #6b7280;
+}
+.project-card .project-visual {
+  aspect-ratio: 16 / 10;
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.project-card .project-title {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  transition: color 0.2s;
+}
+.project-card:hover .project-title {
+  color: var(--nexus-cyan);
+}
+
+/* Skill item / status row */
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.skill-item:last-child {
+  border-bottom: none;
+}
+.status-online { color: #4ade80; }
+.status-warning { color: var(--nexus-orange); }
+
+/* Footer — newstyle minimal */
+.nexus-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem 1.5rem;
+}
+.nexus-footer .footer-content > div:first-child {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  margin-bottom: 1rem;
+}
+.nexus-footer .text-cyan-400,
+.nexus-footer .text-blue-400 {
+  color: var(--nexus-cyan) !important;
+}
+.nexus-footer .text-blue-200,
+.nexus-footer .text-slate-300 {
+  color: #9ca3af;
+}
+.footer-link:hover {
+  color: var(--nexus-cyan) !important;
+}
+
+/* Security notice (contact page) — full border, no side-stripe accent */
+.security-notice {
+  border: 1px solid rgba(255, 87, 0, 0.4);
+  padding: 1rem;
+  background: rgba(255, 87, 0, 0.06);
+}
+.security-notice-header {
+  font-family: var(--font-nexus-display, 'IBM Plex Mono', monospace);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--nexus-orange);
+  margin-bottom: 0.5rem;
+}
+.security-notice-text {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Hero grid — 12 col layout like newstyles */
+.hero-grid.hero-grid-newstyle {
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 80rem;
+}
+@media (min-width: 1024px) {
+  .hero-grid.hero-grid-newstyle {
+    grid-template-columns: 1fr 2fr;
+  }
+  .hero-grid.hero-grid-newstyle .hero-aside {
+    min-width: 0;
+  }
+  .hero-grid.hero-grid-newstyle .hero-main {
+    min-width: 0;
+  }
+}
+
+/* Main content area */
+.nexus-main {
+  position: relative;
+  z-index: 10;
+  padding: 1.5rem 1.5rem 3rem;
+}
+@media (min-width: 768px) {
+  .nexus-main {
+    padding: 2rem 3rem 3rem;
+  }
+}
+@media (min-width: 1024px) {
+  .nexus-main {
+    padding: 2rem 5rem 3rem;
+  }
+}
+
+/* Section title with accent bar */
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.section-title-bar .title-accent {
+  width: 4px;
+  height: 1.5rem;
+  background: var(--nexus-cyan);
+}
+.section-title-bar h1 {
+  font-family: var(--font-nexus-display, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  font-size: 1.875rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  color: #fff;
+}
+
+/* Nav status strip (optional right side) */
+.nav-status {
+  font-size: 10px;
+  font-family: Courier New, monospace;
+  color: var(--nexus-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* --- Game HUD / hub layout (surveillance OS) --- */
+.game-ui-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) 1fr;
+  grid-template-rows: 1fr auto;
+  /* Mobile browsers: dvh avoids address-bar jump; fallback chain */
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.game-hud-left {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  min-width: 0;
+}
+
+.game-hud-right {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.game-hud-bottom {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  min-height: 52px;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}
+
+.game-hud-apps-btn {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.game-nav-btn .btn-inner {
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+}
+
+.game-alert-box {
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.12) 3px,
+    rgba(0, 0, 0, 0.12) 5px
+  );
+}
+
+.game-panel {
+  animation: game-panel-in 0.35s ease-out;
+}
+
+@keyframes game-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .game-ui-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  .game-hud-left {
+    display: none;
+  }
+  .game-hud-right {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    min-height: 0;
+  }
+  .game-hud-bottom {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+}
+
+/* Main column must shrink on mobile so inner scroll regions work */
+#main-content {
+  min-height: 0;
+  min-width: 0;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 210, 255, 0.35) rgba(255, 255, 255, 0.06);
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 210, 255, 0.35);
+  border-radius: 0;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 210, 255, 0.55);
+}
+
+/* --- Game-like UI Enhancements --- */
+
+/* Enhancing Hover States with Glow */
+a, button, .nexus-btn-primary, .nexus-btn-secondary, .hud-sidebar-link, .game-hud-apps-btn {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover, button:hover, .hud-sidebar-link:hover {
+  text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+}
+
+/* Give buttons a slight scale/glitch feel on hover */
+.nexus-btn-primary:active, .nexus-btn-secondary:active, .filter-btn:active {
+  transform: scale(0.98);
+}
+
+/* Selection text shadow */
+::selection {
+  background: var(--nexus-cyan);
+  color: #000;
+  text-shadow: none;
+}
+
+/* Subtle continuous pulse for interactive areas */
+@keyframes interact-pulse {
+  0% { box-shadow: inset 0 0 0 rgba(0, 210, 255, 0); }
+  50% { box-shadow: inset 0 0 10px rgba(0, 210, 255, 0.1); }
+  100% { box-shadow: inset 0 0 0 rgba(0, 210, 255, 0); }
+}
+
+.game-hud-left {
+  animation: interact-pulse 4s infinite;
+}

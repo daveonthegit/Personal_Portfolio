@@ -108,7 +108,7 @@ export class StartupAnimation {
               <div class="xiaoos-progress-bar-fill" id="xiaoos-progress-bar"></div>
           </div>
           <div class="xiaoos-hint-text">
-              SYSTEM.TIP: Decrypting project archives. Navigate the interface to explore software engineering experience and deployed applications.
+              SYSTEM.TIP: Loading workspace modules. Use the HUD to browse profile, projects, and contact.
           </div>
       </div>
 

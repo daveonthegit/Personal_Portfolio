@@ -145,25 +145,9 @@ export function createTerminalLoader(container: HTMLElement, messages: string[])
   });
 }
 
-// Data corruption effect
-export function createDataCorruption(element: HTMLElement, duration: number = 2000): void {
-  const originalText = element.textContent || '';
-  const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?`~';
-  let currentText = originalText;
-  
-  const interval = setInterval(() => {
-    if (Math.random() < 0.3) {
-      const randomIndex = Math.floor(Math.random() * currentText.length);
-      const randomChar = chars[Math.floor(Math.random() * chars.length)];
-      currentText = currentText.substring(0, randomIndex) + randomChar + currentText.substring(randomIndex + 1);
-      element.textContent = currentText;
-    }
-  }, 50);
-
-  setTimeout(() => {
-    clearInterval(interval);
-    element.textContent = originalText;
-  }, duration);
+/** Deprecated: gimmick “corruption” undermined trust; kept as no-op for API compatibility. */
+export function createDataCorruption(_element: HTMLElement, _duration: number = 2000): void {
+  return;
 }
 
 // Initialize subtle loading animations when DOM is ready

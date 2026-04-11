@@ -1,17 +1,16 @@
 # Personal Portfolio — Style Guide
 
-## Design Foundation: xiaoOS xiaoOS
+**Source of truth (2026):** [`.impeccable.md`](.impeccable.md) — hiring-first clarity, plausible near-future **xiaoOS** (command-center UI, not surveillance cosplay). **Deprecated:** gradient-text heroes, “movie surveillance” framing, and side-stripe alert callouts — do not reintroduce them in new work.
 
-This portfolio’s visual language is inspired by **xiaoOS (Central Operating System)** from the **xiaoOS** series — the in-world operating system that controls city infrastructure, surveillance, and data. The site is framed as a personal “OS” (xiaoOS) that presents you as a connected, data-driven professional in a high-tech, command-center aesthetic.
+## Design Foundation: xiaoOS
 
-**xiaoOS references used:**
-- **Map / Blume Complex UI** — Dark base, teal/cyan highlights, uppercase labels, restricted-area red, data overlays.
-- **Centralized control / city schematic** — Isometric feel, network lines, cyan callouts, “DOOR LOCK / CAMERAS / SECURITY” style labels.
-- **xiaoOS: Building Smart Cities** — Grayscale + electric blue/cyan accent, bold sans-serif headlines, minimal chrome.
-- **Traffic / data dashboards** — Black background, blue progress/numbers, circular stats, “VERIFIED OPERATIONS ONLINE” status.
-- **“We Are All Connected” / Blume** — Network-dot pattern, urban imagery, light cyan borders, strong headline typography.
+This portfolio reads as a **plausible personal OS shell**: dark base, cyan semantic accents, monospace labels, HUD-style density. It should feel like **real software** a team could ship (Bloomberg-terminal spirit + CLI confidence), not a generic neon portfolio.
 
-The goal is a **sophisticated, high-tech, slightly surveillance/control-room** feel: dark theme by default, limited accent colors, clear hierarchy, and a sense that content is “system data” rather than decorative.
+**Visual references (spirit, not literal IP):**
+- Dark command surfaces, teal/cyan for **interaction and status**, restrained orange/red for warnings.
+- Uppercase system labels, grid/network background texture, clear hierarchy between scan-friendly headers and body copy.
+
+Older drafts of this file described heavier **surveillance / Blume** fiction and **gradient headlines** — treat that material as **legacy**; the live CSS and templates follow `.impeccable.md` bans.
 
 ---
 
@@ -35,7 +34,7 @@ Aligned with xiaoOS and existing `tailwind.config.js` / `src/styles/main.css`.
 | **Background (secondary)** | `#0a0a0a` – `#1A1E24` | Subtle variation, overlays. |
 | **Surface (light mode)** | `#ffffff` | Cards/panels when theme is light. |
 | **Accent (primary)** | `#00FFC2` – `#22d3ee` (cyan/teal) | Active nav, links, highlights, key data, focus rings. |
-| **Accent (secondary)** | `#3b82f6` (blue) | Gradients, secondary highlights, data viz. |
+| **Accent (secondary)** | `#3b82f6` (blue) | Secondary highlights, data viz. (no gradient-text ban violations). |
 | **Warning / restricted** | `#E60026` – `#ef4444` (red) | Errors, “restricted” states, alerts. |
 | **Success / online** | `#4ade80` – `#22c55e` (green) | Status: OPERATIONAL, VERIFIED, success. |
 | **Caution** | `#f97316` (orange) | Warnings, security notices, demo/CTA emphasis. |
@@ -49,13 +48,13 @@ Aligned with xiaoOS and existing `tailwind.config.js` / `src/styles/main.css`.
 
 ## Typography
 
-- **Font stack (UI / body):** `font-nexus` — Inter, Roboto, system-ui. Clean, legible sans-serif.
-- **Display / headlines:** `font-nexus-display` — Orbitron, Exo 2, Rajdhani. Slightly geometric/tech.
-- **Monospace / data:** `font-mono` — Courier New, monospace. Status lines, labels, terminal, code.
+- **Font stack (UI / body):** `font-nexus` — **IBM Plex Sans**, system-ui fallbacks (see `tailwind.config.js` and `templates/base.html` Google Fonts link).
+- **Display / HUD labels:** `font-nexus-display` — **IBM Plex Mono**.
+- **Monospace / data:** `font-mono` — IBM Plex Mono first, then system monospace.
 
 **Conventions:**
 - **Nav, section titles, panel headers, data labels:** UPPERCASE, `tracking-wider` / `letter-spacing: 0.05em–0.1em`.
-- **Headlines:** Bold, large; hero can use gradient (white → blue) and light text-shadow for “glow.”
+- **Headlines:** Bold, large; **no gradient text** — use solid fills and weight; reserve glow/shadow for boot sequence and intentional status chrome only.
 - **Body:** Regular/medium weight, comfortable line-height; secondary color on dark.
 - **Hierarchy:** Size + weight + color (e.g. white for primary, gray/blue-200 for secondary).
 
@@ -110,9 +109,9 @@ These map directly to `src/styles/main.css` and templates.
 - **Startup animation:** `startup-terminal`, `startup-terminal-header`, `startup-terminal-content` — green/cyan/red by “channel,” optional scanline/glitch.
 - **Status line:** `terminal-line`, `terminal-prompt`, `terminal-success` — cyan/green for system messages.
 
-### Surveillance / Theming
-- **Overlay panels:** `surveillance-window`, `surveillance-camera`, `surveillance-data` — blurred, semi-transparent, for any “feed” or data-overlay feel.
-- **Theme:** Dark by default; `.light-mode` flips nav, cards, text, and borders (e.g. `nexus-nav` → dark bar in light mode, light cards). Accent can stay cyan or shift to blue for contrast.
+### Ambient widgets / theming
+- **Overlay panels:** `surveillance-window`, `surveillance-camera`, `surveillance-data` (legacy class names) — blurred, semi-transparent preview tiles in the background layer; copy in UI should read as **desktop / feeds**, not surveillance theater.
+- **Theme:** Dark by default; `.light-mode` flips nav, cards, text, and borders. Prefer **CSS variables** in `:root` / `.light-mode` (`src/styles/main.css`) for new tokens.
 
 ### Footer
 - **Bar:** `nexus-footer` — top border, dark bg, system-style copy (“SYSTEM STATUS”, “NETWORK”, “BUILD INFO”).
@@ -131,7 +130,7 @@ Requirements for every **existing** component used in the site. New UI must foll
 | **Background** | `base.html` | `nexus-grid-bg` — full viewport, fixed, z behind content; grid + optional radial nodes; no pointer events. |
 | **Nav bar** | `base.html` | `nexus-nav` + `nexus-nav-container`; logo `nexus-logo` with `nexus-logo-ct` (“xiao”) + `nexus-logo-os` (“OS”); links in `nexus-nav-links`; each link `nexus-nav-link`, active page has class `active`; same structure in light mode (nav inverts). |
 | **Mobile menu** | `base.html` | `nexus-mobile-menu` (hidden by default, toggled by JS); same links as desktop; include theme toggle; `nexus-mobile-toggle` button (visible below md breakpoint). |
-| **Main** | `base.html` | `nexus-main` — wraps page content; top padding for fixed nav (e.g. mt-16). |
+| **Main** | `base.html` | `#main-content` / `.game-hud-right` — primary page column in the HUD shell (`game-ui-layout`). Older docs refer to `nexus-main` (still used on `terminal.html`). |
 | **Footer** | `base.html` | `nexus-footer` + `footer-content`; system-status grid (SYSTEM STATUS, NETWORK, SECURITY, BUILD INFO); `footer-main` (copyright + `footer-links`); links `footer-link` (uppercase, hover accent). |
 
 ### Profile & data cards

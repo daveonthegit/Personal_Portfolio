@@ -73,8 +73,8 @@ module.exports = {
         // Newstyle / xiaoOS dashboard
         'nexus-cyan': '#00d2ff',
         'nexus-orange': '#ff5500',
-        surface: '#0a0a0a',
-        'surface-translucent': 'rgba(10, 10, 10, 0.85)',
+        surface: 'var(--color-bg, #0a0a0a)',
+        'surface-translucent': 'var(--surface-translucent, rgba(10, 10, 10, 0.85))',
         'border-dim': 'rgba(255, 255, 255, 0.1)',
         // Standard colors that we're using
         cyan: {
@@ -156,9 +156,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        'mono': ['Courier New', 'monospace'],
-        'nexus': ['Inter', 'Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        'nexus-display': ['JetBrains Mono', 'monospace'],
+        'mono': ['IBM Plex Mono', 'Courier New', 'monospace'],
+        'nexus': ['IBM Plex Sans', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        'nexus-display': ['IBM Plex Mono', 'ui-monospace', 'monospace'],
         'cyber': ['Share Tech Mono', 'monospace'],
       },
       boxShadow: {
