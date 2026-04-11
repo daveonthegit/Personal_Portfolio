@@ -1,7 +1,7 @@
 {{define "home-content"}}
 <div class="h-full w-full flex flex-col sm:flex-row items-center justify-center p-4 sm:p-8 relative min-h-0 overflow-y-auto sm:overflow-y-visible">
     <div class="game-nav-grid grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 w-full max-w-4xl z-10 min-h-0 shrink-0">
-        <a href="/about" class="game-nav-btn group no-underline">
+        <a href="/about" class="game-nav-btn group no-underline" aria-label="About — background and profile">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
@@ -11,7 +11,7 @@
             </div>
         </a>
 
-        <a href="/projects" class="game-nav-btn group no-underline">
+        <a href="/projects" class="game-nav-btn group no-underline" aria-label="Projects — work and modules">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
@@ -21,7 +21,7 @@
             </div>
         </a>
 
-        <a href="/resume" class="game-nav-btn group no-underline">
+        <a href="/resume" class="game-nav-btn group no-underline" aria-label="Resume — CV and dossier">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
@@ -31,7 +31,7 @@
             </div>
         </a>
 
-        <a href="/contact" class="game-nav-btn group no-underline">
+        <a href="/contact" class="game-nav-btn group no-underline" aria-label="Contact — send a message">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/40 border border-nexus-cyan/40 backdrop-blur-md transition-all duration-300 group-hover:bg-nexus-cyan/10 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
@@ -43,7 +43,7 @@
         </a>
 
         {{if .Personal.GitHub}}
-        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline">
+        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline" aria-label="GitHub profile (opens in new tab)">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
@@ -55,7 +55,7 @@
         {{end}}
 
         {{if .Personal.LinkedIn}}
-        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline">
+        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline" aria-label="LinkedIn profile (opens in new tab)">
             <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
                 <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>

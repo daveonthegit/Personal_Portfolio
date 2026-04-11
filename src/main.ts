@@ -7,7 +7,7 @@ import { initGlitchAnimations } from './utils/glitchAnimations';
 
 // Initialize utilities
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 xiaoOS Interface - Initializing...');
+  console.log('xiaoOS Interface — initializing');
   
   // Initialize smooth scrolling
   SmoothScroll.init();
@@ -33,7 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(tick, 1000);
   }
   
-  console.log('✅ xiaoOS Interface - All systems operational');
+  const skip = document.querySelector<HTMLAnchorElement>('.xiaoos-skip-link');
+  const mainEl = document.getElementById('main-content');
+  if (skip && mainEl) {
+    skip.addEventListener('click', () => {
+      window.setTimeout(() => mainEl.focus(), 0);
+    });
+  }
+
+  console.log('xiaoOS Interface — ready');
 });
 
 // Export types for use in templates
