@@ -4,11 +4,11 @@
   "description": "Frontend TypeScript assets for Go-based personal portfolio",
   "scripts": {
     "build": "npm run build:ts && npm run build:css",
-    "build:ts": "tsc && esbuild src/main.ts src/terminal-boot.ts --bundle --outdir=static/js --minify --sourcemap",
+    "build:ts": "tsc && esbuild src/main.ts --bundle --outdir=static/js --minify --sourcemap",
     "build:css": "postcss src/styles/main.css -o static/css/main.css --map",
     "build:resume": "node -e \"require('child_process').execSync(process.platform === 'win32' ? 'scripts\\\\build-resume.bat' : 'bash scripts/build-resume.sh', {stdio: 'inherit'})\"",
     "watch": "concurrently \"npm run watch:ts\" \"npm run watch:css\"",
-    "watch:ts": "esbuild src/main.ts src/terminal-boot.ts --bundle --outdir=static/js --watch --sourcemap",
+    "watch:ts": "esbuild src/main.ts --bundle --outdir=static/js --watch --sourcemap",
     "watch:css": "postcss src/styles/main.css -o static/css/main.css --watch --map",
     "dev": "concurrently \"npm run watch\" \"go run .\"",
     "build:full": "npm run build:ts && npm run build:css && npm run build:resume",

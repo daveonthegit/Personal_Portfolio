@@ -54,15 +54,24 @@ type ContactForm struct {
 }
 
 type PageData struct {
-	Title        string
-	Description  string
-	Projects     []Project
-	ProjectTypes []string
-	Personal     config.PersonalInfo
-	Year         int
-	TemplateName string
-	AssetVersion string
-	SiteURL      string
+	Title         string
+	Description   string
+	Projects      []Project
+	ProjectTypes  []string
+	ProjectGroups []ProjectYearGroup
+	Personal      config.PersonalInfo
+	Year          int
+	TemplateName  string
+	AssetVersion  string
+	SiteURL       string
+}
+
+// ProjectYearGroup bundles projects for one calendar year so the projects page
+// can render editorial year headers and a sticky scroll-spy strip without
+// asking the template to carry per-iteration state it can't reliably hold.
+type ProjectYearGroup struct {
+	Year     int
+	Projects []Project
 }
 
 // resolveAssetVersion picks a cache-bust token without manual steps when possible:
@@ -154,6 +163,10 @@ func NewServer() *Server {
 			}
 			return path + sep + "v=" + url.QueryEscape(assetVer)
 		},
+		// inc shifts a 0-based range index to a 1-based numeral for editorial labels like "№ 01".
+		"inc": func(i int) int { return i + 1 },
+		// split splits a string on a separator so the bio can be rendered as distinct <p> paragraphs.
+		"split": func(sep, s string) []string { return strings.Split(s, sep) },
 	}).ParseGlob("templates/*.html")
 	if err != nil {
 		log.Fatal("Error parsing templates:", err)
@@ -190,24 +203,6 @@ func NewServer() *Server {
 	}
 }
 
-func (s *Server) terminalHandler(w http.ResponseWriter, r *http.Request) {
-	personal := config.GetPersonalInfo()
-	data := PageData{
-		Title:        "xiaoOS Terminal - " + personal.Name,
-		Description:  "Welcome to xiaoOS - Portfolio system initialization and access point.",
-		Personal:     personal,
-		Year:         time.Now().Year(),
-		TemplateName: "terminal",
-		AssetVersion: s.assetVersion,
-		SiteURL:      s.siteURL,
-	}
-
-	if err := s.templates.ExecuteTemplate(w, "terminal.html", data); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("Template execution error: %v", err)
-	}
-}
-
 func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 	data := s.pageDataFor("home")
 
@@ -217,13 +212,9 @@ func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) aboutHandler(w http.ResponseWriter, r *http.Request) {
-	data := s.pageDataFor("about")
-
-	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("Template execution error: %v", err)
-	}
+// aboutRedirectHandler 301s the legacy /about route to the about section on /home.
+func (s *Server) aboutRedirectHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/home#about", http.StatusMovedPermanently)
 }
 
 func (s *Server) projectsHandler(w http.ResponseWriter, r *http.Request) {
@@ -235,23 +226,18 @@ func (s *Server) projectsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// contactHandler now only handles POST submissions. GET is redirected via contactRedirectHandler.
 func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		data := s.pageDataFor("contact")
-
-		if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			log.Printf("Template execution error: %v", err)
-		}
-		return
-	}
-
 	if r.Method == "POST" {
 		s.handleContactForm(w, r)
 		return
 	}
-
 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+}
+
+// contactRedirectHandler 301s GET /contact to the contact section on /home.
+func (s *Server) contactRedirectHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/home#contact", http.StatusMovedPermanently)
 }
 
 func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
@@ -680,12 +666,11 @@ func min(a, b int) int {
 	return b
 }
 
-// spaPageTemplates maps URL segment (home, about, …) to the corresponding content template name.
+// spaPageTemplates maps URL segment (home, projects, resume) to the corresponding content template name.
+// /about and /contact now redirect to anchors on /home and are intentionally absent here.
 var spaPageTemplates = map[string]string{
 	"home":     "home-content",
-	"about":    "about-content",
 	"projects": "projects-content",
-	"contact":  "contact-content",
 	"resume":   "resume-content",
 }
 
@@ -702,19 +687,33 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	case "home":
 		data.Title = personal.Name + " - " + personal.Title
 		data.Description = "Welcome to my portfolio showcasing my work in web development, software engineering, and creative projects."
-		data.Projects = s.projects[:min(3, len(s.projects))]
-	case "about":
-		data.Title = "About Me - " + personal.Name
-		data.Description = "Who I am, skills, experience, and how to reach me — written for recruiters and hiring managers."
-		data.Projects = s.projects
+		// Home only surfaces the curated featured short-list; /projects has the rest.
+		featured := make([]Project, 0, 4)
+		for _, p := range s.projects {
+			if p.Featured {
+				featured = append(featured, p)
+			}
+		}
+		data.Projects = featured
 	case "projects":
 		data.Title = "Projects - " + personal.Name
 		data.Description = "Explore my portfolio of web applications, software projects, and creative work."
-		data.Projects = s.projects
+		// Sort newest first so year headers read top-to-bottom like a changelog.
+		sorted := make([]Project, len(s.projects))
+		copy(sorted, s.projects)
+		sort.Slice(sorted, func(i, j int) bool { return sorted[i].Date.After(sorted[j].Date) })
+		data.Projects = sorted
+		// Preserve descending year order while grouping — map iteration isn't stable.
+		groups := []ProjectYearGroup{}
+		for _, p := range sorted {
+			y := p.Date.Year()
+			if len(groups) == 0 || groups[len(groups)-1].Year != y {
+				groups = append(groups, ProjectYearGroup{Year: y})
+			}
+			groups[len(groups)-1].Projects = append(groups[len(groups)-1].Projects, p)
+		}
+		data.ProjectGroups = groups
 		data.ProjectTypes = GetAvailableTypesSorted()
-	case "contact":
-		data.Title = "Contact Me - " + personal.Name
-		data.Description = "Get in touch with me for collaboration opportunities or project inquiries."
 	case "resume":
 		data.Title = "Resume - " + personal.Name
 		data.Description = "View my professional experience, education, and skills."
@@ -723,26 +722,6 @@ func (s *Server) pageDataFor(templateName string) PageData {
 		data.Description = ""
 	}
 	return data
-}
-
-func (s *Server) partialHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	page := vars["page"]
-	tmplName, ok := spaPageTemplates[page]
-	if !ok {
-		http.NotFound(w, r)
-		return
-	}
-	data := s.pageDataFor(page)
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("X-Page-Title", data.Title)
-	w.Header().Set("X-Page-Description", data.Description)
-	w.Header().Set("Cache-Control", "no-store")
-
-	if err := s.templates.ExecuteTemplate(w, tmplName, data); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		log.Printf("Partial template error: %v", err)
-	}
 }
 
 // Helper functions for environment variables
@@ -859,18 +838,18 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// Routes
-	r.HandleFunc("/", server.terminalHandler).Methods("GET")
+	// Routes — single-page home. / plays the boot overlay and renders /home directly.
+	r.HandleFunc("/", server.homeHandler).Methods("GET")
 	r.HandleFunc("/home", server.homeHandler).Methods("GET")
-	r.HandleFunc("/about", server.aboutHandler).Methods("GET")
+	// Legacy deep links — 301 to the matching section on /home.
+	r.HandleFunc("/about", server.aboutRedirectHandler).Methods("GET")
+	r.HandleFunc("/contact", server.contactRedirectHandler).Methods("GET")
+	r.HandleFunc("/contact", server.contactHandler).Methods("POST")
 	r.HandleFunc("/projects", server.projectsHandler).Methods("GET")
-	r.HandleFunc("/contact", server.contactHandler).Methods("GET", "POST")
 	r.HandleFunc("/resume", server.resumeHandler).Methods("GET")
 	r.HandleFunc("/resume/pdf", server.resumePDFHandler).Methods("GET")
 	r.HandleFunc("/resume/download", server.resumeDownloadHandler).Methods("GET")
 	r.HandleFunc("/resume/html", server.resumeHTMLHandler).Methods("GET")
-
-	r.HandleFunc("/partials/{page}", server.partialHandler).Methods("GET")
 
 	// API routes for project filtering
 	r.HandleFunc("/api/projects", server.projectsAPIHandler).Methods("GET")

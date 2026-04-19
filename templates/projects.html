@@ -1,209 +1,213 @@
 {{define "projects-content"}}
-<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
-    <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
-        <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to portfolio home" aria-label="Back to portfolio home">
-                <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
-            </a>
-            <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-[0.14em] uppercase truncate">Projects</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-gray-500 tracking-[0.18em] truncate">Project index / module registry</p>
-            </div>
-        </div>
-        <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-1.5 h-1.5 rounded-sm bg-nexus-cyan/90"></span>
-            <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Index</span>
-        </div>
+<div class="xw-projects-page">
+
+  {{/* ───────────────────────────────── Page head ──────────────────────────────── */}}
+  <header class="xw-section-head xw-projects-head" data-xw-reveal>
+    <div class="xw-hero-meta">
+      <span class="xw-index" aria-hidden="true">02</span>
+      <span class="xw-caps">Project index</span>
     </div>
-    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-<section class="projects-shell relative flex-1 min-h-0 flex flex-col">
-    <div class="w-full max-w-7xl mx-auto flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div class="projects-toolbar" role="toolbar" aria-label="Filter projects by type">
-            <span class="text-[9px] font-mono text-gray-600 uppercase tracking-[0.15em] mr-1 hidden sm:inline">Filter</span>
-            <button type="button" class="nexus-filter-btn filter-btn active" data-filter="all">All</button>
-            {{range $t := .ProjectTypes}}
-            <button type="button" class="nexus-filter-btn filter-btn uppercase" data-filter="{{$t}}">{{$t}}</button>
-            {{end}}
-        </div>
-
-        <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0 pr-1 sm:pr-2 pb-4">
-            {{ $featuredID := "kyarafit" }}
-            <div class="flex flex-col gap-3 md:gap-4">
-                {{range .Projects}}
-                {{if eq .ID $featuredID}}
-                <button type="button" class="project-card project-tile--feature group relative flex flex-col sm:flex-row sm:items-stretch text-left w-full font-inherit overflow-hidden" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
-                <div class="hidden project-data-store"
-                     data-title="{{.Title}}"
-                     data-desc="{{.Description}}"
-                     data-img="{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
-                     data-github="{{.GitHubURL}}"
-                     data-live="{{.LiveURL}}"
-                     data-demo-url="{{.DemoURL}}">
-                </div>
-                <div class="hidden project-tech-store">
-                    {{range .Technologies}}
-                    <span>{{.}}</span>
-                    {{end}}
-                </div>
-                <div class="relative w-full sm:w-[42%] min-h-[11rem] sm:min-h-0 shrink-0 bg-black/50">
-                    <div class="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-95" style="background-image: url('{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}');"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/25 to-transparent pointer-events-none sm:bg-gradient-to-t sm:from-black/80 sm:via-black/20"></div>
-                </div>
-                <div class="relative flex-1 flex flex-col justify-center p-4 md:p-6 z-10 min-w-0">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="font-mono text-[9px] text-nexus-cyan/90 tracking-[0.2em] uppercase">00 featured</span>
-                        <span class="h-px flex-1 bg-white/[0.08] min-w-[2rem]"></span>
-                    </div>
-                    <h3 class="text-base md:text-lg font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-[0.1em] leading-snug mb-2">{{.Title}}</h3>
-                    <p class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-3">{{.ID}}</p>
-                    <div class="mt-auto flex items-center gap-2 text-[9px] font-mono text-gray-600">
-                        <span>Open dossier</span>
-                        <span class="material-symbols-outlined text-sm text-nexus-cyan/80" aria-hidden="true">chevron_right</span>
-                    </div>
-                </div>
-                <div class="absolute bottom-3 right-3 w-2 h-2 rounded-full z-20 {{if eq .Status "active"}}bg-[#4ade80]{{else if eq .Status "in-development"}}bg-[#e8a030]{{else}}bg-nexus-cyan{{end}}" title="Status" aria-hidden="true"></div>
-                </button>
-                {{end}}
-                {{end}}
-
-                <div class="projects-matrix-asymmetric">
-                {{range .Projects}}
-                {{if ne .ID $featuredID}}
-            <button type="button" class="project-card project-tile-grid relative bg-black/30 border border-white/[0.1] group cursor-pointer aspect-square flex flex-col items-center justify-center p-2 md:p-3 text-center overflow-hidden font-inherit text-left w-full transition-[border-color,background-color] duration-200" data-category="{{.ID}}" data-type="{{.Type}}" data-status="{{.Status}}" data-demo="{{.DemoType}}">
-                <!-- Storing data for JS to use easily without parsing HTML -->
-                <div class="hidden project-data-store" 
-                     data-title="{{.Title}}" 
-                     data-desc="{{.Description}}" 
-                     data-img="{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
-                     data-github="{{.GitHubURL}}"
-                     data-live="{{.LiveURL}}"
-                     data-demo-url="{{.DemoURL}}">
-                </div>
-                <div class="hidden project-tech-store">
-                    {{range .Technologies}}
-                    <span>{{.}}</span>
-                    {{end}}
-                </div>
-                
-                <!-- HUD brackets -->
-                <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
-                <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
-                <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
-                <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/20 group-hover:border-nexus-cyan transition-colors"></div>
-                
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{if .Image}}{{asset .Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent pointer-events-none"></div>
-                
-                <!-- Info -->
-                <h3 class="text-[10px] md:text-xs font-nexus-display font-bold text-white group-hover:text-nexus-cyan uppercase tracking-widest leading-tight line-clamp-2 w-full relative z-10">{{.Title}}</h3>
-                <div class="mt-2 text-[8px] font-mono text-gray-500 uppercase relative z-10">{{.ID}}</div>
-                
-                <!-- Status Dot -->
-                <div class="absolute bottom-2 right-2 w-1.5 h-1.5 rounded-full z-10 {{if eq .Status "active"}}bg-[#4ade80]{{else if eq .Status "in-development"}}bg-[#e8a030]{{else}}bg-nexus-cyan{{end}}"></div>
-            </button>
-            {{end}}
-            {{end}}
-                </div>
-            </div>
-        </div>
-
-        <!-- Database Footer -->
-        <div class="mt-auto pt-4 border-t border-white/5 flex justify-between items-end shrink-0">
-            <div class="text-[10px] font-mono text-gray-600">
-                SYSTEM_STATUS: STABLE<br/>
-                ENCRYPTION: AES-256-GCM
-            </div>
-            <div class="flex flex-col items-end gap-2">
-                <div class="text-[10px] font-mono text-nexus-cyan">ACTIVE_MODULES: {{len .Projects}}</div>
-                <div class="flex gap-1">
-                    <div class="w-2 h-2 bg-nexus-cyan"></div>
-                    <div class="w-2 h-2 bg-nexus-cyan"></div>
-                    <div class="w-2 h-2 bg-white/20"></div>
-                    <div class="w-2 h-2 bg-white/20"></div>
-                </div>
-            </div>
-        </div>
+    <div class="xw-projects-head-row">
+      <h1 class="xw-display xw-display--sm">
+        Projects<span class="xw-display-stop" aria-hidden="true">.</span>
+      </h1>
+      <a href="/home" class="xw-link xw-link--muted xw-projects-back">
+        <span aria-hidden="true">←</span>&nbsp;Back to home
+      </a>
     </div>
-</section>
+    <p class="xw-section-lede">
+      Every shipped, archived, and in-flight project — year-indexed, filterable by stack.
+      Featured work is surfaced on <a href="/home#projects" class="xw-link">the home page</a>.
+    </p>
+  </header>
 
-<!-- Project detail overlay (dossier / module record — not neon terminal) -->
-<div id="project-terminal-overlay" class="fixed inset-0 z-50 hidden bg-black/88 backdrop-blur-sm p-2 sm:p-4 md:p-8 flex items-center justify-center opacity-0 transition-opacity duration-150 ease-out pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(0.5rem,env(safe-area-inset-bottom))]" role="presentation">
-    <div id="terminal-window" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="term-project-title" class="project-modal w-full max-w-5xl h-full max-h-[min(800px,calc(100dvh-1rem))] sm:max-h-[800px] flex flex-col relative transform scale-95 transition-transform duration-200 ease-out overflow-hidden min-h-0 outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/25">
+  {{/* ────────────────────────────────── Filters ──────────────────────────────── */}}
+  <div class="xw-projects-toolbar" role="toolbar" aria-label="Filter projects by type">
+    <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">Filter</span>
+    <button type="button" class="xw-filter filter-btn is-active" data-filter="all">All</button>
+    {{range $t := .ProjectTypes}}
+    <button type="button" class="xw-filter filter-btn" data-filter="{{$t}}">{{$t}}</button>
+    {{end}}
+  </div>
 
-        <header class="project-modal__head">
-            <div class="project-modal__head-text min-w-0">
-                <span class="project-modal__kicker">Module dossier</span>
-                <p id="term-header-title" class="project-modal__path truncate">registry · project</p>
-            </div>
-            <div class="project-modal__head-actions">
-                <span class="project-modal__pulse" aria-hidden="true"></span>
-                <button type="button" id="close-terminal-btn" class="project-modal__close" title="Close" aria-label="Close project details">
-                    <span class="material-symbols-outlined text-lg" aria-hidden="true">close</span>
-                </button>
-            </div>
+  {{/* ────────────────────────────── Body: strip + list ───────────────────────── */}}
+  <div class="xw-projects-body">
+
+    {{/* Year-indexed scroll-spy strip (desktop) */}}
+    <aside class="xw-year-strip" aria-label="Jump to year">
+      <span class="xw-caps xw-caps--muted xw-year-strip-label">Year</span>
+      <ol class="xw-year-ticks" role="list">
+        {{range .ProjectGroups}}
+        <li>
+          <a href="#year-{{.Year}}" data-year="{{.Year}}" class="xw-year-tick">
+            <span class="xw-year-tick-num">{{.Year}}</span>
+            <span class="xw-year-tick-count" aria-hidden="true">{{len .Projects}}</span>
+          </a>
+        </li>
+        {{end}}
+      </ol>
+    </aside>
+
+    {{/* Year-grouped list */}}
+    <div class="xw-year-groups">
+      {{range $gi, $group := .ProjectGroups}}
+      <section id="year-{{$group.Year}}" class="xw-year-group" data-year="{{$group.Year}}" aria-labelledby="year-{{$group.Year}}-heading">
+        <header class="xw-year-head" data-xw-reveal>
+          <div class="xw-year-head-meta">
+            <span class="xw-caps xw-caps--muted">Year</span>
+            <span class="xw-caps xw-caps--accent">{{len $group.Projects}} {{if eq (len $group.Projects) 1}}entry{{else}}entries{{end}}</span>
+          </div>
+          <h2 id="year-{{$group.Year}}-heading" class="xw-year-num">{{$group.Year}}</h2>
+          <span class="xw-year-rule" aria-hidden="true"></span>
         </header>
 
-        <div class="project-modal__body">
-            <aside class="project-modal__aside">
-                <figure class="project-modal__figure">
-                    <span class="project-modal__figure-label">Asset preview</span>
-                    <div id="term-img-container" class="project-modal__img-wrap">
-                        <img id="term-project-img" src="" alt="" class="project-modal__img">
-                    </div>
-                    <figcaption id="term-img-id" class="project-modal__figure-id">—</figcaption>
-                </figure>
+        <ul class="xw-proj-grid" role="list">
+          {{range $i, $p := $group.Projects}}
+          <li class="xw-proj-item" data-xw-reveal>
+            <button type="button"
+              class="project-card xw-proj-card"
+              data-category="{{$p.ID}}"
+              data-type="{{$p.Type}}"
+              data-status="{{$p.Status}}"
+              data-demo="{{$p.DemoType}}"
+              aria-label="Open details for {{$p.Title}}">
 
-                <dl class="project-modal__meta">
-                    <div class="project-modal__meta-row">
-                        <dt>Identifier</dt>
-                        <dd id="term-project-id" class="project-modal__meta-value">—</dd>
-                    </div>
-                    <div class="project-modal__meta-row">
-                        <dt>Type</dt>
-                        <dd id="term-project-type" class="project-modal__meta-value">—</dd>
-                    </div>
-                    <div class="project-modal__meta-row">
-                        <dt>Status</dt>
-                        <dd id="term-project-status" class="project-modal__meta-value project-modal__meta-value--status">—</dd>
-                    </div>
-                </dl>
+              {{/* Hidden stores — TS modal contract */}}
+              <div class="hidden project-data-store"
+                   data-title="{{$p.Title}}"
+                   data-desc="{{$p.Description}}"
+                   data-img="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
+                   data-github="{{$p.GitHubURL}}"
+                   data-live="{{$p.LiveURL}}"
+                   data-demo-url="{{$p.DemoURL}}">
+              </div>
+              <div class="hidden project-tech-store">
+                {{range $p.Technologies}}<span>{{.}}</span>{{end}}
+              </div>
 
-                <div id="term-project-links" class="project-modal__links"></div>
-            </aside>
+              <figure class="xw-proj-card-media">
+                <img
+                  src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
+                  alt="{{$p.Title}} — preview"
+                  loading="lazy" decoding="async" />
+              </figure>
 
-            <div class="project-modal__main custom-scrollbar">
-                <div id="term-content-area" class="project-modal__inner opacity-0 transition-opacity duration-150 ease-out">
-                    <p class="project-modal__context">
-                        <span class="project-modal__context-label">Registry key</span>
-                        <span id="term-cmd-target" class="project-modal__context-key font-mono">mod_—</span>
-                    </p>
+              <div class="xw-proj-card-head">
+                <span class="xw-caps xw-caps--accent">№&nbsp;{{if lt $i 9}}0{{end}}{{inc $i}}</span>
+                <span class="xw-caps xw-caps--muted">{{$p.Type}}</span>
+                {{if eq $p.Status "active"}}<span class="xw-badge xw-badge--live">Live</span>{{end}}
+                {{if eq $p.Status "in-development"}}<span class="xw-badge">In development</span>{{end}}
+                {{if eq $p.Status "archived"}}<span class="xw-badge xw-badge--muted">Archived</span>{{end}}
+              </div>
 
-                    <div class="project-modal__titleblock">
-                        <span class="project-modal__section-label">Module</span>
-                        <h2 id="term-project-title" class="project-modal__title">Title</h2>
-                    </div>
+              <h3 class="xw-proj-card-title">{{$p.Title}}</h3>
+              <p class="xw-proj-card-lede">
+                {{if $p.ShortDescription}}{{$p.ShortDescription}}{{else}}{{$p.Description}}{{end}}
+              </p>
 
-                    <p class="project-modal__verify"><span class="text-[#4ade80]">Record loaded</span></p>
+              {{if $p.Technologies}}
+              <ul class="xw-proj-card-tech" role="list" aria-label="Stack">
+                {{range $p.Technologies}}<li>{{.}}</li>{{end}}
+              </ul>
+              {{end}}
 
-                    <section class="project-modal__block" aria-labelledby="term-desc-label">
-                        <h3 id="term-desc-label" class="project-modal__section-label">Summary</h3>
-                        <div class="project-modal__desc-wrap">
-                            <p id="term-project-desc" class="project-modal__desc">Description goes here…</p>
-                        </div>
-                    </section>
-
-                    <section class="project-modal__block project-modal__block--tech" aria-labelledby="term-tech-label">
-                        <h3 id="term-tech-label" class="project-modal__section-label">Technologies</h3>
-                        <div id="term-project-tech" class="project-modal__tech"></div>
-                    </section>
-
-                    <p class="project-modal__foot">Esc or outside click to close</p>
-                </div>
-            </div>
-        </div>
+              <div class="xw-proj-card-foot">
+                <span class="xw-caps xw-caps--muted">{{$p.Date.Format "Jan 2006"}}</span>
+                <span class="xw-proj-card-cta">
+                  Details<span aria-hidden="true"> →</span>
+                </span>
+              </div>
+            </button>
+          </li>
+          {{end}}
+        </ul>
+      </section>
+      {{end}}
     </div>
+  </div>
 </div>
 
+{{/* ─────────────────────── Project detail overlay (modal) ─────────────────────── */}}
+<div id="project-terminal-overlay" class="xw-modal-overlay hidden" role="presentation">
+  <div id="terminal-window"
+       tabindex="-1"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="term-project-title"
+       class="xw-modal">
+
+    <header class="xw-modal-head">
+      <div class="xw-modal-head-text">
+        <span class="xw-caps xw-caps--accent">Project</span>
+        <p id="term-header-title" class="xw-modal-path">registry · project</p>
+      </div>
+      <button type="button" id="close-terminal-btn" class="xw-modal-close" title="Close" aria-label="Close project details">
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div class="xw-modal-body">
+
+      <aside class="xw-modal-aside">
+        <figure class="xw-modal-figure">
+          <span class="xw-caps xw-caps--muted">Preview</span>
+          <div id="term-img-container" class="xw-modal-img-wrap">
+            <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
+            <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
+            <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
+            <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
+            <img id="term-project-img" src="" alt="" class="xw-modal-img">
+          </div>
+          <figcaption id="term-img-id" class="xw-caps xw-caps--muted xw-modal-figure-id">—</figcaption>
+        </figure>
+
+        <dl class="xw-modal-meta">
+          <div class="xw-modal-meta-row">
+            <dt class="xw-caps xw-caps--muted">Identifier</dt>
+            <dd id="term-project-id">—</dd>
+          </div>
+          <div class="xw-modal-meta-row">
+            <dt class="xw-caps xw-caps--muted">Type</dt>
+            <dd id="term-project-type">—</dd>
+          </div>
+          <div class="xw-modal-meta-row">
+            <dt class="xw-caps xw-caps--muted">Status</dt>
+            <dd id="term-project-status">—</dd>
+          </div>
+        </dl>
+
+        <div id="term-project-links" class="xw-modal-links"></div>
+      </aside>
+
+      <div class="xw-modal-main">
+        <div id="term-content-area" class="xw-modal-inner">
+          <p class="xw-modal-context">
+            <span class="xw-caps xw-caps--muted">Registry key</span>
+            <span id="term-cmd-target" class="xw-modal-context-key">mod_—</span>
+          </p>
+
+          <div class="xw-modal-titleblock">
+            <span class="xw-caps xw-caps--accent">Module</span>
+            <h2 id="term-project-title" class="xw-modal-title">Title</h2>
+          </div>
+
+          <section class="xw-modal-block" aria-labelledby="term-desc-label">
+            <h3 id="term-desc-label" class="xw-caps xw-caps--muted">Summary</h3>
+            <p id="term-project-desc" class="xw-modal-desc">Description goes here…</p>
+          </section>
+
+          <section class="xw-modal-block" aria-labelledby="term-tech-label">
+            <h3 id="term-tech-label" class="xw-caps xw-caps--muted">Stack</h3>
+            <div id="term-project-tech" class="xw-modal-tech"></div>
+          </section>
+
+          <p class="xw-modal-foot">
+            <span class="xw-caps xw-caps--muted">Esc or click outside to close</span>
+          </p>
+        </div>
+      </div>
+
     </div>
+  </div>
 </div>
 {{end}}

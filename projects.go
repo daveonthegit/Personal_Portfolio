@@ -9,79 +9,89 @@ import (
 
 // Project represents a portfolio project with live demo support
 type Project struct {
-	ID           string    `json:"id" yaml:"id"`
-	Title        string    `json:"title" yaml:"title"`
-	Description  string    `json:"description" yaml:"description"`
-	Image        string    `json:"image" yaml:"image"`
-	Technologies []string  `json:"technologies" yaml:"technologies"`
-	Type         string    `json:"type" yaml:"type"` // "web", "mobile", "ai", "security", "academic", "research", "tool"
-	GitHubURL    string    `json:"github_url" yaml:"github_url"`
-	LiveURL      string    `json:"live_url" yaml:"live_url"`
-	DemoType     string    `json:"demo_type" yaml:"demo_type"`     // "live", "video", "screenshot", "hosted", "none"
-	DemoURL      string    `json:"demo_url" yaml:"demo_url"`       // URL for video demos or screenshots
-	HostedPath   string    `json:"hosted_path" yaml:"hosted_path"` // Path to hosted project files
-	Status       string    `json:"status" yaml:"status"`           // "active", "archived", "in-development"
-	Date         time.Time `json:"date" yaml:"date"`
+	ID               string    `json:"id" yaml:"id"`
+	Title            string    `json:"title" yaml:"title"`
+	ShortDescription string    `json:"short_description" yaml:"short_description"` // One-line summary for featured/home cards
+	Description      string    `json:"description" yaml:"description"`
+	Image            string    `json:"image" yaml:"image"`
+	Technologies     []string  `json:"technologies" yaml:"technologies"`
+	Type             string    `json:"type" yaml:"type"` // "web", "mobile", "ai", "security", "academic", "research", "tool"
+	GitHubURL        string    `json:"github_url" yaml:"github_url"`
+	LiveURL          string    `json:"live_url" yaml:"live_url"`
+	DemoType         string    `json:"demo_type" yaml:"demo_type"`     // "live", "video", "screenshot", "hosted", "none"
+	DemoURL          string    `json:"demo_url" yaml:"demo_url"`       // URL for video demos or screenshots
+	HostedPath       string    `json:"hosted_path" yaml:"hosted_path"` // Path to hosted project files
+	Status           string    `json:"status" yaml:"status"`           // "active", "archived", "in-development"
+	Featured         bool      `json:"featured" yaml:"featured"`       // True for a short-list of standouts on /home
+	Date             time.Time `json:"date" yaml:"date"`
 }
 
 // LoadProjects returns all portfolio projects with live demo support
 func LoadProjects() []Project {
 	return []Project{
 		{
-			ID:           "personal-portfolio",
-			Title:        "Personal Portfolio Website",
-			Description:  "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
-			Image:        "/static/images/portfolio-project.png",
-			Technologies: []string{"Go", "TypeScript", "HTML/CSS", "Tailwind CSS", "LaTeX", "Docker", "Heroku"},
-			Type:         "web",
-			GitHubURL:    "https://github.com/daveonthegit/Personal_Portfolio",
-			LiveURL:      "http://davidx.tech",
-			DemoType:     "live",
-			DemoURL:      "http://davidx.tech",
-			Status:       "active",
-			Date:         time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
+			ID:               "personal-portfolio",
+			Title:            "Personal Portfolio",
+			ShortDescription: "This site — a Go + TypeScript portfolio with a LaTeX-compiled resume, editorial single-page layout, and a scripted deploy to Heroku.",
+			Description:      "A modern, responsive personal portfolio built from scratch using Go for the backend and TypeScript for the frontend. Features include LaTeX resume integration with PDF compilation, dynamic project showcase, contact form handling, dark/light theme toggle, and professional responsive design. Demonstrates full-stack development skills with Go web server, HTML templating, modern frontend build tools, and deployment to Heroku.",
+			Image:            "/static/images/portfolio-project.png",
+			Technologies:     []string{"Go", "TypeScript", "HTML/CSS", "Tailwind CSS", "LaTeX", "Docker", "Heroku"},
+			Type:             "web",
+			GitHubURL:        "https://github.com/daveonthegit/Personal_Portfolio",
+			LiveURL:          "http://davidx.tech",
+			DemoType:         "live",
+			DemoURL:          "http://davidx.tech",
+			Status:           "active",
+			Featured:         true,
+			Date:             time.Date(2025, 9, 11, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:           "kyarafit",
-			Title:        "Kyarafit",
-			Description:  "A cross-platform cosplay wardrobe and outfit planning app. Organize costume pieces in a digital closet, link them into character builds, plan conventions day by day, and auto-generate smart packing lists. Built as a TypeScript monorepo with a Next.js web app, React Native (Expo) mobile client, shared design system, and Convex serverless backend with real-time reactive queries. Features offline-first mobile storage via SQLite, Better Auth authentication with Google OAuth, tiered subscriptions via Stripe.",
-			Image:        "/static/images/Kyarafit.png",
-			Technologies: []string{"TypeScript", "React Native", "Next.js", "Expo", "Convex", "FastAPI", "Python", "TailwindCSS", "Docker"},
-			Type:         "mobile",
-			GitHubURL:    "https://github.com/daveonthegit/Kyarafit",
-			LiveURL:      "https://www.kyarafit.com/",
-			DemoType:     "live",
-			DemoURL:      "https://www.kyarafit.com/",
-			Status:       "in-development",
-			Date:         time.Date(2025, 8, 19, 0, 0, 0, 0, time.UTC),
+			ID:               "kyarafit",
+			Title:            "Kyarafit",
+			ShortDescription: "Cross-platform cosplay wardrobe app — TypeScript monorepo (Next.js web, Expo RN mobile) on a Convex reactive backend with Stripe-gated tiers.",
+			Description:      "A cross-platform cosplay wardrobe and outfit planning app. Organize costume pieces in a digital closet, link them into character builds, plan conventions day by day, and auto-generate smart packing lists. Built as a TypeScript monorepo with a Next.js web app, React Native (Expo) mobile client, shared design system, and Convex serverless backend with real-time reactive queries. Features offline-first mobile storage via SQLite, Better Auth authentication with Google OAuth, tiered subscriptions via Stripe.",
+			Image:            "/static/images/Kyarafit.png",
+			Technologies:     []string{"TypeScript", "React Native", "Next.js", "Expo", "Convex", "FastAPI", "Python", "TailwindCSS", "Docker"},
+			Type:             "mobile",
+			GitHubURL:        "https://github.com/daveonthegit/Kyarafit",
+			LiveURL:          "https://www.kyarafit.com/",
+			DemoType:         "live",
+			DemoURL:          "https://www.kyarafit.com/",
+			Status:           "in-development",
+			Featured:         true,
+			Date:             time.Date(2025, 8, 19, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:           "outfai",
-			Title:        "OutfAI",
-			Description:  "Wardrobe-first outfit intelligence. OutfAI helps you decide what to wear by generating context-aware outfits from your own closet—using mood and weather—with optional, explainable suggestions for new pieces that fit what you already own.",
-			Image:        "/static/images/OutfAI.png",
-			Technologies: []string{"Next.js", "React", "TypeScript", "Tailwind CSS", "tRPC", "Convex", "BetterAuth"},
-			Type:         "ai",
-			GitHubURL:    "https://github.com/daveonthegit/OutfAI",
-			LiveURL:      "https://outfai.vercel.app/",
-			DemoType:     "live",
-			DemoURL:      "https://outfai.vercel.app/",
-			Status:       "active",
-			Date:         time.Date(2026, 1, 26, 0, 0, 0, 0, time.UTC),
+			ID:               "outfai",
+			Title:            "OutfAI",
+			ShortDescription: "Wardrobe-first outfit intelligence — Next.js + tRPC + Convex app that generates context-aware outfits from your closet, mood, and weather.",
+			Description:      "Wardrobe-first outfit intelligence. OutfAI helps you decide what to wear by generating context-aware outfits from your own closet—using mood and weather—with optional, explainable suggestions for new pieces that fit what you already own.",
+			Image:            "/static/images/OutfAI.png",
+			Technologies:     []string{"Next.js", "React", "TypeScript", "Tailwind CSS", "tRPC", "Convex", "BetterAuth"},
+			Type:             "ai",
+			GitHubURL:        "https://github.com/daveonthegit/OutfAI",
+			LiveURL:          "https://outfai.vercel.app/",
+			DemoType:         "live",
+			DemoURL:          "https://outfai.vercel.app/",
+			Status:           "active",
+			Featured:         true,
+			Date:             time.Date(2026, 1, 26, 0, 0, 0, 0, time.UTC),
 		},
 		{
-			ID:           "forgearena",
-			Title:        "ForgeArena",
-			Description:  "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
-			Image:        "/static/images/Forgearena.png",
-			Technologies: []string{"TypeScript", "Go", "React", "PostgreSQL"},
-			Type:         "web",
-			GitHubURL:    "https://github.com/CSCI-40500-Fall-2025/ForgeArena",
-			LiveURL:      "https://forgearena.vercel.app/",
-			DemoType:     "live",
-			DemoURL:      "https://forgearena.vercel.app/",
-			Status:       "in-development",
-			Date:         time.Date(2025, 8, 26, 0, 0, 0, 0, time.UTC),
+			ID:               "forgearena",
+			Title:            "ForgeArena",
+			ShortDescription: "Gamified fitness platform — RPG-style avatar progression and social gym competition, built as a multi-semester TypeScript + Go team project.",
+			Description:      "A gamified fitness platform blending avatar evolution with social gym competition. Currently in development as part of CSCI-40500 coursework, this project combines fitness tracking with RPG-style character progression and social features. Repository is private within class organization.",
+			Image:            "/static/images/Forgearena.png",
+			Technologies:     []string{"TypeScript", "Go", "React", "PostgreSQL"},
+			Type:             "web",
+			GitHubURL:        "https://github.com/CSCI-40500-Fall-2025/ForgeArena",
+			LiveURL:          "https://forgearena.vercel.app/",
+			DemoType:         "live",
+			DemoURL:          "https://forgearena.vercel.app/",
+			Status:           "in-development",
+			Featured:         true,
+			Date:             time.Date(2025, 8, 26, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			ID:           "campus-management-system",
@@ -458,6 +468,19 @@ func GetProjectsByTypeAndStatus(projectType, status string) []Project {
 		}
 	}
 	return filtered
+}
+
+// GetFeaturedProjects returns the curated short-list of standout projects for the
+// home page, preserving the declared order in LoadProjects (recency-first).
+func GetFeaturedProjects() []Project {
+	allProjects := LoadProjects()
+	featured := make([]Project, 0, 4)
+	for _, project := range allProjects {
+		if project.Featured {
+			featured = append(featured, project)
+		}
+	}
+	return featured
 }
 
 // GetHostedProjects returns projects that are hosted on this site

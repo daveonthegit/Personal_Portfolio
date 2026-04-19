@@ -1,53 +1,60 @@
-// Main TypeScript entry point for the portfolio
+// Portfolio front-end entry. Single-page architecture — no client-side router.
 import { SmoothScroll } from './utils/smoothScroll';
 import { AnimationObserver } from './utils/animationObserver';
 import { initThemeHandler } from './utils/themeHandler';
-import GlitchAnimationController, { initGlitchAnimations } from './utils/glitchAnimations';
-import { initSpaRouter } from './spa/router';
+import { initGlitchAnimations } from './utils/glitchAnimations';
+import { initBootOverlay } from './home/bootOverlay';
+import { initResumePdfPrint } from './home/resumePrint';
+import { initTopBar } from './home/topbar';
+import { initRevealer } from './home/revealer';
+import { ContactFormHandler } from './components/ContactFormHandler';
 
-let glitchController: GlitchAnimationController | null = null;
-
-// Initialize utilities
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('xiaoOS Interface — initializing');
-  
-  // Initialize smooth scrolling
-  SmoothScroll.init();
-  
-  // Initialize scroll animations
-  AnimationObserver.init();
-  
-  glitchController = initGlitchAnimations();
-
-  initSpaRouter({
-    getGlitchController: () => glitchController,
-    setGlitchController: (c) => {
-      glitchController = c;
-    }
-  });
-  
-  // Initialize theme toggle
-  initThemeHandler();
-
-  const hudTime = document.getElementById('hud-time');
-  if (hudTime) {
-    const tick = () => {
-      hudTime.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
-    };
-    tick();
-    setInterval(tick, 1000);
+function mountContactForm(): void {
+  if (document.getElementById('contact-form')) {
+    ContactFormHandler.bind();
   }
-  
+}
+
+async function mountProjectsPanel(): Promise<void> {
+  // Only /projects ships the filter/modal panel.
+  if (document.body.dataset.page !== 'projects') return;
+  const root =
+    document.querySelector<HTMLElement>('[data-projects-root]') ??
+    document.getElementById('main-content');
+  if (!root) return;
+  try {
+    const mod = await import('./pages/projectsPanel');
+    mod.mountProjectsPage(root);
+  } catch (error) {
+    console.error('projectsPanel: failed to load', error);
+  }
+}
+
+function bindSkipLink(): void {
   const skip = document.querySelector<HTMLAnchorElement>('.xiaoos-skip-link');
   const mainEl = document.getElementById('main-content');
-  if (skip && mainEl) {
-    skip.addEventListener('click', () => {
-      window.setTimeout(() => mainEl.focus(), 0);
-    });
-  }
+  if (!skip || !mainEl) return;
+  skip.addEventListener('click', () => {
+    window.setTimeout(() => mainEl.focus(), 0);
+  });
+}
 
-  console.log('xiaoOS Interface — ready');
+document.addEventListener('DOMContentLoaded', () => {
+  // Boot overlay runs first so the intro sits above everything else.
+  initBootOverlay();
+
+  SmoothScroll.init();
+  AnimationObserver.init();
+  initGlitchAnimations();
+  initThemeHandler();
+
+  initTopBar();
+  initRevealer();
+  initResumePdfPrint();
+  mountContactForm();
+  void mountProjectsPanel();
+
+  bindSkipLink();
 });
 
-// Export types for use in templates
 export type { Project, ContactFormData } from './types';
