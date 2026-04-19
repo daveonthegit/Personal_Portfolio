@@ -960,12 +960,6 @@
     @apply mt-8 pt-4 border-t border-white/[0.06] font-mono text-[10px] text-gray-600 tracking-wide m-0;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .about-manifest-item:active {
-      transform: none;
-    }
-  }
-
   .about-layout {
     @apply relative flex-1 min-h-0 flex flex-col gap-3 md:gap-4 px-1 sm:px-2 md:px-4 pb-2 md:pb-4;
   }
@@ -1124,13 +1118,6 @@
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .dossier-link-row:active,
-    .project-tile--feature:active {
-      transform: none;
-    }
-  }
-  
   /* Sections */
   .section {
     @apply py-20 px-5;
@@ -5125,17 +5112,6 @@ body.xw-mobile-nav-lock {
   transform: translateY(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-xw-reveal].xw-reveal-ready {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-  .xw-nav-link::after {
-    transition: none !important;
-  }
-}
-
 /* ---- Focus rings --------------------------------------------------- */
 
 .xw-topbar a:focus-visible,
@@ -5144,8 +5120,6 @@ body.xw-mobile-nav-lock {
   outline: 2px solid var(--xw-accent);
   outline-offset: 3px;
 }
-
-/* Sidebar: static chrome — removed idle pulse for calmer reading (motion-sensitive users) */
 
 /* =====================================================================
    xiaoOS × Wu Wei — single-scroll home layout
@@ -6609,15 +6583,6 @@ body.xw-mobile-nav-lock {
   margin: 0.5rem 0 0;
 }
 
-/* Reduced motion: skip modal transform, keep opacity only */
-@media (prefers-reduced-motion: reduce) {
-  .xw-modal,
-  .xw-modal-overlay {
-    transition: none;
-  }
-  .xw-modal { transform: none; }
-}
-
 /* ============================================================ */
 /* Section index rail (wu-wei scrollspy)                         */
 /* ============================================================ */
@@ -6683,12 +6648,6 @@ body.xw-mobile-nav-lock {
 
 @media (max-width: 900px) {
   .xw-section-rail { display: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .xw-section-rail a,
-  .xw-rail-num,
-  .xw-rail-label { transition: none; }
 }
 
 

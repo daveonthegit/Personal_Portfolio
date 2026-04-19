@@ -7,11 +7,6 @@ import { StartupAnimation } from '../components/StartupAnimation';
  * - **`/home`** — no splash, no redirect (nav / bookmarks land here without intro).
  *
  * Skip animation on **`/`** only when `?noboot=1` (still redirects to `/home`).
- *
- * We do **not** gate on `prefers-reduced-motion` here: that preference often matches
- * Windows “Animations” / accessibility settings and was skipping the intro entirely
- * while still redirecting — felt like a broken instant redirect. Use `?noboot=1` to
- * skip the splash when needed.
  */
 const BODY_READY_CLASS = 'xw-boot-done';
 const BODY_BOOTING_CLASS = 'xw-booting';
