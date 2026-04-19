@@ -3,14 +3,15 @@ import { StartupAnimation } from '../components/StartupAnimation';
 /**
  * Boot overlay coordinator.
  *
- * Plays on the home template at **`/`** or **`/home`** (same HTML; most visitors use `/home`
- * from nav). After the intro, if the user landed on **`/`**, we `replace('/home')` so the
- * address bar matches deep links and nav.
+ * - **`/`** — full startup animation, then `location.replace('/home')` when done.
+ * - **`/home`** — no splash, no redirect (nav / bookmarks land here without intro).
  *
- * Skips the animation when `?noboot=1` or when `prefers-reduced-motion: reduce` is set
- * (apex `/` still redirects to `/home` without the intro). We intentionally do **not** skip
- * just because there is a `#hash` — otherwise every `/home#about` style link would hide
- * the splash forever.
+ * Skip animation on **`/`** only when `?noboot=1` (still redirects to `/home`).
+ *
+ * We do **not** gate on `prefers-reduced-motion` here: that preference often matches
+ * Windows “Animations” / accessibility settings and was skipping the intro entirely
+ * while still redirecting — felt like a broken instant redirect. Use `?noboot=1` to
+ * skip the splash when needed.
  */
 const BODY_READY_CLASS = 'xw-boot-done';
 const BODY_BOOTING_CLASS = 'xw-booting';
@@ -34,20 +35,8 @@ function normalizePathname(): string {
   return path;
 }
 
-/** Home entry URLs that show the splash (not `/projects`, etc.). */
-function isHomeSplashPath(): boolean {
-  const p = normalizePathname();
-  return p === '/' || p === '/home';
-}
-
-/** User hit apex `/` — after splash we normalize to `/home`. */
 function isApexPath(): boolean {
   return normalizePathname() === '/';
-}
-
-function prefersReducedMotion(): boolean {
-  return typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function hasNobootQuery(): boolean {
@@ -71,18 +60,19 @@ export function initBootOverlay(): void {
     return;
   }
 
-  if (!isHomeSplashPath()) {
+  // /home — never show splash, never client-redirect (canonical browsing URL).
+  if (!isApexPath()) {
     clearOverlay();
     markBooted();
     return;
   }
 
-  const enteredFromApex = isApexPath();
+  // Only `/` from here on (same home template as /home).
 
-  if (prefersReducedMotion() || hasNobootQuery()) {
+  if (hasNobootQuery()) {
     clearOverlay();
     markBooted();
-    if (enteredFromApex) goHome();
+    goHome();
     return;
   }
 
@@ -93,13 +83,13 @@ export function initBootOverlay(): void {
     new StartupAnimation({
       onFinish: () => {
         markBooted();
-        if (enteredFromApex) goHome();
+        goHome();
       },
     });
   } catch (error) {
     console.error('bootOverlay: failed to start animation', error);
     clearOverlay();
     markBooted();
-    if (enteredFromApex) goHome();
+    goHome();
   }
 }
