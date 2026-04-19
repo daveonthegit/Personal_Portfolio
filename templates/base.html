@@ -36,7 +36,7 @@
 <body class="xw-body font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] w-full max-w-[100vw] overflow-x-hidden relative" data-page="{{.TemplateName}}">
     <a href="#main-content" class="xiaoos-skip-link">Skip to main content</a>
 
-    <!-- Boot overlay container. StartupAnimation mounts its markup here on first visit per session. -->
+    <!-- Boot overlay: runs on / and /home; apex / redirects to /home after the intro (see bootOverlay.ts). -->
     <div id="startup-animation" aria-hidden="true"></div>
 
     <!-- Minimal fixed top bar -->
