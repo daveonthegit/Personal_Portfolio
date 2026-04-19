@@ -12,11 +12,22 @@ const SYS_BAR = {
  * xiaoOS style loading sequence
  */
 
+export interface StartupAnimationOptions {
+  /**
+   * Called once the intro has finished and its DOM has been removed.
+   * Replaces the legacy hard-navigation to `/home` so the overlay can
+   * dissolve on top of an already-rendered page.
+   */
+  onFinish?: () => void;
+}
+
 export class StartupAnimation {
   private container: HTMLElement | null = null;
   private isAnimating = false;
+  private readonly options: StartupAnimationOptions;
 
-  constructor() {
+  constructor(options: StartupAnimationOptions = {}) {
+    this.options = options;
     this.init();
   }
 
@@ -108,7 +119,7 @@ export class StartupAnimation {
               <div class="xiaoos-progress-bar-fill" id="xiaoos-progress-bar"></div>
           </div>
           <div class="xiaoos-hint-text">
-              SYSTEM.TIP: Loading workspace modules. Use the HUD to browse profile, projects, and contact.
+              SYSTEM.TIP: Loading workspace. Scroll to move through about, work, experience, and contact.
           </div>
       </div>
 
@@ -116,7 +127,7 @@ export class StartupAnimation {
       <div class="xiaoos-reveal-solid" id="xiaoos-reveal-solid"></div>
     `;
 
-    // Reuse terminal.html placeholder to avoid duplicate #startup-animation IDs (breaks mobile)
+    // Reuse the #startup-animation placeholder in base.html if it exists to avoid duplicate IDs.
     let overlay = document.getElementById('startup-animation') as HTMLElement | null;
     if (overlay) {
       overlay.className = 'xiaoos-loader-container';
@@ -277,19 +288,18 @@ export class StartupAnimation {
 
   private redirectToHome(): void {
     if (!this.container) return;
-    
-    // Fade out animation entirely
+
+    // Fade out overlay
     this.container.style.opacity = '0';
     this.container.style.transition = 'opacity 0.28s ease-out';
 
     setTimeout(() => {
-      if (this.container) {
-        document.body.removeChild(this.container);
-        this.container = null;
+      if (this.container && this.container.parentNode) {
+        this.container.parentNode.removeChild(this.container);
       }
-
-      window.location.href = '/home';
+      this.container = null;
       this.isAnimating = false;
+      this.options.onFinish?.();
     }, 280);
   }
 
@@ -306,13 +316,15 @@ export class StartupAnimation {
   }
 }
 
-/** Call from terminal entry only (loads GSAP on the boot route). */
-export function initStartupAnimation(): void {
-  const currentPath = window.location.pathname;
-  if (currentPath !== '/') return;
+/**
+ * Convenience factory. Kept for backwards compatibility with older boot code.
+ * Prefer mounting via `src/home/bootOverlay.ts` which handles session gating.
+ */
+export function initStartupAnimation(options: StartupAnimationOptions = {}): StartupAnimation | null {
   try {
-    new StartupAnimation();
+    return new StartupAnimation(options);
   } catch (error) {
     console.error('StartupAnimation: Error:', error);
+    return null;
   }
 }

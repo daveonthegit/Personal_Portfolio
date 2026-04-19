@@ -1,124 +1,121 @@
 {{define "resume-content"}}
-<div class="h-full w-full flex flex-col p-3 sm:p-4 md:p-8 relative min-h-0 game-panel">
-    <div class="flex items-center justify-between mb-4 md:mb-6 pb-3 md:pb-4 border-b border-white/10 shrink-0 z-10">
-        <div class="flex items-center gap-3 md:gap-4 min-w-0">
-            <a href="/home" class="flex items-center justify-center w-9 h-9 md:w-10 md:h-10 shrink-0 bg-black/40 border border-white/20 hover:bg-nexus-cyan/20 hover:border-nexus-cyan transition-colors group no-underline" title="Back to portfolio home" aria-label="Back to portfolio home">
-                <span class="material-symbols-outlined text-white group-hover:text-nexus-cyan text-lg md:text-xl">arrow_back</span>
-            </a>
-            <div class="min-w-0">
-                <h1 class="text-lg md:text-2xl font-nexus-display font-bold text-white tracking-[0.14em] uppercase truncate">Personnel documentation</h1>
-                <p class="text-[9px] md:text-[10px] font-mono text-gray-500 tracking-[0.18em] truncate">Resume dossier / clearance public</p>
-            </div>
-        </div>
-        <div class="hidden md:flex items-center gap-2 shrink-0">
-            <span class="w-1.5 h-1.5 rounded-sm bg-nexus-cyan/90"></span>
-            <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">Index</span>
-        </div>
+<section id="resume" class="xw-section xw-section--last" aria-labelledby="resume-heading">
+  <header class="xw-section-head" data-xw-reveal>
+    <div class="xw-hero-meta">
+      <span class="xw-index" aria-hidden="true">05</span>
+      <span class="xw-caps">Résumé</span>
     </div>
-    <div class="flex-1 overflow-hidden min-h-0 flex flex-col">
-        <div class="resume-layout">
-            <aside class="resume-aside" aria-label="Resume actions">
-                <div class="dossier-block dossier-block--pad shrink-0">
-                    <header class="dossier-section-head">
-                        <span class="dossier-section-idx">01</span>
-                        <h2>Document access</h2>
-                        <span class="dossier-section-slug">resume.pdf</span>
-                    </header>
-                    <div class="flex flex-col gap-2">
-                        <a href="/resume/download" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
-                            <span class="material-symbols-outlined text-sm" aria-hidden="true">download</span>
-                            Download PDF
-                        </a>
-                        <button type="button" onclick="window.print()" class="nexus-btn-secondary flex items-center justify-center gap-2 py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
-                            <span class="material-symbols-outlined text-sm" aria-hidden="true">print</span>
-                            Print
-                        </button>
-                    </div>
-                    <p class="text-center text-[10px] font-mono text-gray-500 pt-4 mt-4 border-t border-white/[0.06] leading-relaxed">
-                        Updated {{.Year}}.01.15 / ver 2.1<br>
-                        <span class="text-gray-600">Classification</span> <span class="text-[#4ade80]">PUBLIC</span>
-                    </p>
-                </div>
+    <h1 id="resume-heading" class="xw-display xw-display--sm">
+      Résumé<span class="xw-display-stop" aria-hidden="true">.</span>
+    </h1>
+    <p class="xw-section-lede">
+      The one-page version of everything on this site &mdash; formatted for ATS scanners and for the recruiter who has eight tabs open.
+      Download the PDF, print the PDF from the preview, or browse it inline below.
+    </p>
+  </header>
 
-                <div class="dossier-block dossier-block--pad shrink-0">
-                    <header class="dossier-section-head">
-                        <span class="dossier-section-idx">02</span>
-                        <h2>Outbound</h2>
-                        <span class="dossier-section-slug">contact.req</span>
-                    </header>
-                    <p class="text-gray-400 text-xs leading-relaxed mb-4 max-w-none">
-                        Hiring or collaboration: open a channel from the contact surface.
-                    </p>
-                    <a href="/contact" class="nexus-btn-primary flex items-center justify-center gap-2 no-underline py-2.5 text-xs active:scale-[0.98] transition-transform duration-100">
-                        <span class="material-symbols-outlined text-sm" aria-hidden="true">send</span>
-                        Email me
-                    </a>
-                    <div class="dossier-kv-footer">
-                        <div>
-                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Status</div>
-                            <div class="text-[#4ade80] font-mono text-[10px]">Available</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Response</div>
-                            <div class="text-nexus-cyan font-mono text-[10px]">24h max</div>
-                        </div>
-                        <div>
-                            <div class="text-[9px] font-mono text-gray-500 uppercase tracking-wider mb-1">Priority</div>
-                            <div class="text-[#e8a030] font-mono text-[10px]">High</div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
+  <div class="xw-resume-grid">
+    <aside class="xw-resume-aside" aria-label="Resume actions and contact">
+      <section class="xw-resume-panel" data-xw-reveal>
+        <header class="xw-resume-panel-head">
+          <span class="xw-caps xw-caps--muted" aria-hidden="true">01</span>
+          <h2 class="xw-caps">Document</h2>
+        </header>
 
-            <div class="dossier-viewport flex-1 min-h-0 flex flex-col">
-                <div class="flex items-center justify-between gap-3 px-3 md:px-4 py-3 border-b border-white/[0.06] shrink-0 bg-black/30">
-                    <header class="dossier-section-head mb-0 pb-0 border-0 flex-1 min-w-0">
-                        <span class="dossier-section-idx">03</span>
-                        <h2 class="truncate">Preview</h2>
-                        <span class="dossier-section-slug hidden sm:inline">viewer.bin</span>
-                    </header>
-                    <span class="text-[9px] font-mono text-gray-600 shrink-0 tabular-nums">RES_{{.Year}}_001</span>
-                </div>
-                <div class="flex-1 bg-[#141414] relative w-full min-h-[min(55vh,480px)] md:min-h-0">
-                    <iframe
-                        src="/resume/pdf"
-                        class="absolute inset-0 w-full h-full border-0 min-h-[min(55vh,480px)] md:min-h-0"
-                        title="Resume preview">
-                    </iframe>
-                </div>
-            </div>
+        <dl class="xw-resume-meta">
+          <div>
+            <dt class="xw-caps xw-caps--muted">File</dt>
+            <dd>{{.Personal.Name}}_Resume.pdf</dd>
+          </div>
+          <div>
+            <dt class="xw-caps xw-caps--muted">Updated</dt>
+            <dd>{{.Year}}</dd>
+          </div>
+          <div>
+            <dt class="xw-caps xw-caps--muted">Pages</dt>
+            <dd>1</dd>
+          </div>
+          <div>
+            <dt class="xw-caps xw-caps--muted">Format</dt>
+            <dd>PDF</dd>
+          </div>
+        </dl>
+
+        <div class="xw-resume-actions">
+          <a href="/resume/download" class="xw-cta xw-cta--primary">
+            <span>Download PDF</span>
+            <span aria-hidden="true">↓</span>
+          </a>
+          <button type="button" id="resume-print-pdf" class="xw-cta xw-cta--ghost" aria-label="Print resume PDF">
+            <span>Print PDF</span>
+            <span aria-hidden="true">↗</span>
+          </button>
         </div>
+      </section>
+
+      <section class="xw-resume-panel" data-xw-reveal>
+        <header class="xw-resume-panel-head">
+          <span class="xw-caps xw-caps--muted" aria-hidden="true">02</span>
+          <h2 class="xw-caps">Direct channels</h2>
+        </header>
+
+        <ul class="xw-channels" role="list">
+          {{if .Personal.Email}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Email</span>
+            <a href="mailto:{{.Personal.Email}}" class="xw-link">{{.Personal.Email}}</a>
+          </li>
+          {{end}}
+          {{if .Personal.Phone}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Phone</span>
+            <a href="tel:{{.Personal.Phone}}" class="xw-link">{{.Personal.Phone}}</a>
+          </li>
+          {{end}}
+          {{if .Personal.LinkedIn}}
+          <li>
+            <span class="xw-caps xw-caps--muted">LinkedIn</span>
+            <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="xw-link">LinkedIn ↗</a>
+          </li>
+          {{end}}
+          {{if .Personal.GitHub}}
+          <li>
+            <span class="xw-caps xw-caps--muted">GitHub</span>
+            <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="xw-link">GitHub ↗</a>
+          </li>
+          {{end}}
+          {{if .Personal.Location}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Based</span>
+            <span>{{.Personal.Location}}</span>
+          </li>
+          {{end}}
+        </ul>
+
+        <p class="xw-resume-note">
+          Prefer a form? <a href="/home#contact" class="xw-link">Send a message from the contact section</a>.
+        </p>
+      </section>
+    </aside>
+
+    <div class="xw-resume-viewport" data-xw-reveal>
+      <header class="xw-resume-viewport-head">
+        <span class="xw-caps xw-caps--muted">Preview</span>
+        <span class="xw-caps xw-caps--muted tabular-nums">RES &middot; {{.Year}}</span>
+      </header>
+      <div class="xw-resume-frame">
+        <iframe
+          id="resume-pdf-preview"
+          src="/resume/pdf"
+          title="{{.Personal.Name}} &mdash; resume preview"
+          loading="lazy">
+        </iframe>
+      </div>
+      <p class="xw-resume-fallback">
+        Can&rsquo;t see the preview?
+        <a href="/resume/download" class="xw-link">Download the PDF</a>.
+      </p>
     </div>
-</div>
-
-<style>
-@media print {
-    .game-hud-left,
-    .game-hud-bottom,
-    .nexus-nav,
-    .nexus-footer {
-        display: none !important;
-    }
-
-    .resume-layout {
-        padding: 0 !important;
-    }
-
-    .dossier-block,
-    .dossier-viewport {
-        background: white !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    body {
-        background: white !important;
-        color: black !important;
-    }
-
-    .resume-content {
-        page-break-inside: avoid;
-    }
-}
-</style>
+  </div>
+</section>
 {{end}}

@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{{.Title}}</title>
     <meta name="description" content="{{.Description}}">
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{{asset "/static/favicon.svg"}}">
     <link rel="icon" type="image/x-icon" href="{{asset "/static/favicon.ico"}}">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{.SiteURL}}/">
@@ -24,137 +24,81 @@
     <meta property="twitter:description" content="{{.Description}}">
     <meta property="twitter:image" content="{{asset (printf "%s/static/images/Profile_Picture.jpg" .SiteURL)}}">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{asset "/static/favicon.ico"}}">
-    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
-    
+
     <!-- Styles -->
     <link href="{{asset "/static/css/main.css"}}" rel="stylesheet">
 </head>
-<body class="font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] min-h-screen w-full max-w-[100vw] overflow-x-hidden overflow-y-auto relative bg-black text-white">
+<body class="xw-body font-nexus selection:bg-nexus-cyan selection:text-black min-h-[100dvh] w-full max-w-[100vw] overflow-x-hidden relative" data-page="{{.TemplateName}}">
     <a href="#main-content" class="xiaoos-skip-link">Skip to main content</a>
-    <!-- Background Grid -->
-    <div class="nexus-grid-bg" aria-hidden="true"></div>
 
-    <div class="game-ui-layout">
-        <!-- Left HUD: profile + stats (hidden on small screens; use bottom bar + hub) -->
-        <aside class="game-hud-left border-r border-white/10 bg-black/60 backdrop-blur-md flex flex-col relative z-20" role="complementary" aria-label="Profile and quick links">
-            <div class="p-4 border-b border-white/10 flex justify-between items-center">
-                <a href="/home" class="nexus-logo no-underline inline-flex items-center gap-0" aria-label="xiaoOS home">
-                    <span class="nexus-logo-ct">xiao</span><span class="nexus-logo-os">OS</span>
-                </a>
-                <div class="text-xs font-mono text-nexus-cyan tabular-nums" id="hud-time">00:00:00</div>
+    <!-- Boot overlay container. StartupAnimation mounts its markup here on first visit per session. -->
+    <div id="startup-animation" aria-hidden="true"></div>
+
+    <!-- Minimal fixed top bar -->
+    <header class="xw-topbar" role="banner">
+        <div class="xw-topbar-inner">
+            <a href="/home" class="xw-brand no-underline" aria-label="{{.Personal.Name}} — home">
+                <span class="xw-brand-mark" aria-hidden="true"><span class="xw-brand-mark-text">xiao</span></span><span class="xw-brand-os">OS</span>
+            </a>
+
+            <nav class="xw-nav" aria-label="Primary navigation" id="xw-primary-nav">
+                <a href="/home#about"      data-xw-nav="about"      class="xw-nav-link no-underline">About</a>
+                <a href="/home#experience" data-xw-nav="experience" class="xw-nav-link no-underline">Experience</a>
+                <a href="/home#projects"   data-xw-nav="projects"   class="xw-nav-link no-underline">Projects</a>
+                <a href="/home#contact"    data-xw-nav="contact"    class="xw-nav-link no-underline">Contact</a>
+                <a href="/projects"        data-xw-nav="all-projects" class="xw-nav-link no-underline">All projects</a>
+                <a href="/resume"          data-xw-nav="resume"     class="xw-nav-link no-underline">Resume</a>
+            </nav>
+
+            <div class="xw-meta">
+                <span class="xw-clock tabular-nums" id="xw-clock" aria-hidden="true">--:--:--</span>
+                <button type="button" class="xw-nav-toggle" id="xw-nav-toggle" aria-label="Toggle navigation" aria-controls="xw-mobile-nav" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
+        </div>
+    </header>
 
-            <div class="p-4 flex-1 flex flex-col gap-6 overflow-y-auto custom-scrollbar min-h-0">
-                <div class="relative w-full aspect-[4/5] border border-white/20 overflow-hidden hud-profile-img group">
-                    <div class="absolute inset-0 bg-nexus-cyan/10 z-10 pointer-events-none mix-blend-overlay group-hover:bg-transparent transition-colors duration-500"></div>
-                    <img alt="{{.Personal.Name}}" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" src="{{asset "/static/images/Profile_Picture.jpg"}}">
-                    <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                    <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-nexus-cyan z-30 pointer-events-none"></div>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="hud-alert bg-nexus-cyan/10 border border-nexus-cyan/35 p-2 flex items-center gap-3">
-                        <span class="material-symbols-outlined text-nexus-cyan text-sm" aria-hidden="true">verified_user</span>
-                        <div class="text-[10px] font-mono tracking-widest text-nexus-cyan/90 uppercase leading-tight">
-                            SESSION<br>
-                            <span class="text-white">SECURE</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 text-xs font-mono text-gray-400">
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Name</span> <span class="text-white truncate ml-2">{{.Personal.Name}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Role</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Title}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>Location</span> <span class="text-white truncate ml-2 text-right">{{.Personal.Location}}</span>
-                        </div>
-                        <div class="flex justify-between border-b border-white/5 pb-1">
-                            <span>STATUS</span> <span class="text-nexus-cyan">ONLINE</span>
-                        </div>
-                    </div>
-
-                    <div class="pt-2 flex flex-col gap-2">
-                        {{if .Personal.Email}}
-                        <a href="mailto:{{.Personal.Email}}" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="Send email to {{.Personal.Name}}">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">Email me</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">mail</span>
-                        </a>
-                        {{end}}
-                        {{if .Personal.GitHub}}
-                        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="View GitHub profile and repositories (opens in new tab)">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">GitHub</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">code</span>
-                        </a>
-                        {{end}}
-                        {{if .Personal.LinkedIn}}
-                        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="hud-sidebar-link group flex items-center justify-between p-2 border border-white/10 bg-white/5 hover:border-nexus-cyan transition-colors no-underline" aria-label="Open LinkedIn profile (opens in new tab)">
-                            <span class="text-[10px] font-mono tracking-widest text-gray-300 group-hover:text-white">LinkedIn</span>
-                            <span class="material-symbols-outlined text-xs text-nexus-cyan" aria-hidden="true">work</span>
-                        </a>
-                        {{end}}
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main / hub or page content -->
-        <main class="game-hud-right relative overflow-hidden z-10 min-h-0" id="main-content" role="main" tabindex="-1">
-            {{if eq .TemplateName "home"}}
-                {{template "home-content" .}}
-            {{else if eq .TemplateName "about"}}
-                {{template "about-content" .}}
-            {{else if eq .TemplateName "projects"}}
-                {{template "projects-content" .}}
-            {{else if eq .TemplateName "contact"}}
-                {{template "contact-content" .}}
-            {{else if eq .TemplateName "resume"}}
-                {{template "resume-content" .}}
-            {{else}}
-                {{template "home-content" .}}
-            {{end}}
-        </main>
-
-        <!-- Bottom HUD bar -->
-        <footer class="game-hud-bottom border-t border-white/10 bg-black/80 backdrop-blur-md flex justify-between items-center px-3 sm:px-4 py-2 z-20 gap-2">
-            <div class="flex items-center gap-2 sm:gap-4 min-w-0">
-                <a href="/home" class="w-11 h-11 sm:w-9 sm:h-9 shrink-0 border border-white/20 flex items-center justify-center hover:bg-white/10 hover:border-nexus-cyan transition-colors text-white no-underline game-hud-apps-btn" aria-label="Portfolio home — main menu" title="Portfolio home">
-                    <span class="material-symbols-outlined text-sm" aria-hidden="true">apps</span>
-                </a>
-                <nav class="flex items-center gap-0.5 sm:gap-1 overflow-x-auto game-hud-nav-mini no-scrollbar" aria-label="Primary navigation">
-                    <a href="/about" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">About me</a>
-                    <a href="/projects" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Projects</a>
-                    <a href="/resume" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Resume</a>
-                    <a href="/contact" class="game-hud-nav-link font-mono text-gray-300 hover:text-nexus-cyan whitespace-nowrap no-underline">Contact</a>
-                </nav>
-            </div>
-            <div class="hidden sm:flex items-center gap-4 text-[10px] font-mono text-gray-500 shrink-0" aria-hidden="true">
-                <div class="flex items-center gap-2 border-r border-white/10 pr-4">
-                    <span class="material-symbols-outlined text-xs text-nexus-cyan">mic_off</span>
-                    <span class="hidden lg:inline">MIC IDLE</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 bg-nexus-cyan block animate-pulse"></span>
-                    <span>NET OK</span>
-                </div>
-            </div>
-            <div class="text-[10px] sm:text-[11px] font-mono truncate text-right max-w-[45%] sm:max-w-none" title="Current page">
-                <span class="text-gray-500 normal-case">Page</span>
-                <span id="spa-page-label" class="text-nexus-cyan uppercase ml-1">{{.TemplateName}}</span>
-            </div>
-        </footer>
+    <!-- Mobile nav overlay (hidden on desktop) -->
+    <div class="xw-mobile-nav" id="xw-mobile-nav" hidden>
+        <nav aria-label="Mobile navigation">
+            <a href="/home#about"      class="xw-mobile-nav-link no-underline">About</a>
+            <a href="/home#experience" class="xw-mobile-nav-link no-underline">Experience</a>
+            <a href="/home#projects"   class="xw-mobile-nav-link no-underline">Projects</a>
+            <a href="/home#contact"    class="xw-mobile-nav-link no-underline">Contact</a>
+            <a href="/projects"        class="xw-mobile-nav-link no-underline">All projects</a>
+            <a href="/resume"          class="xw-mobile-nav-link no-underline">Resume</a>
+        </nav>
     </div>
+
+    <!-- Main content -->
+    <main class="xw-main" id="main-content" role="main" tabindex="-1">
+        {{if eq .TemplateName "home"}}
+            {{template "home-content" .}}
+        {{else if eq .TemplateName "projects"}}
+            {{template "projects-content" .}}
+        {{else if eq .TemplateName "resume"}}
+            {{template "resume-content" .}}
+        {{else}}
+            {{template "home-content" .}}
+        {{end}}
+    </main>
+
+    <!-- Thin status-line footer -->
+    <footer class="xw-status" role="contentinfo">
+        <div class="xw-status-inner">
+            <span class="xw-status-slug">{{.Personal.Name}} — {{.Personal.Title}}</span>
+            <span class="xw-status-sep" aria-hidden="true">/</span>
+            <span class="xw-status-index">© {{.Year}}</span>
+            <span class="xw-status-sep" aria-hidden="true">/</span>
+            <span class="xw-status-page" id="xw-page-label">{{.TemplateName}}</span>
+        </div>
+    </footer>
 
     <script src="{{asset "/static/js/main.js"}}"></script>
 </body>

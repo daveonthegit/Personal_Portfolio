@@ -1,87 +1,303 @@
 {{define "home-content"}}
-<div class="h-full w-full flex flex-col sm:flex-row items-center justify-center p-4 sm:p-8 relative min-h-0 overflow-y-auto sm:overflow-y-visible">
-    <div class="game-nav-grid grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 w-full max-w-4xl z-10 min-h-0 shrink-0">
-        <a href="/about" class="game-nav-btn group no-underline" aria-label="About me — background and profile">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">navigation</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">About me</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Background &amp; story</span>
-            </div>
-        </a>
+<div class="xw-home">
 
-        <a href="/projects" class="game-nav-btn group no-underline" aria-label="Projects — selected work and case studies">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">folder</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">Projects</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Selected work</span>
-            </div>
-        </a>
+  {{/* Section index rail — fixed, scroll-spy driven. Mirrors /projects year strip. */}}
+  <nav class="xw-section-rail" id="xw-section-rail" aria-label="Sections on this page">
+    <ol role="list">
+      <li><a href="#about"      data-xw-rail="about"><span class="xw-rail-num">01</span><span class="xw-rail-label">About</span></a></li>
+      <li><a href="#projects"   data-xw-rail="projects"><span class="xw-rail-num">02</span><span class="xw-rail-label">Work</span></a></li>
+      <li><a href="#experience" data-xw-rail="experience"><span class="xw-rail-num">03</span><span class="xw-rail-label">Experience</span></a></li>
+      <li><a href="#contact"    data-xw-rail="contact"><span class="xw-rail-num">04</span><span class="xw-rail-label">Contact</span></a></li>
+    </ol>
+  </nav>
 
-        <a href="/resume" class="game-nav-btn group no-underline" aria-label="Resume — experience and downloadable CV">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">tune</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">Resume</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Experience &amp; CV</span>
-            </div>
-        </a>
+  {{/* ────────────────────────────────── #about ────────────────────────────────── */}}
+  <section id="about" data-xw-section="about" class="xw-section xw-hero" aria-labelledby="about-heading">
+    <div class="xw-hero-grid">
+      <div class="xw-hero-lead">
+        <div class="xw-hero-meta" data-xw-reveal>
+          <span class="xw-index" aria-hidden="true">01</span>
+          <span class="xw-caps">Dossier</span>
+        </div>
 
-        <a href="/contact" class="game-nav-btn group no-underline" aria-label="Contact — hiring inquiries and messages">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/40 border border-nexus-cyan/40 backdrop-blur-md transition-all duration-300 group-hover:bg-nexus-cyan/10 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-nexus-cyan/80 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">call</span>
-                <span class="absolute top-3 right-3 bg-nexus-cyan text-black text-[9px] font-bold px-1.5 py-0.5 font-mono">1</span>
-                <span class="font-nexus-display font-bold text-nexus-cyan tracking-widest uppercase text-xs sm:text-sm text-center">Contact</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Hiring &amp; inquiries</span>
-            </div>
-        </a>
+        <h1 id="about-heading" class="xw-display" data-xw-reveal>
+          {{.Personal.Name}}<span class="xw-display-stop" aria-hidden="true">.</span>
+        </h1>
 
-        {{if .Personal.GitHub}}
-        <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline" aria-label="GitHub — code and open-source work (opens in new tab)">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">public</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">GitHub</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Code &amp; repos</span>
-            </div>
-        </a>
-        {{end}}
+        <p class="xw-tagline" data-xw-reveal>{{.Personal.Tagline}}</p>
 
-        {{if .Personal.LinkedIn}}
-        <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="game-nav-btn group no-underline" aria-label="LinkedIn — professional profile (opens in new tab)">
-            <div class="btn-inner relative flex flex-col items-center justify-center p-6 sm:p-8 bg-black/60 border border-white/10 backdrop-blur-md transition-all duration-300 group-hover:bg-white/5 group-hover:border-nexus-cyan min-h-[140px] sm:h-48">
-                <div class="corner-accent-tl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="corner-accent-br opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <span class="material-symbols-outlined text-3xl sm:text-4xl text-gray-400 group-hover:text-nexus-cyan transition-colors mb-3 sm:mb-4">work</span>
-                <span class="font-nexus-display font-bold text-white tracking-widest uppercase text-xs sm:text-sm text-center">LinkedIn</span>
-                <span class="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 sm:mt-2 tracking-widest text-center leading-tight">Professional profile</span>
-            </div>
-        </a>
-        {{end}}
+        <div class="xw-now" data-xw-reveal>
+          <span class="xw-now-dot" aria-hidden="true"></span>
+          <span class="xw-caps xw-caps--accent">Now</span>
+          <span class="xw-now-text">{{.Personal.NowLine}}</span>
+        </div>
+
+        <div class="xw-bio" data-xw-reveal>
+          {{range split "\n\n" .Personal.Bio}}<p>{{.}}</p>{{end}}
+        </div>
+
+        <div class="xw-hero-cta" data-xw-reveal>
+          <a href="#projects" class="xw-cta xw-cta--primary">See selected work<span aria-hidden="true"> →</span></a>
+          <a href="#contact" class="xw-cta">Get in touch<span aria-hidden="true"> →</span></a>
+          <a href="/resume" class="xw-cta xw-cta--ghost">Resume<span aria-hidden="true"> →</span></a>
+        </div>
+      </div>
+
+      <aside class="xw-hero-aside" data-xw-reveal aria-label="Profile">
+        <figure class="xw-portrait">
+          <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
+          <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
+          <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
+          <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
+          <img
+            src="{{asset "/static/images/Profile_Picture.jpg"}}"
+            alt="Portrait of {{.Personal.Name}}"
+            width="420" height="520" loading="eager" decoding="async" />
+        </figure>
+
+        <dl class="xw-facts">
+          <div class="xw-fact">
+            <dt>Role</dt>
+            <dd>{{.Personal.Title}}</dd>
+          </div>
+          <div class="xw-fact">
+            <dt>Based</dt>
+            <dd>{{.Personal.Location}}</dd>
+          </div>
+          <div class="xw-fact">
+            <dt>Seeking</dt>
+            <dd>2026 new-grad software role</dd>
+          </div>
+          <div class="xw-fact">
+            <dt>Links</dt>
+            <dd class="xw-fact-links">
+              {{if .Personal.GitHub}}<a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{{end}}
+              {{if .Personal.LinkedIn}}<a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>{{end}}
+            </dd>
+          </div>
+        </dl>
+      </aside>
     </div>
 
-    <div class="relative w-full max-w-md mt-6 sm:mt-0 sm:absolute sm:bottom-8 sm:left-8 sm:right-auto flex flex-col gap-2 z-20 pointer-events-none shrink-0">
-        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
-            <span class="material-symbols-outlined text-sm shrink-0">bolt</span>
-            <div class="flex flex-col min-w-0">
-                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">SYSTEM</span>
-                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase truncate">CONNECT YOUR CHARGER</span>
-            </div>
-        </div>
-        <div class="game-alert-box bg-red-600/90 text-black px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 backdrop-blur-sm border border-red-400/50">
-            <span class="material-symbols-outlined text-sm shrink-0">call_missed</span>
-            <div class="flex flex-col min-w-0">
-                <span class="text-[8px] sm:text-[9px] font-mono tracking-widest opacity-90 uppercase">COMM LINK</span>
-                <span class="text-[10px] sm:text-xs font-nexus-display font-bold tracking-wider uppercase">1 MISSED SIGNAL</span>
-            </div>
-        </div>
+    <div class="xw-hero-skills" data-xw-reveal>
+      {{range .Personal.Skills}}
+      <div class="xw-skill-block">
+        <span class="xw-caps xw-caps--muted xw-skill-cat">{{.Category}}</span>
+        <ul class="xw-skill-items" role="list">
+          {{range .Items}}<li class="xw-skill-item">{{.}}</li>{{end}}
+        </ul>
+      </div>
+      {{end}}
     </div>
+  </section>
+
+  {{/* ──────────────────────────────── #projects ──────────────────────────────── */}}
+  <section id="projects" data-xw-section="projects" class="xw-section" aria-labelledby="projects-heading">
+    <header class="xw-section-head">
+      <div class="xw-hero-meta" data-xw-reveal>
+        <span class="xw-index" aria-hidden="true">02</span>
+        <span class="xw-caps">Selected work</span>
+      </div>
+      <h2 id="projects-heading" class="xw-display xw-display--sm" data-xw-reveal>
+        Work<span class="xw-display-stop" aria-hidden="true">.</span>
+      </h2>
+      <p class="xw-section-lede" data-xw-reveal>
+        Four projects worth pulling up in an interview — the rest lives on
+        <a href="/projects" class="xw-link">all projects</a>.
+      </p>
+    </header>
+
+    <ul class="xw-work-grid" role="list">
+      {{range $i, $p := .Projects}}
+      <li class="xw-work-card xw-work-card--{{$i}}" data-xw-reveal>
+        <figure class="xw-work-media">
+          <img
+            src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
+            alt="{{$p.Title}} — preview"
+            loading="lazy" decoding="async" />
+        </figure>
+        <div class="xw-work-meta">
+          <span class="xw-caps xw-caps--accent">№&nbsp;{{if lt $i 9}}0{{end}}{{inc $i}}</span>
+          <span class="xw-caps xw-caps--muted">{{$p.Type}}</span>
+          {{if eq $p.Status "in-development"}}<span class="xw-badge">In development</span>{{end}}
+          {{if eq $p.Status "active"}}<span class="xw-badge xw-badge--live">Live</span>{{end}}
+        </div>
+        <h3 class="xw-work-title">{{$p.Title}}</h3>
+        <p class="xw-work-lede">{{if $p.ShortDescription}}{{$p.ShortDescription}}{{else}}{{$p.Description}}{{end}}</p>
+
+        {{if $p.Technologies}}
+        <ul class="xw-work-tech" role="list" aria-label="Stack">
+          {{range $p.Technologies}}<li>{{.}}</li>{{end}}
+        </ul>
+        {{end}}
+
+        <div class="xw-work-links">
+          {{if $p.LiveURL}}<a href="{{$p.LiveURL}}" target="_blank" rel="noopener noreferrer" class="xw-link">Live<span aria-hidden="true"> ↗</span></a>{{end}}
+          {{if $p.GitHubURL}}<a href="{{$p.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="xw-link">Source<span aria-hidden="true"> ↗</span></a>{{end}}
+          <a href="/projects#{{$p.ID}}" class="xw-link xw-link--muted">Details<span aria-hidden="true"> →</span></a>
+        </div>
+      </li>
+      {{end}}
+    </ul>
+
+    <p class="xw-section-foot" data-xw-reveal>
+      <a href="/projects" class="xw-cta xw-cta--primary">See all projects<span aria-hidden="true"> →</span></a>
+    </p>
+  </section>
+
+  {{/* ─────────────────────────────── #experience ─────────────────────────────── */}}
+  <section id="experience" data-xw-section="experience" class="xw-section" aria-labelledby="experience-heading">
+    <header class="xw-section-head">
+      <div class="xw-hero-meta" data-xw-reveal>
+        <span class="xw-index" aria-hidden="true">03</span>
+        <span class="xw-caps">Log</span>
+      </div>
+      <h2 id="experience-heading" class="xw-display xw-display--sm" data-xw-reveal>
+        Experience<span class="xw-display-stop" aria-hidden="true">.</span>
+      </h2>
+      <p class="xw-section-lede" data-xw-reveal>
+        Year-indexed log of roles and schooling. Full CV on
+        <a href="/resume" class="xw-link">the resume page</a>.
+      </p>
+    </header>
+
+    <ol class="xw-timeline" role="list">
+      {{range .Personal.Experience}}
+      <li class="xw-timeline-row" data-xw-reveal>
+        <div class="xw-timeline-year" aria-hidden="true">
+          <span class="xw-timeline-year-start">{{.StartDate.Format "2006"}}</span>
+          <span class="xw-timeline-year-sep">—</span>
+          {{if .EndDate}}
+            <span class="xw-timeline-year-end">{{.EndDate.Format "2006"}}</span>
+          {{else}}
+            <span class="xw-timeline-year-end xw-timeline-year-now">Now</span>
+          {{end}}
+        </div>
+        <div class="xw-timeline-body">
+          <h3 class="xw-timeline-title">
+            {{.Position}}
+            <span class="xw-timeline-at">at {{.Company}}</span>
+          </h3>
+          <div class="xw-timeline-meta">
+            <span class="xw-caps xw-caps--muted">{{.Location}}</span>
+            <span class="xw-timeline-range">
+              {{.StartDate.Format "Jan 2006"}} –
+              {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}Present{{end}}
+            </span>
+          </div>
+          {{if .Description}}
+          <ul class="xw-timeline-bullets" role="list">
+            {{range .Description}}<li>{{.}}</li>{{end}}
+          </ul>
+          {{end}}
+          {{if .Technologies}}
+          <ul class="xw-timeline-tech" role="list" aria-label="Stack">
+            {{range .Technologies}}<li>{{.}}</li>{{end}}
+          </ul>
+          {{end}}
+        </div>
+      </li>
+      {{end}}
+
+      {{range .Personal.Education}}
+      <li class="xw-timeline-row xw-timeline-row--edu" data-xw-reveal>
+        <div class="xw-timeline-year" aria-hidden="true">
+          <span class="xw-timeline-year-start">{{.StartDate.Format "2006"}}</span>
+          <span class="xw-timeline-year-sep">—</span>
+          <span class="xw-timeline-year-end">{{.EndDate.Format "2006"}}</span>
+        </div>
+        <div class="xw-timeline-body">
+          <h3 class="xw-timeline-title">
+            {{.Degree}}, {{.Field}}
+            <span class="xw-timeline-at">· {{.Institution}}</span>
+          </h3>
+          <div class="xw-timeline-meta">
+            <span class="xw-caps xw-caps--muted">{{.Location}}</span>
+            <span class="xw-timeline-range">Expected {{.EndDate.Format "Jan 2006"}}</span>
+          </div>
+        </div>
+      </li>
+      {{end}}
+    </ol>
+  </section>
+
+  {{/* ───────────────────────────────── #contact ──────────────────────────────── */}}
+  <section id="contact" data-xw-section="contact" class="xw-section xw-section--last" aria-labelledby="contact-heading">
+    <header class="xw-section-head">
+      <div class="xw-hero-meta" data-xw-reveal>
+        <span class="xw-index" aria-hidden="true">04</span>
+        <span class="xw-caps">Transmit</span>
+      </div>
+      <h2 id="contact-heading" class="xw-display xw-display--sm" data-xw-reveal>
+        Contact<span class="xw-display-stop" aria-hidden="true">.</span>
+      </h2>
+      <p class="xw-section-lede" data-xw-reveal>
+        Best for hiring conversations, collaborations, and security-adjacent side quests.
+        Replies within a day or two.
+      </p>
+    </header>
+
+    <div class="xw-contact-grid">
+      <aside class="xw-contact-channels" data-xw-reveal aria-label="Direct channels">
+        <h3 class="xw-caps xw-caps--muted">Direct channels</h3>
+        <ul class="xw-channels" role="list">
+          {{if .Personal.Email}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Email</span>
+            <a href="mailto:{{.Personal.Email}}" class="xw-link">{{.Personal.Email}}</a>
+          </li>
+          {{end}}
+          {{if .Personal.Phone}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Phone</span>
+            <a href="tel:{{.Personal.Phone}}" class="xw-link">{{.Personal.Phone}}</a>
+          </li>
+          {{end}}
+          {{if .Personal.LinkedIn}}
+          <li>
+            <span class="xw-caps xw-caps--muted">LinkedIn</span>
+            <a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer" class="xw-link">linkedin.com/in/david-on-linked ↗</a>
+          </li>
+          {{end}}
+          {{if .Personal.GitHub}}
+          <li>
+            <span class="xw-caps xw-caps--muted">GitHub</span>
+            <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="xw-link">github.com/daveonthegit ↗</a>
+          </li>
+          {{end}}
+          {{if .Personal.Location}}
+          <li>
+            <span class="xw-caps xw-caps--muted">Based</span>
+            <span>{{.Personal.Location}}</span>
+          </li>
+          {{end}}
+        </ul>
+      </aside>
+
+      <form id="contact-form" class="xw-contact-form" method="POST" action="/contact" novalidate data-xw-reveal>
+        <div class="xw-field">
+          <label for="contact-name" class="xw-caps xw-caps--muted">Name</label>
+          <input type="text" id="contact-name" name="name" required autocomplete="name" />
+        </div>
+        <div class="xw-field">
+          <label for="contact-email" class="xw-caps xw-caps--muted">Email</label>
+          <input type="email" id="contact-email" name="email" required autocomplete="email" />
+        </div>
+        <div class="xw-field">
+          <label for="contact-subject" class="xw-caps xw-caps--muted">Subject</label>
+          <input type="text" id="contact-subject" name="subject" required />
+        </div>
+        <div class="xw-field">
+          <label for="contact-message" class="xw-caps xw-caps--muted">Message</label>
+          <textarea id="contact-message" name="message" rows="6" required></textarea>
+        </div>
+        <div class="xw-form-row">
+          <button type="submit" class="xw-cta xw-cta--primary">Send message<span aria-hidden="true"> →</span></button>
+          <p class="xw-form-status" id="contact-form-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
 </div>
 {{end}}

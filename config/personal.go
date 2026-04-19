@@ -12,6 +12,8 @@ type PersonalInfo struct {
 	LinkedIn   string
 	GitHub     string
 	Website    string
+	Tagline    string // Short one-line positioning statement for the hero.
+	NowLine    string // Single-sentence "currently" status for the status-line.
 	Bio        string
 	Skills     []Skill
 	Experience []Experience
@@ -48,31 +50,35 @@ type Education struct {
 func GetPersonalInfo() PersonalInfo {
 	return PersonalInfo{
 		Name:     "David Xiao",
-		Title:    "CS Student",
+		Title:    "Software engineer, CS student",
 		Email:    "dxiao3043@gmail.com",
 		Phone:    "917-946-7086",
 		Location: "New York, NY",
 		LinkedIn: "https://linkedin.com/in/david-on-linked",
 		GitHub:   "https://github.com/daveonthegit",
-		Website:  "",
-		Bio:      `Computer Science student and software engineer with hands-on experience in full-stack development, system architecture modernization, and security-focused programming. Currently pursuing my BA in Computer Science at CUNY Hunter College and passionate about building scalable, secure applications. Working on ForgeArena - a gamified fitness platform blending avatar evolution with social gym competition. Learning TypeScript and Golang while contributing to security research projects.`,
+		Website:  "https://davidx.tech",
+		Tagline:  "Software engineer graduating May 2026 — production internship experience plus shipped projects across full-stack web, cross-platform mobile, and low-level systems.",
+		NowLine:  "Finishing my CS degree at Hunter College, shipping Kyarafit and OutfAI, and looking for a 2026 new-grad software role.",
+		Bio: `I'm a Computer Science senior at CUNY Hunter College and a software engineer focused on API performance, security, and reliable delivery. Fluent across TypeScript, React, Node.js, Python, Go, and C — I like hard, load-bearing work: rewriting legacy code into components, tightening REST APIs, and making systems cheaper to change.
+
+At Unadat I decomposed a legacy PHP/JavaScript monolith into modular microservices, shipped a reusable React component library adopted by three product teams, and hardened backend endpoints against SQL injection and XSS. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
 
 		Skills: []Skill{
 			{
-				Category: "Programming Languages",
-				Items:    []string{"Java", "Python", "C/C++", "JavaScript", "TypeScript", "Go", "PHP", "SQL", "MIPS Assembly", "BASH"},
+				Category: "Languages",
+				Items:    []string{"TypeScript", "JavaScript", "Python", "Go", "C", "C++", "SQL", "PHP", "Bash"},
 			},
 			{
-				Category: "Web Technologies & Frameworks",
-				Items:    []string{"React", "Node.js", "Express.js", "HTML/CSS", "jQuery", "RESTful APIs", "PERN Stack"},
+				Category: "Frameworks",
+				Items:    []string{"React", "React Native", "Next.js", "Node.js", "Express.js", "FastAPI", "Expo"},
 			},
 			{
-				Category: "Databases & Cloud",
-				Items:    []string{"PostgreSQL", "MySQL", "GCP"},
+				Category: "Databases",
+				Items:    []string{"PostgreSQL", "MySQL", "SQLite", "Convex", "Firestore"},
 			},
 			{
-				Category: "Tools & Methodologies",
-				Items:    []string{"Git", "VS Code", "UNIX", "Agile Scrum", "Automated Testing"},
+				Category: "Testing & DevOps",
+				Items:    []string{"Vitest", "Jest", "Playwright", "Docker", "GitHub Actions", "Jenkins", "GCP", "Vercel", "Heroku", "Linux"},
 			},
 		},
 
@@ -84,24 +90,12 @@ func GetPersonalInfo() PersonalInfo {
 				EndDate:   &[]time.Time{time.Date(2025, 8, 31, 0, 0, 0, 0, time.UTC)}[0],
 				Location:  "New York, NY",
 				Description: []string{
-					"Re-architected legacy JS/PHP into modular components, cutting feature development time by 25% and enabling B2C/B2B scalability",
-					"Added 6+ new features to legacy chores system, increasing usability and adoption across B2C/B2B users",
-					"Converted core components into reusable modals, improving UI consistency and cutting frontend development effort by 20%",
-					"Refactored 10+ API endpoints with REST + automated tests, reducing response times by 15% and supporting faster rollouts",
+					"Decomposed a legacy PHP/JavaScript monolith into modular microservices, cutting feature delivery time by 25% across 6 production releases",
+					"Optimized 10+ REST endpoints with input validation and query batching, reducing average response time by 15%",
+					"Shipped a reusable React component library adopted by 3 product teams, eliminating duplicate modal and form implementations",
+					"Hardened backend endpoints against SQL injection and XSS by introducing parameterized queries and centralized input sanitization",
 				},
-				Technologies: []string{"JavaScript", "PHP", "MySQL", "RESTful APIs"},
-			},
-			{
-				Company:   "Blank Street Coffee",
-				Position:  "Barista",
-				StartDate: time.Date(2024, 5, 1, 0, 0, 0, 0, time.UTC),
-				EndDate:   nil, // Current position
-				Location:  "New York, NY",
-				Description: []string{
-					"Handled $4K+ in daily POS transactions with accuracy while maintaining quality in a fast-paced environment",
-					"Trained new staff and streamlined workflows, improving team efficiency during peak hours by 15%",
-				},
-				Technologies: []string{},
+				Technologies: []string{"JavaScript", "PHP", "React", "MySQL", "RESTful APIs"},
 			},
 		},
 
