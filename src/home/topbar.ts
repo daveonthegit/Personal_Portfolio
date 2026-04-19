@@ -3,7 +3,8 @@
  *
  * - Live clock (HH:MM:SS 24h)
  * - Mobile nav overlay toggle
- * - Scroll-spy underline that tracks the in-view section on /home
+ * - Scroll-spy: highlights the section whose heading has passed the activation line
+ *   (below the top bar). Updates on scroll **up and down** via rAF-throttled listeners.
  *
  * All listeners are passive and safe to run on pages without any of the
  * target elements — the helpers no-op cleanly.
@@ -78,6 +79,31 @@ function initMobileNav(): Cleanup {
   };
 }
 
+/** Pixels from viewport top; matches scroll-margin intent under fixed top bar. */
+function getActivationOffsetPx(): number {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--xw-topbar-h').trim();
+  const parsed = parseFloat(raw);
+  const topbar = Number.isFinite(parsed) ? parsed : 56;
+  return topbar + 16;
+}
+
+/**
+ * Last section (in document order) whose top edge is at or above the activation line.
+ * Updates correctly when scrolling up or down (unlike IO “max ratio among intersecting”).
+ */
+function pickActiveSection(sections: HTMLElement[]): HTMLElement | null {
+  if (sections.length === 0) return null;
+  const offset = getActivationOffsetPx();
+  let active: HTMLElement = sections[0]!;
+  for (const s of sections) {
+    const top = s.getBoundingClientRect().top;
+    if (top <= offset) {
+      active = s;
+    }
+  }
+  return active;
+}
+
 function initScrollSpy(): Cleanup {
   const nav = document.getElementById(NAV_ID);
   const rail = document.getElementById('xw-section-rail');
@@ -124,27 +150,29 @@ function initScrollSpy(): Cleanup {
     });
   };
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // Pick the most-visible intersecting section.
-      let best: IntersectionObserverEntry | null = null;
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        if (!best || entry.intersectionRatio > best.intersectionRatio) best = entry;
-      }
-      if (best) {
-        const key = (best.target as HTMLElement).dataset.xwSection ?? null;
-        setActive(key);
-      }
-    },
-    {
-      rootMargin: '-40% 0px -50% 0px',
-      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
-    },
-  );
+  let raf = 0;
+  const sync = () => {
+    raf = 0;
+    const active = pickActiveSection(sections);
+    setActive(active?.dataset.xwSection ?? null);
+  };
 
-  sections.forEach((s) => observer.observe(s));
-  return () => observer.disconnect();
+  const onScrollOrResize = () => {
+    if (raf !== 0) return;
+    raf = window.requestAnimationFrame(sync);
+  };
+
+  window.addEventListener('scroll', onScrollOrResize, { passive: true });
+  window.addEventListener('resize', onScrollOrResize, { passive: true });
+  sync();
+
+  return () => {
+    window.removeEventListener('scroll', onScrollOrResize);
+    window.removeEventListener('resize', onScrollOrResize);
+    if (raf !== 0) {
+      window.cancelAnimationFrame(raf);
+    }
+  };
 }
 
 export function initTopBar(): Cleanup {

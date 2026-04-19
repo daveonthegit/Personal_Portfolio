@@ -6643,7 +6643,8 @@ body.xw-mobile-nav-lock {
 .xw-section-rail a[data-xw-active="true"] .xw-rail-label,
 .xw-section-rail:hover a .xw-rail-label {
   opacity: 0.9;
-  max-width: 10ch;
+  /* Wider than longest label — 10ch clips “EXPERIENCE” once letter-spacing is applied */
+  max-width: 15ch;
 }
 
 @media (max-width: 900px) {
