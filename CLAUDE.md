@@ -13,3 +13,12 @@
 **In one line:** Recruiters and engineers should trust the craft in 30 seconds; the UI should feel like a plausible command-center product, not a template or spectacle.
 
 **Constraint:** Keep the existing xiaoOS boot sequence (`StartupAnimation` + related CSS); refactor tokens or boot copy around it — do not remove the intro wholesale.
+
+## Scrolling & motion (architecture)
+
+- **One native page scroller:** `document.scrollingElement` — do not attach `touchmove` / `wheel` handlers for scrollspy or reveals; do not fight iOS rubber-band on the root.
+- **Smooth scroll:** CSS `scroll-behavior: smooth` only for fine pointers (see `main.css`); hash jumps use `scroll-padding-top` on `html` and `scroll-margin-top` on sections.
+- **Viewport units:** Avoid locking the **root** to `100vh` / `100dvh` on `body`. Use `min-height` shells with `svh` where needed (e.g. `.xw-main`); reserve full-viewport **height** for real overlays (boot, modals).
+- **Scroll-spy & reveals:** IntersectionObserver only; **mobile:** reveal each `data-xw-reveal` target once (no enter/exit toggle churn).
+- **Overlays:** `body.xw-mobile-nav-lock` / `overflow: hidden` only while the overlay is open; empty `#startup-animation` uses `pointer-events: none` so it cannot block touches after boot.
+

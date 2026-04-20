@@ -1,6 +1,4 @@
 // Portfolio front-end entry. Single-page architecture — no client-side router.
-import { SmoothScroll } from './utils/smoothScroll';
-import { AnimationObserver } from './utils/animationObserver';
 import { initThemeHandler } from './utils/themeHandler';
 import { initGlitchAnimations } from './utils/glitchAnimations';
 import { initBootOverlay } from './home/bootOverlay';
@@ -40,11 +38,9 @@ function bindSkipLink(): void {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Boot overlay runs first so the intro sits above everything else.
   initBootOverlay();
 
-  SmoothScroll.init();
-  AnimationObserver.init();
+  // Keep the root scroller native on touch devices.
   initGlitchAnimations();
   initThemeHandler();
 

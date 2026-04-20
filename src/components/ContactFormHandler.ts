@@ -95,6 +95,13 @@ export class ContactFormHandler {
     }
   }
 
+  private static getScrollBehavior(): ScrollBehavior {
+    if (typeof window === 'undefined') return 'auto';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    return !reduce && fine ? 'smooth' : 'auto';
+  }
+
   private static showMessage(message: string, type: 'success' | 'error') {
     if (!this.messageContainer) return;
 
@@ -116,7 +123,10 @@ export class ContactFormHandler {
       </div>
     `;
     this.messageContainer.style.display = 'block';
-    this.messageContainer.scrollIntoView({ behavior: 'smooth' });
+    this.messageContainer.scrollIntoView({
+      behavior: ContactFormHandler.getScrollBehavior(),
+      block: 'nearest',
+    });
 
     // Clear message after 5 seconds for success, 10 seconds for errors
     setTimeout(() => {

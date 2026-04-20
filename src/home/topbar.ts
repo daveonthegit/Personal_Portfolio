@@ -3,11 +3,9 @@
  *
  * - Live clock (HH:MM:SS 24h)
  * - Mobile nav overlay toggle
- * - Scroll-spy: highlights the section whose heading has passed the activation line
- *   (below the top bar). Updates on scroll **up and down** via rAF-throttled listeners.
+ * - Scroll-spy: highlights the active section via IntersectionObserver + sync on resize
  *
- * All listeners are passive and safe to run on pages without any of the
- * target elements — the helpers no-op cleanly.
+ * Helpers no-op cleanly when targets are missing.
  */
 
 type Cleanup = () => void;
@@ -38,43 +36,51 @@ function initMobileNav(): Cleanup {
 
   const setOpen = (open: boolean) => {
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    nav.setAttribute('aria-hidden', open ? 'false' : 'true');
+
     if (open) {
       nav.hidden = false;
-      requestAnimationFrame(() => nav.classList.add('xw-mobile-nav--open'));
       document.body.classList.add('xw-mobile-nav-lock');
-    } else {
-      nav.classList.remove('xw-mobile-nav--open');
-      document.body.classList.remove('xw-mobile-nav-lock');
-      // hide after transition end — keep simple
-      window.setTimeout(() => {
-        if (toggle.getAttribute('aria-expanded') === 'false') {
-          nav.hidden = true;
-        }
-      }, 200);
+      requestAnimationFrame(() => nav.classList.add('xw-mobile-nav--open'));
+      return;
     }
+
+    nav.classList.remove('xw-mobile-nav--open');
+    document.body.classList.remove('xw-mobile-nav-lock');
   };
 
   const onToggle = () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    setOpen(!open);
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
   };
 
   const onLinkClick = (e: Event) => {
     const t = e.target as Element | null;
-    if (t && t.closest('a')) setOpen(false);
+    if (t?.closest('a')) setOpen(false);
   };
 
   const onEsc = (e: KeyboardEvent) => {
     if (e.key === 'Escape') setOpen(false);
   };
 
+  const onTransitionEnd = (e: TransitionEvent) => {
+    if (e.target !== nav || e.propertyName !== 'opacity') return;
+    if (toggle.getAttribute('aria-expanded') !== 'true') {
+      nav.hidden = true;
+    }
+  };
+
+  nav.hidden = true;
+  nav.setAttribute('aria-hidden', 'true');
+
   toggle.addEventListener('click', onToggle);
   nav.addEventListener('click', onLinkClick);
+  nav.addEventListener('transitionend', onTransitionEnd);
   document.addEventListener('keydown', onEsc);
 
   return () => {
     toggle.removeEventListener('click', onToggle);
     nav.removeEventListener('click', onLinkClick);
+    nav.removeEventListener('transitionend', onTransitionEnd);
     document.removeEventListener('keydown', onEsc);
   };
 }
@@ -87,26 +93,6 @@ function getActivationOffsetPx(): number {
   return topbar + 16;
 }
 
-/**
- * Last section (in document order) whose top edge is at or above the activation line.
- * Updates correctly when scrolling up or down (unlike IO “max ratio among intersecting”).
- */
-function pickActiveSection(sections: HTMLElement[]): HTMLElement | null {
-  if (sections.length === 0) return null;
-  const offset = getActivationOffsetPx();
-  let active: HTMLElement = sections[0]!;
-  for (const s of sections) {
-    const top = s.getBoundingClientRect().top;
-    if (top <= offset) {
-      active = s;
-    }
-  }
-  return active;
-}
-
-/** Matches `main.css`: rail + desktop nav hidden — continuous spy only matters on wider layouts. */
-const SCROLL_SPY_MIN_WIDTH_PX = 901;
-
 function initScrollSpy(): Cleanup {
   const nav = document.getElementById(NAV_ID);
   const rail = document.getElementById('xw-section-rail');
@@ -116,34 +102,28 @@ function initScrollSpy(): Cleanup {
   if (sections.length === 0) return () => undefined;
 
   const links = new Map<string, HTMLAnchorElement>();
-  if (nav) {
-    nav.querySelectorAll<HTMLAnchorElement>('a[data-xw-nav]').forEach((a) => {
-      const key = a.dataset.xwNav;
-      if (key) links.set(key, a);
-    });
-  }
+  nav?.querySelectorAll<HTMLAnchorElement>('a[data-xw-nav]').forEach((a) => {
+    const key = a.dataset.xwNav;
+    if (key) links.set(key, a);
+  });
 
   const railLinks = new Map<string, HTMLAnchorElement>();
-  if (rail) {
-    rail.querySelectorAll<HTMLAnchorElement>('a[data-xw-rail]').forEach((a) => {
-      const key = a.dataset.xwRail;
-      if (key) railLinks.set(key, a);
-    });
-  }
+  rail?.querySelectorAll<HTMLAnchorElement>('a[data-xw-rail]').forEach((a) => {
+    const key = a.dataset.xwRail;
+    if (key) railLinks.set(key, a);
+  });
 
   const setActive = (key: string | null) => {
     links.forEach((a) => {
-      const isActive = a.dataset.xwNav === key;
-      a.classList.toggle(ACTIVE_CLASS, isActive);
-      if (isActive) {
-        a.setAttribute('aria-current', 'true');
-      } else {
-        a.removeAttribute('aria-current');
-      }
+      const active = a.dataset.xwNav === key;
+      a.classList.toggle(ACTIVE_CLASS, active);
+      if (active) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
     });
+
     railLinks.forEach((a) => {
-      const isActive = a.dataset.xwRail === key;
-      if (isActive) {
+      const active = a.dataset.xwRail === key;
+      if (active) {
         a.setAttribute('data-xw-active', 'true');
         a.setAttribute('aria-current', 'true');
       } else {
@@ -153,52 +133,49 @@ function initScrollSpy(): Cleanup {
     });
   };
 
+  let observer: IntersectionObserver | null = null;
+  let raf = 0;
+
   const sync = () => {
-    const active = pickActiveSection(sections);
+    raf = 0;
+    const offset = getActivationOffsetPx();
+    const viewportBottom = window.innerHeight * 0.72;
+
+    const active =
+      sections
+        .map((section) => ({ section, rect: section.getBoundingClientRect() }))
+        .filter(({ rect }) => rect.bottom > offset && rect.top < viewportBottom)
+        .sort((a, b) => Math.abs(a.rect.top - offset) - Math.abs(b.rect.top - offset))[0]
+        ?.section ?? sections[0] ?? null;
+
     setActive(active?.dataset.xwSection ?? null);
   };
 
-  let raf = 0;
-  const syncRaf = () => {
-    raf = 0;
-    sync();
-  };
-
-  const onScrollOrResize = () => {
+  const queueSync = () => {
     if (raf !== 0) return;
-    raf = window.requestAnimationFrame(syncRaf);
+    raf = window.requestAnimationFrame(sync);
   };
 
-  const mq = window.matchMedia(`(min-width: ${SCROLL_SPY_MIN_WIDTH_PX}px)`);
-
-  const removeScrollListeners = () => {
-    window.removeEventListener('scroll', onScrollOrResize);
-    window.removeEventListener('resize', onScrollOrResize);
-    if (raf !== 0) {
-      window.cancelAnimationFrame(raf);
-      raf = 0;
-    }
+  const observe = () => {
+    observer?.disconnect();
+    observer = new IntersectionObserver(queueSync, {
+      root: null,
+      rootMargin: `-${getActivationOffsetPx()}px 0px -55% 0px`,
+      threshold: [0, 0.01, 0.15, 0.35, 0.6],
+    });
+    sections.forEach((section) => observer?.observe(section));
+    queueSync();
   };
 
-  const applyLayout = () => {
-    removeScrollListeners();
-    if (mq.matches) {
-      window.addEventListener('scroll', onScrollOrResize, { passive: true });
-      window.addEventListener('resize', onScrollOrResize, { passive: true });
-      syncRaf();
-    } else {
-      // Mobile / narrow: rail and desktop nav are hidden — avoid scroll listeners +
-      // repeated getBoundingClientRect during touch momentum (was causing stuck/janky scroll).
-      sync();
-    }
-  };
+  const onResize = () => observe();
 
-  applyLayout();
-  mq.addEventListener('change', applyLayout);
+  observe();
+  window.addEventListener('resize', onResize, { passive: true });
 
   return () => {
-    mq.removeEventListener('change', applyLayout);
-    removeScrollListeners();
+    window.removeEventListener('resize', onResize);
+    observer?.disconnect();
+    if (raf !== 0) window.cancelAnimationFrame(raf);
   };
 }
 
