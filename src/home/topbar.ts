@@ -104,6 +104,9 @@ function pickActiveSection(sections: HTMLElement[]): HTMLElement | null {
   return active;
 }
 
+/** Matches `main.css`: rail + desktop nav hidden — continuous spy only matters on wider layouts. */
+const SCROLL_SPY_MIN_WIDTH_PX = 901;
+
 function initScrollSpy(): Cleanup {
   const nav = document.getElementById(NAV_ID);
   const rail = document.getElementById('xw-section-rail');
@@ -150,28 +153,52 @@ function initScrollSpy(): Cleanup {
     });
   };
 
-  let raf = 0;
   const sync = () => {
-    raf = 0;
     const active = pickActiveSection(sections);
     setActive(active?.dataset.xwSection ?? null);
   };
 
-  const onScrollOrResize = () => {
-    if (raf !== 0) return;
-    raf = window.requestAnimationFrame(sync);
+  let raf = 0;
+  const syncRaf = () => {
+    raf = 0;
+    sync();
   };
 
-  window.addEventListener('scroll', onScrollOrResize, { passive: true });
-  window.addEventListener('resize', onScrollOrResize, { passive: true });
-  sync();
+  const onScrollOrResize = () => {
+    if (raf !== 0) return;
+    raf = window.requestAnimationFrame(syncRaf);
+  };
 
-  return () => {
+  const mq = window.matchMedia(`(min-width: ${SCROLL_SPY_MIN_WIDTH_PX}px)`);
+
+  const removeScrollListeners = () => {
     window.removeEventListener('scroll', onScrollOrResize);
     window.removeEventListener('resize', onScrollOrResize);
     if (raf !== 0) {
       window.cancelAnimationFrame(raf);
+      raf = 0;
     }
+  };
+
+  const applyLayout = () => {
+    removeScrollListeners();
+    if (mq.matches) {
+      window.addEventListener('scroll', onScrollOrResize, { passive: true });
+      window.addEventListener('resize', onScrollOrResize, { passive: true });
+      syncRaf();
+    } else {
+      // Mobile / narrow: rail and desktop nav are hidden — avoid scroll listeners +
+      // repeated getBoundingClientRect during touch momentum (was causing stuck/janky scroll).
+      sync();
+    }
+  };
+
+  applyLayout();
+  mq.addEventListener('change', applyLayout);
+
+  return () => {
+    mq.removeEventListener('change', applyLayout);
+    removeScrollListeners();
   };
 }
 
