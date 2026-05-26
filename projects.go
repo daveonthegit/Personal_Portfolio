@@ -64,10 +64,10 @@ func LoadProjects() []Project {
 		{
 			ID:               "outfai",
 			Title:            "OutfAI",
-			ShortDescription: "Wardrobe-first outfit intelligence — Next.js + tRPC + Convex app that generates context-aware outfits from your closet, mood, and weather.",
-			Description:      "Wardrobe-first outfit intelligence. OutfAI helps you decide what to wear by generating context-aware outfits from your own closet—using mood and weather—with optional, explainable suggestions for new pieces that fit what you already own.",
-			Image:            "/static/images/OutfAI.png",
-			Technologies:     []string{"Next.js", "React", "TypeScript", "Tailwind CSS", "tRPC", "Convex", "BetterAuth"},
+			ShortDescription: "Wardrobe-first AI stylist redesigned around an editorial landing page, closet-aware recommendations, and clear outfit reasoning.",
+			Description:      "A Next.js + Convex wardrobe app that turns closet uploads, mood, weather, calendar, and preferences into explainable outfits. The May 2026 redesign moved OutfAI from a dashboard-first feel to a full-bleed editorial landing page with a styled brief, generated look, and why-it-works panel that makes the product value legible before sign-up.",
+			Image:            "/static/images/outfai-redesign.png",
+			Technologies:     []string{"Next.js 15", "React", "TypeScript", "Tailwind CSS", "Convex", "Better Auth", "Framer Motion"},
 			Type:             "ai",
 			GitHubURL:        "https://github.com/daveonthegit/OutfAI",
 			LiveURL:          "https://outfai.vercel.app/",
@@ -75,7 +75,7 @@ func LoadProjects() []Project {
 			DemoURL:          "https://outfai.vercel.app/",
 			Status:           "active",
 			Featured:         true,
-			Date:             time.Date(2026, 1, 26, 0, 0, 0, 0, time.UTC),
+			Date:             time.Date(2026, 5, 4, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			ID:               "forgearena",
