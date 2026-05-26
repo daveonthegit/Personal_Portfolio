@@ -686,7 +686,7 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	switch templateName {
 	case "home":
 		data.Title = personal.Name + " - " + personal.Title
-		data.Description = "Welcome to my portfolio showcasing my work in web development, software engineering, and creative projects."
+		data.Description = "David Xiao is a CS student and developer focused on full-stack web applications, Next.js, TypeScript, and backend data flows, joining Secco Squared in June 2026."
 		// Home only surfaces the curated featured short-list; /projects has the rest.
 		featured := make([]Project, 0, 4)
 		for _, p := range s.projects {
@@ -697,7 +697,7 @@ func (s *Server) pageDataFor(templateName string) PageData {
 		data.Projects = featured
 	case "projects":
 		data.Title = "Projects - " + personal.Name
-		data.Description = "Explore my portfolio of web applications, software projects, and creative work."
+		data.Description = "Explore David Xiao's full-stack web, TypeScript, React, Next.js, backend, and systems projects."
 		// Sort newest first so year headers read top-to-bottom like a changelog.
 		sorted := make([]Project, len(s.projects))
 		copy(sorted, s.projects)

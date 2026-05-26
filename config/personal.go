@@ -29,6 +29,9 @@ type Skill struct {
 type Experience struct {
 	Company      string
 	Position     string
+	Type         string
+	Media        string
+	MediaAlt     string
 	StartDate    time.Time
 	EndDate      *time.Time // nil for current position
 	Location     string
@@ -40,6 +43,8 @@ type Education struct {
 	Institution string
 	Degree      string
 	Field       string
+	Media       string
+	MediaAlt    string
 	StartDate   time.Time
 	EndDate     time.Time
 	GPA         string
@@ -50,18 +55,18 @@ type Education struct {
 func GetPersonalInfo() PersonalInfo {
 	return PersonalInfo{
 		Name:     "David Xiao",
-		Title:    "Software engineer, CS student",
+		Title:    "Developer, CS student",
 		Email:    "dxiao3043@gmail.com",
 		Phone:    "917-946-7086",
 		Location: "New York, NY",
 		LinkedIn: "https://linkedin.com/in/david-on-linked",
 		GitHub:   "https://github.com/daveonthegit",
 		Website:  "https://davidx.tech",
-		Tagline:  "Software engineer graduating May 2026 — production internship experience plus shipped projects across full-stack web, cross-platform mobile, and low-level systems.",
-		NowLine:  "Finishing my CS degree at Hunter College, shipping Kyarafit and OutfAI, and looking for a 2026 new-grad software role.",
-		Bio: `I'm a Computer Science senior at CUNY Hunter College and a software engineer focused on API performance, security, and reliable delivery. Fluent across TypeScript, React, Node.js, Python, Go, and C — I like hard, load-bearing work: rewriting legacy code into components, tightening REST APIs, and making systems cheaper to change.
+		Tagline:  "CS student and developer focused on full-stack web applications, product-minded interfaces, and backend data flows. Joining Secco Squared as a Junior Web Developer in June 2026.",
+		NowLine:  "Finishing my CS degree at Hunter College and joining Secco Squared as a Junior Web Developer in June 2026.",
+		Bio: `I'm a Computer Science senior at CUNY Hunter College and a developer focused on full-stack web applications, backend data flows, and reliable delivery. Fluent across TypeScript, React, Next.js, Node.js, Python, Go, and C, I like hard, load-bearing work: rewriting legacy code into components, tightening REST APIs, and making systems cheaper to change.
 
-At Unadat I decomposed a legacy PHP/JavaScript monolith into modular microservices, shipped a reusable React component library adopted by three product teams, and hardened backend endpoints against SQL injection and XSS. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
+I'm joining Secco Squared as a Junior Web Developer in June 2026. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
 
 		Skills: []Skill{
 			{
@@ -84,8 +89,25 @@ At Unadat I decomposed a legacy PHP/JavaScript monolith into modular microservic
 
 		Experience: []Experience{
 			{
+				Company:   "Secco Squared",
+				Position:  "Junior Web Developer",
+				Type:      "Full-time",
+				Media:     "/static/images/portfolio-square-animation.gif",
+				MediaAlt:  "Animated Secco Squared logo",
+				StartDate: time.Date(2026, 6, 1, 0, 0, 0, 0, time.UTC),
+				EndDate:   nil,
+				Location:  "New York, NY",
+				Description: []string{
+					"Joining Secco Squared as a Junior Web Developer to work on production web projects involving Next.js, client integrations, lead-generation flows, A/B testing, and data-driven optimization.",
+				},
+				Technologies: []string{"Next.js", "React", "TypeScript", "Client integrations", "A/B testing"},
+			},
+			{
 				Company:   "Unadat",
 				Position:  "Software Engineer Intern",
+				Type:      "Internship",
+				Media:     "/static/images/unadat-logo.jfif",
+				MediaAlt:  "Unadat logo",
 				StartDate: time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC),
 				EndDate:   &[]time.Time{time.Date(2025, 8, 31, 0, 0, 0, 0, time.UTC)}[0],
 				Location:  "New York, NY",
@@ -104,6 +126,8 @@ At Unadat I decomposed a legacy PHP/JavaScript monolith into modular microservic
 				Institution: "CUNY Hunter College",
 				Degree:      "Bachelor of Arts",
 				Field:       "Computer Science",
+				Media:       "/static/images/cuny-hunter-college.jpg",
+				MediaAlt:    "CUNY Hunter College logo",
 				StartDate:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
 				EndDate:     time.Date(2026, 5, 1, 0, 0, 0, 0, time.UTC), // Expected graduation
 				GPA:         "",

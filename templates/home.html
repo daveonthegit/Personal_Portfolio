@@ -26,12 +26,6 @@
 
         <p class="xw-tagline" data-xw-reveal>{{.Personal.Tagline}}</p>
 
-        <div class="xw-now" data-xw-reveal>
-          <span class="xw-now-dot" aria-hidden="true"></span>
-          <span class="xw-caps xw-caps--accent">Now</span>
-          <span class="xw-now-text">{{.Personal.NowLine}}</span>
-        </div>
-
         <div class="xw-bio" data-xw-reveal>
           {{range split "\n\n" .Personal.Bio}}<p>{{.}}</p>{{end}}
         </div>
@@ -65,8 +59,8 @@
             <dd>{{.Personal.Location}}</dd>
           </div>
           <div class="xw-fact">
-            <dt>Seeking</dt>
-            <dd>2026 new-grad software role</dd>
+            <dt>Starting</dt>
+            <dd>Junior Web Developer, June 2026</dd>
           </div>
           <div class="xw-fact">
             <dt>Links</dt>
@@ -172,21 +166,31 @@
           </h3>
           <div class="xw-timeline-meta">
             <span class="xw-caps xw-caps--muted">{{.Location}}</span>
+            {{if .Type}}<span class="xw-caps xw-caps--muted">{{.Type}}</span>{{end}}
             <span class="xw-timeline-range">
               {{.StartDate.Format "Jan 2006"}} –
               {{if .EndDate}}{{.EndDate.Format "Jan 2006"}}{{else}}Present{{end}}
             </span>
           </div>
-          {{if .Description}}
-          <ul class="xw-timeline-bullets" role="list">
-            {{range .Description}}<li>{{.}}</li>{{end}}
-          </ul>
-          {{end}}
-          {{if .Technologies}}
-          <ul class="xw-timeline-tech" role="list" aria-label="Stack">
-            {{range .Technologies}}<li>{{.}}</li>{{end}}
-          </ul>
-          {{end}}
+          <div class="xw-timeline-content">
+            <div class="xw-timeline-copy">
+              {{if .Description}}
+              <ul class="xw-timeline-bullets" role="list">
+                {{range .Description}}<li>{{.}}</li>{{end}}
+              </ul>
+              {{end}}
+              {{if .Technologies}}
+              <ul class="xw-timeline-tech" role="list" aria-label="Stack">
+                {{range .Technologies}}<li>{{.}}</li>{{end}}
+              </ul>
+              {{end}}
+            </div>
+            {{if .Media}}
+            <figure class="xw-timeline-media">
+              <img src="{{asset .Media}}" alt="{{if .MediaAlt}}{{.MediaAlt}}{{else}}{{.Company}} media{{end}}" loading="lazy" decoding="async" />
+            </figure>
+            {{end}}
+          </div>
         </div>
       </li>
       {{end}}
@@ -206,6 +210,14 @@
           <div class="xw-timeline-meta">
             <span class="xw-caps xw-caps--muted">{{.Location}}</span>
             <span class="xw-timeline-range">Expected {{.EndDate.Format "Jan 2006"}}</span>
+          </div>
+          <div class="xw-timeline-content">
+            <div class="xw-timeline-copy"></div>
+            {{if .Media}}
+            <figure class="xw-timeline-media">
+              <img src="{{asset .Media}}" alt="{{if .MediaAlt}}{{.MediaAlt}}{{else}}{{.Institution}} media{{end}}" loading="lazy" decoding="async" />
+            </figure>
+            {{end}}
           </div>
         </div>
       </li>
