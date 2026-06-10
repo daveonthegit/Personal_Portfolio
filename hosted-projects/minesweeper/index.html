@@ -3,248 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minesweeper Game</title>
+    <title>xiaoOS — minesweeper.exe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --xw-bg: #0b0a09;
+            --xw-bg-elev: #111110;
+            --xw-bg-soft: #161513;
+            --xw-ink: #f4efe6;
+            --xw-ink-muted: #a39d92;
+            --xw-ink-faint: #6e675e;
+            --xw-hairline: rgba(244, 239, 230, 0.08);
+            --xw-hairline-hi: rgba(244, 239, 230, 0.14);
+            --xw-accent: #00d2ff;
+            --xw-accent-ink: #002a35;
+            --xw-display: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --xw-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+            --xw-tracking-caps: 0.18em;
+            color-scheme: dark;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: var(--xw-display);
+            background:
+                radial-gradient(1200px 600px at 50% -10%, rgba(0, 210, 255, 0.05), transparent 60%),
+                var(--xw-bg);
+            color: var(--xw-ink);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            color: white;
+            padding: clamp(1rem, 4vw, 2.5rem);
+            -webkit-font-smoothing: antialiased;
         }
 
-        .game-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            text-align: center;
+        .ms-caps {
+            font-family: var(--xw-mono);
+            font-size: 0.68rem;
+            letter-spacing: var(--xw-tracking-caps);
+            text-transform: uppercase;
+            color: var(--xw-ink-faint);
         }
 
-        h1 {
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .info-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 20px;
-            border-radius: 10px;
-            min-width: 80px;
-        }
-
-        .controls {
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 10px 20px;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn.new-game {
-            background: rgba(34, 197, 94, 0.8);
-        }
-
-        .btn.new-game:hover {
-            background: rgba(34, 197, 94, 1);
-        }
-
-        .game-board {
-            display: inline-block;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+        /* ---- window shell ---- */
+        .ms-window {
+            width: 100%;
+            max-width: min(96vw, 1040px);
+            background: var(--xw-bg-elev);
+            border: 1px solid var(--xw-hairline-hi);
             border-radius: 10px;
             overflow: hidden;
-            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
         }
 
-        .row {
-            display: flex;
-        }
-
-        .cell {
-            width: 30px;
-            height: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .ms-titlebar {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--xw-hairline);
+            background: var(--xw-bg-soft);
+        }
+        .ms-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--xw-hairline-hi); }
+        .ms-dot.live { background: var(--xw-accent); box-shadow: 0 0 8px rgba(0, 210, 255, 0.6); }
+        .ms-title { font-family: var(--xw-mono); font-size: 0.8rem; letter-spacing: 0.06em; color: var(--xw-ink); }
+        .ms-title b { color: var(--xw-accent); font-weight: 600; }
+        .ms-titlebar-right { margin-left: auto; }
+        #ms-gear {
+            background: none; border: 1px solid var(--xw-hairline-hi); color: var(--xw-ink-muted);
+            border-radius: 6px; width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem;
+            transition: all 0.15s ease;
+        }
+        #ms-gear:hover { color: var(--xw-accent); border-color: var(--xw-accent); }
+
+        .ms-body { padding: clamp(1rem, 3vw, 1.6rem); }
+
+        /* ---- tab rows ---- */
+        .ms-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+        .ms-tab {
+            font-family: var(--xw-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 0.4rem 0.7rem; border: 1px solid var(--xw-hairline-hi); border-radius: 6px;
+            background: transparent; color: var(--xw-ink-muted); cursor: pointer; transition: all 0.15s ease;
+        }
+        .ms-tab:hover { color: var(--xw-ink); border-color: var(--xw-ink-faint); }
+        .ms-tab.is-active { background: var(--xw-accent); color: var(--xw-accent-ink); border-color: var(--xw-accent); font-weight: 600; }
+        .ms-tabs-spacer { flex: 1; }
+        .ms-tab-label { align-self: center; margin-right: 0.3rem; }
+
+        /* ---- HUD ---- */
+        .ms-hud {
+            display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+            padding: 0.8rem 1rem; margin-bottom: 0.9rem;
+            background: var(--xw-bg-soft); border: 1px solid var(--xw-hairline);
+            border-radius: 8px;
+        }
+        .ms-readout {
+            font-family: var(--xw-mono); font-weight: 600; font-size: 1.5rem; letter-spacing: 0.08em;
+            color: var(--xw-accent); background: #060605; border: 1px solid var(--xw-hairline-hi);
+            border-radius: 6px; padding: 0.25rem 0.65rem; min-width: 4.4ch; text-align: center;
+            text-shadow: 0 0 12px rgba(0, 210, 255, 0.35);
+        }
+        #ms-face {
+            margin: 0 auto; width: 44px; height: 44px; border-radius: 8px;
+            border: 1px solid var(--xw-hairline-hi); background: var(--xw-bg-elev);
+            color: var(--xw-ink); font-size: 1.3rem; cursor: pointer; transition: all 0.15s ease;
+            display: grid; place-items: center;
+        }
+        #ms-face:hover { border-color: var(--xw-accent); }
+        #ms-face[data-state="win"] { color: var(--xw-accent); border-color: var(--xw-accent); }
+        #ms-face[data-state="lose"] { color: #ff6b6b; border-color: #ff6b6b; }
+
+        .ms-statgrid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .ms-stat {
+            background: var(--xw-bg-soft); border: 1px solid var(--xw-hairline);
+            border-radius: 7px; padding: 0.55rem 0.7rem;
+        }
+        .ms-stat .k { display: block; font-family: var(--xw-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--xw-ink-faint); margin-bottom: 0.25rem; }
+        .ms-stat .v { font-family: var(--xw-mono); font-size: 1.05rem; font-weight: 600; color: var(--xw-ink); }
+        .ms-stat .v small { color: var(--xw-ink-muted); font-weight: 400; }
+
+        /* ---- board ---- */
+        .ms-board-wrap { display: flex; justify-content: center; position: relative; }
+        #ms-board {
+            display: grid;
+            grid-template-columns: repeat(var(--cols, 9), 1fr);
+            gap: 2px;
+            padding: 8px;
+            background: #060605;
+            border: 1px solid var(--xw-hairline-hi);
+            border-radius: 8px;
+            --cell: clamp(20px, 3.4vw, 30px);
             user-select: none;
+            touch-action: manipulation;
         }
-
-        .cell:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .ms-cell {
+            width: var(--cell); height: var(--cell);
+            display: grid; place-items: center;
+            font-family: var(--xw-mono); font-weight: 700;
+            font-size: calc(var(--cell) * 0.56);
+            background: var(--xw-bg-elev);
+            border: 1px solid var(--xw-hairline-hi);
+            border-radius: 3px;
+            color: var(--xw-ink);
+            cursor: pointer;
+            transition: background 0.08s ease, border-color 0.08s ease;
         }
-
-        .cell.revealed {
-            background: rgba(255, 255, 255, 0.1);
-            cursor: default;
+        .ms-cell:hover:not(.open) { border-color: var(--xw-accent); background: var(--xw-bg-soft); }
+        .ms-cell.open {
+            background: #0d0c0b; border-color: var(--xw-hairline); cursor: default;
         }
+        .ms-cell.flag { color: var(--xw-accent); }
+        .ms-cell.mine { color: var(--xw-ink); }
+        .ms-cell.mine.boom { background: #3a0d0d; border-color: #ff6b6b; color: #ff6b6b; }
+        .ms-cell.wrong { color: #ff6b6b; }
 
-        .cell.flagged {
-            background: rgba(255, 193, 7, 0.3);
+        #ms-gen {
+            position: absolute; inset: 0; display: none; place-items: center;
+            background: rgba(6, 6, 5, 0.78); border-radius: 8px;
+            font-family: var(--xw-mono); font-size: 0.8rem; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--xw-accent);
         }
+        #ms-gen.show { display: grid; }
 
-        .cell.mine {
-            background: rgba(220, 53, 69, 0.8);
-            color: white;
+        /* ---- footer / best ---- */
+        .ms-footer { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1.1rem; align-items: flex-start; }
+        .ms-best { flex: 1; min-width: 240px; }
+        .ms-best h3, .ms-legend h3 {
+            font-family: var(--xw-mono); font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--xw-ink-faint); margin-bottom: 0.5rem; font-weight: 600;
         }
-
-        .cell.mine.revealed {
-            background: rgba(220, 53, 69, 1);
+        .ms-best-head, .ms-best-row {
+            display: grid; grid-template-columns: 1fr 70px 70px; gap: 0.5rem;
+            font-family: var(--xw-mono); font-size: 0.72rem; padding: 0.3rem 0;
         }
+        .ms-best-head { color: var(--xw-ink-faint); border-bottom: 1px solid var(--xw-hairline); letter-spacing: 0.1em; }
+        .ms-best-row { color: var(--xw-ink-muted); border-bottom: 1px solid var(--xw-hairline); }
+        .ms-best-val { text-align: right; color: var(--xw-ink); }
+        .ms-best-val.ng { color: var(--xw-accent); }
 
-        .cell.number-1 { color: #007bff; }
-        .cell.number-2 { color: #28a745; }
-        .cell.number-3 { color: #dc3545; }
-        .cell.number-4 { color: #6f42c1; }
-        .cell.number-5 { color: #fd7e14; }
-        .cell.number-6 { color: #20c997; }
-        .cell.number-7 { color: #000000; }
-        .cell.number-8 { color: #6c757d; }
+        .ms-legend { min-width: 200px; }
+        .ms-legend p { font-family: var(--xw-mono); font-size: 0.7rem; color: var(--xw-ink-muted); line-height: 1.7; }
+        .ms-legend b { color: var(--xw-ink); }
 
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+        /* ---- panels (settings + custom) ---- */
+        .ms-panel {
+            display: none; position: fixed; inset: 0; z-index: 50;
+            background: rgba(6, 6, 5, 0.7); backdrop-filter: blur(4px);
+            place-items: center; padding: 1rem;
         }
-
-        .game-over-content {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+        .ms-panel.open { display: grid; }
+        .ms-panel-card {
+            width: 100%; max-width: 420px; background: var(--xw-bg-elev);
+            border: 1px solid var(--xw-hairline-hi); border-radius: 10px; overflow: hidden;
         }
-
-        .game-over h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        .ms-panel-head {
+            display: flex; align-items: center; padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--xw-hairline); background: var(--xw-bg-soft);
+            font-family: var(--xw-mono); font-size: 0.78rem; letter-spacing: 0.06em;
         }
-
-        .game-over p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+        .ms-panel-head button {
+            margin-left: auto; background: none; border: none; color: var(--xw-ink-muted);
+            font-size: 1.1rem; cursor: pointer; line-height: 1;
         }
-
-        .hidden {
-            display: none;
+        .ms-panel-head button:hover { color: var(--xw-accent); }
+        .ms-panel-body { padding: 1.1rem; }
+        .ms-opt { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; font-size: 0.88rem; color: var(--xw-ink); cursor: pointer; }
+        .ms-opt input { accent-color: var(--xw-accent); width: 16px; height: 16px; cursor: pointer; }
+        .ms-opt small { display: block; color: var(--xw-ink-faint); font-size: 0.72rem; }
+        .ms-field { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 0; }
+        .ms-field label { font-family: var(--xw-mono); font-size: 0.78rem; color: var(--xw-ink-muted); letter-spacing: 0.06em; }
+        .ms-field input {
+            width: 90px; background: #060605; border: 1px solid var(--xw-hairline-hi);
+            color: var(--xw-ink); font-family: var(--xw-mono); padding: 0.4rem 0.6rem; border-radius: 5px;
         }
-
-        .difficulty-selector {
-            margin-bottom: 20px;
+        .ms-btn-row { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .ms-btn {
+            flex: 1; font-family: var(--xw-mono); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase;
+            padding: 0.6rem; border-radius: 6px; cursor: pointer; border: 1px solid var(--xw-hairline-hi);
+            background: transparent; color: var(--xw-ink-muted); transition: all 0.15s ease;
         }
+        .ms-btn.primary { background: var(--xw-accent); color: var(--xw-accent-ink); border-color: var(--xw-accent); font-weight: 600; }
+        .ms-btn:hover { color: var(--xw-ink); }
+        .ms-btn.primary:hover { color: var(--xw-accent-ink); filter: brightness(1.08); }
+        .ms-divider { height: 1px; background: var(--xw-hairline); margin: 0.7rem 0; }
 
-        .difficulty-selector select {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            padding: 10px 15px;
-            margin: 0 5px;
-            backdrop-filter: blur(10px);
-        }
-
-        .difficulty-selector select option {
-            background: #2a5298;
-            color: white;
-        }
+        .ms-tagline { text-align: center; margin-top: 1.4rem; }
+        .ms-tagline a { color: var(--xw-accent); text-decoration: none; }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>💣 Minesweeper</h1>
-        
-        <div class="difficulty-selector">
-            <label for="difficulty">Difficulty: </label>
-            <select id="difficulty">
-                <option value="easy">Easy (9x9, 10 mines)</option>
-                <option value="medium" selected>Medium (16x16, 40 mines)</option>
-                <option value="hard">Hard (16x30, 99 mines)</option>
-            </select>
-        </div>
-
-        <div class="game-info">
-            <div class="info-item">
-                <div>Mines</div>
-                <div id="mine-count">40</div>
-            </div>
-            <div class="info-item">
-                <div>Time</div>
-                <div id="timer">000</div>
-            </div>
-            <div class="info-item">
-                <div>Flags</div>
-                <div id="flag-count">0</div>
+    <div class="ms-window">
+        <div class="ms-titlebar">
+            <span class="ms-dot live"></span>
+            <span class="ms-title"><b>xiao</b>OS &mdash; minesweeper.exe</span>
+            <span class="ms-caps" id="ms-status" style="margin-left:0.6rem;">READY</span>
+            <div class="ms-titlebar-right">
+                <button id="ms-gear" title="Settings">⚙</button>
             </div>
         </div>
 
-        <div class="controls">
-            <button class="btn new-game" id="new-game">New Game</button>
-            <button class="btn" id="flag-mode">Toggle Flag Mode</button>
-        </div>
+        <div class="ms-body">
+            <!-- mode + level tabs -->
+            <div class="ms-tabs">
+                <span class="ms-caps ms-tab-label">Mode</span>
+                <button class="ms-tab is-active" data-mode="standard">Standard</button>
+                <button class="ms-tab" data-mode="noguess">No-guessing</button>
+                <span class="ms-tabs-spacer"></span>
+            </div>
+            <div class="ms-tabs">
+                <span class="ms-caps ms-tab-label">Level</span>
+                <button class="ms-tab is-active" data-level="beginner">Beginner</button>
+                <button class="ms-tab" data-level="intermediate">Intermediate</button>
+                <button class="ms-tab" data-level="expert">Expert</button>
+                <button class="ms-tab" data-level="custom">Custom</button>
+            </div>
 
-        <div class="game-board" id="game-board">
-            <!-- Game board will be generated here -->
+            <!-- HUD -->
+            <div class="ms-hud">
+                <span class="ms-caps">Mines</span>
+                <span class="ms-readout" id="ms-mines">010</span>
+                <button id="ms-face" data-state="idle">◉</button>
+                <span class="ms-readout" id="ms-time">000</span>
+                <span class="ms-caps">Time</span>
+            </div>
+
+            <!-- stats -->
+            <div class="ms-statgrid">
+                <div class="ms-stat"><span class="k">3BV</span><span class="v" id="ms-bbbv">0/—</span></div>
+                <div class="ms-stat"><span class="k">3BV / sec</span><span class="v" id="ms-bbbv-rate">0.00</span></div>
+                <div class="ms-stat"><span class="k">Efficiency (IOE)</span><span class="v" id="ms-ioe">0%</span></div>
+                <div class="ms-stat"><span class="k">Clicks</span><span class="v" id="ms-clicks">0L / 0R / 0C</span></div>
+            </div>
+
+            <!-- board -->
+            <div class="ms-board-wrap">
+                <div id="ms-board"></div>
+                <div id="ms-gen">Generating guess-free board…</div>
+            </div>
+
+            <!-- footer -->
+            <div class="ms-footer">
+                <div class="ms-best">
+                    <h3>Personal bests (local)</h3>
+                    <div class="ms-best-head"><span>Level</span><span class="ms-best-val">Std</span><span class="ms-best-val ng">No-guess</span></div>
+                    <div id="ms-best"></div>
+                </div>
+                <div class="ms-legend">
+                    <h3>Controls</h3>
+                    <p>
+                        <b>Left</b> reveal &nbsp;·&nbsp; <b>Right</b> flag<br>
+                        <b>Chord</b> a satisfied number to clear<br>
+                        its neighbors — configure triggers in <b>⚙</b>.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="game-over hidden" id="game-over">
-        <div class="game-over-content">
-            <h2 id="game-over-title">Game Over!</h2>
-            <p id="game-over-message">You hit a mine!</p>
-            <button class="btn new-game" id="play-again">Play Again</button>
+    <p class="ms-tagline ms-caps">Built by David Xiao · <a href="/">return to xiaoOS</a></p>
+
+    <!-- settings panel -->
+    <div class="ms-panel" id="ms-settings">
+        <div class="ms-panel-card">
+            <div class="ms-panel-head">SETTINGS <button id="ms-settings-close">✕</button></div>
+            <div class="ms-panel-body">
+                <h3 class="ms-caps" style="margin-bottom:0.4rem;">Chording triggers</h3>
+                <label class="ms-opt"><input type="checkbox" id="opt-chord-both"><span>Left + right together <small>press both buttons on a number</small></span></label>
+                <label class="ms-opt"><input type="checkbox" id="opt-chord-single"><span>Left-click a revealed number <small>minesweeper.online default</small></span></label>
+                <label class="ms-opt"><input type="checkbox" id="opt-chord-middle"><span>Middle mouse button <small>middle-click a number</small></span></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- custom dialog -->
+    <div class="ms-panel" id="ms-custom">
+        <div class="ms-panel-card">
+            <div class="ms-panel-head">CUSTOM BOARD <button id="ms-custom-cancel">✕</button></div>
+            <div class="ms-panel-body">
+                <div class="ms-field"><label>Height (rows)</label><input type="number" id="cf-rows" min="5" max="40" value="16"></div>
+                <div class="ms-field"><label>Width (cols)</label><input type="number" id="cf-cols" min="5" max="50" value="30"></div>
+                <div class="ms-field"><label>Mines</label><input type="number" id="cf-mines" min="1" value="99"></div>
+                <div class="ms-divider"></div>
+                <div class="ms-btn-row">
+                    <button class="ms-btn" id="ms-custom-cancel-2" onclick="document.getElementById('ms-custom').classList.remove('open')">Cancel</button>
+                    <button class="ms-btn primary" id="ms-custom-apply">Start</button>
+                </div>
+            </div>
         </div>
     </div>
 

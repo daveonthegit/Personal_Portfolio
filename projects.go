@@ -123,10 +123,10 @@ func LoadProjects() []Project {
 		},
 		{
 			ID:           "minesweeper-game",
-			Title:        "Minesweeper Game",
-			Description:  "A modern, fully-featured Minesweeper game built with TypeScript, HTML5, and CSS3. Features multiple difficulty levels, flag mode, timer, and a beautiful glassmorphism UI. Demonstrates advanced TypeScript patterns, DOM manipulation, and game logic implementation.",
+			Title:        "Minesweeper — xiaoOS",
+			Description:  "A minesweeper.online-grade engine reskinned in the xiaoOS command-center UI. Chording (three configurable triggers), live 3BV / 3BV-per-second / efficiency (IOE) stats, and a No-Guessing mode backed by a deterministic logical solver (subset deduction + per-component enumeration) that regenerates boards until they're provably guess-free. Beginner/Intermediate/Expert/Custom with local best times.",
 			Image:        "/static/images/minesweeper-project.png",
-			Technologies: []string{"TypeScript", "HTML5", "CSS3", "DOM Manipulation", "Game Development"},
+			Technologies: []string{"TypeScript", "Game Solver / CSP", "3BV Analytics", "DOM Manipulation", "xiaoOS Design System"},
 			Type:         "web",
 			GitHubURL:    "",
 			LiveURL:      "",
@@ -134,7 +134,7 @@ func LoadProjects() []Project {
 			DemoURL:      "/hosted/minesweeper/",
 			HostedPath:   "minesweeper",
 			Status:       "active",
-			Date:         time.Date(2024, 9, 13, 0, 0, 0, 0, time.UTC),
+			Date:         time.Date(2026, 6, 9, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			ID:           "ascii-rpg-game",
