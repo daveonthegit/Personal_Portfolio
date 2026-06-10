@@ -139,14 +139,24 @@ function initScrollSpy(): Cleanup {
   const sync = () => {
     raf = 0;
     const offset = getActivationOffsetPx();
-    const viewportBottom = window.innerHeight * 0.72;
 
-    const active =
-      sections
-        .map((section) => ({ section, rect: section.getBoundingClientRect() }))
-        .filter(({ rect }) => rect.bottom > offset && rect.top < viewportBottom)
-        .sort((a, b) => Math.abs(a.rect.top - offset) - Math.abs(b.rect.top - offset))[0]
-        ?.section ?? sections[0] ?? null;
+    // At the bottom of the page the last section's top may never reach the
+    // activation line, so pin it explicitly once we've scrolled to the end.
+    const scroller = document.scrollingElement ?? document.documentElement;
+    const atBottom = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < 4;
+    if (atBottom) {
+      setActive(sections[sections.length - 1]?.dataset.xwSection ?? null);
+      return;
+    }
+
+    // Active section is the last one whose top has crossed the activation line.
+    // Sections are in DOM (top-to-bottom) order, so we can stop at the first
+    // one still below the line. This is symmetric for scrolling up and down.
+    let active: HTMLElement | null = sections[0] ?? null;
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top - offset <= 1) active = section;
+      else break;
+    }
 
     setActive(active?.dataset.xwSection ?? null);
   };
