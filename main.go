@@ -65,6 +65,7 @@ type PageData struct {
 	TemplateName     string
 	AssetVersion     string
 	SiteURL          string
+	IsApex           bool
 }
 
 // ProjectYearGroup bundles projects for one calendar year so the projects page
@@ -206,6 +207,9 @@ func NewServer() *Server {
 
 func (s *Server) homeHandler(w http.ResponseWriter, r *http.Request) {
 	data := s.pageDataFor("home")
+	// Only the apex "/" plays the boot intro; it first-paints black so the
+	// portfolio never flashes before the animation mounts. /home renders normally.
+	data.IsApex = r.URL.Path == "/"
 
 	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

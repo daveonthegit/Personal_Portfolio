@@ -32,8 +32,13 @@
 
     <!-- Styles -->
     <link href="{{asset "/static/css/main.css"}}" rel="stylesheet">
+
+    {{if .IsApex}}
+    <!-- No-JS fallback: drop the black boot cover so content is still reachable. -->
+    <noscript><style>body.xw-boot-pending #startup-animation{display:none!important}body.xw-boot-pending{background:var(--xw-bg)!important}</style></noscript>
+    {{end}}
 </head>
-<body class="xw-body font-nexus selection:bg-nexus-cyan selection:text-black relative" data-page="{{.TemplateName}}">
+<body class="xw-body font-nexus selection:bg-nexus-cyan selection:text-black relative{{if .IsApex}} xw-boot-pending{{end}}" data-page="{{.TemplateName}}">
     <a href="#main-content" class="xiaoos-skip-link">Skip to main content</a>
 
     <!-- Boot overlay: full intro only on /; then replace → /home. /home has no splash (see bootOverlay.ts). -->

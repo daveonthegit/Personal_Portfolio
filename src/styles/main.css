@@ -690,6 +690,21 @@ body.xw-mobile-nav-lock {
 #startup-animation:empty {
   pointer-events: none;
 }
+
+/* Apex ("/") first paint: cover the server-rendered portfolio with an opaque black
+   layer so davidx.tech never flashes content before the boot animation mounts.
+   StartupAnimation reuses this same #startup-animation element, so the black cover
+   transitions seamlessly into the intro. Scoped to apex only — /home is unaffected. */
+body.xw-boot-pending {
+  background: #000;
+}
+body.xw-boot-pending #startup-animation {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 10000;
+  pointer-events: none;
+}
 .xw-main:focus-visible {
   outline: none;
 }
