@@ -209,7 +209,7 @@
           </h3>
           <div class="xw-timeline-meta">
             <span class="xw-caps xw-caps--muted">{{.Location}}</span>
-            <span class="xw-timeline-range">Expected {{.EndDate.Format "Jan 2006"}}</span>
+            <span class="xw-timeline-range">{{.EndDate.Format "Jan 2006"}}</span>
           </div>
           <div class="xw-timeline-content">
             <div class="xw-timeline-copy"></div>
@@ -291,9 +291,13 @@
           <label for="contact-message" class="xw-caps xw-caps--muted">Message</label>
           <textarea id="contact-message" name="message" rows="6" required></textarea>
         </div>
+        <div class="xw-field xw-honeypot" aria-hidden="true">
+          <label for="contact-website">Website</label>
+          <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
         <div class="xw-form-row">
           <button type="submit" class="xw-cta xw-cta--primary">Send message<span aria-hidden="true"> →</span></button>
-          <p class="xw-form-status" id="contact-form-status" role="status" aria-live="polite"></p>
+          <p class="xw-form-status" id="contact-form-status" role="status" aria-live="polite" hidden></p>
         </div>
       </form>
     </div>

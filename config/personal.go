@@ -55,18 +55,18 @@ type Education struct {
 func GetPersonalInfo() PersonalInfo {
 	return PersonalInfo{
 		Name:     "David Xiao",
-		Title:    "Developer, CS student",
+		Title:    "Web Developer, Secco Squared",
 		Email:    "dxiao3043@gmail.com",
 		Phone:    "917-946-7086",
 		Location: "New York, NY",
 		LinkedIn: "https://linkedin.com/in/david-on-linked",
 		GitHub:   "https://github.com/daveonthegit",
 		Website:  "https://davidx.tech",
-		Tagline:  "CS student and developer focused on full-stack web applications, product-minded interfaces, and backend data flows. Joining Secco Squared as a Junior Web Developer in June 2026.",
-		NowLine:  "Finishing my CS degree at Hunter College and joining Secco Squared as a Junior Web Developer in June 2026.",
-		Bio: `I'm a Computer Science senior at CUNY Hunter College and a developer focused on full-stack web applications, backend data flows, and reliable delivery. Fluent across TypeScript, React, Next.js, Node.js, Python, Go, and C, I like hard, load-bearing work: rewriting legacy code into components, tightening REST APIs, and making systems cheaper to change.
+		Tagline:  "Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and data-driven optimization. I ship A/B-tested Next.js pages, client integrations, and in-house tooling.",
+		NowLine:  "Building production web at Secco Squared — A/B testing pages, optimizing lead-generation funnels, and shipping Next.js client integrations.",
+		Bio: `I'm a Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and reliable delivery. Fluent across TypeScript, React, Next.js, Node.js, Python, Go, and C, I like hard, load-bearing work: A/B testing and optimizing pages, tightening REST APIs, and making systems cheaper to change.
 
-I'm joining Secco Squared as a Junior Web Developer in June 2026. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
+At Secco Squared I run A/B tests on production pages, optimize lead-generation flows with data-driven decisions, build client integrations and in-house tooling, and rebuilt a video site's lead funnel — cutting costs by $1,300+ monthly. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
 
 		Skills: []Skill{
 			{
@@ -90,7 +90,7 @@ I'm joining Secco Squared as a Junior Web Developer in June 2026. On the side I 
 		Experience: []Experience{
 			{
 				Company:   "Secco Squared",
-				Position:  "Junior Web Developer",
+				Position:  "Web Developer",
 				Type:      "Full-time",
 				Media:     "/static/images/portfolio-square-animation.gif",
 				MediaAlt:  "Animated Secco Squared logo",
@@ -98,9 +98,12 @@ I'm joining Secco Squared as a Junior Web Developer in June 2026. On the side I 
 				EndDate:   nil,
 				Location:  "New York, NY",
 				Description: []string{
-					"Joining Secco Squared as a Junior Web Developer to work on production web projects involving Next.js, client integrations, lead-generation flows, A/B testing, and data-driven optimization.",
+					"Rebuilt a video site's lead funnel, reducing costs by $1,300+ monthly while improving conversion",
+					"Run A/B tests on production pages and optimize lead-generation flows through data-driven decisions",
+					"Build Next.js features and client integrations across production web projects",
+					"Develop in-house tooling to streamline team workflows",
 				},
-				Technologies: []string{"Next.js", "React", "TypeScript", "Client integrations", "A/B testing"},
+				Technologies: []string{"Next.js", "React", "TypeScript", "A/B testing", "Lead generation", "Client integrations"},
 			},
 			{
 				Company:   "Unadat",
@@ -129,7 +132,7 @@ I'm joining Secco Squared as a Junior Web Developer in June 2026. On the side I 
 				Media:       "/static/images/cuny-hunter-college.jpg",
 				MediaAlt:    "CUNY Hunter College logo",
 				StartDate:   time.Date(2022, 8, 1, 0, 0, 0, 0, time.UTC),
-				EndDate:     time.Date(2026, 5, 1, 0, 0, 0, 0, time.UTC), // Expected graduation
+				EndDate:     time.Date(2026, 5, 1, 0, 0, 0, 0, time.UTC), // Graduated
 				GPA:         "",
 				Location:    "New York, NY",
 			},

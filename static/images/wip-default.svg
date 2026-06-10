@@ -1,62 +1,100 @@
-<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">xiaoOS project placeholder</title>
+  <desc id="desc">A black xiaoOS-style project placeholder with a geometric grid, system label, and animated wireframe mark.</desc>
   <defs>
-    <!-- Subtle background pattern -->
-    <pattern id="gridPattern" patternUnits="userSpaceOnUse" width="20" height="20">
-      <rect width="20" height="20" fill="#1a1a1a"/>
-      <path d="M 0 20 L 20 0 M 0 0 L 20 20" stroke="#2a2a2a" stroke-width="0.5" opacity="0.3"/>
+    <style>
+      .wire { stroke-dasharray: 1; stroke-dashoffset: 1; }
+      .build-guide { opacity: 0; }
+    </style>
+    <pattern id="triGrid" width="96" height="84" patternUnits="userSpaceOnUse">
+      <path d="M0 84L48 0L96 84M0 0L96 84M96 0L0 84M48 0V84" stroke="#F4EFE6" stroke-opacity="0.105" stroke-width="1"/>
     </pattern>
+    <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0V10" stroke="#F4EFE6" stroke-opacity="0.5" stroke-width="2"/>
+    </pattern>
+    <filter id="chalk">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4"/>
+    </filter>
   </defs>
-  
-  <!-- Background -->
-  <rect width="400" height="300" fill="#0f0f0f"/>
-  <rect width="400" height="300" fill="url(#gridPattern)"/>
-  
-  <!-- Main logo design (terminal/console style) -->
-  <g transform="translate(200, 120)">
-    <!-- Terminal window frame -->
-    <rect x="-50" y="-30" width="100" height="60" fill="none" stroke="#ffffff" stroke-width="2"/>
-    <!-- Terminal header bar -->
-    <rect x="-50" y="-30" width="100" height="15" fill="#ffffff"/>
-    <!-- Terminal dots -->
-    <circle cx="-35" cy="-22" r="2" fill="#000000"/>
-    <circle cx="-25" cy="-22" r="2" fill="#000000"/>
-    <circle cx="-15" cy="-22" r="2" fill="#000000"/>
-    <!-- Terminal content lines -->
-    <line x1="-40" y1="-10" x2="40" y2="-10" stroke="#ffffff" stroke-width="1"/>
-    <line x1="-40" y1="-5" x2="20" y2="-5" stroke="#ffffff" stroke-width="1"/>
-    <line x1="-40" y1="0" x2="30" y2="0" stroke="#ffffff" stroke-width="1"/>
-    <line x1="-40" y1="5" x2="25" y2="5" stroke="#ffffff" stroke-width="1"/>
-    <!-- Cursor -->
-    <rect x="25" y="3" width="2" height="4" fill="#ffffff"/>
+
+  <rect width="1200" height="675" fill="#050505"/>
+  <g>
+    <animateTransform attributeName="transform" type="translate" from="0 0" to="96 84" dur="18s" repeatCount="indefinite"/>
+    <rect x="-96" y="-84" width="1392" height="843" fill="url(#triGrid)"/>
   </g>
-  
-  <!-- xiaoOS branding -->
-  <g font-family="Arial, sans-serif" font-weight="bold">
-    <!-- xiao in white box -->
-    <rect x="120" y="180" width="100" height="20" fill="#ffffff"/>
-    <text x="215" y="195" text-anchor="end" font-size="14" fill="#000000">xiao</text>
-    
-    <!-- OS text -->
-    <text x="230" y="195" font-size="16" fill="#ffffff">OS</text>
+  <path d="M-90 432C170 334 282 368 486 308C717 241 872 176 1292 196" stroke="#F4EFE6" stroke-opacity="0.08" stroke-width="5"/>
+  <path d="M-60 518C160 430 332 458 572 362C802 270 982 254 1280 298" stroke="#F4EFE6" stroke-opacity="0.05" stroke-width="3"/>
+
+  <g font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+    <rect x="34" y="31" width="112" height="34" fill="#F4EFE6"/>
+    <text x="126" y="55" text-anchor="end" fill="#050505" font-size="25" font-weight="700">xiao</text>
+    <text x="154" y="55" fill="#F4EFE6" font-size="27" font-weight="600">OS</text>
   </g>
-  
-  <!-- WIP text -->
-  <text x="200" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">
-    WORK IN PROGRESS
-  </text>
-  
-  <!-- Status line -->
-  <line x1="50" y1="250" x2="350" y2="250" stroke="#ffffff" stroke-width="2"/>
-  
-  <!-- Status text -->
-  <g font-family="Arial, sans-serif" font-size="10" fill="#cccccc">
-    <text x="50" y="270">STATUS: IN DEVELOPMENT</text>
-    <text x="250" y="270">CLEARANCE: LEVEL 3</text>
+
+  <g transform="translate(188 134)">
+    <rect x="0" y="0" width="824" height="78" fill="#F4EFE6"/>
+    <text x="42" y="53" font-family="IBM Plex Mono, ui-monospace, monospace" fill="#050505" font-size="44" font-weight="600">PROJECT PREVIEW</text>
   </g>
-  
-  <!-- Small corner symbol -->
-  <g transform="translate(350, 270)" opacity="0.4">
-    <path d="M 0 -8 L 6 0 L 0 8 L -6 0 Z" fill="none" stroke="#ffffff" stroke-width="1"/>
-    <rect x="-2" y="-2" width="4" height="4" fill="#ffffff"/>
+
+  <g transform="translate(0 44)" filter="url(#chalk)">
+    <path class="wire" pathLength="1" d="M600 202L758 360L600 518L442 360Z" stroke="#F4EFE6" stroke-width="4" stroke-opacity="0.9">
+      <animate attributeName="stroke-dashoffset" values="1;0;0;1" keyTimes="0;.08;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".16;.92;.92;.18" keyTimes="0;.08;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </path>
+    <path class="wire" pathLength="1" d="M600 246L714 360L600 474L486 360Z" stroke="#F4EFE6" stroke-width="3" stroke-opacity="0.58">
+      <animate attributeName="stroke-dashoffset" values="1;1;0;0;1" keyTimes="0;.06;.14;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;.58;.58;0" keyTimes="0;.06;.14;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </path>
+    <path class="wire" pathLength="1" d="M442 360H758M600 202V518M488 248L712 472M712 248L488 472" stroke="#F4EFE6" stroke-width="2" stroke-opacity="0.34">
+      <animate attributeName="stroke-dashoffset" values="1;1;0;0;1" keyTimes="0;.12;.22;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;.34;.34;0" keyTimes="0;.12;.22;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </path>
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.18;1;1;0" keyTimes="0;.30;.34;.38;.42;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <path d="M512 270L688 450" stroke="#F4EFE6" stroke-width="18" stroke-linecap="square"/>
+      <path d="M688 270L512 450" stroke="#F4EFE6" stroke-width="18" stroke-linecap="square"/>
+    </g>
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;0;.64;.64;0" keyTimes="0;.46;.50;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <rect x="474" y="315" width="0" height="10" fill="#F4EFE6">
+        <animate attributeName="width" values="0;0;252;252;0" keyTimes="0;.46;.54;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="474" y="355" width="0" height="10" fill="#F4EFE6">
+        <animate attributeName="width" values="0;0;252;252;0" keyTimes="0;.50;.58;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="474" y="395" width="0" height="10" fill="#F4EFE6">
+        <animate attributeName="width" values="0;0;252;252;0" keyTimes="0;.54;.62;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <path class="build-guide" d="M394 360H444M756 360H806M600 154V204M600 516V566" stroke="#F4EFE6" stroke-width="5" stroke-opacity="0.72">
+      <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.58;.70;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </path>
+    <path class="build-guide" d="M420 236H488M712 236H780M420 484H488M712 484H780" stroke="#F4EFE6" stroke-width="3" stroke-opacity="0.45">
+      <animate attributeName="opacity" values="0;0;.75;.75;0" keyTimes="0;.62;.74;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </path>
+    <circle cx="600" cy="202" r="7" fill="#F4EFE6" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.35;0" keyTimes="0;.64;.70;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="5;5;9;7;5" keyTimes="0;.64;.70;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="758" cy="360" r="7" fill="#F4EFE6" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.35;0" keyTimes="0;.68;.74;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="5;5;9;7;5" keyTimes="0;.68;.74;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="600" cy="518" r="7" fill="#F4EFE6" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.35;0" keyTimes="0;.72;.78;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="5;5;9;7;5" keyTimes="0;.72;.78;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="442" cy="360" r="7" fill="#F4EFE6" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.35;0" keyTimes="0;.76;.82;.86;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="5;5;9;7;5" keyTimes="0;.76;.82;.86;1" dur="6.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="600" cy="360" r="8" fill="#F4EFE6" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;.45;0" keyTimes="0;.80;.84;.88;1" dur="6.4s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="5;5;11;8;5" keyTimes="0;.80;.84;.88;1" dur="6.4s" repeatCount="indefinite"/>
+    </circle>
   </g>
+
+  <path d="M32 650H94M32 650V596M1168 650H1106M1168 650V596" stroke="#F4EFE6" stroke-opacity="0.4" stroke-width="10"/>
 </svg>

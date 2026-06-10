@@ -69,3 +69,6 @@ static/js/main.js.map
 
 # Local reference frames for loading animation (not shipped with site)
 loadingsequence/
+
+# Claude Code per-user overrides (project-wide config lives in settings.json)
+.claude/settings.local.json

@@ -17,6 +17,78 @@
     </div>
   </header>
 
+  {{/* ─────────────────────────────── Featured first ───────────────────────────── */}}
+  {{if .FeaturedProjects}}
+  <section class="xw-featured-projects" aria-labelledby="featured-projects-heading">
+    <header class="xw-featured-head" data-xw-reveal>
+      <div>
+        <span class="xw-caps xw-caps--muted">Featured</span>
+        <h2 id="featured-projects-heading" class="xw-featured-title">Selected builds</h2>
+      </div>
+    </header>
+
+    <ul class="xw-proj-grid xw-proj-grid--featured" role="list">
+      {{range $i, $p := .FeaturedProjects}}
+      <li class="xw-proj-item" data-xw-reveal>
+        <button type="button"
+          class="project-card xw-proj-card xw-proj-card--featured"
+          data-category="{{$p.ID}}"
+          data-type="{{$p.Type}}"
+          data-status="{{$p.Status}}"
+          data-demo="{{$p.DemoType}}"
+          aria-label="Open details for {{$p.Title}}">
+
+          <div class="hidden project-data-store"
+               data-title="{{$p.Title}}"
+               data-desc="{{$p.Description}}"
+               data-img="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
+               data-github="{{$p.GitHubURL}}"
+               data-live="{{$p.LiveURL}}"
+               data-demo-url="{{$p.DemoURL}}">
+          </div>
+          <div class="hidden project-tech-store">
+            {{range $p.Technologies}}<span>{{.}}</span>{{end}}
+          </div>
+
+          <figure class="xw-proj-card-media">
+            <img
+              src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
+              alt="{{$p.Title}} — preview"
+              loading="lazy" decoding="async" />
+          </figure>
+
+          <div class="xw-proj-card-head">
+            <span class="xw-caps xw-caps--accent">Featured&nbsp;{{if lt $i 9}}0{{end}}{{inc $i}}</span>
+            <span class="xw-caps xw-caps--muted">{{$p.Type}}</span>
+            {{if eq $p.Status "active"}}<span class="xw-badge xw-badge--live">Live</span>{{end}}
+            {{if eq $p.Status "in-development"}}<span class="xw-badge">In development</span>{{end}}
+            {{if eq $p.Status "archived"}}<span class="xw-badge xw-badge--muted">Archived</span>{{end}}
+          </div>
+
+          <h3 class="xw-proj-card-title">{{$p.Title}}</h3>
+          <p class="xw-proj-card-lede">
+            {{if $p.ShortDescription}}{{$p.ShortDescription}}{{else}}{{$p.Description}}{{end}}
+          </p>
+
+          {{if $p.Technologies}}
+          <ul class="xw-proj-card-tech" role="list" aria-label="Stack">
+            {{range $p.Technologies}}<li>{{.}}</li>{{end}}
+          </ul>
+          {{end}}
+
+          <div class="xw-proj-card-foot">
+            <span class="xw-caps xw-caps--muted">{{$p.Date.Format "Jan 2006"}}</span>
+            <span class="xw-proj-card-cta">
+              Details<span aria-hidden="true"> →</span>
+            </span>
+          </div>
+        </button>
+      </li>
+      {{end}}
+    </ul>
+  </section>
+  {{end}}
+
   {{/* ────────────────────────────────── Filters ──────────────────────────────── */}}
   <div class="xw-projects-toolbar" role="toolbar" aria-label="Filter projects by type">
     <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">Filter</span>

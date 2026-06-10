@@ -14,6 +14,7 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   const projectCards = root.querySelectorAll<HTMLElement>('.project-card');
   const yearGroups = root.querySelectorAll<HTMLElement>('.xw-year-group');
   const yearTicks = root.querySelectorAll<HTMLAnchorElement>('.xw-year-tick');
+  const featuredSection = root.querySelector<HTMLElement>('.xw-featured-projects');
 
   const overlay = root.querySelector<HTMLElement>('#project-terminal-overlay');
   const modalEl = root.querySelector<HTMLElement>('#terminal-window');
@@ -70,6 +71,12 @@ export function mountProjectsPage(root: HTMLElement): () => void {
       );
       tick.style.display = group && group.style.display !== 'none' ? '' : 'none';
     });
+    if (featuredSection) {
+      const anyFeaturedVisible = Array.from(
+        featuredSection.querySelectorAll<HTMLElement>('.project-card'),
+      ).some((c) => c.style.display !== 'none');
+      featuredSection.style.display = anyFeaturedVisible ? '' : 'none';
+    }
   };
 
   const filterDisposers: (() => void)[] = [];

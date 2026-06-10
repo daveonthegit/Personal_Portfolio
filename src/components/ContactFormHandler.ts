@@ -3,15 +3,16 @@ import type { ContactFormData } from '../types';
 export class ContactFormHandler {
   private static form: HTMLFormElement | null = null;
   private static submitButton: HTMLButtonElement | null = null;
-  private static messageContainer: HTMLDivElement | null = null;
+  private static messageContainer: HTMLElement | null = null;
   private static boundSubmit: ((e: Event) => void) | null = null;
 
   /** Bind to #contact-form if present (initial load or SPA navigation to contact). */
   static bind() {
     this.unbind();
     this.form = document.getElementById('contact-form') as HTMLFormElement;
-    this.submitButton = document.getElementById('submit-btn') as HTMLButtonElement;
-    this.messageContainer = document.getElementById('form-message') as HTMLDivElement;
+    this.submitButton =
+      this.form?.querySelector<HTMLButtonElement>('button[type="submit"]') ?? null;
+    this.messageContainer = document.getElementById('contact-form-status');
 
     if (this.form) {
       this.boundSubmit = this.handleSubmit.bind(this);
@@ -64,10 +65,9 @@ export class ContactFormHandler {
       return;
     }
 
-    const defaultBtnHtml =
-      '<span class="material-symbols-outlined text-sm">send</span> TRANSMIT';
+    const defaultBtnHtml = this.submitButton.innerHTML;
     this.submitButton.disabled = true;
-    this.submitButton.innerHTML = 'Sending...';
+    this.submitButton.textContent = 'Sending...';
 
     try {
       const response = await fetch('/contact', {
@@ -106,23 +106,9 @@ export class ContactFormHandler {
     if (!this.messageContainer) return;
 
     const isSuccess = type === 'success';
-    const borderColor = isSuccess ? '#00ff00' : '#ff0000';
-    const bgColor = isSuccess ? '#00ff00' : '#ff0000';
-    const textColor = isSuccess ? '#000000' : '#ffffff';
-    const messageColor = isSuccess ? '#00ff00' : '#ff0000';
-    const statusText = isSuccess ? 'TRANSMISSION STATUS' : 'TRANSMISSION ERROR';
-
-    this.messageContainer.innerHTML = `
-      <div style="background-color: #222222; border: 1px solid ${borderColor}; padding: 16px;">
-        <div style="background-color: ${bgColor}; color: ${textColor}; padding: 4px 8px; font-weight: bold; font-size: 12px; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">
-          ${statusText}
-        </div>
-        <p style="color: ${messageColor}; font-size: 14px;">
-          ${message}
-        </p>
-      </div>
-    `;
-    this.messageContainer.style.display = 'block';
+    this.messageContainer.textContent = message;
+    this.messageContainer.dataset.state = type;
+    this.messageContainer.hidden = false;
     this.messageContainer.scrollIntoView({
       behavior: ContactFormHandler.getScrollBehavior(),
       block: 'nearest',
@@ -131,7 +117,8 @@ export class ContactFormHandler {
     // Clear message after 5 seconds for success, 10 seconds for errors
     setTimeout(() => {
       if (this.messageContainer) {
-        this.messageContainer.style.display = 'none';
+        this.messageContainer.hidden = true;
+        delete this.messageContainer.dataset.state;
       }
     }, isSuccess ? 5000 : 10000);
   }

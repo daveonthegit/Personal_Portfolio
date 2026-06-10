@@ -54,16 +54,17 @@ type ContactForm struct {
 }
 
 type PageData struct {
-	Title         string
-	Description   string
-	Projects      []Project
-	ProjectTypes  []string
-	ProjectGroups []ProjectYearGroup
-	Personal      config.PersonalInfo
-	Year          int
-	TemplateName  string
-	AssetVersion  string
-	SiteURL       string
+	Title            string
+	Description      string
+	Projects         []Project
+	FeaturedProjects []Project
+	ProjectTypes     []string
+	ProjectGroups    []ProjectYearGroup
+	Personal         config.PersonalInfo
+	Year             int
+	TemplateName     string
+	AssetVersion     string
+	SiteURL          string
 }
 
 // ProjectYearGroup bundles projects for one calendar year so the projects page
@@ -171,7 +172,7 @@ func NewServer() *Server {
 	if err != nil {
 		log.Fatal("Error parsing templates:", err)
 	}
-	siteURL := strings.TrimSuffix(getEnv("SITE_URL", "https://www.davidxiao.dev"), "/")
+	siteURL := strings.TrimSuffix(getEnv("SITE_URL", "https://davidx.tech"), "/")
 
 	// Initialize email configuration from environment variables
 	emailConfig := EmailConfig{
@@ -686,7 +687,7 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	switch templateName {
 	case "home":
 		data.Title = personal.Name + " - " + personal.Title
-		data.Description = "David Xiao is a CS student and developer focused on full-stack web applications, Next.js, TypeScript, and backend data flows, joining Secco Squared in June 2026."
+		data.Description = "David Xiao is a Web Developer at Secco Squared focused on full-stack web applications, Next.js, TypeScript, A/B testing, and lead-generation optimization."
 		// Home only surfaces the curated featured short-list; /projects has the rest.
 		featured := make([]Project, 0, 4)
 		for _, p := range s.projects {
@@ -698,6 +699,13 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	case "projects":
 		data.Title = "Projects - " + personal.Name
 		data.Description = "Explore David Xiao's full-stack web, TypeScript, React, Next.js, backend, and systems projects."
+		featured := make([]Project, 0, 4)
+		for _, p := range s.projects {
+			if p.Featured {
+				featured = append(featured, p)
+			}
+		}
+		data.FeaturedProjects = featured
 		// Sort newest first so year headers read top-to-bottom like a changelog.
 		sorted := make([]Project, len(s.projects))
 		copy(sorted, s.projects)

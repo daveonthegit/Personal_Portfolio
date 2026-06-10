@@ -105,8 +105,8 @@ func securityHeadersMiddleware(enableHSTS bool, next http.Handler) http.Handler 
 }
 
 type redirectConfig struct {
-	CanonicalHost string // e.g. www.davidxiao.dev
-	ApexHost      string // e.g. davidxiao.dev (optional)
+	CanonicalHost string // e.g. davidx.tech
+	ApexHost      string // optional alternate host to fold into CanonicalHost
 }
 
 func httpsRedirectMiddleware(cfg redirectConfig, next http.Handler) http.Handler {
