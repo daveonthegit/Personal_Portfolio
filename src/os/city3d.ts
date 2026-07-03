@@ -20,11 +20,12 @@ import { REGION_STATES, METRO_COAST, PROJ } from './mapdata';
 
 const BG = 0x060505;
 const REGION_SCALE = 12; // world units per map unit on the geography plane
+const METRO_SCALE = 116; // world units per map unit at street scale (real geometry)
 const ISLAND_ROT = (-28.9 * Math.PI) / 180;
 const DPR_CAP = 1.5;
 
-const REST_POS = new THREE.Vector3(300, 265, 400);
-const REST_TARGET = new THREE.Vector3(-70, 24, -10);
+const REST_POS = new THREE.Vector3(320, 400, 450);
+const REST_TARGET = new THREE.Vector3(-70, 20, -10);
 
 interface AppAnchor {
   id: string;
@@ -36,14 +37,14 @@ interface AppAnchor {
   h: number;
 }
 
-// Anchors sit along the island's east/downtown run so their tags project into
-// the free right third of the rest view — NOT behind the default Dossier window.
+// Anchors dispersed across the island (the map is rotatable — reachability no
+// longer depends on one fixed framing).
 const APP_ANCHORS: AppAnchor[] = [
   { id: 'dossier', label: 'DOSSIER', line: 'Subject file — profile & history', lx: 20, lz: 40, h: 46 },
-  { id: 'projects', label: 'PROJECTS', line: 'Recovered artifacts & live captures', lx: 190, lz: 120, h: 96 },
-  { id: 'resume', label: 'RESUME', line: 'Career document (PDF)', lx: 200, lz: 210, h: 74 },
-  { id: 'contact', label: 'CONTACT', line: 'Direct channel to the subject', lx: 160, lz: -60, h: 128 },
-  { id: 'arcade', label: 'ARCADE', line: 'Recreational modules — playable', lx: 218, lz: 30, h: 40 },
+  { id: 'projects', label: 'PROJECTS', line: 'Recovered artifacts & live captures', lx: -80, lz: -260, h: 96 },
+  { id: 'resume', label: 'RESUME', line: 'Career document (PDF)', lx: 190, lz: 140, h: 74 },
+  { id: 'contact', label: 'CONTACT', line: 'Direct channel to the subject', lx: -40, lz: 470, h: 128 },
+  { id: 'arcade', label: 'ARCADE', line: 'Recreational modules — playable', lx: -170, lz: 60, h: 40 },
 ];
 
 function lcg(seed: number): () => number {
@@ -73,7 +74,7 @@ interface City {
   tagLayer: HTMLElement;
   hooks: CityHooks;
   riseT: number;
-  drift: boolean;
+  orbit: { az: number; pol: number; r: number };
   clock: THREE.Clock;
 }
 
@@ -96,8 +97,9 @@ function buildGroundTexture(): THREE.CanvasTexture {
   c.width = c.height = px;
   const ctx = c.getContext('2d')!;
   const k = px / world;
-  ctx.fillStyle = '#050504';
-  ctx.fillRect(0, 0, px, px);
+  // Transparent outside the island slab — the real metro coastline plane
+  // beneath must stay visible around Manhattan.
+  ctx.clearRect(0, 0, px, px);
   ctx.translate(px / 2, px / 2);
   ctx.scale(k, k);
   // Drawn UNROTATED — the ground mesh lives inside the rotated island group,
@@ -199,6 +201,23 @@ function buildRegionTexture(): THREE.CanvasTexture {
   return new THREE.CanvasTexture(c);
 }
 
+/** Real metro geography at street scale — borough edges + the Jersey shoreline. */
+function buildMetroTexture(): THREE.CanvasTexture {
+  const px = 2048;
+  const world = 8000;
+  const c = document.createElement('canvas');
+  c.width = c.height = px;
+  const ctx = c.getContext('2d')!;
+  const pxPerMap = (px / world) * METRO_SCALE;
+  ctx.setTransform(pxPerMap, 0, 0, pxPerMap, px / 2 - 500 * pxPerMap, px / 2 - 350 * pxPerMap);
+  ctx.strokeStyle = 'rgba(244,239,230,0.34)';
+  ctx.lineWidth = 0.075;
+  for (const pth of METRO_COAST) {
+    ctx.stroke(new Path2D(pth.d));
+  }
+  return new THREE.CanvasTexture(c);
+}
+
 function buildCity(scene: THREE.Scene): {
   islandGroup: THREE.Group;
   buildings: THREE.InstancedMesh;
@@ -215,11 +234,21 @@ function buildCity(scene: THREE.Scene): {
   basePlane.position.y = -0.5;
   scene.add(basePlane);
 
+  // Real metro geography under everything: Brooklyn/Queens/Bronx/Staten Island
+  // edges and the Jersey shoreline (Natural Earth 10m, projected + scaled so
+  // real Manhattan matches the procedural island footprint).
+  const metroMat = new THREE.MeshBasicMaterial({ map: buildMetroTexture(), transparent: true });
+  metroMat.fog = false;
+  const metroPlane = new THREE.Mesh(new THREE.PlaneGeometry(8000, 8000), metroMat);
+  metroPlane.rotation.x = -Math.PI / 2;
+  metroPlane.position.y = 0.06;
+  scene.add(metroPlane);
+
   const group = new THREE.Group();
-  group.rotation.y = -ISLAND_ROT; // rotate island on the XZ plane
+  group.rotation.y = ISLAND_ROT; // island leans NE like the real one
 
   // Ground — inside the group so it rotates with the buildings.
-  const groundMat = new THREE.MeshBasicMaterial({ map: buildGroundTexture() });
+  const groundMat = new THREE.MeshBasicMaterial({ map: buildGroundTexture(), transparent: true });
   groundMat.fog = false; // must stay visible from cinematic altitude
   const ground = new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600), groundMat);
   ground.rotation.x = -Math.PI / 2;
@@ -369,10 +398,20 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     return { spec, world, tag };
   });
 
+  const off = REST_POS.clone().sub(REST_TARGET);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
-    subjectBounds, anchors, tagLayer, hooks, riseT: 1, drift: true, clock: new THREE.Clock(),
+    subjectBounds, anchors, tagLayer, hooks, riseT: 1,
+    orbit: {
+      az: Math.atan2(off.x, off.z),
+      pol: Math.acos(off.y / off.length()),
+      r: off.length(),
+    },
+    clock: new THREE.Clock(),
   };
+
+  // The background is rotatable: dragging the canvas orbits the camera.
+  bindOrbitDrag(renderer.domElement);
 
   const onResize = () => {
     if (!city) return;
@@ -441,16 +480,49 @@ export function settleDesktop(): void {
 function tick(): void {
   if (!city) return;
   const t = city.clock.getElapsedTime();
-  if (city.drift && !introActive) {
-    // Slow desktop drift — a system idly watching.
-    const a = Math.sin(t * 0.1) * 0.05;
-    city.camera.position.x = REST_POS.x + Math.sin(t * 0.07) * 14;
-    city.camera.position.z = REST_POS.z + Math.cos(t * 0.05) * 10;
-    city.camera.position.y = REST_POS.y + Math.sin(t * 0.06) * 5;
-    city.camera.lookAt(REST_TARGET.x + a * 40, REST_TARGET.y, REST_TARGET.z);
+  if (!introActive) {
+    // Camera on the user's orbit, breathing slightly — a system idly watching.
+    const az = city.orbit.az + Math.sin(t * 0.07) * 0.045;
+    const pol = city.orbit.pol + Math.sin(t * 0.06) * 0.012;
+    const r = city.orbit.r;
+    city.camera.position.set(
+      REST_TARGET.x + r * Math.sin(pol) * Math.sin(az),
+      REST_TARGET.y + r * Math.cos(pol),
+      REST_TARGET.z + r * Math.sin(pol) * Math.cos(az),
+    );
+    city.camera.lookAt(REST_TARGET);
   }
   city.renderer.render(city.scene, city.camera);
   updateTags();
+}
+
+/** Drag-to-rotate: azimuth free, polar clamped so the city never flips. */
+function bindOrbitDrag(el: HTMLElement): void {
+  let dragging = false;
+  let lastX = 0;
+  let lastY = 0;
+  el.classList.add('xw-city-canvas--grab');
+  el.addEventListener('pointerdown', (e) => {
+    if (introActive || !city) return;
+    dragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add('xw-city-canvas--grabbing');
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging || !city) return;
+    city.orbit.az -= (e.clientX - lastX) * 0.0042;
+    city.orbit.pol = THREE.MathUtils.clamp(city.orbit.pol + (e.clientY - lastY) * 0.0026, 0.32, 1.32);
+    lastX = e.clientX;
+    lastY = e.clientY;
+  });
+  const stop = () => {
+    dragging = false;
+    el.classList.remove('xw-city-canvas--grabbing');
+  };
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('pointercancel', stop);
 }
 
 function project(world: THREE.Vector3): { x: number; y: number; behind: boolean } {

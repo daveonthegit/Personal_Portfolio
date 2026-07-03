@@ -3213,3 +3213,15 @@ body.xw-introing .xw-section-rail {
 .xw-arcade-card .xw-work-links { margin-top: auto; display: flex; gap: 1rem; align-items: center; }
 .xw-arcade-foot { margin-top: 0.4rem; }
 .xw-window[data-app="arcade"] { width: min(880px, 56vw); height: min(74%, 760px); }
+
+/* ── Rotatable city + Companion App map panel ── */
+.xw-city-canvas--grab { cursor: grab; touch-action: none; }
+.xw-city-canvas--grabbing { cursor: grabbing; }
+
+.xw-city-mobile {
+  position: relative;
+  height: 54vh;
+  min-height: 320px;
+  border-bottom: 1px solid var(--xw-hairline);
+  overflow: hidden;
+}

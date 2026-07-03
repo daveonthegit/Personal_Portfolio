@@ -487,7 +487,31 @@ export function initOSShell(): void {
   if (desktopMode) {
     activateDesktop(initialApp, article);
   } else {
-    // Companion App presentation: bottom tab bar, native navigation, native scroll.
+    // Companion App presentation: bottom tab bar, native navigation, native
+    // scroll — plus the City as a rotatable map panel on the home screen.
     document.body.classList.add('xw-os-mobile');
+    if (initialApp.id === 'dossier') mountMobileCity(article);
   }
+}
+
+/** The City on the Companion App: a map panel above the dossier document.
+ *  Tags navigate natively (no windows on touch). */
+function mountMobileCity(article: HTMLElement): void {
+  const panel = document.createElement('div');
+  panel.className = 'xw-city-mobile';
+  panel.setAttribute('aria-label', 'City map — app locations');
+  article.parentNode?.insertBefore(panel, article);
+
+  void import('./city3d')
+    .then((m) => {
+      const ok = m.mountCity(panel, {
+        openApp: (id) => {
+          const spec = APP_BY_ID.get(id as AppId);
+          if (spec) window.location.href = spec.route;
+        },
+      });
+      if (ok) m.showTags();
+      else panel.remove();
+    })
+    .catch(() => panel.remove());
 }
