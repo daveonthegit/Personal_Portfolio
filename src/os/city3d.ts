@@ -381,11 +381,6 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     city.renderer.setSize(w, h);
     city.camera.aspect = w / h;
     city.camera.updateProjectionMatrix();
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      // No frame loop in static mode — repaint and reposition tags manually.
-      city.renderer.render(city.scene, city.camera);
-      updateTags();
-    }
   };
   window.addEventListener('resize', onResize);
 
@@ -399,16 +394,11 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     applyRise(city, 0);
   }
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced) {
-    city.drift = false;
-    renderer.render(scene, camera);
-    updateTags();
-  } else {
-    renderer.setAnimationLoop(tick);
-  }
+  // Full animation always (project rule): the loop runs unconditionally and
+  // pauses only while the tab is hidden.
+  renderer.setAnimationLoop(tick);
   document.addEventListener('visibilitychange', () => {
-    if (!city || reduced) return;
+    if (!city) return;
     if (document.hidden) city.renderer.setAnimationLoop(null);
     else city.renderer.setAnimationLoop(tick);
   });

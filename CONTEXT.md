@@ -107,12 +107,13 @@ plain-English (`PROJECTS`, `CONTACT`, `RESUME`); surveillance flavor lives in th
 navigation. A 30-second skim must still work.
 
 **The fiction is operable by everyone**
-The Boot Sequence always plays on the front door — it is never skipped by the system
-(only by the visitor, via Bypass/Escape). `prefers-reduced-motion` skips the Zoom-In
-flight and typing/tick effects that follow it — after boot, content is simply present.
-Every App is keyboard-operable (dock tabbable, Escape closes the focused window).
-Assistive tech reads the semantic substrate, never the chrome. Sound is on by default
-but begins only at the visitor's first gesture (browser policy), with a persistent mute.
+The FULL intro (Boot Sequence + Zoom-In) always plays on the front door — it is never
+skipped by the system, including under `prefers-reduced-motion` (owner's decision,
+2026-07: the cinematic is the product). The visitor's ways out are Bypass and Escape,
+available from the first frame. Every App is keyboard-operable (dock tabbable, Escape
+closes the focused window). Assistive tech reads the semantic substrate, never the
+chrome. Sound is on by default but begins only at the visitor's first gesture (browser
+policy), with a persistent mute.
 
 **The intro is a bounded courtesy**
 Boot Sequence + Zoom-In together stay under ~8 seconds, are skippable from the first
