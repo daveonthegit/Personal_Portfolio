@@ -4,11 +4,11 @@
   "description": "Frontend TypeScript assets for Go-based personal portfolio",
   "scripts": {
     "build": "npm run build:ts && npm run build:css",
-    "build:ts": "tsc && esbuild src/main.ts --bundle --outdir=static/js --minify --sourcemap",
+    "build:ts": "tsc && esbuild src/main.ts --bundle --outdir=static/js --minify --sourcemap --splitting --format=esm --chunk-names=chunks/[name]-[hash]",
     "build:css": "postcss src/styles/main.css -o static/css/main.css --map",
     "build:resume": "node -e \"require('child_process').execSync(process.platform === 'win32' ? 'scripts\\\\build-resume.bat' : 'bash scripts/build-resume.sh', {stdio: 'inherit'})\"",
     "watch": "concurrently \"npm run watch:ts\" \"npm run watch:css\"",
-    "watch:ts": "esbuild src/main.ts --bundle --outdir=static/js --watch --sourcemap",
+    "watch:ts": "esbuild src/main.ts --bundle --outdir=static/js --watch --sourcemap --splitting --format=esm --chunk-names=chunks/[name]-[hash]",
     "watch:css": "postcss src/styles/main.css -o static/css/main.css --watch --map",
     "dev": "concurrently \"npm run watch\" \"go run .\"",
     "build:full": "npm run build:ts && npm run build:css && npm run build:resume",
@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.8.0",
+    "@types/three": "^0.185.0",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
     "cssnano": "^6.0.1",
@@ -29,6 +30,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "gsap": "^3.14.2"
+    "gsap": "^3.14.2",
+    "three": "^0.185.1"
   }
 }

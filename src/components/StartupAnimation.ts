@@ -17,13 +17,20 @@ export interface StartupAnimationOptions {
    * Called once the intro has finished and its DOM has been removed.
    * Replaces the legacy hard-navigation to `/home` so the overlay can
    * dissolve on top of an already-rendered page.
+   * `skipped` is true when the visitor bailed out via the bypass control —
+   * callers should skip any follow-up cinematics too.
    */
-  onFinish?: () => void;
+  onFinish?: (skipped?: boolean) => void;
 }
 
 export class StartupAnimation {
   private container: HTMLElement | null = null;
   private isAnimating = false;
+  private tl: gsap.core.Timeline | null = null;
+  private skipped = false;
+  private readonly onEscape = (e: KeyboardEvent): void => {
+    if (e.key === 'Escape') this.skip();
+  };
   private readonly options: StartupAnimationOptions;
 
   constructor(options: StartupAnimationOptions = {}) {
@@ -125,6 +132,8 @@ export class StartupAnimation {
 
       <div class="xiaoos-reveal-outline" id="xiaoos-reveal-outline"></div>
       <div class="xiaoos-reveal-solid" id="xiaoos-reveal-solid"></div>
+
+      <button type="button" class="xiaoos-skip-btn" id="xiaoos-skip-btn">Bypass ▸</button>
     `;
 
     // Reuse the #startup-animation placeholder in base.html if it exists to avoid duplicate IDs.
@@ -142,6 +151,11 @@ export class StartupAnimation {
       document.body.appendChild(overlay);
     }
     this.container = overlay;
+
+    // Skip control — the intro is a bounded courtesy, never a gate.
+    const skipBtn = overlay.querySelector<HTMLButtonElement>('#xiaoos-skip-btn');
+    skipBtn?.addEventListener('click', () => this.skip());
+    document.addEventListener('keydown', this.onEscape);
 
     // Generate the 3x10 grid of X's
     const grid = document.getElementById('xiaoos-x-grid');
@@ -186,6 +200,7 @@ export class StartupAnimation {
     gsap.set("#xiaoos-progress-bar", { width: "0%" });
 
     const tl = gsap.timeline();
+    this.tl = tl;
 
     // Timing scale ~0.5× vs original — same beats, faster pass
     // 0. Bottom UI begins loading immediately
@@ -286,6 +301,14 @@ export class StartupAnimation {
       });
   }
 
+  /** Bail out of the intro immediately (bypass button / Escape). */
+  public skip(): void {
+    if (!this.container || this.skipped) return;
+    this.skipped = true;
+    this.tl?.kill();
+    this.redirectToHome();
+  }
+
   private redirectToHome(): void {
     if (!this.container) return;
 
@@ -299,7 +322,9 @@ export class StartupAnimation {
       }
       this.container = null;
       this.isAnimating = false;
-      this.options.onFinish?.();
+      this.tl = null;
+      document.removeEventListener('keydown', this.onEscape);
+      this.options.onFinish?.(this.skipped);
     }, 280);
   }
 

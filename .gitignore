@@ -5,6 +5,11 @@
 *.so
 *.dylib
 main
+# Compiled server binaries (extension-less builds committed by mistake before)
+/personal-portfolio
+/personal-portfolio-test
+# Default `go build .` output (named after the module directory)
+/Personal_Portfolio
 
 # Test binary, built with `go test -c`
 *.test
@@ -72,3 +77,5 @@ loadingsequence/
 
 # Claude Code per-user overrides (project-wide config lives in settings.json)
 .claude/settings.local.json
+scripts/.map-cache/
+static/js/chunks/

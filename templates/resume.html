@@ -1,14 +1,24 @@
 {{define "resume-content"}}
-<section id="resume" class="xw-section xw-section--last" aria-labelledby="resume-heading">
+<section id="resume" class="xw-section xw-section--last" aria-labelledby="resume-heading" data-xw-app="resume" data-xw-app-title="Resume">
   <header class="xw-section-head" data-xw-reveal>
     <div class="xw-hero-meta">
-      <span class="xw-index" aria-hidden="true">05</span>
+      <span class="xw-index" aria-hidden="true">03</span>
       <span class="xw-caps">Résumé</span>
     </div>
     <h1 id="resume-heading" class="xw-display xw-display--sm">
       Résumé<span class="xw-display-stop" aria-hidden="true">.</span>
     </h1>
   </header>
+
+  {{/* Lens toggle — document stays the default (recruiter rule); the timeline
+       is generated client-side from the career-ops export (static/data/cv.json). */}}
+  <div class="xw-resume-lens" role="toolbar" aria-label="Resume view">
+    <span class="xw-caps xw-caps--muted">View</span>
+    <button type="button" class="xw-filter lens-btn is-active" data-lens="document">Document</button>
+    <button type="button" class="xw-filter lens-btn" data-lens="timeline">Timeline</button>
+  </div>
+
+  <div class="xw-cv-timeline hidden" data-cv-timeline aria-label="Career timeline"></div>
 
   <div class="xw-resume-grid">
     <aside class="xw-resume-aside" aria-label="Resume actions and contact">

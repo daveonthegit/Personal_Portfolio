@@ -30,6 +30,9 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   const termCmdTarget = root.querySelector<HTMLElement>('#term-cmd-target');
   const termHeaderTitle = root.querySelector<HTMLElement>('#term-header-title');
   const termImgCaption = root.querySelector<HTMLElement>('#term-img-id');
+  const termDate = root.querySelector<HTMLElement>('#term-project-date');
+  const termRec = root.querySelector<HTMLElement>('#term-rec');
+  const termFeedLost = root.querySelector<HTMLElement>('#term-feed-lost');
 
   if (
     !overlay ||
@@ -167,6 +170,13 @@ export function mountProjectsPage(root: HTMLElement): () => void {
       const githubUrl = dataStore.getAttribute('data-github');
       const liveUrl = dataStore.getAttribute('data-live');
       const demoUrl = dataStore.getAttribute('data-demo-url');
+      const hostedPath = dataStore.getAttribute('data-hosted');
+      const observedDate = dataStore.getAttribute('data-date');
+
+      if (termDate) termDate.textContent = observedDate ?? '—';
+      // Footage chrome: live records glow REC; archived ones lost their feed.
+      if (termRec) termRec.hidden = status !== 'active' && !hostedPath;
+      if (termFeedLost) termFeedLost.hidden = status !== 'archived';
 
       termTitle.textContent = title;
       termDesc.textContent = desc;
@@ -204,6 +214,18 @@ export function mountProjectsPage(root: HTMLElement): () => void {
       }
 
       termLinks.innerHTML = '';
+      if (hostedPath) {
+        // Live capture: the subject's actual software, observable in a child
+        // window (the OS shell intercepts this link; elsewhere it's a new tab).
+        const a = document.createElement('a');
+        a.href = `/hosted/${hostedPath}/`;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'xw-observe-live xw-modal-link xw-modal-link--accent';
+        a.dataset.captureTitle = title;
+        a.innerHTML = '<span>Observe live</span><span aria-hidden="true">▸</span>';
+        termLinks.appendChild(a);
+      }
       if (githubUrl) {
         const a = document.createElement('a');
         a.href = githubUrl;
@@ -241,6 +263,144 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   };
   overlay.addEventListener('click', onOverlayClick);
 
+  /* ───────────────────────── signal view (graph lens) ─────────────────────── */
+
+  const signalRoot = root.querySelector<HTMLElement>('[data-signal-root]');
+  const viewButtons = root.querySelectorAll<HTMLButtonElement>('.view-btn');
+  const listPanes = [
+    root.querySelector<HTMLElement>('.xw-projects-body'),
+    root.querySelector<HTMLElement>('.xw-featured-projects'),
+  ].filter((el): el is HTMLElement => el !== null);
+  let signalBuilt = false;
+
+  const buildSignalView = () => {
+    if (!signalRoot || signalBuilt) return;
+    signalBuilt = true;
+
+    interface Node {
+      id: string;
+      title: string;
+      type: string;
+      status: string;
+      tech: string[];
+      x: number;
+      y: number;
+    }
+    const seen = new Set<string>();
+    const nodes: Node[] = [];
+    root.querySelectorAll<HTMLElement>('.project-card').forEach((card) => {
+      const id = card.getAttribute('data-category') ?? '';
+      if (!id || seen.has(id)) return;
+      seen.add(id);
+      nodes.push({
+        id,
+        title: card.querySelector('.project-data-store')?.getAttribute('data-title') ?? id,
+        type: card.getAttribute('data-type') ?? 'other',
+        status: card.getAttribute('data-status') ?? '',
+        tech: Array.from(card.querySelectorAll('.project-tech-store span')).map((s) => s.textContent ?? ''),
+        x: 0,
+        y: 0,
+      });
+    });
+
+    // Distinctive tech: shared by 2+ records but not ubiquitous — base-stack
+    // tech (in ~a third of records or more) carries no signal.
+    const freq = new Map<string, number>();
+    nodes.forEach((n) => n.tech.forEach((t) => freq.set(t, (freq.get(t) ?? 0) + 1)));
+    const cap = Math.max(3, Math.ceil(nodes.length / 3));
+    const distinctive = (t: string) => {
+      const f = freq.get(t) ?? 0;
+      return f >= 2 && f <= cap;
+    };
+
+    // Type clusters on a ring; nodes fan out around their cluster center.
+    const W = 1200;
+    const H = 760;
+    const types = Array.from(new Set(nodes.map((n) => n.type))).sort();
+    const byType = new Map<string, Node[]>();
+    nodes.forEach((n) => {
+      const list = byType.get(n.type) ?? [];
+      list.push(n);
+      byType.set(n.type, list);
+    });
+    types.forEach((type, ti) => {
+      const angle = (ti / types.length) * Math.PI * 2 - Math.PI / 2;
+      const cx = W / 2 + Math.cos(angle) * 340;
+      const cy = H / 2 + Math.sin(angle) * 230;
+      const members = byType.get(type) ?? [];
+      members.forEach((n, i) => {
+        const a = (i / members.length) * Math.PI * 2;
+        const r = members.length === 1 ? 0 : 46 + 14 * Math.sqrt(members.length);
+        n.x = cx + Math.cos(a) * r;
+        n.y = cy + Math.sin(a) * r * 0.72;
+      });
+    });
+
+    const edges: Array<{ a: Node; b: Node; shared: string[] }> = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const shared = nodes[i]!.tech.filter((t) => distinctive(t) && nodes[j]!.tech.includes(t));
+        if (shared.length > 0) edges.push({ a: nodes[i]!, b: nodes[j]!, shared });
+      }
+    }
+
+    const svgEdges = edges
+      .map(
+        (e) =>
+          `<line x1="${e.a.x.toFixed(0)}" y1="${e.a.y.toFixed(0)}" x2="${e.b.x.toFixed(0)}" y2="${e.b.y.toFixed(0)}" class="xw-sig-edge" stroke-width="${Math.min(3, e.shared.length)}"><title>${e.shared.join(', ')}</title></line>`,
+      )
+      .join('');
+    const svgClusters = types
+      .map((type, ti) => {
+        const angle = (ti / types.length) * Math.PI * 2 - Math.PI / 2;
+        const cx = W / 2 + Math.cos(angle) * 340;
+        const cy = H / 2 + Math.sin(angle) * 230;
+        return `<text x="${cx.toFixed(0)}" y="${(cy - 92).toFixed(0)}" class="xw-sig-cluster">${type.toUpperCase()}</text>`;
+      })
+      .join('');
+    const svgNodes = nodes
+      .map(
+        (n) => `
+        <g class="xw-sig-node${n.status === 'active' ? ' xw-sig-node--live' : ''}" data-id="${n.id}" tabindex="0" role="button" aria-label="Open record: ${n.title}">
+          <circle cx="${n.x.toFixed(0)}" cy="${n.y.toFixed(0)}" r="13"/>
+          <text x="${n.x.toFixed(0)}" y="${(n.y + 30).toFixed(0)}" class="xw-sig-label">${n.title}</text>
+        </g>`,
+      )
+      .join('');
+
+    signalRoot.innerHTML = `
+      <p class="xw-caps xw-caps--muted xw-sig-hint">Edges — shared distinctive tech · click a record to open it</p>
+      <svg viewBox="0 0 ${W} ${H}" class="xw-sig-svg" role="img" aria-label="Project graph">${svgEdges}${svgClusters}${svgNodes}</svg>`;
+
+    signalRoot.querySelectorAll<SVGGElement>('.xw-sig-node').forEach((el) => {
+      const open = () => {
+        const id = el.getAttribute('data-id');
+        root.querySelector<HTMLElement>(`.project-card[data-category="${id}"]`)?.click();
+      };
+      el.addEventListener('click', open);
+      el.addEventListener('keydown', (e) => {
+        if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+          e.preventDefault();
+          open();
+        }
+      });
+    });
+  };
+
+  const setView = (view: string) => {
+    viewButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.view === view));
+    const signal = view === 'signal';
+    if (signal) buildSignalView();
+    signalRoot?.classList.toggle('hidden', !signal);
+    listPanes.forEach((el) => el.classList.toggle('hidden', signal));
+  };
+  const viewDisposers: (() => void)[] = [];
+  viewButtons.forEach((b) => {
+    const onClick = () => setView(b.dataset.view ?? 'list');
+    b.addEventListener('click', onClick);
+    viewDisposers.push(() => b.removeEventListener('click', onClick));
+  });
+
   // Initial filter state: everything visible.
   applyFilter('all');
 
@@ -248,6 +408,7 @@ export function mountProjectsPage(root: HTMLElement): () => void {
     document.removeEventListener('keydown', onEscape);
     filterDisposers.forEach((d) => d());
     cardDisposers.forEach((d) => d());
+    viewDisposers.forEach((d) => d());
     closeBtn.removeEventListener('click', onCloseClick);
     overlay.removeEventListener('click', onOverlayClick);
     spyObserver?.disconnect();

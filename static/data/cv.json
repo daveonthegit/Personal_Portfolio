@@ -1,0 +1,185 @@
+{
+  "generated_by": "career-ops export-cv.mjs",
+  "name": "David Xiao",
+  "summary": "Web Developer at Secco Squared building full-stack web applications, A/B-tested Next.js pages, and lead-generation flows driven by data. Fluent in TypeScript, React, Node.js, Python, Go, and C, focused on conversion, performance, and reliable delivery.",
+  "contact": {
+    "location": {
+      "value": "New York, NY",
+      "public": true
+    },
+    "portfolio": {
+      "value": "davidx.tech",
+      "public": true
+    },
+    "github": {
+      "value": "github.com/daveonthegit",
+      "public": true
+    },
+    "linkedin": {
+      "value": "linkedin.com/in/david-on-linked",
+      "public": true
+    }
+  },
+  "experience": [
+    {
+      "id": "secco-squared",
+      "company": "Secco Squared",
+      "location": "New York, NY",
+      "role": "Web Developer",
+      "start": "2026-06",
+      "end": null,
+      "bullets": [
+        "Rebuilt a video site's lead funnel, cutting recurring costs by $1,300+ monthly while improving conversion",
+        "Engineered A/B tests on production pages, optimizing lead-generation flows through data-driven decisions",
+        "Delivered Next.js features and client integrations across production web projects",
+        "Developed in-house tooling that streamlined team workflows"
+      ]
+    },
+    {
+      "id": "unadat",
+      "company": "Unadat",
+      "location": "New York, NY",
+      "role": "Software Engineer Intern",
+      "start": "2025-06",
+      "end": "2025-08",
+      "bullets": [
+        "Decomposed a legacy PHP/JavaScript monolith into modular microservices, cutting feature delivery time by 25% across 6 production releases",
+        "Optimized 10+ REST endpoints with input validation and query batching, reducing average response time by 15%",
+        "Shipped a reusable React component library adopted by 3 product teams, eliminating duplicate modal and form implementations",
+        "Hardened backend endpoints against SQL injection and XSS by introducing parameterized queries and centralized input sanitization"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "kyarafit",
+      "name": "Kyarafit",
+      "technologies": [
+        "TypeScript",
+        "React Native",
+        "Next.js 15",
+        "Expo",
+        "Convex",
+        "Docker"
+      ],
+      "bullets": [
+        "Architected a shared TypeScript monorepo serving a Next.js 15 web client and a React Native/Expo mobile app from one codebase",
+        "Built offline-first persistence with SQLite and a custom Convex cloud-sync adapter, enabling full functionality without connectivity",
+        "Automated convention packing-list generation with cross-item deduplication, removing manual planning steps for users"
+      ]
+    },
+    {
+      "id": "outfai",
+      "name": "OutfAI",
+      "technologies": [
+        "TypeScript",
+        "Next.js 15",
+        "Vitest",
+        "Playwright",
+        "Vercel"
+      ],
+      "bullets": [
+        "Designed a recommendation engine scoring outfit combinations against mood, weather, and personal style signals, with explainable rationales for each pick",
+        "Modeled wardrobe and garment data with server-side scoring logic exposed through Next.js API routes",
+        "Covered the scoring pipeline with Playwright end-to-end tests and Vitest unit tests on ranking logic, deployed to Vercel"
+      ]
+    },
+    {
+      "id": "forgearena",
+      "name": "ForgeArena",
+      "technologies": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Express.js",
+        "Firebase",
+        "Jest",
+        "Jenkins"
+      ],
+      "bullets": [
+        "Delivered a 5-layer Express backend with Firebase Auth, Firestore persistence, and WebSocket-driven real-time leaderboard caching",
+        "Integrated Google Gemini for personalized workout plans inside a multi-agent coaching engine",
+        "Instrumented production observability with Winston and Sumo Logic across 5 log levels and 35+ log points, reaching 95% test coverage"
+      ]
+    },
+    {
+      "id": "randcompile",
+      "name": "RandCompile",
+      "technologies": [
+        "C",
+        "GCC Plugin",
+        "Linux Kernel",
+        "QEMU/KVM"
+      ],
+      "bullets": [
+        "Extended a GCC compiler plugin that hardens Linux kernel binaries through string encryption, pointer obfuscation, and ABI randomization",
+        "Validated defenses against Katana and HyperLink forensic tools in QEMU/KVM, blocking process enumeration on all hardened variants",
+        "Achieved sub-5% runtime overhead with partial hardening while preserving full kernel boot and module compatibility"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "CUNY Hunter College",
+      "degree": "B.A. Computer Science",
+      "location": "New York, NY",
+      "end": "2026-05",
+      "honors": [
+        "Dean's List"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": "Languages",
+      "items": [
+        "TypeScript",
+        "JavaScript",
+        "Python",
+        "Go",
+        "C",
+        "C++",
+        "SQL",
+        "PHP",
+        "Bash"
+      ]
+    },
+    {
+      "category": "Frameworks",
+      "items": [
+        "React",
+        "React Native",
+        "Next.js",
+        "Node.js",
+        "Express.js",
+        "FastAPI",
+        "Expo"
+      ]
+    },
+    {
+      "category": "Databases",
+      "items": [
+        "PostgreSQL",
+        "MySQL",
+        "SQLite",
+        "Convex",
+        "Firestore (NoSQL)"
+      ]
+    },
+    {
+      "category": "Testing & DevOps",
+      "items": [
+        "Vitest",
+        "Jest",
+        "Playwright (E2E)",
+        "Docker",
+        "GitHub Actions",
+        "Jenkins",
+        "GCP",
+        "Vercel",
+        "Heroku",
+        "Linux"
+      ]
+    }
+  ]
+}

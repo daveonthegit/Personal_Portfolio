@@ -9,6 +9,9 @@ RUN npm ci
 
 # Copy source files
 COPY src/ ./src/
+# templates/ is needed so Tailwind's content globs can scan the HTML that uses
+# the utility classes — without it the CSS build purges template-only classes.
+COPY templates/ ./templates/
 COPY tailwind.config.js postcss.config.js tsconfig.json ./
 
 # Build frontend assets
@@ -45,6 +48,8 @@ WORKDIR /root/
 COPY --from=go-builder /app/main .
 COPY --from=go-builder /app/static ./static
 COPY --from=go-builder /app/templates ./templates
+# hosted-projects powers the /hosted/* demo links — without it they 404 in prod.
+COPY --from=go-builder /app/hosted-projects ./hosted-projects
 
 # Expose port
 EXPOSE 8080

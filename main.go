@@ -34,6 +34,7 @@ type Server struct {
 	contactAllowedOrigins     []string
 	contactLimiter            *contactIPLimiter
 	disableRuntimeResumeBuild bool
+	trustProxy                bool
 }
 
 type EmailConfig struct {
@@ -192,6 +193,9 @@ func NewServer() *Server {
 
 	allowedOrigins := parseListEnv("ALLOWED_ORIGINS")
 	disableResume := strings.EqualFold(getEnv("DISABLE_RUNTIME_RESUME_BUILD", ""), "true")
+	// Only trust X-Forwarded-For when explicitly deployed behind a known proxy
+	// (e.g. Heroku's router). Off by default so the rate-limit key can't be spoofed.
+	trustProxy := strings.EqualFold(getEnv("TRUST_PROXY", ""), "true")
 
 	return &Server{
 		templates:                 templates,
@@ -202,6 +206,7 @@ func NewServer() *Server {
 		contactAllowedOrigins:     allowedOrigins,
 		contactLimiter:            newContactIPLimiter(15*time.Minute, 10),
 		disableRuntimeResumeBuild: disableResume,
+		trustProxy:                trustProxy,
 	}
 }
 
@@ -240,9 +245,25 @@ func (s *Server) contactHandler(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 }
 
-// contactRedirectHandler 301s GET /contact to the contact section on /home.
-func (s *Server) contactRedirectHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/home#contact", http.StatusMovedPermanently)
+// contactPageHandler renders the standalone Contact app page (GET /contact).
+// It replaced the legacy 301 → /home#contact redirect when contact became its own app.
+func (s *Server) contactPageHandler(w http.ResponseWriter, r *http.Request) {
+	data := s.pageDataFor("contact")
+
+	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("Template execution error: %v", err)
+	}
+}
+
+// arcadePageHandler renders the Arcade app page (hosted games as live captures).
+func (s *Server) arcadePageHandler(w http.ResponseWriter, r *http.Request) {
+	data := s.pageDataFor("arcade")
+
+	if err := s.templates.ExecuteTemplate(w, "base.html", data); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("Template execution error: %v", err)
+	}
 }
 
 func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
@@ -617,7 +638,7 @@ func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(map[string]string{"status": status, "message": msg})
 	}
 
-	if !s.contactLimiter.allow(clientIP(r)) {
+	if !s.contactLimiter.allow(clientIP(r, s.trustProxy)) {
 		writeJSON(http.StatusTooManyRequests, "error", "Too many requests. Please try again later.")
 		return
 	}
@@ -729,6 +750,12 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	case "resume":
 		data.Title = "Resume - " + personal.Name
 		data.Description = "View my professional experience, education, and skills."
+	case "contact":
+		data.Title = "Contact - " + personal.Name
+		data.Description = "Get in touch with David Xiao — email, LinkedIn, GitHub, or a direct message."
+	case "arcade":
+		data.Title = "Arcade - " + personal.Name
+		data.Description = "Playable projects by David Xiao — a minesweeper engine and an ASCII roguelike, running live."
 	default:
 		data.Title = personal.Name
 		data.Description = ""
@@ -769,24 +796,41 @@ func parseListEnv(key string) []string {
 	return out
 }
 
-// Email sending function
-func (s *Server) sendEmail(form ContactForm) error {
-	// Check if email configuration is properly set
-	if s.emailConfig.Username == "" || s.emailConfig.Password == "" || s.emailConfig.ToEmail == "" {
-		return fmt.Errorf("email configuration incomplete")
+// sanitizeHeaderValue strips CR, LF and NUL from a value destined for an email
+// header. User-controlled input (e.g. the contact Subject) must never carry a
+// bare newline into an SMTP header or an attacker can inject extra headers
+// (e.g. "\r\nBcc: evil@x.com") — this collapses those control chars to spaces.
+func sanitizeHeaderValue(s string) string {
+	replacer := strings.NewReplacer(
+		"\r", " ",
+		"\n", " ",
+		"\x00", "",
+	)
+	return strings.TrimSpace(replacer.Replace(s))
+}
+
+// buildContactMessage assembles the outbound mail.Message for a contact form
+// submission, sanitizing every user-controlled value that lands in a header.
+// Split out from sendEmail so header handling can be unit-tested without SMTP.
+func (s *Server) buildContactMessage(form ContactForm) *mail.Message {
+	m := mail.NewMessage()
+	// From/To come from server config, but sanitize defensively in case they
+	// are ever sourced from less-trusted input.
+	m.SetHeader("From", sanitizeHeaderValue(s.emailConfig.FromEmail))
+	m.SetHeader("To", sanitizeHeaderValue(s.emailConfig.ToEmail))
+
+	// Reply-To carries the submitter's email; sanitize it as a header value.
+	if email := sanitizeHeaderValue(form.Email); email != "" {
+		m.SetHeader("Reply-To", email)
 	}
 
-	// Create new message
-	m := mail.NewMessage()
-	m.SetHeader("From", s.emailConfig.FromEmail)
-	m.SetHeader("To", s.emailConfig.ToEmail)
-	subj := form.Subject
+	subj := sanitizeHeaderValue(form.Subject)
 	if subj == "" {
 		subj = "(no subject)"
 	}
-	m.SetHeader("Subject", fmt.Sprintf("Portfolio Contact: %s", subj))
+	m.SetHeader("Subject", "Portfolio Contact: "+subj)
 
-	// Create email body
+	// Body is plain text, so newlines here are safe (not a header context).
 	body := fmt.Sprintf(`
 New contact form submission from your portfolio:
 
@@ -802,6 +846,17 @@ This message was sent from your portfolio contact form.
 `, form.Name, form.Email, form.Subject, form.Message)
 
 	m.SetBody("text/plain", body)
+	return m
+}
+
+// Email sending function
+func (s *Server) sendEmail(form ContactForm) error {
+	// Check if email configuration is properly set
+	if s.emailConfig.Username == "" || s.emailConfig.Password == "" || s.emailConfig.ToEmail == "" {
+		return fmt.Errorf("email configuration incomplete")
+	}
+
+	m := s.buildContactMessage(form)
 
 	// Create dialer
 	d := mail.NewDialer(s.emailConfig.SMTPHost, s.emailConfig.SMTPPort, s.emailConfig.Username, s.emailConfig.Password)
@@ -855,7 +910,8 @@ func main() {
 	r.HandleFunc("/home", server.homeHandler).Methods("GET")
 	// Legacy deep links — 301 to the matching section on /home.
 	r.HandleFunc("/about", server.aboutRedirectHandler).Methods("GET")
-	r.HandleFunc("/contact", server.contactRedirectHandler).Methods("GET")
+	r.HandleFunc("/contact", server.contactPageHandler).Methods("GET")
+	r.HandleFunc("/arcade", server.arcadePageHandler).Methods("GET")
 	r.HandleFunc("/contact", server.contactHandler).Methods("POST")
 	r.HandleFunc("/projects", server.projectsHandler).Methods("GET")
 	r.HandleFunc("/resume", server.resumeHandler).Methods("GET")

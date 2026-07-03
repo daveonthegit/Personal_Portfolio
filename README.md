@@ -69,7 +69,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 
 4. **Run the server:**
    ```bash
-   go run main.go
+   go run .
    ```
 
 5. **Visit your portfolio:**

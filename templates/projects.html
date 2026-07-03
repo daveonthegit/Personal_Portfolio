@@ -1,5 +1,5 @@
 {{define "projects-content"}}
-<div class="xw-projects-page">
+<div class="xw-projects-page" data-xw-app="projects" data-xw-app-title="Projects">
 
   {{/* ───────────────────────────────── Page head ──────────────────────────────── */}}
   <header class="xw-section-head xw-projects-head" data-xw-reveal>
@@ -44,7 +44,9 @@
                data-img="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
                data-github="{{$p.GitHubURL}}"
                data-live="{{$p.LiveURL}}"
-               data-demo-url="{{$p.DemoURL}}">
+               data-demo-url="{{$p.DemoURL}}"
+               data-hosted="{{$p.HostedPath}}"
+               data-date="{{$p.Date.Format "Jan 2006"}}">
           </div>
           <div class="hidden project-tech-store">
             {{range $p.Technologies}}<span>{{.}}</span>{{end}}
@@ -77,7 +79,7 @@
           {{end}}
 
           <div class="xw-proj-card-foot">
-            <span class="xw-caps xw-caps--muted">{{$p.Date.Format "Jan 2006"}}</span>
+            <span class="xw-caps xw-caps--muted">Observed {{$p.Date.Format "Jan 2006"}}</span>
             <span class="xw-proj-card-cta">
               Details<span aria-hidden="true"> →</span>
             </span>
@@ -96,7 +98,14 @@
     {{range $t := .ProjectTypes}}
     <button type="button" class="xw-filter filter-btn" data-filter="{{$t}}">{{$t}}</button>
     {{end}}
+    <span class="xw-projects-toolbar-spacer" aria-hidden="true"></span>
+    <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">View</span>
+    <button type="button" class="xw-filter view-btn is-active" data-view="list">List</button>
+    <button type="button" class="xw-filter view-btn" data-view="signal">Signal</button>
   </div>
+
+  {{/* Signal view — records as a graph linked by distinctive shared tech (TS builds it) */}}
+  <div class="xw-signal-view hidden" data-signal-root aria-label="Projects as a signal graph"></div>
 
   {{/* ────────────────────────────── Body: strip + list ───────────────────────── */}}
   <div class="xw-projects-body">
@@ -147,7 +156,9 @@
                    data-img="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
                    data-github="{{$p.GitHubURL}}"
                    data-live="{{$p.LiveURL}}"
-                   data-demo-url="{{$p.DemoURL}}">
+                   data-demo-url="{{$p.DemoURL}}"
+                   data-hosted="{{$p.HostedPath}}"
+                   data-date="{{$p.Date.Format "Jan 2006"}}">
               </div>
               <div class="hidden project-tech-store">
                 {{range $p.Technologies}}<span>{{.}}</span>{{end}}
@@ -180,7 +191,7 @@
               {{end}}
 
               <div class="xw-proj-card-foot">
-                <span class="xw-caps xw-caps--muted">{{$p.Date.Format "Jan 2006"}}</span>
+                <span class="xw-caps xw-caps--muted">Observed {{$p.Date.Format "Jan 2006"}}</span>
                 <span class="xw-proj-card-cta">
                   Details<span aria-hidden="true"> →</span>
                 </span>
@@ -193,88 +204,94 @@
       {{end}}
     </div>
   </div>
-</div>
 
-{{/* ─────────────────────── Project detail overlay (modal) ─────────────────────── */}}
-<div id="project-terminal-overlay" class="xw-modal-overlay hidden" role="presentation">
-  <div id="terminal-window"
-       tabindex="-1"
-       role="dialog"
-       aria-modal="true"
-       aria-labelledby="term-project-title"
-       class="xw-modal">
+  {{/* ─────────────────────── Project detail overlay (modal) ─────────────────────── */}}
+  <div id="project-terminal-overlay" class="xw-modal-overlay hidden" role="presentation">
+    <div id="terminal-window"
+         tabindex="-1"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="term-project-title"
+         class="xw-modal">
 
-    <header class="xw-modal-head">
-      <div class="xw-modal-head-text">
-        <span class="xw-caps xw-caps--accent">Project</span>
-        <p id="term-header-title" class="xw-modal-path">registry · project</p>
-      </div>
-      <button type="button" id="close-terminal-btn" class="xw-modal-close" title="Close" aria-label="Close project details">
-        <span aria-hidden="true">×</span>
-      </button>
-    </header>
-
-    <div class="xw-modal-body">
-
-      <aside class="xw-modal-aside">
-        <figure class="xw-modal-figure">
-          <span class="xw-caps xw-caps--muted">Preview</span>
-          <div id="term-img-container" class="xw-modal-img-wrap">
-            <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
-            <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
-            <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
-            <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
-            <img id="term-project-img" src="" alt="" class="xw-modal-img">
-          </div>
-          <figcaption id="term-img-id" class="xw-caps xw-caps--muted xw-modal-figure-id">—</figcaption>
-        </figure>
-
-        <dl class="xw-modal-meta">
-          <div class="xw-modal-meta-row">
-            <dt class="xw-caps xw-caps--muted">Identifier</dt>
-            <dd id="term-project-id">—</dd>
-          </div>
-          <div class="xw-modal-meta-row">
-            <dt class="xw-caps xw-caps--muted">Type</dt>
-            <dd id="term-project-type">—</dd>
-          </div>
-          <div class="xw-modal-meta-row">
-            <dt class="xw-caps xw-caps--muted">Status</dt>
-            <dd id="term-project-status">—</dd>
-          </div>
-        </dl>
-
-        <div id="term-project-links" class="xw-modal-links"></div>
-      </aside>
-
-      <div class="xw-modal-main">
-        <div id="term-content-area" class="xw-modal-inner">
-          <p class="xw-modal-context">
-            <span class="xw-caps xw-caps--muted">Registry key</span>
-            <span id="term-cmd-target" class="xw-modal-context-key">mod_—</span>
-          </p>
-
-          <div class="xw-modal-titleblock">
-            <span class="xw-caps xw-caps--accent">Module</span>
-            <h2 id="term-project-title" class="xw-modal-title">Title</h2>
-          </div>
-
-          <section class="xw-modal-block" aria-labelledby="term-desc-label">
-            <h3 id="term-desc-label" class="xw-caps xw-caps--muted">Summary</h3>
-            <p id="term-project-desc" class="xw-modal-desc">Description goes here…</p>
-          </section>
-
-          <section class="xw-modal-block" aria-labelledby="term-tech-label">
-            <h3 id="term-tech-label" class="xw-caps xw-caps--muted">Stack</h3>
-            <div id="term-project-tech" class="xw-modal-tech"></div>
-          </section>
-
-          <p class="xw-modal-foot">
-            <span class="xw-caps xw-caps--muted">Esc or click outside to close</span>
-          </p>
+      <header class="xw-modal-head">
+        <div class="xw-modal-head-text">
+          <span class="xw-caps xw-caps--accent">Project</span>
+          <p id="term-header-title" class="xw-modal-path">registry · project</p>
         </div>
-      </div>
+        <button type="button" id="close-terminal-btn" class="xw-modal-close" title="Close" aria-label="Close project details">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
 
+      <div class="xw-modal-body">
+
+        <aside class="xw-modal-aside">
+          <figure class="xw-modal-figure">
+            <span class="xw-caps xw-caps--muted">Preview</span>
+            <div id="term-img-container" class="xw-modal-img-wrap">
+              <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
+              <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
+              <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
+              <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
+              <img id="term-project-img" src="" alt="" class="xw-modal-img">
+              <span class="xw-rec" id="term-rec" aria-hidden="true" hidden><span class="xw-rec-dot"></span>REC</span>
+              <span class="xw-feed-lost" id="term-feed-lost" aria-hidden="true" hidden>FEED LOST</span>
+            </div>
+            <figcaption id="term-img-id" class="xw-caps xw-caps--muted xw-modal-figure-id">—</figcaption>
+          </figure>
+
+          <dl class="xw-modal-meta">
+            <div class="xw-modal-meta-row">
+              <dt class="xw-caps xw-caps--muted">Identifier</dt>
+              <dd id="term-project-id">—</dd>
+            </div>
+            <div class="xw-modal-meta-row">
+              <dt class="xw-caps xw-caps--muted">Type</dt>
+              <dd id="term-project-type">—</dd>
+            </div>
+            <div class="xw-modal-meta-row">
+              <dt class="xw-caps xw-caps--muted">Status</dt>
+              <dd id="term-project-status">—</dd>
+            </div>
+            <div class="xw-modal-meta-row">
+              <dt class="xw-caps xw-caps--muted">First observed</dt>
+              <dd id="term-project-date">—</dd>
+            </div>
+          </dl>
+
+          <div id="term-project-links" class="xw-modal-links"></div>
+        </aside>
+
+        <div class="xw-modal-main">
+          <div id="term-content-area" class="xw-modal-inner">
+            <p class="xw-modal-context">
+              <span class="xw-caps xw-caps--muted">Registry key</span>
+              <span id="term-cmd-target" class="xw-modal-context-key">mod_—</span>
+            </p>
+
+            <div class="xw-modal-titleblock">
+              <span class="xw-caps xw-caps--accent">Module</span>
+              <h2 id="term-project-title" class="xw-modal-title">Title</h2>
+            </div>
+
+            <section class="xw-modal-block" aria-labelledby="term-desc-label">
+              <h3 id="term-desc-label" class="xw-caps xw-caps--muted">Summary</h3>
+              <p id="term-project-desc" class="xw-modal-desc">Description goes here…</p>
+            </section>
+
+            <section class="xw-modal-block" aria-labelledby="term-tech-label">
+              <h3 id="term-tech-label" class="xw-caps xw-caps--muted">Stack</h3>
+              <div id="term-project-tech" class="xw-modal-tech"></div>
+            </section>
+
+            <p class="xw-modal-foot">
+              <span class="xw-caps xw-caps--muted">Esc or click outside to close</span>
+            </p>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

@@ -1,12 +1,17 @@
 import { StartupAnimation } from '../components/StartupAnimation';
+import { mountZoomInCover, playZoomIn, removeZoomIn } from '../os/zoomIn';
 
 /**
- * Boot overlay coordinator.
+ * Boot overlay coordinator — the front-door cinematic chain.
  *
- * - **`/`** — full startup animation, then `location.replace('/home')` when done.
+ * - **`/`** — boot sequence → Zoom-In (map → NYC → subject file) → desktop
+ *   reveal. The page beneath is the same home template the OS shell already
+ *   mounted, so the finale is a dissolve + `history.replaceState('/home')`,
+ *   not a reload. Skipping (button/Escape) at any point cuts straight to the
+ *   desktop; `prefers-reduced-motion` skips the whole chain.
  * - **`/home`** — no splash, no redirect (nav / bookmarks land here without intro).
  *
- * Skip animation on **`/`** only when `?noboot=1` (still redirects to `/home`).
+ * Skip animation on **`/`** only when `?noboot=1` (still canonicalizes to `/home`).
  */
 const BODY_READY_CLASS = 'xw-boot-done';
 const BODY_BOOTING_CLASS = 'xw-booting';
@@ -20,6 +25,11 @@ function clearOverlay(): void {
 
 function markBooted(): void {
   document.body.classList.remove(BODY_BOOTING_CLASS);
+  // Apex first-paint cover class — previously cleared by the full-page redirect;
+  // with the in-place reveal it must be removed explicitly.
+  document.body.classList.remove('xw-boot-pending');
+  // Intro veil (hides OS chrome while the 3D flight plays over the canvas).
+  document.body.classList.remove('xw-introing');
   document.body.classList.add(BODY_READY_CLASS);
 }
 
@@ -42,8 +52,21 @@ function hasNobootQuery(): boolean {
   }
 }
 
-function goHome(): void {
-  window.location.replace('/home');
+/** Canonicalize `/` → `/home` without reloading the already-rendered page. */
+function canonicalizeToHome(): void {
+  try {
+    window.history.replaceState(null, '', '/home');
+  } catch {
+    window.location.replace('/home');
+  }
+}
+
+function prefersReducedMotion(): boolean {
+  try {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
+  }
 }
 
 export function initBootOverlay(): void {
@@ -64,27 +87,64 @@ export function initBootOverlay(): void {
 
   // Only `/` from here on (same home template as /home).
 
-  if (hasNobootQuery()) {
+  if (hasNobootQuery() || prefersReducedMotion()) {
     clearOverlay();
     markBooted();
-    goHome();
+    canonicalizeToHome();
     return;
   }
 
   document.body.classList.add(BODY_BOOTING_CLASS);
 
+  const finish = () => {
+    markBooted();
+    canonicalizeToHome();
+  };
+
+  // 3D City intro (ADR 0002) on fine-pointer desktops; SVG ladder elsewhere.
+  const wants3D = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+  // Warm the chunk during the boot animation; the shell mounts the scene.
+  const cityP = wants3D
+    ? import('../os/city3d').catch(() => null)
+    : Promise.resolve(null);
+  if (wants3D) document.body.classList.add('xw-introing');
+
+  const runSvgFallback = (existingCover: HTMLElement | null) => {
+    const cover = existingCover ?? mountZoomInCover();
+    playZoomIn(cover, finish);
+  };
+
   try {
+    // For the SVG path the cover pre-mounts beneath the boot layer so the boot
+    // fade lands black-on-black. The 3D path renders under a transparent HUD
+    // (the canvas is the desktop plane), so no cover is needed.
+    const svgCover = wants3D ? null : mountZoomInCover();
+
     // eslint-disable-next-line no-new
     new StartupAnimation({
-      onFinish: () => {
-        markBooted();
-        goHome();
+      onFinish: (skipped) => {
+        if (skipped) {
+          if (svgCover) removeZoomIn(svgCover);
+          void cityP.then((m) => m?.settleDesktop());
+          finish();
+          return;
+        }
+        void cityP.then((m) => {
+          if (m && m.cityMounted()) {
+            const hud = document.createElement('div');
+            hud.className = 'xw-zoomin xw-zoomin--clear';
+            document.body.appendChild(hud);
+            if (m.playIntro(hud, finish)) return;
+            hud.remove();
+          }
+          runSvgFallback(svgCover);
+        });
       },
     });
   } catch (error) {
     console.error('bootOverlay: failed to start animation', error);
     clearOverlay();
     markBooted();
-    goHome();
+    canonicalizeToHome();
   }
 }

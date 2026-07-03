@@ -1,5 +1,5 @@
 {{define "home-content"}}
-<div class="xw-home">
+<div class="xw-home" data-xw-app="dossier" data-xw-app-title="Dossier">
 
   {{/* Section index rail — fixed, scroll-spy driven. Mirrors /projects year strip. */}}
   <nav class="xw-section-rail" id="xw-section-rail" aria-label="Sections on this page">
@@ -7,7 +7,6 @@
       <li><a href="#about"      data-xw-rail="about"><span class="xw-rail-num">01</span><span class="xw-rail-label">About</span></a></li>
       <li><a href="#projects"   data-xw-rail="projects"><span class="xw-rail-num">02</span><span class="xw-rail-label">Projects</span></a></li>
       <li><a href="#experience" data-xw-rail="experience"><span class="xw-rail-num">03</span><span class="xw-rail-label">Experience</span></a></li>
-      <li><a href="#contact"    data-xw-rail="contact"><span class="xw-rail-num">04</span><span class="xw-rail-label">Contact</span></a></li>
     </ol>
   </nav>
 
@@ -32,7 +31,7 @@
 
         <div class="xw-hero-cta" data-xw-reveal>
           <a href="#projects" class="xw-cta xw-cta--primary">See selected work<span aria-hidden="true"> →</span></a>
-          <a href="#contact" class="xw-cta">Get in touch<span aria-hidden="true"> →</span></a>
+          <a href="/contact" class="xw-cta">Get in touch<span aria-hidden="true"> →</span></a>
           <a href="/resume" class="xw-cta xw-cta--ghost">Resume<span aria-hidden="true"> →</span></a>
         </div>
       </div>
@@ -67,6 +66,24 @@
             <dd class="xw-fact-links">
               {{if .Personal.GitHub}}<a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>{{end}}
               {{if .Personal.LinkedIn}}<a href="{{.Personal.LinkedIn}}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>{{end}}
+            </dd>
+          </div>
+          {{/* Living-dossier rows — filled by dossierLive.ts, hidden without JS */}}
+          <div class="xw-fact xw-fact--live" data-dossier-live hidden>
+            <dt>Observing</dt>
+            <dd><span data-obs-timer>00:00:00</span><span class="xw-obs-dot" aria-hidden="true"></span></dd>
+          </div>
+          <div class="xw-fact xw-fact--live" data-dossier-activity hidden>
+            <dt>Activity</dt>
+            <dd data-activity-line>—</dd>
+          </div>
+          <div class="xw-fact">
+            <dt>Field notes</dt>
+            <dd class="xw-fact-notes">
+              <button type="button" class="xw-redact" aria-label="Redacted field note — reveal"
+                data-redact="Same bagel order since 2019 — sesame, scallion cream cheese.">████████████████████</button>
+              <button type="button" class="xw-redact" aria-label="Redacted field note — reveal"
+                data-redact="Ships side projects past midnight. The commits apologize politely.">██████████████████</button>
             </dd>
           </div>
         </dl>
@@ -225,15 +242,31 @@
     </ol>
   </section>
 
-  {{/* ───────────────────────────────── #contact ──────────────────────────────── */}}
-  <section id="contact" data-xw-section="contact" class="xw-section xw-section--last" aria-labelledby="contact-heading">
+  {{/* ─────────────────────────────── observer log ──────────────────────────────
+       The Observer Mirror (CONTEXT.md): one contained panel that flips the lens.
+       Strictly client-side (dossierLive.ts); without JS it stays a quiet note. */}}
+  <aside class="xw-observer" data-observer aria-labelledby="observer-heading">
+    <header class="xw-observer-head">
+      <span class="xw-caps xw-caps--accent">Observer log</span>
+      <h2 id="observer-heading" class="xw-caps">New session on this file</h2>
+    </header>
+    <dl class="xw-facts xw-observer-rows" data-observer-rows>
+      <div class="xw-fact"><dt>Status</dt><dd>Telemetry shown in the interactive view only.</dd></div>
+    </dl>
+    <p class="xw-caps xw-caps--muted xw-observer-disclaimer">Not retained — this system observes but does not remember.</p>
+  </aside>
+
+  {{/* ───────────────────────────────── contact ───────────────────────────────
+       The contact form lives in its own app now (templates/contact.html, /contact).
+       The Dossier closes with direct channels + a handoff link instead. */}}
+  <section id="reach" class="xw-section xw-section--last" aria-labelledby="reach-heading">
     <header class="xw-section-head">
       <div class="xw-hero-meta" data-xw-reveal>
         <span class="xw-index" aria-hidden="true">04</span>
         <span class="xw-caps">Transmit</span>
       </div>
-      <h2 id="contact-heading" class="xw-display xw-display--sm" data-xw-reveal>
-        Contact<span class="xw-display-stop" aria-hidden="true">.</span>
+      <h2 id="reach-heading" class="xw-display xw-display--sm" data-xw-reveal>
+        Get in touch<span class="xw-display-stop" aria-hidden="true">.</span>
       </h2>
     </header>
 
@@ -245,12 +278,6 @@
           <li>
             <span class="xw-caps xw-caps--muted">Email</span>
             <a href="mailto:{{.Personal.Email}}" class="xw-link">{{.Personal.Email}}</a>
-          </li>
-          {{end}}
-          {{if .Personal.Phone}}
-          <li>
-            <span class="xw-caps xw-caps--muted">Phone</span>
-            <a href="tel:{{.Personal.Phone}}" class="xw-link">{{.Personal.Phone}}</a>
           </li>
           {{end}}
           {{if .Personal.LinkedIn}}
@@ -265,41 +292,15 @@
             <a href="{{.Personal.GitHub}}" target="_blank" rel="noopener noreferrer" class="xw-link">github.com/daveonthegit ↗</a>
           </li>
           {{end}}
-          {{if .Personal.Location}}
-          <li>
-            <span class="xw-caps xw-caps--muted">Based</span>
-            <span>{{.Personal.Location}}</span>
-          </li>
-          {{end}}
         </ul>
       </aside>
 
-      <form id="contact-form" class="xw-contact-form" method="POST" action="/contact" novalidate data-xw-reveal>
-        <div class="xw-field">
-          <label for="contact-name" class="xw-caps xw-caps--muted">Name</label>
-          <input type="text" id="contact-name" name="name" required autocomplete="name" />
-        </div>
-        <div class="xw-field">
-          <label for="contact-email" class="xw-caps xw-caps--muted">Email</label>
-          <input type="email" id="contact-email" name="email" required autocomplete="email" />
-        </div>
-        <div class="xw-field">
-          <label for="contact-subject" class="xw-caps xw-caps--muted">Subject</label>
-          <input type="text" id="contact-subject" name="subject" required />
-        </div>
-        <div class="xw-field">
-          <label for="contact-message" class="xw-caps xw-caps--muted">Message</label>
-          <textarea id="contact-message" name="message" rows="6" required></textarea>
-        </div>
-        <div class="xw-field xw-honeypot" aria-hidden="true">
-          <label for="contact-website">Website</label>
-          <input type="text" id="contact-website" name="website" tabindex="-1" autocomplete="off" />
-        </div>
-        <div class="xw-form-row">
-          <button type="submit" class="xw-cta xw-cta--primary">Send message<span aria-hidden="true"> →</span></button>
-          <p class="xw-form-status" id="contact-form-status" role="status" aria-live="polite" hidden></p>
-        </div>
-      </form>
+      <div class="xw-contact-handoff" data-xw-reveal>
+        <p>Prefer a form? Send a message straight from the site.</p>
+        <p class="xw-hero-cta">
+          <a href="/contact" class="xw-cta xw-cta--primary">Open contact<span aria-hidden="true"> →</span></a>
+        </p>
+      </div>
     </div>
   </section>
 

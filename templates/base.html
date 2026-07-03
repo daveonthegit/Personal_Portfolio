@@ -55,7 +55,7 @@
                 <a href="/home#about"      data-xw-nav="about"      class="xw-nav-link no-underline">About</a>
                 <a href="/home#projects"   data-xw-nav="projects"   class="xw-nav-link no-underline">Projects</a>
                 <a href="/home#experience" data-xw-nav="experience" class="xw-nav-link no-underline">Experience</a>
-                <a href="/home#contact"    data-xw-nav="contact"    class="xw-nav-link no-underline">Contact</a>
+                <a href="/contact"         class="xw-nav-link no-underline">Contact</a>
                 <a href="/projects"        data-xw-nav="all-projects" class="xw-nav-link no-underline">All projects</a>
                 <a href="/resume"          data-xw-nav="resume"     class="xw-nav-link no-underline">Resume</a>
             </nav>
@@ -75,11 +75,35 @@
             <a href="/home#about"      class="xw-mobile-nav-link no-underline">About</a>
             <a href="/home#projects"   class="xw-mobile-nav-link no-underline">Projects</a>
             <a href="/home#experience" class="xw-mobile-nav-link no-underline">Experience</a>
-            <a href="/home#contact"    class="xw-mobile-nav-link no-underline">Contact</a>
+            <a href="/contact"         class="xw-mobile-nav-link no-underline">Contact</a>
             <a href="/projects"        class="xw-mobile-nav-link no-underline">All projects</a>
             <a href="/resume"          class="xw-mobile-nav-link no-underline">Resume</a>
         </nav>
     </div>
+
+    <!-- xiaoOS dock — inert markup until os/shell.ts activates it (desktop windows or mobile tab bar). -->
+    <nav class="xw-dock" id="xw-dock" aria-label="Applications">
+        <a href="/home" class="xw-dock-item" data-xw-dock="dossier"{{if eq .TemplateName "home"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">01</span>
+            <span class="xw-dock-label">Dossier</span>
+        </a>
+        <a href="/projects" class="xw-dock-item" data-xw-dock="projects"{{if eq .TemplateName "projects"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">02</span>
+            <span class="xw-dock-label">Projects</span>
+        </a>
+        <a href="/resume" class="xw-dock-item" data-xw-dock="resume"{{if eq .TemplateName "resume"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">03</span>
+            <span class="xw-dock-label">Resume</span>
+        </a>
+        <a href="/contact" class="xw-dock-item" data-xw-dock="contact"{{if eq .TemplateName "contact"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">04</span>
+            <span class="xw-dock-label">Contact</span>
+        </a>
+        <a href="/arcade" class="xw-dock-item" data-xw-dock="arcade"{{if eq .TemplateName "arcade"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">05</span>
+            <span class="xw-dock-label">Arcade</span>
+        </a>
+    </nav>
 
     <!-- Main content -->
     <main class="xw-main" id="main-content" role="main" tabindex="-1">
@@ -89,6 +113,10 @@
             {{template "projects-content" .}}
         {{else if eq .TemplateName "resume"}}
             {{template "resume-content" .}}
+        {{else if eq .TemplateName "contact"}}
+            {{template "contact-content" .}}
+        {{else if eq .TemplateName "arcade"}}
+            {{template "arcade-content" .}}
         {{else}}
             {{template "home-content" .}}
         {{end}}
@@ -105,6 +133,6 @@
         </div>
     </footer>
 
-    <script src="{{asset "/static/js/main.js"}}"></script>
+    <script type="module" src="{{asset "/static/js/main.js"}}"></script>
 </body>
 </html>

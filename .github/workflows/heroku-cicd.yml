@@ -21,7 +21,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          # Keep aligned with go.mod and the Dockerfile (golang:1.21-alpine).
+          go-version: '1.21'
 
       - name: Cache Go modules
         uses: actions/cache@v4
@@ -38,6 +39,18 @@ jobs:
 
       - name: Run tests
         run: go test ./...
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Matches the Dockerfile frontend build stage (node:18-alpine).
+          node-version: '18'
+
+      - name: Build and typecheck frontend
+        run: |
+          npm ci
+          npx tsc --noEmit
+          npm run build
 
   deploy:
     name: Deploy to Heroku

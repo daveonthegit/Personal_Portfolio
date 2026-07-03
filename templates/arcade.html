@@ -1,0 +1,64 @@
+{{define "arcade-content"}}
+<div class="xw-arcade-page" data-xw-app="arcade" data-xw-app-title="Arcade">
+
+  <section class="xw-section xw-section--last" aria-labelledby="arcade-heading">
+    <header class="xw-section-head">
+      <div class="xw-hero-meta" data-xw-reveal>
+        <span class="xw-index" aria-hidden="true">05</span>
+        <span class="xw-caps">Recreational modules</span>
+      </div>
+      <h1 id="arcade-heading" class="xw-display xw-display--sm" data-xw-reveal>
+        Arcade<span class="xw-display-stop" aria-hidden="true">.</span>
+      </h1>
+      <p class="xw-tagline" data-xw-reveal>
+        Software recovered from the subject, still running. Observe it live — every module is playable.
+      </p>
+    </header>
+
+    <ul class="xw-arcade-grid" role="list">
+      <li class="xw-arcade-card" data-xw-reveal>
+        <div class="xw-proj-card-head">
+          <span class="xw-caps xw-caps--accent">MOD 01</span>
+          <span class="xw-badge xw-badge--live">Running</span>
+        </div>
+        <h2 class="xw-proj-card-title">Minesweeper</h2>
+        <p class="xw-proj-card-lede">
+          A minesweeper.online-style engine in the xiaoOS skin — chording, flags,
+          timer, and first-click safety, in vanilla TypeScript.
+        </p>
+        <div class="xw-work-links">
+          <a href="/hosted/minesweeper/" target="_blank" rel="noopener noreferrer"
+             class="xw-observe-live xw-cta xw-cta--primary" data-capture-title="Minesweeper">
+            Observe live<span aria-hidden="true"> ▸</span>
+          </a>
+          <a href="/projects#minesweeper" class="xw-link xw-link--muted">Record<span aria-hidden="true"> →</span></a>
+        </div>
+      </li>
+
+      <li class="xw-arcade-card" data-xw-reveal>
+        <div class="xw-proj-card-head">
+          <span class="xw-caps xw-caps--accent">MOD 02</span>
+          <span class="xw-badge xw-badge--live">Running</span>
+        </div>
+        <h2 class="xw-proj-card-title">ASCII Roguelike</h2>
+        <p class="xw-proj-card-lede">
+          An ASCII-rendered roguelike RPG with permadeath — procedural floors,
+          turn-based combat, no graphics but the character grid.
+        </p>
+        <div class="xw-work-links">
+          <a href="/hosted/ascii-rpg/" target="_blank" rel="noopener noreferrer"
+             class="xw-observe-live xw-cta xw-cta--primary" data-capture-title="ASCII Roguelike">
+            Observe live<span aria-hidden="true"> ▸</span>
+          </a>
+          <a href="/projects#ascii-rpg" class="xw-link xw-link--muted">Record<span aria-hidden="true"> →</span></a>
+        </div>
+      </li>
+    </ul>
+
+    <p class="xw-caps xw-caps--muted xw-arcade-foot" data-xw-reveal>
+      Modules run in a sandboxed capture window on desktop, or a new tab elsewhere.
+    </p>
+  </section>
+
+</div>
+{{end}}

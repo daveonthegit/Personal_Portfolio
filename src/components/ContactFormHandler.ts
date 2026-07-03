@@ -65,9 +65,20 @@ export class ContactFormHandler {
       return;
     }
 
+    // Transmission beat — states driven by the REAL request result, no theater.
     const defaultBtnHtml = this.submitButton.innerHTML;
-    this.submitButton.disabled = true;
-    this.submitButton.textContent = 'Sending...';
+    const btn = this.submitButton;
+    btn.disabled = true;
+    btn.classList.add('xw-cta--transmitting');
+    btn.textContent = 'Transmitting…';
+
+    const restore = (delay: number) => {
+      window.setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('xw-cta--transmitting', 'xw-cta--delivered');
+        btn.innerHTML = defaultBtnHtml;
+      }, delay);
+    };
 
     try {
       const response = await fetch('/contact', {
@@ -81,17 +92,20 @@ export class ContactFormHandler {
       const result = await response.json();
 
       if (response.ok && result.status === 'success') {
+        btn.classList.remove('xw-cta--transmitting');
+        btn.classList.add('xw-cta--delivered');
+        btn.textContent = 'Delivered ✓';
         this.showMessage(result.message, 'success');
         this.form.reset();
+        restore(2400);
       } else {
         this.showMessage(result.message || 'Something went wrong. Please try again.', 'error');
+        restore(0);
       }
     } catch (error) {
       console.error('Contact form error:', error);
       this.showMessage('Network error. Please check your connection and try again.', 'error');
-    } finally {
-      this.submitButton.disabled = false;
-      this.submitButton.innerHTML = defaultBtnHtml;
+      restore(0);
     }
   }
 
