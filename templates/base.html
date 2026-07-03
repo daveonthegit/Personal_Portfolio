@@ -83,10 +83,13 @@
 
     <!-- xiaoOS dock — inert markup until os/shell.ts activates it (desktop windows or mobile tab bar). -->
     <nav class="xw-dock" id="xw-dock" aria-label="Applications">
-        <a href="/home" class="xw-dock-item" data-xw-dock="dossier"{{if eq .TemplateName "home"}} aria-current="page"{{end}}>
+        <a href="/home" class="xw-dock-item xw-dock-item--mob"{{if eq .TemplateName "home"}} aria-current="page"{{end}}>
+            <span class="xw-dock-glyph" aria-hidden="true">00</span>
+            <span class="xw-dock-label">Map</span>
+        </a>
+        <a href="/home#file" class="xw-dock-item" data-xw-dock="dossier">
             <span class="xw-dock-glyph" aria-hidden="true">01</span>
-            <span class="xw-dock-label xw-dock-label--desk">Dossier</span>
-            <span class="xw-dock-label xw-dock-label--mob">Map</span>
+            <span class="xw-dock-label">Dossier</span>
         </a>
         <a href="/projects" class="xw-dock-item" data-xw-dock="projects"{{if eq .TemplateName "projects"}} aria-current="page"{{end}}>
             <span class="xw-dock-glyph" aria-hidden="true">02</span>

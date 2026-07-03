@@ -3249,9 +3249,13 @@ body.xw-introing .xw-city-mobile {
 }
 
 /* ── Mobile map hub: the City IS the main nav ── */
-.xw-dock-label--mob { display: none; }
-body.xw-os-mobile .xw-dock-label--desk { display: none; }
-body.xw-os-mobile .xw-dock-label--mob { display: block; }
+/* MAP tab exists only on the Companion App; desktop's dock starts at Dossier. */
+.xw-dock-item--mob { display: none !important; }
+body.xw-os-mobile .xw-dock-item--mob { display: flex !important; }
+
+/* One nav on mobile: the tab bar. The hamburger overlay retires in OS mode. */
+body.xw-os-mobile .xw-nav-toggle,
+body.xw-os-mobile .xw-mobile-nav { display: none !important; }
 
 body.xw-map-home .xw-city-mobile {
   position: fixed;
