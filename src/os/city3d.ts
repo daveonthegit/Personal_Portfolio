@@ -78,6 +78,8 @@ interface City {
   orbit: { az: number; pol: number; r: number };
   orbitTarget: THREE.Vector3;
   packets: Array<{ mesh: THREE.Mesh; pts: THREE.Vector3[]; lens: number[]; total: number; speed: number; phase: number }>;
+  shellMat: THREE.MeshLambertMaterial;
+  person: THREE.Group;
   flights: Array<{ mesh: THREE.Mesh; a: THREE.Vector3; b: THREE.Vector3; total: number; speed: number; phase: number }>;
   subjectEdges: THREE.LineSegments;
   clock: THREE.Clock;
@@ -298,6 +300,8 @@ function buildCity(scene: THREE.Scene): {
   packets: City['packets'];
   metroPlane: THREE.Mesh;
   subjectEdges: THREE.LineSegments;
+  shellMat: THREE.MeshLambertMaterial;
+  person: THREE.Group;
 } {
   // Endless dark base so the textured ground never shows a horizon edge.
   const basePlane = new THREE.Mesh(
@@ -371,7 +375,12 @@ function buildCity(scene: THREE.Scene): {
   let subjectBounds = new THREE.Box3();
 
   positions.forEach((p, i) => {
-    m.makeScale(p.w, p.h, p.d).setPosition(p.x, 0, p.z);
+    if (p.anchor?.id === 'dossier') {
+      // Standalone shell handles this one — zero the instance permanently.
+      m.makeScale(0.0001, 0.0001, 0.0001).setPosition(p.x, 0, p.z);
+    } else {
+      m.makeScale(p.w, p.h, p.d).setPosition(p.x, 0, p.z);
+    }
     mesh.setMatrixAt(i, m);
     base.push(m.clone());
     // Grayscale variance so the mass doesn't read flat
@@ -416,14 +425,75 @@ function buildCity(scene: THREE.Scene): {
 
   // Subject building highlight — cyan edges, pulsed during the lock-on.
   let subjectEdges = new THREE.LineSegments();
+  let shellMat = new THREE.MeshLambertMaterial();
+  let person = new THREE.Group();
   for (const p of positions) {
     if (p.anchor?.id !== 'dossier') continue;
+
     const eg = new THREE.EdgesGeometry(new THREE.BoxGeometry(p.w + 2, p.h + 2, p.d + 2));
     const em = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0 });
     em.fog = false;
     subjectEdges = new THREE.LineSegments(eg, em);
     subjectEdges.position.set(p.x, p.h / 2, p.z);
     group.add(subjectEdges);
+
+    // The subject's building is a standalone SHELL (its instance is zeroed
+    // below) so the camera can fade through the facade into the room.
+    shellMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true });
+    const shell = new THREE.Mesh(new THREE.BoxGeometry(p.w, p.h, p.d), shellMat);
+    shell.position.set(p.x, p.h / 2, p.z);
+    group.add(shell);
+
+    // ── The room (X-ray wireframe): floor, desk, glowing screen, a person ──
+    const room = new THREE.Group();
+    room.position.set(p.x, 0, p.z);
+    const wire = new THREE.LineBasicMaterial({ color: 0xf4efe6, transparent: true, opacity: 0.75 });
+    const dim = new THREE.MeshBasicMaterial({ color: 0x0b0a09 });
+    const edge = (g: THREE.BufferGeometry, x: number, y: number, z: number, ry = 0) => {
+      const m = new THREE.LineSegments(new THREE.EdgesGeometry(g), wire);
+      m.position.set(x, y, z);
+      m.rotation.y = ry;
+      room.add(m);
+      return m;
+    };
+    // floor slab
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(p.w - 2, 0.4, p.d - 2), dim);
+    floor.position.set(0, 0.2, 0);
+    room.add(floor);
+    edge(new THREE.BoxGeometry(p.w - 2, 0.4, p.d - 2), 0, 0.2, 0);
+    // desk against the far (-z) side
+    edge(new THREE.BoxGeometry(12, 0.6, 5), 0, 4.4, -5.5);
+    edge(new THREE.BoxGeometry(0.5, 4.2, 4.6), -5.5, 2.2, -5.5);
+    edge(new THREE.BoxGeometry(0.5, 4.2, 4.6), 5.5, 2.2, -5.5);
+    // monitor + glowing screen facing the person (+z)
+    edge(new THREE.BoxGeometry(7, 4.4, 0.5), 0, 7, -7);
+    const screen = new THREE.Mesh(
+      new THREE.PlaneGeometry(6.2, 3.6),
+      new THREE.MeshBasicMaterial({ color: 0xd9f4fb, transparent: true, opacity: 0.85 }),
+    );
+    screen.position.set(0, 7, -6.7);
+    room.add(screen);
+    const screenGlow = new THREE.PointLight(0xbfe9f5, 14, 30);
+    screenGlow.position.set(0, 7, -4);
+    room.add(screenGlow);
+    // chair
+    edge(new THREE.BoxGeometry(4, 0.5, 4), 0, 2.6, 0.5);
+    edge(new THREE.BoxGeometry(4, 4.4, 0.5), 0, 4.6, 2.4);
+    // the person — seated, back to the entering camera, facing the screen
+    person = new THREE.Group();
+    const wm = new THREE.MeshBasicMaterial({ color: 0xf4efe6, wireframe: true, transparent: true, opacity: 0.55 });
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(3.4, 4.6, 2), wm);
+    torso.position.set(0, 5.2, -0.6);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(1.35, 8, 6), wm);
+    head.position.set(0, 8.6, -0.8);
+    const armL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 3.4), wm);
+    armL.position.set(-2, 4.6, -2.4);
+    const armR = armL.clone();
+    armR.position.x = 2;
+    person.add(torso, head, armL, armR);
+    person.position.set(0, 0, -0.4);
+    room.add(person);
+    group.add(room);
   }
 
   // Anchor points + subject bounds via the group's REAL transform — no
@@ -441,7 +511,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges };
+  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person };
 }
 
 function lcgHash(i: number): number {
@@ -480,7 +550,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges } = buildCity(scene);
+  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person } = buildCity(scene);
 
   // Aircraft markers flying the air routes (region scale, ink triangles).
   const flights: City['flights'] = [];
@@ -549,7 +619,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
     subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
-    flights,
+    shellMat, person, flights,
     orbitTarget: REST_TARGET.clone(),
     orbit: {
       az: Math.atan2(off.x, off.z),
@@ -636,6 +706,12 @@ export function settleDesktop(): void {
   city.metroPlane.visible = true;
   city.flights.forEach((f) => { f.mesh.visible = false; });
   (city.subjectEdges.material as THREE.LineBasicMaterial).opacity = 0;
+  city.shellMat.opacity = 1;
+  city.shellMat.transparent = false;
+  if (city.camera.near !== 5) {
+    city.camera.near = 5;
+    city.camera.updateProjectionMatrix();
+  }
   city.orbitTarget.copy(REST_TARGET);
   showTags(); // renders a fresh frame + positions tags (covers static mode)
 }
@@ -784,9 +860,8 @@ function openFromTag(spec: AppAnchor, tag: HTMLElement): void {
 
 const mapToWorld = (mx: number, my: number) => new THREE.Vector3((mx - 500) * REGION_SCALE, 3, (my - 350) * REGION_SCALE);
 
-function subjectScreenRect(): DOMRect | null {
+function boundsScreenRect(b: THREE.Box3): DOMRect | null {
   if (!city) return null;
-  const b = city.subjectBounds;
   const pts = [
     new THREE.Vector3(b.min.x, b.min.y, b.min.z), new THREE.Vector3(b.max.x, b.min.y, b.min.z),
     new THREE.Vector3(b.min.x, b.max.y, b.min.z), new THREE.Vector3(b.max.x, b.max.y, b.min.z),
@@ -873,47 +948,58 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     gsap.fromTo(flashEl, { opacity: 0 }, { opacity: 0.9, duration: 0.05, yoyo: true, repeat: 1 });
   };
 
-  /* Document confetti: the system aggregates the file into the profiler card. */
-  const docSwarm = (tx: number, ty: number) => {
-    for (let i = 0; i < 26; i++) {
-      const d = document.createElement('span');
-      d.className = 'xw-zi-doc';
-      const sx = Math.random() * window.innerWidth;
-      const sy = Math.random() * window.innerHeight;
-      d.style.width = `${5 + Math.random() * 7}px`;
-      d.style.height = `${7 + Math.random() * 9}px`;
-      overlay.appendChild(d);
-      gsap.fromTo(
-        d,
-        { x: sx, y: sy, opacity: 0 },
-        {
-          x: tx, y: ty, opacity: 0.9,
-          duration: 0.4 + Math.random() * 0.3,
-          delay: Math.random() * 0.25,
-          ease: 'power2.in',
-          onComplete: () => d.remove(),
-        },
-      );
-    }
-  };
+
 
   // Camera path: start SOUTH of the target looking north (map reads north-up),
-  // drift gently left (west) on the way down, then settle into the rest pose.
+  // drift gently left on the way down — then keep going: through the facade,
+  // into the room, to the person at the screen. The dive never settles.
+  const q = c.islandGroup.quaternion;
+  const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(q); // room "behind the person"
+  const bCenter = c.subjectBounds.getCenter(new THREE.Vector3());
+  const entry = bCenter.clone().setY(c.subjectBounds.max.y + 40).add(fwd.clone().multiplyScalar(26));
+  const inside = bCenter.clone().setY(12.5).add(fwd.clone().multiplyScalar(14));
+  const lookRoof = bCenter.clone().setY(c.subjectBounds.max.y);
+  const lookPerson = bCenter.clone().setY(6.2).sub(fwd.clone().multiplyScalar(2));
   const path = new THREE.CatmullRomCurve3([
     new THREE.Vector3(60, 5600, 1500),
     new THREE.Vector3(-420, 3100, 1500),
-    new THREE.Vector3(-380, 1300, 1050),
-    new THREE.Vector3(20, 640, 720),
-    REST_POS.clone(),
+    new THREE.Vector3(-360, 1300, 1000),
+    new THREE.Vector3(60, 560, 660),
+    entry,
+    inside,
   ], false, 'centripetal');
   const lookFrom = new THREE.Vector3(0, 0, 0);
   const flight = { t: 0 };
 
+  let shellFlashed = false;
   const setCam = () => {
     const pos = path.getPoint(flight.t);
     c.camera.position.copy(pos);
-    const target = lookFrom.clone().lerp(REST_TARGET, flight.t);
+    // Piecewise look target: geography → the subject's roof → the person.
+    const t = flight.t;
+    const target = new THREE.Vector3();
+    if (t < 0.6) target.copy(lookFrom).lerp(lookRoof, t / 0.6);
+    else if (t < 0.85) target.copy(lookRoof).lerp(lookPerson, (t - 0.6) / 0.25);
+    else target.copy(lookPerson);
     c.camera.lookAt(target);
+    // Facade fades as the camera closes; a single blink as we cross it.
+    const dist = pos.distanceTo(bCenter);
+    const fade = THREE.MathUtils.clamp((dist - 26) / 120, 0, 1);
+    if (fade < 1) c.shellMat.transparent = true;
+    c.shellMat.opacity = fade;
+    if (!shellFlashed && fade < 0.45) {
+      shellFlashed = true;
+      flash();
+    }
+    // Subject edges glow on approach, hand off to the interior at the end.
+    const em = c.subjectEdges.material as THREE.LineBasicMaterial;
+    em.opacity = THREE.MathUtils.clamp((900 - dist) / 500, 0, 1) * THREE.MathUtils.clamp((dist - 30) / 40, 0, 1) * 0.9;
+    // Interior needs a tighter near plane than the cinematic sky does.
+    const near = pos.y < 140 ? 0.8 : 5;
+    if (c.camera.near !== near) {
+      c.camera.near = near;
+      c.camera.updateProjectionMatrix();
+    }
     // True-ish readouts derived from the camera: position over the geography.
     const mx = 500 + target.x / REGION_SCALE;
     const my = 350 + target.z / REGION_SCALE;
@@ -1051,79 +1137,92 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     .add(() => typeOut(), '<+0.85')
     .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.35')
     .add(() => typeOut(), '<+0.75')
-    .add(() => setStatus('Grid — Manhattan'), '<45%')
+    .add(() => setStatus('Grid — Manhattan'), '<40%')
+    .add(() => setStatus('Entering — subject residence'), '<78%')
     .add(glitch, '<10%')
-    .add(glitch, '<55%')
     .add(() => {
-      setStatus('Block resolved');
       lockOn();
     });
 
-  /* Lock-on finale (screen-space, same grammar as the 2D path). */
-  const bracketFrame = (r: DOMRect, spread: number) => {
-    const x0 = r.left - spread;
-    const y0 = r.top - spread;
-    const x1 = r.right + spread;
-    const y1 = r.bottom + spread;
-    gsap.set('.xw-zi-bkt--tl', { left: x0 - 18, top: y0 - 18 });
-    gsap.set('.xw-zi-bkt--tr', { left: x1, top: y0 - 18 });
-    gsap.set('.xw-zi-bkt--bl', { left: x0 - 18, top: y1 });
-    gsap.set('.xw-zi-bkt--br', { left: x1, top: y1 });
-  };
-
+  /* Lock-on finale: an entity HITBOX draws around the person at the screen —
+     game-style target labeling — then the subject's information card fires. */
   const lockOn = () => {
     if (finished) return;
-    const anchor = subjectScreenRect();
-    if (!anchor) { finish(false); return; }
-    setStatus('Subject located');
-    // The target is a BUILDING, not a patch of ground — light its edges.
-    const edgeMat = c.subjectEdges.material as THREE.LineBasicMaterial;
-    gsap.to(edgeMat, { opacity: 0.95, duration: 0.18 });
-    gsap.to(edgeMat, { opacity: 0.35, duration: 0.55, yoyo: true, repeat: 3, delay: 0.2 });
-    const ltl = gsap.timeline();
-    [200, 80, 26, 6].forEach((spread, i) => {
-      ltl.add(() => {
-        bracketFrame(anchor, spread);
-        if (i === 0) gsap.set('.xw-zi-bkt', { autoAlpha: 1 });
-        glitch();
-      }).to({}, { duration: 0.09 });
+    const raw = boundsScreenRect(new THREE.Box3().setFromObject(c.person));
+    if (!raw) { finish(false); return; }
+    setStatus('Subject identified');
+    // Cap the box so it reads as an entity TAG, not a screen border.
+    const maxW = window.innerWidth * 0.34;
+    const maxH = window.innerHeight * 0.62;
+    const cx = raw.left + raw.width / 2;
+    const cy = raw.top + raw.height / 2;
+    const w = Math.min(raw.width + 28, maxW);
+    const h = Math.min(raw.height + 28, maxH);
+    const pr = new DOMRect(cx - w / 2, cy - h / 2, w, h);
+    hbox.classList.add('xw-zi-hbox--entity');
+    gsap.set(hbox, {
+      autoAlpha: 1,
+      left: pr.left,
+      top: pr.top,
+      width: pr.width,
+      height: pr.height,
     });
+    gsap.from(hbox, { scale: 1.45, opacity: 0, duration: 0.22, ease: 'power3.out' });
+    chip.textContent = 'SUBJECT';
+    chip.style.left = `${pr.left}px`;
+    chip.style.top = `${Math.max(60, pr.top - 34)}px`;
+    gsap.set(chip, { opacity: 1 });
+    glitch();
+
+    const ltl = gsap.timeline();
     ltl
+      .to({}, { duration: 0.5 })
       .add(() => {
+        if (finished) { ltl.kill(); return; }
         overlay.classList.add('xw-zi-lock--captured');
-        flash();
-        docSwarm(anchor.right + 90, Math.max(40, anchor.top + 10));
-        gsap.set('#xw-zi-lockrect', {
-          autoAlpha: 1,
-          left: anchor.left - 6, top: anchor.top - 6,
-          width: anchor.width + 12, height: anchor.height + 12,
-        });
-      })
-      .to({}, { duration: 0.12 })
-      .add(() => {
-        gsap.set('#xw-zi-connector', {
-          autoAlpha: 1,
-          left: anchor.right + 6, top: anchor.top + anchor.height / 2, width: 0,
-        });
-      })
-      .to('#xw-zi-connector', { width: 36, duration: 0.12 })
-      .add(() => {
+        chip.textContent = 'SUBJECT — IDENTIFIED';
         gsap.set(card, {
-          left: Math.max(8, Math.min(anchor.right + 42, window.innerWidth - 300)),
-          top: Math.max(16, Math.min(anchor.top - 24, window.innerHeight - 140)),
+          left: Math.max(8, Math.min(pr.right + 30, window.innerWidth - 320)),
+          top: Math.max(64, Math.min(pr.top, window.innerHeight - 180)),
         });
       })
-      .fromTo(card, { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.2 })
+      .fromTo(card, { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.22 })
       .add(() => setStatus('Subject located — opening file'))
-      .to({}, { duration: 0.6 })
+      .to({}, { duration: 0.85 })
       .add(() => cardToWindow());
+  };
+
+  const pullBackToRest = () => {
+    const from = c.camera.position.clone();
+    const pull = { k: 0 };
+    gsap.to(pull, {
+      k: 1,
+      duration: 0.9,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        c.camera.position.lerpVectors(from, REST_POS, pull.k);
+        const lt = new THREE.Vector3().lerpVectors(lookPerson, REST_TARGET, pull.k);
+        c.camera.lookAt(lt);
+        const dist = c.camera.position.distanceTo(bCenter);
+        const fade = THREE.MathUtils.clamp((dist - 26) / 120, 0, 1);
+        c.shellMat.opacity = fade;
+        if (fade >= 1) c.shellMat.transparent = false;
+        const near = c.camera.position.y < 140 ? 0.8 : 5;
+        if (c.camera.near !== near) {
+          c.camera.near = near;
+          c.camera.updateProjectionMatrix();
+        }
+      },
+      onComplete: () => {
+        introActive = false; // hand the camera to the desktop orbit
+      },
+    });
   };
 
   const cardToWindow = () => {
     if (finished) return;
     finished = true;
     document.removeEventListener('keydown', onKey);
-    introActive = false;
     // The hidden window still has layout — measure it WITHOUT revealing yet;
     // the Dossier must not appear until the card lands on it.
     const winEl = document.querySelector<HTMLElement>('.xw-window[data-app="dossier"]');
@@ -1134,7 +1233,10 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       opacity: 0, duration: 0.18,
     });
     if (!target || target.width === 0) {
-      mtl.add(() => reveal(), '<+0.1').to(overlay, { opacity: 0, duration: 0.3 }, '<');
+      mtl.add(() => {
+        reveal();
+        pullBackToRest();
+      }, '<+0.1').to(overlay, { opacity: 0, duration: 0.3 }, '<');
       return;
     }
     mtl
@@ -1146,8 +1248,9 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       .add(() => {
         gsap.to(edgeMat, { opacity: 0, duration: 0.4 });
         reveal(); // the window appears exactly where the card landed
+        pullBackToRest(); // the camera glides out of the room behind it
       })
-      .to(overlay, { opacity: 0, duration: 0.25 });
+      .to(overlay, { opacity: 0, duration: 0.35 });
   };
 
   return true;

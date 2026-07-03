@@ -3380,3 +3380,27 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
 .xw-desktop--city {
   background: var(--xw-bg);
 }
+
+/* Entity hitbox — game-style target label around the person. */
+.xw-zi-hbox--entity {
+  border: 1.5px solid rgba(244, 239, 230, 0.9);
+  border-radius: 2px;
+}
+.xw-zi-hbox--entity::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: -34px;
+  width: 1px;
+  height: 34px;
+  background: rgba(244, 239, 230, 0.7);
+  border: none;
+}
+.xw-zi-hbox--entity::after { content: none; }
+.xw-zi-lock--captured .xw-zi-hbox--entity { border-color: var(--xw-accent); }
+.xw-zi-lock--captured .xw-zi-hbox--entity::before { background: var(--xw-accent); }
+.xw-zi-lock--captured .xw-zi-chip {
+  color: var(--xw-accent-ink);
+  background: var(--xw-accent);
+  border-color: var(--xw-accent);
+}
