@@ -67,6 +67,7 @@ interface City {
   camera: THREE.PerspectiveCamera;
   islandGroup: THREE.Group;
   regionPlane: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  metroPlane: THREE.Mesh;
   buildings: THREE.InstancedMesh;
   buildingBase: THREE.Matrix4[];
   subjectBounds: THREE.Box3;
@@ -177,6 +178,25 @@ function buildRegionTexture(): THREE.CanvasTexture {
     ctx.stroke(new Path2D(p.d));
   }
 
+  // The corridor as live infrastructure: dashed data route DC → Boston.
+  const corridor: Array<[number, number]> = [
+    [-77.037, 38.907], [-76.612, 39.29], [-75.165, 39.953], [-74.006, 40.713],
+    [-72.928, 41.308], [-71.413, 41.824], [-71.059, 42.36],
+  ];
+  ctx.save();
+  ctx.setLineDash([3.5, 5.5]);
+  ctx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  corridor.forEach(([lon, lat], i) => {
+    const x = 500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon;
+    const y = 350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.restore();
+
   // Night lights
   const rnd = lcg(20260703);
   const metros: Array<[number, number, number, number]> = [
@@ -226,6 +246,7 @@ function buildCity(scene: THREE.Scene): {
   subjectBounds: THREE.Box3;
   anchorWorlds: Map<string, THREE.Vector3>;
   packets: City['packets'];
+  metroPlane: THREE.Mesh;
 } {
   // Endless dark base so the textured ground never shows a horizon edge.
   const basePlane = new THREE.Mesh(
@@ -244,6 +265,7 @@ function buildCity(scene: THREE.Scene): {
   const metroPlane = new THREE.Mesh(new THREE.PlaneGeometry(8000, 8000), metroMat);
   metroPlane.rotation.x = -Math.PI / 2;
   metroPlane.position.y = 0.06;
+  metroPlane.name = 'xw-metro';
   scene.add(metroPlane);
 
   const group = new THREE.Group();
@@ -356,7 +378,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets };
+  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane };
 }
 
 function lcgHash(i: number): number {
@@ -394,7 +416,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets } = buildCity(scene);
+  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane } = buildCity(scene);
 
   // Geography plane (night-lights region) — visible at altitude, fades on dive.
   const regionMat = new THREE.MeshBasicMaterial({
@@ -432,7 +454,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   const off = REST_POS.clone().sub(REST_TARGET);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
-    subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets,
+    subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane,
     orbit: {
       az: Math.atan2(off.x, off.z),
       pol: Math.acos(off.y / off.length()),
@@ -467,6 +489,8 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     camera.lookAt(0, 0, 0);
     regionPlane.material.opacity = 1;
     applyRise(city, 0);
+    islandGroup.visible = false;
+    metroPlane.visible = false;
   }
 
   // Full animation always (project rule): the loop runs unconditionally and
@@ -510,6 +534,8 @@ export function settleDesktop(): void {
   city.camera.lookAt(REST_TARGET);
   city.regionPlane.material.opacity = 0;
   applyRise(city, 1);
+  city.islandGroup.visible = true;
+  city.metroPlane.visible = true;
   showTags(); // renders a fresh frame + positions tags (covers static mode)
 }
 
@@ -613,6 +639,13 @@ function diveToward(world: THREE.Vector3): void {
   gsap.to(city.orbit, { az, pol: 0.98, r: 250, duration: 0.75, ease: 'power2.inOut' });
 }
 
+/** Dock/nav hook: swing the camera to an app's building without opening it. */
+export function diveTowardApp(id: string): void {
+  if (!city || introActive) return;
+  const a = city.anchors.find((x) => x.spec.id === id);
+  if (a) diveToward(a.world);
+}
+
 function openFromTag(spec: AppAnchor, tag: HTMLElement): void {
   if (!city) return;
   const anchor = city.anchors.find((a) => a.spec.id === spec.id);
@@ -680,6 +713,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
         <span class="xw-zi-card-foot">ACCESSING FILE…</span>
       </div>
     </div>
+    <span class="xw-zi-brand" aria-hidden="true"><i>xiao</i>OS</span>
     <div class="xw-zi-type" id="xw-zi-type" aria-hidden="true">
       <span class="xw-zi-type-l1" id="xw-zi-type-l1"></span>
       <span class="xw-zi-type-l2" id="xw-zi-type-l2"></span>
@@ -746,11 +780,13 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     }
   };
 
-  // Camera path: high nadir over the region → banking dive → the rest pose.
+  // Camera path (MK12 grammar): a banking S-curve — swing wide east over the
+  // sound, cross back west as the city rises, settle into the rest pose.
   const path = new THREE.CatmullRomCurve3([
     new THREE.Vector3(40, 5600, 60),
-    new THREE.Vector3(420, 2600, 900),
-    new THREE.Vector3(760, 900, 1150),
+    new THREE.Vector3(1500, 3300, -350),
+    new THREE.Vector3(-700, 1450, 1050),
+    new THREE.Vector3(-40, 680, 820),
     REST_POS.clone(),
   ], false, 'centripetal');
   const lookFrom = new THREE.Vector3(0, 0, 0);
@@ -761,6 +797,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     c.camera.position.copy(pos);
     const target = lookFrom.clone().lerp(REST_TARGET, flight.t);
     c.camera.lookAt(target);
+    // Bank into the turns, settle level by the end.
+    c.camera.rotateZ(0.16 * Math.sin(flight.t * Math.PI * 2) * (1 - flight.t));
     // True-ish readouts derived from the camera: position over the geography.
     const mx = 500 + target.x / REGION_SCALE;
     const my = 350 + target.z / REGION_SCALE;
@@ -772,6 +810,11 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     // Region fades on descent; buildings rise 2200→800 so the two overlap.
     c.regionPlane.material.opacity = THREE.MathUtils.clamp((pos.y - 700) / 2200, 0, 1);
     setRise(THREE.MathUtils.clamp((2200 - pos.y) / 1400, 0, 1));
+    // Scale gate: street-scale layers don't exist at region altitude (they'd
+    // render as fog-black streaks over the unfogged geography).
+    const cityScale = pos.y < 2600;
+    c.islandGroup.visible = cityScale;
+    c.metroPlane.visible = cityScale;
   };
 
   const setRise = (r: number) => applyRise(c, r);
@@ -809,7 +852,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   document.addEventListener('keydown', onKey);
   skipBtn.addEventListener('click', () => finish(true));
 
-  const placeBox = (screen: { x: number; y: number }, size: number, label: string) => {
+  const placeBox = (screen: { x: number; y: number }, size: number, label: string, ring = false) => {
+    hbox.classList.toggle('xw-zi-hbox--ring', ring);
     gsap.set(hbox, {
       autoAlpha: 1,
       left: screen.x - size / 2,
@@ -830,6 +874,24 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     gsap.fromTo('.xw-city-canvas', { x: gsap.utils.random(-4, 4, 1) }, { x: 0, duration: 0.07 });
   };
 
+  // Tiny true-coordinate labels — instrument texture on the geography.
+  const microLabels: HTMLElement[] = [];
+  const metrosForMicro: Array<[number, number]> = [
+    [-71.059, 42.36], [-77.037, 38.907], [-75.165, 39.953], [-74.006, 40.713],
+  ];
+  for (const [lon, lat] of metrosForMicro) {
+    const world = mapToWorld(500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon, 350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat);
+    const scr = project(world);
+    const el = document.createElement('span');
+    el.className = 'xw-zi-micro';
+    el.textContent = `${lat.toFixed(2)}N ${Math.abs(lon).toFixed(2)}W`;
+    el.style.left = `${scr.x + 14}px`;
+    el.style.top = `${scr.y + 10}px`;
+    overlay.appendChild(el);
+    microLabels.push(el);
+  }
+  gsap.set(microLabels, { autoAlpha: 0 });
+
   const candidates: Array<[number, number, string]> = [
     [-71.059, 42.36, 'BOSTON METRO'],
     [-77.037, 38.907, 'WASHINGTON METRO'],
@@ -838,12 +900,13 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
 
   const tl = gsap.timeline();
   tl.add(() => setStatus('Acquiring — northeast corridor'), 0)
+    .to(microLabels, { autoAlpha: 0.85, duration: 0.3, stagger: 0.06 }, 0.35)
     .to(overlay, { '--xw-zi-veil': 0, duration: 0.01 }, 0);
 
   candidates.forEach(([lon, lat, label]) => {
     tl.add(() => {
       const world = mapToWorld(500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon, 350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat);
-      placeBox(project(world), 120, label);
+      placeBox(project(world), 140, label, true);
       glitch();
     }).to({}, { duration: 0.14 });
   });
@@ -856,11 +919,14 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       setStatus('Target — New York metro');
     })
     // The one continuous dive.
-    .to(flight, { t: 1, duration: 3.4, ease: 'power2.inOut', onUpdate: setCam })
-    .add(() => typeIn('NEW YORK,', 'NY.'), '<+0.25')
-    .add(() => typeOut(), '<+1.15')
-    .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.45')
-    .add(() => typeOut(), '<+1.0')
+    .to(microLabels, { autoAlpha: 0, duration: 0.25 }, '<')
+    .to(flight, { t: 1, duration: 4.0, ease: 'power2.inOut', onUpdate: setCam }, '<')
+    .add(() => typeIn('NEW YORK,', 'NY.'), '<+0.2')
+    .add(() => typeOut(), '<+0.85')
+    .add(() => typeIn('8,300,000', 'PEOPLE.'), '<+0.35')
+    .add(() => typeOut(), '<+0.85')
+    .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.35')
+    .add(() => typeOut(), '<+0.75')
     .add(() => setStatus('Grid — Manhattan'), '<45%')
     .add(glitch, '<10%')
     .add(glitch, '<55%')

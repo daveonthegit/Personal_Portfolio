@@ -80,6 +80,12 @@ export class OSShell {
     const spec = APP_BY_ID.get(id);
     if (!spec) return;
 
+    // One location at a time: opening an app retires the other app windows
+    // (live-capture windows are independent and stay).
+    for (const otherId of Array.from(this.windows.keys())) {
+      if (otherId !== id) this.closeApp(otherId);
+    }
+
     const existing = this.windows.get(id);
     if (existing) {
       if (existing.minimized) this.setMinimized(existing, false);
@@ -400,6 +406,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
   shell.adoptInitial(article, initialApp.id);
 
   // The City (ADR 0002) — lazy chunk; SVG wallpaper stays if WebGL is out.
+  let cityApi: typeof import('./city3d') | null = null;
   void import('./city3d')
     .then((m) => {
       const ok = m.mountCity(plane, {
@@ -407,6 +414,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
           void shell.openApp(id as AppId, { originRect: rect ?? undefined });
         },
       });
+      if (ok) cityApi = m;
       // During the apex intro the flight reveals the tags itself.
       if (ok && !document.body.classList.contains('xw-introing')) m.showTags();
     })
@@ -420,6 +428,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
       const id = item.dataset.xwDock as AppId | undefined;
       if (!id) return;
       e.preventDefault();
+      cityApi?.diveTowardApp(id); // the nav flies you to the location too
       void shell.openApp(id);
     });
   });

@@ -3323,3 +3323,40 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
   background: rgba(244, 239, 230, 0.92);
   pointer-events: none;
 }
+
+/* Intro revision — brand chip, radar rings, micro coordinates */
+.xw-zi-brand {
+  position: fixed;
+  top: 18px;
+  right: clamp(16px, 4vw, 44px);
+  font-family: var(--xw-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--xw-ink);
+  pointer-events: none;
+}
+.xw-zi-brand i {
+  font-style: normal;
+  background: var(--xw-ink);
+  color: #0b0a09;
+  padding: 2px 5px;
+  margin-right: 3px;
+}
+
+.xw-zi-hbox--ring {
+  border-radius: 50%;
+  border-color: rgba(244, 239, 230, 0.5);
+}
+.xw-zi-hbox--ring::before,
+.xw-zi-hbox--ring::after { content: none; }
+
+.xw-zi-micro {
+  position: fixed;
+  font-family: var(--xw-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.1em;
+  color: var(--xw-ink-faint);
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
