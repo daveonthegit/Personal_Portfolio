@@ -106,6 +106,13 @@ interface City {
 
 let city: City | null = null;
 
+/** Portrait containers (the Companion App) need a farther rest camera — the
+ *  vertical FOV is fixed, so narrow aspects crop the island horizontally. */
+function restRadiusScale(): number {
+  const aspect = city?.camera.aspect ?? 16 / 9;
+  return THREE.MathUtils.clamp(1.3 / aspect, 1, 2.4);
+}
+
 export function cityMounted(): boolean {
   return city !== null;
 }
@@ -753,6 +760,8 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   plane.appendChild(exitBtn);
 
   const off = REST_POS.clone().sub(REST_TARGET);
+  const baseAspect = plane.clientWidth / Math.max(1, plane.clientHeight);
+  const rScale = THREE.MathUtils.clamp(1.3 / baseAspect, 1, 2.4);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
     subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
@@ -765,7 +774,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     orbit: {
       az: Math.atan2(off.x, off.z),
       pol: Math.acos(off.y / off.length()),
-      r: off.length(),
+      r: off.length() * rScale,
     },
     clock: new THREE.Clock(),
   };
@@ -879,6 +888,10 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     city.renderer.setSize(w, h);
     city.camera.aspect = w / h;
     city.camera.updateProjectionMatrix();
+    if (city.mode === 'overhead') {
+      const offR = REST_POS.clone().sub(REST_TARGET);
+      city.orbit.r = offR.length() * restRadiusScale();
+    }
   };
   window.addEventListener('resize', onResize);
   // The mobile map panel resizes without a window resize (fullscreen intro →
@@ -957,6 +970,12 @@ export function settleDesktop(): void {
   if (city.camera.near !== 5) {
     city.camera.near = 5;
     city.camera.updateProjectionMatrix();
+  }
+  {
+    const offR = REST_POS.clone().sub(REST_TARGET);
+    city.orbit.az = Math.atan2(offR.x, offR.z);
+    city.orbit.pol = Math.acos(offR.y / offR.length());
+    city.orbit.r = offR.length() * restRadiusScale();
   }
   city.orbitTarget.copy(REST_TARGET);
   showTags(); // renders a fresh frame + positions tags (covers static mode)
@@ -1185,7 +1204,7 @@ export function exitRoom(fast = false): void {
       const off2 = REST_POS.clone().sub(REST_TARGET);
       c.orbit.az = Math.atan2(off2.x, off2.z);
       c.orbit.pol = Math.acos(off2.y / off2.length());
-      c.orbit.r = off2.length();
+      c.orbit.r = off2.length() * restRadiusScale();
       c.orbitTarget.copy(REST_TARGET);
     },
   });
