@@ -487,31 +487,81 @@ export function initOSShell(): void {
   if (desktopMode) {
     activateDesktop(initialApp, article);
   } else {
-    // Companion App presentation: bottom tab bar, native navigation, native
-    // scroll — plus the City as a rotatable map panel on the home screen.
+    // Companion App presentation: the MAP is the main nav. /home is a
+    // fullscreen city hub (tags navigate); the dossier document lives behind
+    // its tag at /home#file; every other view gets a floating "back to map".
     document.body.classList.add('xw-os-mobile');
-    if (initialApp.id === 'dossier') mountMobileCity(article);
+    if (initialApp.id === 'dossier') mountMobileMapHome();
+    else mountMapBackLink();
   }
 }
 
-/** The City on the Companion App: a map panel above the dossier document.
- *  Tags navigate natively (no windows on touch). */
-function mountMobileCity(article: HTMLElement): void {
+/** Fullscreen map hub on mobile /home; the dossier doc toggles via #file. */
+function mountMobileMapHome(): void {
+  document.body.classList.add('xw-map-home');
+
   const panel = document.createElement('div');
   panel.className = 'xw-city-mobile';
   panel.setAttribute('aria-label', 'City map — app locations');
-  article.parentNode?.insertBefore(panel, article);
+  document.body.appendChild(panel);
+
+  const setView = (map: boolean, sync = true) => {
+    document.body.classList.toggle('xw-map-view', map);
+    if (sync) {
+      try {
+        window.history.replaceState(null, '', map ? '/home' : '/home#file');
+      } catch {
+        /* URL cosmetics only */
+      }
+    }
+    if (!map) window.scrollTo(0, 0);
+  };
+
+  const back = document.createElement('button');
+  back.type = 'button';
+  back.className = 'xw-map-back';
+  back.innerHTML = '<span aria-hidden="true">◂</span> Map';
+  back.addEventListener('click', () => setView(true));
+  document.body.appendChild(back);
+
+  window.addEventListener('hashchange', () => setView(window.location.hash !== '#file', false));
 
   void import('./city3d')
     .then((m) => {
       const ok = m.mountCity(panel, {
         openApp: (id) => {
+          if (id === 'dossier') {
+            setView(false);
+            return;
+          }
           const spec = APP_BY_ID.get(id as AppId);
           if (spec) window.location.href = spec.route;
         },
       });
-      if (ok) m.showTags();
-      else panel.remove();
+      if (ok) {
+        if (!document.body.classList.contains('xw-introing')) m.showTags();
+        setView(window.location.hash !== '#file', false);
+      } else {
+        // No WebGL: plain document companion, no map hub.
+        panel.remove();
+        back.remove();
+        document.body.classList.remove('xw-map-home');
+        document.body.classList.remove('xw-map-view');
+      }
     })
-    .catch(() => panel.remove());
+    .catch(() => {
+      panel.remove();
+      back.remove();
+      document.body.classList.remove('xw-map-home');
+      document.body.classList.remove('xw-map-view');
+    });
+}
+
+/** Floating return-to-map control on non-home mobile views. */
+function mountMapBackLink(): void {
+  const a = document.createElement('a');
+  a.href = '/home';
+  a.className = 'xw-map-back';
+  a.innerHTML = '<span aria-hidden="true">◂</span> Map';
+  document.body.appendChild(a);
 }

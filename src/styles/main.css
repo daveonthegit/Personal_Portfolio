@@ -1395,6 +1395,9 @@ body.xw-boot-pending #startup-animation {
 @media (max-width: 900px) {
   .xw-contact-grid { grid-template-columns: 1fr; }
 }
+/* Inside a Window the viewport media query never fires — the window is the
+   container. Stack the channels above the form there. */
+.xw-window .xw-contact-grid { grid-template-columns: 1fr; }
 
 .xw-contact-channels {
   border: 1px solid var(--xw-hairline);
@@ -1411,9 +1414,17 @@ body.xw-boot-pending #startup-animation {
 }
 .xw-channels li {
   display: grid;
-  grid-template-columns: 5rem 1fr;
+  grid-template-columns: 5rem minmax(0, 1fr);
   gap: 0.75rem;
   align-items: baseline;
+}
+/* Long unbroken values (URLs, emails) must wrap inside their track, never
+   paint over the neighboring column. */
+.xw-channels li a,
+.xw-channels li span,
+.xw-channels li dd {
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 @media (max-width: 480px) {
   .xw-channels li { grid-template-columns: 1fr; gap: 0.15rem; }
@@ -2493,7 +2504,7 @@ body.xw-os .xw-dock {
 .xw-window[data-app="dossier"]  { width: min(1020px, 62vw); height: min(86%, 960px); }
 .xw-window[data-app="projects"] { width: min(1120px, 70vw); height: min(84%, 980px); }
 .xw-window[data-app="resume"]   { width: min(920px, 58vw);  height: min(84%, 940px); }
-.xw-window[data-app="contact"]  { width: min(700px, 44vw);  height: min(72%, 780px); }
+.xw-window[data-app="contact"]  { width: min(780px, 52vw);  height: min(80%, 860px); }
 
 /* Unfocused windows recede slightly so the stack reads at a glance. */
 .xw-window:not(.xw-window--focused) { filter: brightness(0.84); }
@@ -3225,3 +3236,57 @@ body.xw-introing .xw-section-rail {
   border-bottom: 1px solid var(--xw-hairline);
   overflow: hidden;
 }
+
+/* Mobile plays the same 3D intro fullscreen: while the intro veil is up, the
+   map panel covers the viewport; it settles back into the page at reveal. */
+body.xw-introing .xw-city-mobile {
+  position: fixed;
+  inset: 0;
+  height: auto;
+  min-height: 0;
+  z-index: 9998; /* beneath the intro HUD (9999) and boot cover (10000) */
+  border-bottom: none;
+}
+
+/* ── Mobile map hub: the City IS the main nav ── */
+.xw-dock-label--mob { display: none; }
+body.xw-os-mobile .xw-dock-label--desk { display: none; }
+body.xw-os-mobile .xw-dock-label--mob { display: block; }
+
+body.xw-map-home .xw-city-mobile {
+  position: fixed;
+  top: var(--xw-topbar-h);
+  bottom: calc(58px + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  height: auto;
+  min-height: 0;
+  border-bottom: none;
+  z-index: var(--z-content);
+  display: none;
+}
+body.xw-map-home.xw-map-view .xw-city-mobile { display: block; }
+body.xw-map-home.xw-map-view #main-content { display: none; }
+
+/* Floating return-to-map control (mobile only) */
+.xw-map-back {
+  display: none;
+  position: fixed;
+  right: 14px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: var(--z-topbar);
+  align-items: center;
+  gap: 6px;
+  font-family: var(--xw-mono);
+  font-size: var(--xw-fs-caps);
+  letter-spacing: var(--xw-tracking-caps);
+  text-transform: uppercase;
+  color: var(--xw-ink);
+  background: rgba(11, 10, 9, 0.92);
+  border: 1px solid var(--xw-hairline-hi);
+  padding: 9px 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+body.xw-os-mobile .xw-map-back { display: inline-flex; }
+body.xw-map-home.xw-map-view .xw-map-back { display: none; }

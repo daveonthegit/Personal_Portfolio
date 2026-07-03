@@ -422,6 +422,11 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     city.camera.updateProjectionMatrix();
   };
   window.addEventListener('resize', onResize);
+  // The mobile map panel resizes without a window resize (fullscreen intro →
+  // in-flow panel). Track the container itself.
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(() => onResize()).observe(plane);
+  }
 
   // If the intro flight is pending, pre-park the camera at its start so the
   // boot fade never glimpses the desktop view (buildings down, geography up).
@@ -803,7 +808,10 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       })
       .to('#xw-zi-connector', { width: 36, duration: 0.12 })
       .add(() => {
-        gsap.set(card, { left: anchor.right + 42, top: Math.max(16, anchor.top - 24) });
+        gsap.set(card, {
+          left: Math.max(8, Math.min(anchor.right + 42, window.innerWidth - 300)),
+          top: Math.max(16, Math.min(anchor.top - 24, window.innerHeight - 140)),
+        });
       })
       .fromTo(card, { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.2 })
       .add(() => setStatus('Subject located — opening file'))

@@ -54,8 +54,10 @@ native phone OS app. Never overlapping draggable windows on touch.
 
 **Companion App**
 The mobile form of xiaoOS as a whole: designed as its own mobile-first product (the
-"phone app" of the surveillance system), not the Desktop scaled down. Same Apps, same
-content, different native-feeling presentation.
+"phone app" of the surveillance system), not the Desktop scaled down. The CITY MAP is
+its main navigation — the home screen is the fullscreen rotatable City with Tags; the
+dossier document lives behind its Tag; every other view carries a "back to map" control
+alongside the bottom tab bar. Same intro cinematic as the Desktop, played fullscreen.
 
 **Dossier**
 The surveillance file on David Xiao — the subject file the system "already has."

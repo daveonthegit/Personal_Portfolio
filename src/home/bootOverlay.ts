@@ -95,8 +95,9 @@ export function initBootOverlay(): void {
 
   // The full intro ALWAYS plays (project rule — owner's decision overrides the
   // reduced-motion skip). Bypass/Escape remain the visitor's way out.
-  // 3D City intro (ADR 0002) on fine-pointer desktops; SVG ladder elsewhere.
-  const wants3D = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+  // 3D City intro (ADR 0002) on every form factor — mobile plays it fullscreen
+  // in the map panel; the SVG ladder remains the no-WebGL fallback.
+  const wants3D = true;
   // Warm the chunk during the boot animation; the shell mounts the scene.
   const cityP = wants3D
     ? import('../os/city3d').catch(() => null)
