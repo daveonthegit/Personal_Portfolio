@@ -23,8 +23,8 @@ const REGION_SCALE = 12; // world units per map unit on the geography plane
 const ISLAND_ROT = (-28.9 * Math.PI) / 180;
 const DPR_CAP = 1.5;
 
-const REST_POS = new THREE.Vector3(330, 270, 380);
-const REST_TARGET = new THREE.Vector3(0, 24, -20);
+const REST_POS = new THREE.Vector3(300, 265, 400);
+const REST_TARGET = new THREE.Vector3(-70, 24, -10);
 
 interface AppAnchor {
   id: string;
@@ -36,12 +36,14 @@ interface AppAnchor {
   h: number;
 }
 
+// Anchors sit along the island's east/downtown run so their tags project into
+// the free right third of the rest view — NOT behind the default Dossier window.
 const APP_ANCHORS: AppAnchor[] = [
   { id: 'dossier', label: 'DOSSIER', line: 'Subject file — profile & history', lx: 20, lz: 40, h: 46 },
-  { id: 'projects', label: 'PROJECTS', line: 'Recovered artifacts & live captures', lx: -60, lz: -160, h: 110 },
-  { id: 'resume', label: 'RESUME', line: 'Career document (PDF)', lx: 140, lz: 150, h: 74 },
-  { id: 'contact', label: 'CONTACT', line: 'Direct channel to the subject', lx: -100, lz: 240, h: 128 },
-  { id: 'arcade', label: 'ARCADE', line: 'Recreational modules — playable', lx: -150, lz: -30, h: 34 },
+  { id: 'projects', label: 'PROJECTS', line: 'Recovered artifacts & live captures', lx: 190, lz: 120, h: 96 },
+  { id: 'resume', label: 'RESUME', line: 'Career document (PDF)', lx: 200, lz: 210, h: 74 },
+  { id: 'contact', label: 'CONTACT', line: 'Direct channel to the subject', lx: 160, lz: -60, h: 128 },
+  { id: 'arcade', label: 'ARCADE', line: 'Recreational modules — playable', lx: 218, lz: 30, h: 40 },
 ];
 
 function lcg(seed: number): () => number {
@@ -379,6 +381,11 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     city.renderer.setSize(w, h);
     city.camera.aspect = w / h;
     city.camera.updateProjectionMatrix();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // No frame loop in static mode — repaint and reposition tags manually.
+      city.renderer.render(city.scene, city.camera);
+      updateTags();
+    }
   };
   window.addEventListener('resize', onResize);
 
@@ -438,11 +445,7 @@ export function settleDesktop(): void {
   city.camera.lookAt(REST_TARGET);
   city.regionPlane.material.opacity = 0;
   applyRise(city, 1);
-  showTags();
-  if (!city.renderer.getContext().isContextLost() && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    city.renderer.render(city.scene, city.camera);
-    updateTags();
-  }
+  showTags(); // renders a fresh frame + positions tags (covers static mode)
 }
 
 function tick(): void {
@@ -475,7 +478,12 @@ let tagsShown = false;
 
 export function showTags(): void {
   tagsShown = true;
-  city?.tagLayer.classList.add('xw-city-tags--on');
+  if (!city) return;
+  city.tagLayer.classList.add('xw-city-tags--on');
+  // Static mode (reduced motion) has no frame loop — render and position the
+  // tags explicitly, or they'd appear stacked and untransformed at origin.
+  city.renderer.render(city.scene, city.camera);
+  updateTags();
 }
 
 function updateTags(): void {
