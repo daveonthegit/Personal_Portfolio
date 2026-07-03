@@ -3360,3 +3360,23 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
   pointer-events: none;
   font-variant-numeric: tabular-nums;
 }
+
+/* Targeting-system search — viewport crosshair + lock state */
+.xw-zi-crossline {
+  position: fixed;
+  background: rgba(244, 239, 230, 0.26);
+  pointer-events: none;
+}
+.xw-zi-crossline--h { left: 0; right: 0; height: 1px; }
+.xw-zi-crossline--v { top: 0; bottom: 0; width: 1px; }
+.xw-zi-target-lock .xw-zi-crossline { background: rgba(0, 210, 255, 0.45); }
+.xw-zi-target-lock .xw-zi-hbox { border-color: rgba(0, 210, 255, 0.55); }
+.xw-zi-target-lock .xw-zi-hbox::before,
+.xw-zi-target-lock .xw-zi-hbox::after {
+  border-color: var(--xw-accent);
+}
+
+/* While the 3D City renders, the plane's own decoration must not bleed through. */
+.xw-desktop--city {
+  background: var(--xw-bg);
+}

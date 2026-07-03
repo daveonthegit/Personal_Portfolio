@@ -76,7 +76,10 @@ interface City {
   hooks: CityHooks;
   riseT: number;
   orbit: { az: number; pol: number; r: number };
+  orbitTarget: THREE.Vector3;
   packets: Array<{ mesh: THREE.Mesh; pts: THREE.Vector3[]; lens: number[]; total: number; speed: number; phase: number }>;
+  flights: Array<{ mesh: THREE.Mesh; a: THREE.Vector3; b: THREE.Vector3; total: number; speed: number; phase: number }>;
+  subjectEdges: THREE.LineSegments;
   clock: THREE.Clock;
 }
 
@@ -161,7 +164,7 @@ function buildRegionTexture(): THREE.CanvasTexture {
   c.height = 1434;
   const ctx = c.getContext('2d')!;
   const k = 2048 / 1000;
-  ctx.fillStyle = '#050504';
+  ctx.fillStyle = '#060505'; // EXACT scene background — no visible plane edge
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.scale(k, k);
 
@@ -177,6 +180,28 @@ function buildRegionTexture(): THREE.CanvasTexture {
   for (const p of METRO_COAST) {
     ctx.stroke(new Path2D(p.d));
   }
+
+  // Air routes (trailer grammar) — dashed ink arcs; markers fly them in 3D.
+  const airRoutes: Array<Array<[number, number]>> = [
+    [[-77.037, 38.907], [-71.059, 42.36]],
+    [[-74.006, 40.713], [-73.756, 42.653]],
+    [[-75.165, 39.953], [-71.413, 41.824]],
+  ];
+  ctx.save();
+  ctx.setLineDash([2.5, 4.5]);
+  ctx.strokeStyle = 'rgba(244,239,230,0.22)';
+  ctx.lineWidth = 0.9;
+  for (const route of airRoutes) {
+    ctx.beginPath();
+    route.forEach(([lon, lat], i) => {
+      const x = 500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon;
+      const y = 350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  ctx.restore();
 
   // The corridor as live infrastructure: dashed data route DC → Boston.
   const corridor: Array<[number, number]> = [
@@ -219,6 +244,31 @@ function buildRegionTexture(): THREE.CanvasTexture {
       ctx.fillRect(mx + dx, my + dy, 1.1, 1.1);
     }
   }
+  // Fade the plane's borders to transparent so its rectangle never reads.
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'destination-out';
+  const edge = 140;
+  const fades: Array<[number, number, number, number]> = [
+    [0, 0, edge, 0], [c.width, 0, c.width - edge, 0],
+  ];
+  for (const [x0, y0, x1, y1] of fades) {
+    const g = ctx.createLinearGradient(x0, y0, x1, y1);
+    g.addColorStop(0, 'rgba(0,0,0,1)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, c.width, c.height);
+  }
+  const gv1 = ctx.createLinearGradient(0, 0, 0, edge);
+  gv1.addColorStop(0, 'rgba(0,0,0,1)');
+  gv1.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gv1;
+  ctx.fillRect(0, 0, c.width, edge);
+  const gv2 = ctx.createLinearGradient(0, c.height, 0, c.height - edge);
+  gv2.addColorStop(0, 'rgba(0,0,0,1)');
+  gv2.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gv2;
+  ctx.fillRect(0, c.height - edge, c.width, edge);
+  ctx.globalCompositeOperation = 'source-over';
   return new THREE.CanvasTexture(c);
 }
 
@@ -247,6 +297,7 @@ function buildCity(scene: THREE.Scene): {
   anchorWorlds: Map<string, THREE.Vector3>;
   packets: City['packets'];
   metroPlane: THREE.Mesh;
+  subjectEdges: THREE.LineSegments;
 } {
   // Endless dark base so the textured ground never shows a horizon edge.
   const basePlane = new THREE.Mesh(
@@ -363,6 +414,18 @@ function buildCity(scene: THREE.Scene): {
   scene.add(group);
   group.updateMatrixWorld(true);
 
+  // Subject building highlight — cyan edges, pulsed during the lock-on.
+  let subjectEdges = new THREE.LineSegments();
+  for (const p of positions) {
+    if (p.anchor?.id !== 'dossier') continue;
+    const eg = new THREE.EdgesGeometry(new THREE.BoxGeometry(p.w + 2, p.h + 2, p.d + 2));
+    const em = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0 });
+    em.fog = false;
+    subjectEdges = new THREE.LineSegments(eg, em);
+    subjectEdges.position.set(p.x, p.h / 2, p.z);
+    group.add(subjectEdges);
+  }
+
   // Anchor points + subject bounds via the group's REAL transform — no
   // hand-rolled rotation math to drift out of sync with the render.
   for (const p of positions) {
@@ -378,7 +441,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane };
+  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges };
 }
 
 function lcgHash(i: number): number {
@@ -401,13 +464,14 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   renderer.domElement.className = 'xw-city-canvas';
   // Replace only the SVG wallpaper — windows may already live in the plane.
   plane.querySelector('.xw-desktop-wallpaper')?.remove();
+  plane.classList.add('xw-desktop--city'); // canvas is the picture; no CSS grid
   plane.insertBefore(renderer.domElement, plane.firstChild);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(BG);
   scene.fog = new THREE.FogExp2(BG, 0.0006);
 
-  const camera = new THREE.PerspectiveCamera(50, plane.clientWidth / plane.clientHeight, 1, 30000);
+  const camera = new THREE.PerspectiveCamera(50, plane.clientWidth / plane.clientHeight, 5, 30000);
   camera.position.copy(REST_POS);
   camera.lookAt(REST_TARGET);
 
@@ -416,7 +480,36 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane } = buildCity(scene);
+  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges } = buildCity(scene);
+
+  // Aircraft markers flying the air routes (region scale, ink triangles).
+  const flights: City['flights'] = [];
+  {
+    const routes: Array<[[number, number], [number, number], number]> = [
+      [[-77.037, 38.907], [-71.059, 42.36], 170],
+      [[-73.756, 42.653], [-74.006, 40.713], 130],
+      [[-75.165, 39.953], [-71.413, 41.824], 150],
+    ];
+    const triGeo = new THREE.ConeGeometry(16, 42, 3);
+    triGeo.rotateX(-Math.PI / 2); // lie flat, nose along -z→heading applied later
+    for (const [[lonA, latA], [lonB, latB], speed] of routes) {
+      const toWorld = (lon: number, lat: number) =>
+        new THREE.Vector3(
+          (500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon - 500) * REGION_SCALE,
+          46, // above the region surface, or the plane hides its own traffic
+          (350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat - 350) * REGION_SCALE,
+        );
+      const a = toWorld(lonA, latA);
+      const b = toWorld(lonB, latB);
+      const mat = new THREE.MeshBasicMaterial({ color: 0xf4efe6, transparent: true, opacity: 0.85 });
+      mat.fog = false;
+      const m = new THREE.Mesh(triGeo, mat);
+      const heading = Math.atan2(b.x - a.x, b.z - a.z);
+      m.rotation.y = heading;
+      scene.add(m);
+      flights.push({ mesh: m, a, b, total: a.distanceTo(b), speed, phase: Math.abs(heading) * 1000 });
+    }
+  }
 
   // Geography plane (night-lights region) — visible at altitude, fades on dive.
   const regionMat = new THREE.MeshBasicMaterial({
@@ -431,8 +524,9 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     regionMat,
   );
   regionPlane.rotation.x = -Math.PI / 2;
-  // Center so NYC (map 500,350) sits at the origin.
-  regionPlane.position.set(0, 3, 0);
+  // Center so NYC (map 500,350) sits at the origin. Held WELL above the base
+  // plane — at cinematic distances their depth values z-fight otherwise.
+  regionPlane.position.set(0, 24, 0);
   scene.add(regionPlane);
 
   // Tag layer (DOM, above canvas, below windows — windows carry inline z-index)
@@ -454,7 +548,9 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   const off = REST_POS.clone().sub(REST_TARGET);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
-    subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane,
+    subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
+    flights,
+    orbitTarget: REST_TARGET.clone(),
     orbit: {
       az: Math.atan2(off.x, off.z),
       pol: Math.acos(off.y / off.length()),
@@ -485,12 +581,14 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   // boot fade never glimpses the desktop view (buildings down, geography up).
   if (document.body.classList.contains('xw-introing')) {
     introActive = true;
-    camera.position.set(40, 5600, 60);
+    camera.position.set(60, 5600, 1500);
     camera.lookAt(0, 0, 0);
     regionPlane.material.opacity = 1;
     applyRise(city, 0);
     islandGroup.visible = false;
     metroPlane.visible = false;
+  } else {
+    flights.forEach((f) => { f.mesh.visible = false; });
   }
 
   // Full animation always (project rule): the loop runs unconditionally and
@@ -536,6 +634,9 @@ export function settleDesktop(): void {
   applyRise(city, 1);
   city.islandGroup.visible = true;
   city.metroPlane.visible = true;
+  city.flights.forEach((f) => { f.mesh.visible = false; });
+  (city.subjectEdges.material as THREE.LineBasicMaterial).opacity = 0;
+  city.orbitTarget.copy(REST_TARGET);
   showTags(); // renders a fresh frame + positions tags (covers static mode)
 }
 
@@ -543,16 +644,23 @@ function tick(): void {
   if (!city) return;
   const t = city.clock.getElapsedTime();
   if (!introActive) {
-    // Camera on the user's orbit, breathing slightly — a system idly watching.
+    // Camera orbits a MOVING focus (rest point, or the building being visited),
+    // breathing slightly — a system idly watching.
     const az = city.orbit.az + Math.sin(t * 0.07) * 0.045;
     const pol = city.orbit.pol + Math.sin(t * 0.06) * 0.012;
     const r = city.orbit.r;
+    const o = city.orbitTarget;
     city.camera.position.set(
-      REST_TARGET.x + r * Math.sin(pol) * Math.sin(az),
-      REST_TARGET.y + r * Math.cos(pol),
-      REST_TARGET.z + r * Math.sin(pol) * Math.cos(az),
+      o.x + r * Math.sin(pol) * Math.sin(az),
+      o.y + r * Math.cos(pol),
+      o.z + r * Math.sin(pol) * Math.cos(az),
     );
-    city.camera.lookAt(REST_TARGET);
+    city.camera.lookAt(o);
+  }
+  // Aircraft glide their air routes (region scale).
+  for (const fl of city.flights) {
+    const d = ((t * fl.speed + fl.phase) % fl.total) / fl.total;
+    fl.mesh.position.lerpVectors(fl.a, fl.b, d);
   }
   // Data packets travel their arteries.
   for (const pk of city.packets) {
@@ -630,13 +738,20 @@ function updateTags(): void {
 
 /* ── Tag → panel → window ─────────────────────────────────────────────────── */
 
-/** Swing the orbit camera toward an anchor's building (interiors phase 1). */
+/** Travel the orbit focus TO an anchor's building (interiors phase 1). */
 function diveToward(world: THREE.Vector3): void {
   if (!city) return;
-  let az = Math.atan2(world.x - REST_TARGET.x, world.z - REST_TARGET.z);
-  // Take the short way around the circle.
+  // Keep the current bearing so the camera slides over rather than whipping around.
+  let az = Math.atan2(city.camera.position.x - world.x, city.camera.position.z - world.z);
   az += Math.round((city.orbit.az - az) / (Math.PI * 2)) * Math.PI * 2;
-  gsap.to(city.orbit, { az, pol: 0.98, r: 250, duration: 0.75, ease: 'power2.inOut' });
+  gsap.to(city.orbit, { az, pol: 1.0, r: 230, duration: 0.8, ease: 'power2.inOut' });
+  gsap.to(city.orbitTarget, {
+    x: world.x,
+    y: Math.min(world.y * 0.5, 50),
+    z: world.z,
+    duration: 0.8,
+    ease: 'power2.inOut',
+  });
 }
 
 /** Dock/nav hook: swing the camera to an app's building without opening it. */
@@ -697,6 +812,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   overlay.innerHTML = `
     <div class="xw-zi-sweep" aria-hidden="true"></div>
     <div class="xw-zi-chip" id="xw-zi-chip" aria-hidden="true"></div>
+    <span class="xw-zi-crossline xw-zi-crossline--h" id="xw-zi-cross-h" aria-hidden="true"></span>
+    <span class="xw-zi-crossline xw-zi-crossline--v" id="xw-zi-cross-v" aria-hidden="true"></span>
     <div class="xw-zi-hbox" id="xw-zi-hbox" aria-hidden="true"></div>
     <span class="xw-zi-bkt xw-zi-bkt--tl"></span>
     <span class="xw-zi-bkt xw-zi-bkt--tr"></span>
@@ -780,13 +897,13 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     }
   };
 
-  // Camera path (MK12 grammar): a banking S-curve — swing wide east over the
-  // sound, cross back west as the city rises, settle into the rest pose.
+  // Camera path: start SOUTH of the target looking north (map reads north-up),
+  // drift gently left (west) on the way down, then settle into the rest pose.
   const path = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(40, 5600, 60),
-    new THREE.Vector3(1500, 3300, -350),
-    new THREE.Vector3(-700, 1450, 1050),
-    new THREE.Vector3(-40, 680, 820),
+    new THREE.Vector3(60, 5600, 1500),
+    new THREE.Vector3(-420, 3100, 1500),
+    new THREE.Vector3(-380, 1300, 1050),
+    new THREE.Vector3(20, 640, 720),
     REST_POS.clone(),
   ], false, 'centripetal');
   const lookFrom = new THREE.Vector3(0, 0, 0);
@@ -797,8 +914,6 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     c.camera.position.copy(pos);
     const target = lookFrom.clone().lerp(REST_TARGET, flight.t);
     c.camera.lookAt(target);
-    // Bank into the turns, settle level by the end.
-    c.camera.rotateZ(0.16 * Math.sin(flight.t * Math.PI * 2) * (1 - flight.t));
     // True-ish readouts derived from the camera: position over the geography.
     const mx = 500 + target.x / REGION_SCALE;
     const my = 350 + target.z / REGION_SCALE;
@@ -815,6 +930,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     const cityScale = pos.y < 2600;
     c.islandGroup.visible = cityScale;
     c.metroPlane.visible = cityScale;
+    c.flights.forEach((f) => { f.mesh.visible = !cityScale; });
   };
 
   const setRise = (r: number) => applyRise(c, r);
@@ -852,8 +968,14 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   document.addEventListener('keydown', onKey);
   skipBtn.addEventListener('click', () => finish(true));
 
-  const placeBox = (screen: { x: number; y: number }, size: number, label: string, ring = false) => {
-    hbox.classList.toggle('xw-zi-hbox--ring', ring);
+  // Targeting system: viewport-spanning crosshair snaps between candidates,
+  // bracket box at the intersection, then flips to LOCK on the target.
+  const crossH = overlay.querySelector<HTMLElement>('#xw-zi-cross-h')!;
+  const crossV = overlay.querySelector<HTMLElement>('#xw-zi-cross-v')!;
+  const placeTarget = (screen: { x: number; y: number }, size: number, label: string, locked = false) => {
+    overlay.classList.toggle('xw-zi-target-lock', locked);
+    gsap.set(crossH, { autoAlpha: 1, top: screen.y });
+    gsap.set(crossV, { autoAlpha: 1, left: screen.x });
     gsap.set(hbox, {
       autoAlpha: 1,
       left: screen.x - size / 2,
@@ -861,14 +983,15 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       width: size,
       height: size,
     });
-    chip.textContent = label;
-    chip.style.left = `${screen.x - size / 2}px`;
-    chip.style.top = `${screen.y - size / 2 - 30}px`;
+    chip.textContent = locked ? `${label} — TARGET LOCK` : `${label} — SCANNING`;
+    chip.style.left = `${screen.x + size / 2 + 12}px`;
+    chip.style.top = `${screen.y - size / 2 - 4}px`;
     gsap.set(chip, { opacity: 1 });
   };
   const hideBox = () => {
-    gsap.set(hbox, { autoAlpha: 0 });
+    gsap.set([hbox, crossH, crossV], { autoAlpha: 0 });
     gsap.set(chip, { opacity: 0 });
+    overlay.classList.remove('xw-zi-target-lock');
   };
   const glitch = () => {
     gsap.fromTo('.xw-city-canvas', { x: gsap.utils.random(-4, 4, 1) }, { x: 0, duration: 0.07 });
@@ -906,12 +1029,13 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   candidates.forEach(([lon, lat, label]) => {
     tl.add(() => {
       const world = mapToWorld(500 + (lon - PROJ.nyc.lon) * PROJ.pxPerLon, 350 - (lat - PROJ.nyc.lat) * PROJ.pxPerLat);
-      placeBox(project(world), 140, label, true);
+      placeTarget(project(world), 92, label);
       glitch();
     }).to({}, { duration: 0.14 });
   });
   tl.add(() => {
-    placeBox(project(new THREE.Vector3(0, 3, 0)), 150, 'NEW YORK METRO');
+    placeTarget(project(new THREE.Vector3(0, 3, 0)), 120, 'NEW YORK METRO', true);
+    flash();
   })
     .to({}, { duration: 0.3 })
     .add(() => {
@@ -923,7 +1047,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     .to(flight, { t: 1, duration: 4.0, ease: 'power2.inOut', onUpdate: setCam }, '<')
     .add(() => typeIn('NEW YORK,', 'NY.'), '<+0.2')
     .add(() => typeOut(), '<+0.85')
-    .add(() => typeIn('8,300,000', 'PEOPLE.'), '<+0.35')
+    .add(() => typeIn('8,584,629', 'PEOPLE.'), '<+0.35')
     .add(() => typeOut(), '<+0.85')
     .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.35')
     .add(() => typeOut(), '<+0.75')
@@ -952,6 +1076,10 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     const anchor = subjectScreenRect();
     if (!anchor) { finish(false); return; }
     setStatus('Subject located');
+    // The target is a BUILDING, not a patch of ground — light its edges.
+    const edgeMat = c.subjectEdges.material as THREE.LineBasicMaterial;
+    gsap.to(edgeMat, { opacity: 0.95, duration: 0.18 });
+    gsap.to(edgeMat, { opacity: 0.35, duration: 0.55, yoyo: true, repeat: 3, delay: 0.2 });
     const ltl = gsap.timeline();
     [200, 80, 26, 6].forEach((spread, i) => {
       ltl.add(() => {
@@ -996,24 +1124,30 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     finished = true;
     document.removeEventListener('keydown', onKey);
     introActive = false;
-    reveal();
+    // The hidden window still has layout — measure it WITHOUT revealing yet;
+    // the Dossier must not appear until the card lands on it.
     const winEl = document.querySelector<HTMLElement>('.xw-window[data-app="dossier"]');
     const target = winEl?.getBoundingClientRect();
+    const edgeMat = c.subjectEdges.material as THREE.LineBasicMaterial;
     const mtl = gsap.timeline({ onComplete: () => overlay.remove() });
     mtl.to('.xw-zi-readout, #xw-zi-status, #xw-zi-chip, .xw-zi-skip, .xw-zi-sweep, .xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector', {
       opacity: 0, duration: 0.18,
     });
-    if (!target) {
-      mtl.to(overlay, { opacity: 0, duration: 0.3 }, '<+0.1');
+    if (!target || target.width === 0) {
+      mtl.add(() => reveal(), '<+0.1').to(overlay, { opacity: 0, duration: 0.3 }, '<');
       return;
     }
     mtl
       .to('.xw-zi-card-photo, .xw-zi-card-body', { opacity: 0, duration: 0.22 }, '<')
       .to(card, {
         left: target.left, top: target.top, width: target.width, height: target.height,
-        duration: 0.5, ease: 'power3.inOut',
+        duration: 0.55, ease: 'power3.inOut',
       }, '<+0.05')
-      .to(overlay, { opacity: 0, duration: 0.22 });
+      .add(() => {
+        gsap.to(edgeMat, { opacity: 0, duration: 0.4 });
+        reveal(); // the window appears exactly where the card landed
+      })
+      .to(overlay, { opacity: 0, duration: 0.25 });
   };
 
   return true;
