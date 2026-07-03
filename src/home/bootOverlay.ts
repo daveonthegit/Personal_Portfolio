@@ -87,7 +87,7 @@ export function initBootOverlay(): void {
 
   // Only `/` from here on (same home template as /home).
 
-  if (hasNobootQuery() || prefersReducedMotion()) {
+  if (hasNobootQuery()) {
     clearOverlay();
     markBooted();
     canonicalizeToHome();
@@ -101,8 +101,13 @@ export function initBootOverlay(): void {
     canonicalizeToHome();
   };
 
+  // The boot sequence ALWAYS plays (project rule). Reduced motion only skips
+  // the Zoom-In flight that follows it — content is present right after boot.
+  const reduced = prefersReducedMotion();
+
   // 3D City intro (ADR 0002) on fine-pointer desktops; SVG ladder elsewhere.
-  const wants3D = window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+  const wants3D =
+    !reduced && window.matchMedia('(min-width: 900px) and (pointer: fine)').matches;
   // Warm the chunk during the boot animation; the shell mounts the scene.
   const cityP = wants3D
     ? import('../os/city3d').catch(() => null)
@@ -117,13 +122,14 @@ export function initBootOverlay(): void {
   try {
     // For the SVG path the cover pre-mounts beneath the boot layer so the boot
     // fade lands black-on-black. The 3D path renders under a transparent HUD
-    // (the canvas is the desktop plane), so no cover is needed.
-    const svgCover = wants3D ? null : mountZoomInCover();
+    // (the canvas is the desktop plane), so no cover is needed. Reduced motion
+    // gets no cover at all — boot dissolves straight onto the desktop.
+    const svgCover = wants3D || reduced ? null : mountZoomInCover();
 
     // eslint-disable-next-line no-new
     new StartupAnimation({
       onFinish: (skipped) => {
-        if (skipped) {
+        if (skipped || reduced) {
           if (svgCover) removeZoomIn(svgCover);
           void cityP.then((m) => m?.settleDesktop());
           finish();
