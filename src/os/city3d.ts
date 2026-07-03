@@ -444,54 +444,119 @@ function buildCity(scene: THREE.Scene): {
     shell.position.set(p.x, p.h / 2, p.z);
     group.add(shell);
 
-    // ── The room (X-ray wireframe): floor, desk, glowing screen, a person ──
+    // ── The room: SOLID geometry (the white-city language, indoors) ──
     const room = new THREE.Group();
     room.position.set(p.x, 0, p.z);
-    const wire = new THREE.LineBasicMaterial({ color: 0xf4efe6, transparent: true, opacity: 0.75 });
-    const dim = new THREE.MeshBasicMaterial({ color: 0x0b0a09 });
-    const edge = (g: THREE.BufferGeometry, x: number, y: number, z: number, ry = 0) => {
-      const m = new THREE.LineSegments(new THREE.EdgesGeometry(g), wire);
-      m.position.set(x, y, z);
-      m.rotation.y = ry;
-      room.add(m);
-      return m;
+    const white = new THREE.MeshLambertMaterial({ color: 0xe9e4d8 });
+    const grey = new THREE.MeshLambertMaterial({ color: 0x8f8a80 });
+    const dark = new THREE.MeshLambertMaterial({ color: 0x27231f });
+    const solid = (
+      g: THREE.BufferGeometry, m: THREE.Material,
+      x: number, y: number, z: number, ry = 0,
+    ) => {
+      const mesh = new THREE.Mesh(g, m);
+      mesh.position.set(x, y, z);
+      mesh.rotation.y = ry;
+      room.add(mesh);
+      return mesh;
     };
-    // floor slab
-    const floor = new THREE.Mesh(new THREE.BoxGeometry(p.w - 2, 0.4, p.d - 2), dim);
-    floor.position.set(0, 0.2, 0);
-    room.add(floor);
-    edge(new THREE.BoxGeometry(p.w - 2, 0.4, p.d - 2), 0, 0.2, 0);
-    // desk against the far (-z) side
-    edge(new THREE.BoxGeometry(12, 0.6, 5), 0, 4.4, -5.5);
-    edge(new THREE.BoxGeometry(0.5, 4.2, 4.6), -5.5, 2.2, -5.5);
-    edge(new THREE.BoxGeometry(0.5, 4.2, 4.6), 5.5, 2.2, -5.5);
-    // monitor + glowing screen facing the person (+z)
-    edge(new THREE.BoxGeometry(7, 4.4, 0.5), 0, 7, -7);
+
+    const RW = p.w - 2;   // room width  (~32)
+    const RD = p.d - 2;   // room depth  (~18)
+    const WALL_H = 13;
+
+    // Floor, rug, walls (no ceiling — the camera enters from above)
+    solid(new THREE.BoxGeometry(RW, 0.5, RD), dark, 0, 0.25, 0);
+    solid(new THREE.BoxGeometry(11, 0.12, 8), grey, 0, 0.56, 1.5);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x3a352f });
+    solid(new THREE.BoxGeometry(RW, WALL_H, 0.6), wallMat, 0, WALL_H / 2, -RD / 2);
+    solid(new THREE.BoxGeometry(RW, WALL_H, 0.6), wallMat, 0, WALL_H / 2, RD / 2);
+    solid(new THREE.BoxGeometry(0.6, WALL_H, RD), wallMat, -RW / 2, WALL_H / 2, 0);
+    solid(new THREE.BoxGeometry(0.6, WALL_H, RD), wallMat, RW / 2, WALL_H / 2, 0);
+    // Window on the west wall — a lighter pane with muntins
+    solid(new THREE.BoxGeometry(0.2, 6, 8), new THREE.MeshBasicMaterial({ color: 0x11141a }), -RW / 2 + 0.45, 6.5, 0);
+    solid(new THREE.BoxGeometry(0.24, 6, 0.24), grey, -RW / 2 + 0.45, 6.5, 0);
+    solid(new THREE.BoxGeometry(0.24, 0.24, 8), grey, -RW / 2 + 0.45, 6.5, 0);
+
+    // Desk (slab + legs), monitor, keyboard, mug
+    solid(new THREE.BoxGeometry(13, 0.7, 5.4), white, 0, 4.4, -5.6);
+    for (const [lx, lz] of [[-6, -7.6], [6, -7.6], [-6, -3.6], [6, -3.6]] as Array<[number, number]>) {
+      solid(new THREE.BoxGeometry(0.6, 4.1, 0.6), grey, lx, 2.05, lz);
+    }
+    solid(new THREE.BoxGeometry(7.6, 4.8, 0.5), dark, 0, 7.4, -7.2);        // monitor body
     const screen = new THREE.Mesh(
-      new THREE.PlaneGeometry(6.2, 3.6),
-      new THREE.MeshBasicMaterial({ color: 0xd9f4fb, transparent: true, opacity: 0.85 }),
+      new THREE.PlaneGeometry(6.8, 4),
+      new THREE.MeshBasicMaterial({ color: 0xd9f4fb }),
     );
-    screen.position.set(0, 7, -6.7);
+    screen.position.set(0, 7.4, -6.9);
     room.add(screen);
-    const screenGlow = new THREE.PointLight(0xbfe9f5, 14, 30);
-    screenGlow.position.set(0, 7, -4);
+    solid(new THREE.BoxGeometry(1, 1.8, 0.5), dark, 0, 5.2, -7.3);           // monitor stand
+    const screenGlow = new THREE.PointLight(0xbfe9f5, 26, 34);
+    screenGlow.position.set(0, 7.4, -4.4);
     room.add(screenGlow);
-    // chair
-    edge(new THREE.BoxGeometry(4, 0.5, 4), 0, 2.6, 0.5);
-    edge(new THREE.BoxGeometry(4, 4.4, 0.5), 0, 4.6, 2.4);
-    // the person — seated, back to the entering camera, facing the screen
+    solid(new THREE.BoxGeometry(4.6, 0.25, 1.7), grey, 0, 4.9, -4.4);        // keyboard
+    solid(new THREE.CylinderGeometry(0.4, 0.34, 0.9, 10), white, 4.4, 5.2, -4.6); // mug
+
+    // Bookshelf on the east wall — frame, shelves, books
+    solid(new THREE.BoxGeometry(0.8, 10.4, 6.6), white, RW / 2 - 1.3, 5.2, 2.4);
+    {
+      let seedB = 97;
+      const rndB = () => { seedB = (seedB * 1103515245 + 12345) & 0x7fffffff; return seedB / 0x7fffffff; };
+      for (let shelf = 0; shelf < 4; shelf++) {
+        const y = 2 + shelf * 2.4;
+        let bz = -0.4;
+        while (bz < 5) {
+          const bw = 0.35 + rndB() * 0.4;
+          const bh = 1.3 + rndB() * 0.7;
+          const tone = 0.35 + rndB() * 0.5;
+          solid(
+            new THREE.BoxGeometry(0.9, bh, bw),
+            new THREE.MeshLambertMaterial({ color: new THREE.Color(tone, tone, tone * 0.97) }),
+            RW / 2 - 1.3, y + bh / 2, bz,
+          );
+          bz += bw + 0.12;
+        }
+      }
+    }
+
+    // Couch + floor lamp on the west side
+    solid(new THREE.BoxGeometry(4.2, 1.6, 9), white, -RW / 2 + 3.4, 1.3, 1.5);
+    solid(new THREE.BoxGeometry(1.2, 3.2, 9), white, -RW / 2 + 1.9, 2.1, 1.5);
+    solid(new THREE.BoxGeometry(4.2, 1, 1.2), white, -RW / 2 + 3.4, 1.8, -3.1);
+    solid(new THREE.BoxGeometry(4.2, 1, 1.2), white, -RW / 2 + 3.4, 1.8, 6.1);
+    solid(new THREE.CylinderGeometry(0.14, 0.14, 7.6, 8), grey, -RW / 2 + 3.2, 3.8, -6.4);
+    solid(new THREE.ConeGeometry(1.3, 1.7, 12, 1, true), white, -RW / 2 + 3.2, 8, -6.4);
+    const lampGlow = new THREE.PointLight(0xfff3e0, 15, 26);
+    lampGlow.position.set(-RW / 2 + 3.6, 7.2, -6.4);
+    room.add(lampGlow);
+
+    // Chair — seat, back, post
+    solid(new THREE.BoxGeometry(4, 0.6, 4), dark, 0, 2.9, 0.6);
+    solid(new THREE.BoxGeometry(4, 4.6, 0.7), dark, 0, 5.3, 2.6);
+    solid(new THREE.CylinderGeometry(0.25, 0.25, 2.6, 8), grey, 0, 1.45, 0.6);
+
+    // ── The person: solid figure, seated, facing the screen ──
     person = new THREE.Group();
-    const wm = new THREE.MeshBasicMaterial({ color: 0xf4efe6, wireframe: true, transparent: true, opacity: 0.55 });
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(3.4, 4.6, 2), wm);
-    torso.position.set(0, 5.2, -0.6);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(1.35, 8, 6), wm);
-    head.position.set(0, 8.6, -0.8);
-    const armL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 3.4), wm);
-    armL.position.set(-2, 4.6, -2.4);
-    const armR = armL.clone();
-    armR.position.x = 2;
-    person.add(torso, head, armL, armR);
-    person.position.set(0, 0, -0.4);
+    const skin = new THREE.MeshLambertMaterial({ color: 0xd8d2c4 });
+    const cloth = new THREE.MeshLambertMaterial({ color: 0x4a453e });
+    const part = (g: THREE.BufferGeometry, m: THREE.Material, x: number, y: number, z: number, rx = 0) => {
+      const mesh = new THREE.Mesh(g, m);
+      mesh.position.set(x, y, z);
+      mesh.rotation.x = rx;
+      person.add(mesh);
+      return mesh;
+    };
+    part(new THREE.BoxGeometry(3.3, 4.2, 1.9), cloth, 0, 5.4, 0.2);            // torso
+    part(new THREE.SphereGeometry(1.35, 18, 14), skin, 0, 8.55, 0);            // head
+    part(new THREE.CylinderGeometry(0.5, 0.6, 0.7, 10), skin, 0, 7.25, 0);     // neck
+    part(new THREE.BoxGeometry(1, 1, 3.4), cloth, -1.9, 5.6, -1.3, -0.35);     // upper arms reach the desk
+    part(new THREE.BoxGeometry(1, 1, 3.4), cloth, 1.9, 5.6, -1.3, -0.35);
+    part(new THREE.BoxGeometry(0.9, 0.7, 1.6), skin, -1.9, 4.85, -3.3);        // hands on the keyboard
+    part(new THREE.BoxGeometry(0.9, 0.7, 1.6), skin, 1.9, 4.85, -3.3);
+    part(new THREE.BoxGeometry(3.1, 1.3, 3.4), cloth, 0, 3.55, -0.9);          // thighs forward
+    part(new THREE.BoxGeometry(1.2, 2.6, 1.2), cloth, -0.9, 1.6, -2.2);        // shins
+    part(new THREE.BoxGeometry(1.2, 2.6, 1.2), cloth, 0.9, 1.6, -2.2);
+    person.position.set(0, 0, 1.2);
     room.add(person);
     group.add(room);
   }
@@ -956,8 +1021,12 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   const q = c.islandGroup.quaternion;
   const fwd = new THREE.Vector3(0, 0, 1).applyQuaternion(q); // room "behind the person"
   const bCenter = c.subjectBounds.getCenter(new THREE.Vector3());
-  const entry = bCenter.clone().setY(c.subjectBounds.max.y + 40).add(fwd.clone().multiplyScalar(26));
-  const inside = bCenter.clone().setY(12.5).add(fwd.clone().multiplyScalar(14));
+  const right = new THREE.Vector3(1, 0, 0).applyQuaternion(q);
+  const entry = bCenter.clone().setY(c.subjectBounds.max.y + 40).add(fwd.clone().multiplyScalar(22));
+  // Diagonal corner view INSIDE the walls: desk, person, and couch in frame.
+  const inside = bCenter.clone().setY(10.5)
+    .add(fwd.clone().multiplyScalar(7.8))
+    .add(right.clone().multiplyScalar(10.5));
   const lookRoof = bCenter.clone().setY(c.subjectBounds.max.y);
   const lookPerson = bCenter.clone().setY(6.2).sub(fwd.clone().multiplyScalar(2));
   const path = new THREE.CatmullRomCurve3([
@@ -1151,15 +1220,13 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     const raw = boundsScreenRect(new THREE.Box3().setFromObject(c.person));
     if (!raw) { finish(false); return; }
     setStatus('Subject identified');
-    // Cap the box so it reads as an entity TAG, not a screen border.
-    const maxW = window.innerWidth * 0.34;
-    const maxH = window.innerHeight * 0.62;
-    const cx = raw.left + raw.width / 2;
-    const cy = raw.top + raw.height / 2;
-    const w = Math.min(raw.width + 28, maxW);
-    const h = Math.min(raw.height + 28, maxH);
-    const pr = new DOMRect(cx - w / 2, cy - h / 2, w, h);
+    // The box HUGS the figure (small pad); cap only pathological sizes.
+    const pad = 10;
+    const w = Math.min(raw.width + pad * 2, window.innerWidth * 0.8);
+    const h = Math.min(raw.height + pad * 2, window.innerHeight * 0.8);
+    const pr = new DOMRect(raw.left + raw.width / 2 - w / 2, raw.top + raw.height / 2 - h / 2, w, h);
     hbox.classList.add('xw-zi-hbox--entity');
+    hbox.innerHTML = '<span class="xw-zi-hbox-head" id="xw-zi-hbox-head">SUBJECT — SCANNING…</span>';
     gsap.set(hbox, {
       autoAlpha: 1,
       left: pr.left,
@@ -1167,11 +1234,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       width: pr.width,
       height: pr.height,
     });
-    gsap.from(hbox, { scale: 1.45, opacity: 0, duration: 0.22, ease: 'power3.out' });
-    chip.textContent = 'SUBJECT';
-    chip.style.left = `${pr.left}px`;
-    chip.style.top = `${Math.max(60, pr.top - 34)}px`;
-    gsap.set(chip, { opacity: 1 });
+    gsap.from(hbox, { scale: 1.35, opacity: 0, duration: 0.22, ease: 'power3.out' });
     glitch();
 
     const ltl = gsap.timeline();
@@ -1180,7 +1243,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
       .add(() => {
         if (finished) { ltl.kill(); return; }
         overlay.classList.add('xw-zi-lock--captured');
-        chip.textContent = 'SUBJECT — IDENTIFIED';
+        const head = overlay.querySelector<HTMLElement>('#xw-zi-hbox-head');
+        if (head) head.textContent = 'XIAO, DAVID — IDENTIFIED';
         gsap.set(card, {
           left: Math.max(8, Math.min(pr.right + 30, window.innerWidth - 320)),
           top: Math.max(64, Math.min(pr.top, window.innerHeight - 180)),

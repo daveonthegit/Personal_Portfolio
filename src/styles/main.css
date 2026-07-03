@@ -3404,3 +3404,23 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
   background: var(--xw-accent);
   border-color: var(--xw-accent);
 }
+
+/* Entity heading strip — attached to the box's top edge, game-style. */
+.xw-zi-hbox-head {
+  position: absolute;
+  left: -1.5px;
+  top: 0;
+  transform: translateY(-100%);
+  font-family: var(--xw-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  padding: 4px 9px;
+  background: #f4efe6;
+  color: #0b0a09;
+  white-space: nowrap;
+}
+.xw-zi-lock--captured .xw-zi-hbox-head {
+  background: var(--xw-accent);
+  color: var(--xw-accent-ink);
+}
+.xw-zi-hbox--entity::before { content: none; }
