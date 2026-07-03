@@ -3290,3 +3290,36 @@ body.xw-map-home.xw-map-view #main-content { display: none; }
 }
 body.xw-os-mobile .xw-map-back { display: inline-flex; }
 body.xw-map-home.xw-map-view .xw-map-back { display: none; }
+
+/* ── MK12-grammar intro additions ── */
+.xw-zi-type {
+  position: fixed;
+  left: 6vw;
+  top: 16vh;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  font-family: var(--xw-display);
+  font-weight: 700;
+  font-size: clamp(56px, 11vw, 160px);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  color: var(--xw-ink);
+}
+.xw-zi-type-l2 { padding-left: 0.9em; }
+
+.xw-zi-flash {
+  position: fixed;
+  inset: 0;
+  background: var(--xw-ink);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.xw-zi-doc {
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(244, 239, 230, 0.92);
+  pointer-events: none;
+}

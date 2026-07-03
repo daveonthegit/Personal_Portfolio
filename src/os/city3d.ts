@@ -75,6 +75,7 @@ interface City {
   hooks: CityHooks;
   riseT: number;
   orbit: { az: number; pol: number; r: number };
+  packets: Array<{ mesh: THREE.Mesh; pts: THREE.Vector3[]; lens: number[]; total: number; speed: number; phase: number }>;
   clock: THREE.Clock;
 }
 
@@ -224,6 +225,7 @@ function buildCity(scene: THREE.Scene): {
   buildingBase: THREE.Matrix4[];
   subjectBounds: THREE.Box3;
   anchorWorlds: Map<string, THREE.Vector3>;
+  packets: City['packets'];
 } {
   // Endless dark base so the textured ground never shows a horizon edge.
   const basePlane = new THREE.Mesh(
@@ -307,6 +309,35 @@ function buildCity(scene: THREE.Scene): {
   if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
 
   group.add(mesh);
+
+  // Cyan data arteries (the system's traffic) — faint lines + traveling packets.
+  const routePts: THREE.Vector3[][] = [
+    [new THREE.Vector3(-120, 1.4, -600), new THREE.Vector3(-120, 1.4, 600)],
+    [new THREE.Vector3(80, 1.4, -560), new THREE.Vector3(80, 1.4, 580)],
+    [
+      new THREE.Vector3(-150, 1.4, -620), new THREE.Vector3(-58, 1.4, -210),
+      new THREE.Vector3(28, 1.4, 140), new THREE.Vector3(74, 1.4, 620),
+    ],
+    [new THREE.Vector3(-220, 1.4, 220), new THREE.Vector3(230, 1.4, 220)],
+  ];
+  const routeMat = new THREE.LineBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.16 });
+  const packets: City['packets'] = [];
+  const pktGeo = new THREE.PlaneGeometry(7, 7);
+  routePts.forEach((pts, ri) => {
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), routeMat));
+    const lens: number[] = [0];
+    for (let i = 1; i < pts.length; i++) lens.push(lens[i - 1]! + pts[i]!.distanceTo(pts[i - 1]!));
+    const total = lens[lens.length - 1]!;
+    for (let k = 0; k < 2; k++) {
+      const pktMat = new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.75 });
+      pktMat.fog = false;
+      const m = new THREE.Mesh(pktGeo, pktMat);
+      m.rotation.x = -Math.PI / 2;
+      group.add(m);
+      packets.push({ mesh: m, pts, lens, total, speed: 60 + ri * 22 + k * 31, phase: (k * total) / 2 + ri * 137 });
+    }
+  });
+
   scene.add(group);
   group.updateMatrixWorld(true);
 
@@ -325,7 +356,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds };
+  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets };
 }
 
 function lcgHash(i: number): number {
@@ -363,7 +394,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds } = buildCity(scene);
+  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets } = buildCity(scene);
 
   // Geography plane (night-lights region) — visible at altitude, fades on dive.
   const regionMat = new THREE.MeshBasicMaterial({
@@ -401,7 +432,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   const off = REST_POS.clone().sub(REST_TARGET);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
-    subjectBounds, anchors, tagLayer, hooks, riseT: 1,
+    subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets,
     orbit: {
       az: Math.atan2(off.x, off.z),
       pol: Math.acos(off.y / off.length()),
@@ -497,6 +528,15 @@ function tick(): void {
     );
     city.camera.lookAt(REST_TARGET);
   }
+  // Data packets travel their arteries.
+  for (const pk of city.packets) {
+    const d = (t * pk.speed + pk.phase) % pk.total;
+    let i = 1;
+    while (i < pk.lens.length - 1 && pk.lens[i]! < d) i++;
+    const segStart = pk.lens[i - 1]!;
+    const frac = (d - segStart) / (pk.lens[i]! - segStart);
+    pk.mesh.position.lerpVectors(pk.pts[i - 1]!, pk.pts[i]!, frac);
+  }
   city.renderer.render(city.scene, city.camera);
   updateTags();
 }
@@ -564,8 +604,19 @@ function updateTags(): void {
 
 /* ── Tag → panel → window ─────────────────────────────────────────────────── */
 
+/** Swing the orbit camera toward an anchor's building (interiors phase 1). */
+function diveToward(world: THREE.Vector3): void {
+  if (!city) return;
+  let az = Math.atan2(world.x - REST_TARGET.x, world.z - REST_TARGET.z);
+  // Take the short way around the circle.
+  az += Math.round((city.orbit.az - az) / (Math.PI * 2)) * Math.PI * 2;
+  gsap.to(city.orbit, { az, pol: 0.98, r: 250, duration: 0.75, ease: 'power2.inOut' });
+}
+
 function openFromTag(spec: AppAnchor, tag: HTMLElement): void {
   if (!city) return;
+  const anchor = city.anchors.find((a) => a.spec.id === spec.id);
+  if (anchor) diveToward(anchor.world);
   const r = tag.getBoundingClientRect();
   const panel = document.createElement('div');
   panel.className = 'xw-city-panel';
@@ -629,6 +680,11 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
         <span class="xw-zi-card-foot">ACCESSING FILE…</span>
       </div>
     </div>
+    <div class="xw-zi-type" id="xw-zi-type" aria-hidden="true">
+      <span class="xw-zi-type-l1" id="xw-zi-type-l1"></span>
+      <span class="xw-zi-type-l2" id="xw-zi-type-l2"></span>
+    </div>
+    <div class="xw-zi-flash" id="xw-zi-flash" aria-hidden="true"></div>
     <div class="xw-zi-readout" aria-hidden="true"><span id="xw-zi-coords"></span><span id="xw-zi-alt"></span></div>
     <div class="xw-zi-status" id="xw-zi-status" role="status" aria-live="polite"></div>
     <button type="button" class="xw-zi-skip" id="xw-zi-skip">Bypass ▸</button>`;
@@ -640,11 +696,55 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   const altEl = overlay.querySelector<HTMLElement>('#xw-zi-alt')!;
   const card = overlay.querySelector<HTMLElement>('#xw-zi-card')!;
   const skipBtn = overlay.querySelector<HTMLButtonElement>('#xw-zi-skip')!;
+  const typeCard = overlay.querySelector<HTMLElement>('#xw-zi-type')!;
+  const typeL1 = overlay.querySelector<HTMLElement>('#xw-zi-type-l1')!;
+  const typeL2 = overlay.querySelector<HTMLElement>('#xw-zi-type-l2')!;
 
   gsap.set('.xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector, #xw-zi-card', { autoAlpha: 0 });
   gsap.set(hbox, { autoAlpha: 0 });
+  gsap.set(typeCard, { autoAlpha: 0 });
 
   const setStatus = (s: string) => { status.textContent = s; };
+
+  /* Kinetic type narration (MK12 grammar): huge two-line cards riding the dive. */
+  const typeIn = (l1: string, l2: string) => {
+    typeL1.textContent = l1;
+    typeL2.textContent = l2;
+    gsap.fromTo(typeCard, { autoAlpha: 0, x: 60 }, { autoAlpha: 1, x: 0, duration: 0.28, ease: 'power3.out' });
+  };
+  const typeOut = () => {
+    gsap.to(typeCard, { autoAlpha: 0, x: -80, duration: 0.24, ease: 'power3.in' });
+  };
+
+  /* White inversion flash — the capture beat. */
+  const flashEl = overlay.querySelector<HTMLElement>('#xw-zi-flash')!;
+  const flash = () => {
+    gsap.fromTo(flashEl, { opacity: 0 }, { opacity: 0.9, duration: 0.05, yoyo: true, repeat: 1 });
+  };
+
+  /* Document confetti: the system aggregates the file into the profiler card. */
+  const docSwarm = (tx: number, ty: number) => {
+    for (let i = 0; i < 26; i++) {
+      const d = document.createElement('span');
+      d.className = 'xw-zi-doc';
+      const sx = Math.random() * window.innerWidth;
+      const sy = Math.random() * window.innerHeight;
+      d.style.width = `${5 + Math.random() * 7}px`;
+      d.style.height = `${7 + Math.random() * 9}px`;
+      overlay.appendChild(d);
+      gsap.fromTo(
+        d,
+        { x: sx, y: sy, opacity: 0 },
+        {
+          x: tx, y: ty, opacity: 0.9,
+          duration: 0.4 + Math.random() * 0.3,
+          delay: Math.random() * 0.25,
+          ease: 'power2.in',
+          onComplete: () => d.remove(),
+        },
+      );
+    }
+  };
 
   // Camera path: high nadir over the region → banking dive → the rest pose.
   const path = new THREE.CatmullRomCurve3([
@@ -757,6 +857,10 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     })
     // The one continuous dive.
     .to(flight, { t: 1, duration: 3.4, ease: 'power2.inOut', onUpdate: setCam })
+    .add(() => typeIn('NEW YORK,', 'NY.'), '<+0.25')
+    .add(() => typeOut(), '<+1.15')
+    .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.45')
+    .add(() => typeOut(), '<+1.0')
     .add(() => setStatus('Grid — Manhattan'), '<45%')
     .add(glitch, '<10%')
     .add(glitch, '<55%')
@@ -793,6 +897,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     ltl
       .add(() => {
         overlay.classList.add('xw-zi-lock--captured');
+        flash();
+        docSwarm(anchor.right + 90, Math.max(40, anchor.top + 10));
         gsap.set('#xw-zi-lockrect', {
           autoAlpha: 1,
           left: anchor.left - 6, top: anchor.top - 6,
