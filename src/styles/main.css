@@ -3452,3 +3452,18 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
 
 /* Tags hide while diving/inside rooms. */
 .xw-city-tags--away { opacity: 0 !important; pointer-events: none; }
+
+/* Mobile intro: bypass moves to the TOP (bottom is readout/status territory
+   and the two collide on narrow screens); the brand chip yields to the left. */
+@media (max-width: 900px) {
+  .xw-zi-skip,
+  .xiaoos-skip-btn {
+    top: 14px;
+    right: 16px;
+    bottom: auto;
+  }
+  .xw-zi-brand {
+    right: auto;
+    left: 16px;
+  }
+}
