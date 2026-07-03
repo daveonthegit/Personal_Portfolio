@@ -3445,3 +3445,6 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
   cursor: pointer;
 }
 .xw-city-exit--on { display: inline-flex; }
+
+/* Tags hide while diving/inside rooms. */
+.xw-city-tags--away { opacity: 0 !important; pointer-events: none; }

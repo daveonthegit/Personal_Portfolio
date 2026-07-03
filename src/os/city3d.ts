@@ -70,6 +70,9 @@ interface RoomEntry {
   center: THREE.Vector3;
   camIn: THREE.Vector3;
   camLook: THREE.Vector3;
+  screenMesh: THREE.Mesh | null;
+  /** Look-around state while inside (drag adjusts az/pol). */
+  orbit: { az: number; pol: number; r: number };
   leds: THREE.Mesh[];
 }
 
@@ -777,17 +780,34 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
       const world = anchorWorlds.get(id);
       if (!world) return;
       const center = world.clone().setY(0);
-      const camIn = center.clone().setY(10.5)
-        .add(fwd2.clone().multiplyScalar(7.2))
-        .add(right2.clone().multiplyScalar(9.5));
-      const camLook = new THREE.Vector3();
-      if (screenMesh) screenMesh.getWorldPosition(camLook);
-      else camLook.copy(center).setY(6);
+      let camIn: THREE.Vector3;
+      let camLook: THREE.Vector3;
+      if (build?.camLocal) {
+        camIn = build.group.localToWorld(build.camLocal.pos.clone());
+        camLook = build.group.localToWorld(build.camLocal.look.clone());
+      } else {
+        camIn = center.clone().setY(10.5)
+          .add(fwd2.clone().multiplyScalar(7.2))
+          .add(right2.clone().multiplyScalar(9.5));
+        camLook = new THREE.Vector3();
+        if (screenMesh) screenMesh.getWorldPosition(camLook);
+        else camLook.copy(center).setY(6);
+      }
+      const offR = camIn.clone().sub(camLook);
       const leds: THREE.Mesh[] = [];
       build?.group.traverse((o) => {
         if ((o as THREE.Mesh).isMesh && o.userData.blinkPhase !== undefined) leds.push(o as THREE.Mesh);
       });
-      city!.rooms.set(id, { shellMat: sm, build, center, camIn, camLook, leds });
+      city!.rooms.set(id, {
+        shellMat: sm, build, center, camIn, camLook,
+        screenMesh: build?.screen ?? screenMesh,
+        orbit: {
+          az: Math.atan2(offR.x, offR.z),
+          pol: Math.acos(THREE.MathUtils.clamp(offR.y / offR.length(), -1, 1)),
+          r: offR.length(),
+        },
+        leds,
+      });
     };
     register('dossier', shellMat, null, dossierScreen);
     for (const [id, entry] of roomShells) register(id, entry.shellMat, entry.build, entry.screen);
@@ -826,7 +846,14 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     const ray = new THREE.Raycaster();
     ray.setFromCamera(ndc, city.camera);
     const entry = city.rooms.get(city.currentRoom ?? '');
-    if (!entry?.build) return;
+    if (!entry) return;
+    if (entry.screenMesh) {
+      if (ray.intersectObject(entry.screenMesh, false).length > 0) {
+        city.hooks.openApp(city.currentRoom ?? '', boundsScreenRect(new THREE.Box3().setFromObject(entry.screenMesh)));
+        return;
+      }
+    }
+    if (!entry.build) return;
     if (city.currentRoom === 'projects') {
       const hits = ray.intersectObjects(entry.build.displays.map((d) => d.mesh), false);
       const first = hits[0];
@@ -941,10 +968,15 @@ function tick(): void {
   if (!introActive && city.mode === 'room') {
     const entry = city.rooms.get(city.currentRoom ?? '');
     if (entry) {
-      // Gentle handheld sway inside the room.
-      city.camera.position.copy(entry.camIn);
-      city.camera.position.x += Math.sin(t * 0.4) * 0.25;
-      city.camera.position.y += Math.sin(t * 0.31) * 0.18;
+      // Look-around orbit inside the room (drag to look), plus handheld sway.
+      const o = entry.orbit;
+      city.camera.position.set(
+        entry.camLook.x + o.r * Math.sin(o.pol) * Math.sin(o.az),
+        entry.camLook.y + o.r * Math.cos(o.pol),
+        entry.camLook.z + o.r * Math.sin(o.pol) * Math.cos(o.az),
+      );
+      city.camera.position.x += Math.sin(t * 0.4) * 0.22;
+      city.camera.position.y += Math.sin(t * 0.31) * 0.15;
       city.camera.lookAt(entry.camLook);
       for (const led of entry.leds) {
         (led.material as THREE.MeshBasicMaterial).opacity =
@@ -990,7 +1022,7 @@ function bindOrbitDrag(el: HTMLElement): void {
   let lastY = 0;
   el.classList.add('xw-city-canvas--grab');
   el.addEventListener('pointerdown', (e) => {
-    if (introActive || !city || city.mode !== 'overhead') return;
+    if (introActive || !city || city.mode === 'diving') return;
     dragging = true;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -999,8 +1031,16 @@ function bindOrbitDrag(el: HTMLElement): void {
   });
   el.addEventListener('pointermove', (e) => {
     if (!dragging || !city) return;
-    city.orbit.az -= (e.clientX - lastX) * 0.0042;
-    city.orbit.pol = THREE.MathUtils.clamp(city.orbit.pol + (e.clientY - lastY) * 0.0026, 0.32, 1.32);
+    if (city.mode === 'room') {
+      const entry = city.rooms.get(city.currentRoom ?? '');
+      if (entry) {
+        entry.orbit.az -= (e.clientX - lastX) * 0.0038;
+        entry.orbit.pol = THREE.MathUtils.clamp(entry.orbit.pol + (e.clientY - lastY) * 0.0024, 0.55, 1.5);
+      }
+    } else {
+      city.orbit.az -= (e.clientX - lastX) * 0.0042;
+      city.orbit.pol = THREE.MathUtils.clamp(city.orbit.pol + (e.clientY - lastY) * 0.0026, 0.32, 1.32);
+    }
     lastX = e.clientX;
     lastY = e.clientY;
   });
@@ -1053,6 +1093,8 @@ function setMode(mode: 'overhead' | 'diving' | 'room', roomId: string | null = n
   city.mode = mode;
   city.currentRoom = roomId;
   city.exitBtn.classList.toggle('xw-city-exit--on', mode === 'room');
+  // Map tags belong to the overhead view — inside they're floating noise.
+  city.tagLayer.classList.toggle('xw-city-tags--away', mode !== 'overhead');
 }
 
 /** Fly INTO an app's room: over the roof, through the fading facade, settle
@@ -1074,8 +1116,8 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
   roomTl = gsap.timeline({
     onComplete: () => {
       setMode('room', id);
-      const rect = entry.build?.screen ?? null;
-      onArrive(rect ? boundsScreenRect(new THREE.Box3().setFromObject(rect)) : null);
+      const sm = entry.screenMesh;
+      onArrive(sm ? boundsScreenRect(new THREE.Box3().setFromObject(sm)) : null);
     },
   });
   roomTl.to(fl, {
@@ -1101,15 +1143,24 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
   return true;
 }
 
-/** Dock behavior: no flight. If inside a room, step out quickly; stay overhead. */
-export function teleportToApp(id: string): void {
-  if (!city || introActive) return;
+/** Dock behavior: dive into the app's room AND hand back the screen rect so
+ *  the caller opens the window. Chains out of another room first. */
+export function dockDive(id: string, onArrive: (screenRect: DOMRect | null) => void): boolean {
+  if (!city || introActive) return false;
+  if (city.mode === 'room' && city.currentRoom === id) {
+    const entry = city.rooms.get(id);
+    const sm = entry?.screenMesh;
+    onArrive(sm ? boundsScreenRect(new THREE.Box3().setFromObject(sm)) : null);
+    return true;
+  }
   if (city.mode === 'room' || city.mode === 'diving') {
     exitRoom(true);
-  } else {
-    const a = city.anchors.find((x) => x.spec.id === id);
-    if (a) diveToward(a.world);
+    gsap.delayedCall(0.6, () => {
+      if (!diveIntoRoom(id, onArrive)) onArrive(null);
+    });
+    return true;
   }
+  return diveIntoRoom(id, onArrive);
 }
 
 /** Leave the current room: ascend out, facade heals, overhead orbit resumes. */
@@ -1184,7 +1235,9 @@ export function diveTowardApp(id: string): void {
 
 function openFromTag(spec: AppAnchor, tag: HTMLElement): void {
   if (!city) return;
-  if (diveIntoRoom(spec.id, (screenRect) => city?.hooks.openApp(spec.id, screenRect))) {
+  // Tags VISIT — the dive only; windows open from the dock or from clicking
+  // surfaces inside the room (open policy per design session).
+  if (diveIntoRoom(spec.id, () => undefined)) {
     return;
   }
   const r = tag.getBoundingClientRect();

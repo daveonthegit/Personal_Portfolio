@@ -22,6 +22,8 @@ export interface RoomBuild {
   displays: Array<{ mesh: THREE.Mesh; projectId: string }>;
   /** The one functional arcade cabinet's screen (arcade room only). */
   cabinet: THREE.Mesh | null;
+  /** Preferred interior camera, room-local coords. */
+  camLocal: { pos: THREE.Vector3; look: THREE.Vector3 };
 }
 
 const white = () => new THREE.MeshLambertMaterial({ color: 0xe9e4d8 });
@@ -69,50 +71,59 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
   shellRoom(group, w, d);
   const rnd = lcg(2077);
 
-  // Rack rows — one unit per real project, blinking status lights.
+  // Rack columns along the WEST wall — sightline to the display wall stays
+  // clear. One unit per real project, blinking status LEDs on their faces.
   const rackMat = dark();
   const unitMat = grey();
   let placed = 0;
-  const rows = 2;
-  const perRow = Math.ceil(projectCount / rows);
-  for (let r = 0; r < rows; r++) {
-    const z = -d / 2 + 4.5 + r * 5.2;
-    const rackW = Math.min(w - 8, perRow * 1.15);
-    mesh(group, new THREE.BoxGeometry(rackW, 8.4, 2.4), rackMat, 0, 4.2, z);
-    for (let i = 0; i < perRow && placed < projectCount; i++, placed++) {
-      const x = -rackW / 2 + 0.9 + i * (rackW / perRow);
-      mesh(group, new THREE.BoxGeometry(0.7, 0.28, 0.15), unitMat, x, 2.4 + rnd() * 5.2, z + 1.28);
+  const rackX = -w / 2 + 2.2;
+  for (let r = 0; r < 2 && placed < projectCount; r++) {
+    const zC = -4.2 + r * 8.4;
+    mesh(group, new THREE.BoxGeometry(2.4, 8.8, 6.8), rackMat, rackX, 4.4, zC);
+    const per = Math.ceil(projectCount / 2);
+    for (let i = 0; i < per && placed < projectCount; i++, placed++) {
+      const z = zC - 2.9 + (i % 6) * 1.1;
+      const y = 1.6 + Math.floor(i / 6) * 2.1 + rnd() * 0.8;
+      mesh(group, new THREE.BoxGeometry(0.15, 0.3, 0.8), unitMat, rackX + 1.28, y, z);
       const led = mesh(
         group,
-        new THREE.BoxGeometry(0.22, 0.22, 0.1),
+        new THREE.BoxGeometry(0.1, 0.24, 0.24),
         new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.4 + rnd() * 0.6 }),
-        x + 0.6, 2.4 + rnd() * 5.2, z + 1.28,
+        rackX + 1.28, y + 0.55, z,
       );
       led.userData.blinkPhase = rnd() * Math.PI * 2;
     }
   }
 
-  // The display wall: featured project screens (textures assigned async).
+  // Display wall: 2×2 grid of featured screens — fits the interior frustum.
   const displays: RoomBuild['displays'] = [];
   const wallZ = d / 2 - 1.2;
-  const screenW = 6.4;
-  const total = 4;
-  for (let i = 0; i < total; i++) {
-    const x = -((total - 1) / 2) * (screenW + 1.4) + i * (screenW + 1.4);
-    mesh(group, new THREE.BoxGeometry(screenW + 0.6, 4.6, 0.4), dark(), x, 6.4, wallZ);
-    const disp = mesh(group, new THREE.PlaneGeometry(screenW, 3.9), glow(0x1a2126), x, 6.4, wallZ - 0.35, Math.PI);
+  const sw = 6.6;
+  const sh = 3.9;
+  for (let i = 0; i < 4; i++) {
+    const x = (i % 2 === 0 ? -1 : 1) * (sw / 2 + 0.9);
+    const y = i < 2 ? 8.6 : 4.1;
+    mesh(group, new THREE.BoxGeometry(sw + 0.6, sh + 0.7, 0.4), dark(), x, y, wallZ);
+    const disp = mesh(group, new THREE.PlaneGeometry(sw, sh), glow(0x1a2126), x, y, wallZ - 0.35, Math.PI);
     displays.push({ mesh: disp, projectId: '' });
   }
-  // Main console screen (the window's birthplace) below the wall, desk-mounted.
-  mesh(group, new THREE.BoxGeometry(10, 0.6, 4), white(), 0, 3.4, wallZ - 4.6);
-  mesh(group, new THREE.BoxGeometry(6.4, 4, 0.45), dark(), 0, 6, wallZ - 5.6);
-  const screen = mesh(group, new THREE.PlaneGeometry(5.8, 3.4), glow(), 0, 6, wallZ - 5.32, Math.PI);
+  // Main console (the window's birthplace) off to the east side of the wall.
+  mesh(group, new THREE.BoxGeometry(6, 0.6, 3.4), white(), w / 2 - 4.6, 3.4, wallZ - 3.4);
+  mesh(group, new THREE.BoxGeometry(4.6, 3.2, 0.45), dark(), w / 2 - 4.6, 5.6, wallZ - 4.4);
+  const screen = mesh(group, new THREE.PlaneGeometry(4.1, 2.7), glow(), w / 2 - 4.6, 5.6, wallZ - 4.12, Math.PI);
 
-  const cool = new THREE.PointLight(0xbfe9f5, 20, 34);
-  cool.position.set(0, 9, 0);
+  const cool = new THREE.PointLight(0xbfe9f5, 34, 44);
+  cool.position.set(0, 9.5, 2);
   group.add(cool);
+  const fill = new THREE.PointLight(0xfff3e0, 14, 30);
+  fill.position.set(-6, 8, -3);
+  group.add(fill);
 
-  return { group, screen, displays, cabinet: null };
+  return {
+    group, screen, displays, cabinet: null,
+    // Straight-on view of the display wall from the clear back half.
+    camLocal: { pos: new THREE.Vector3(1.5, 7.6, -d / 2 + 2.6), look: new THREE.Vector3(0, 6.2, d / 2 - 1.4) },
+  };
 }
 
 /* ── RESUME: records office — cabinets + a light table ───────────────────── */
@@ -147,11 +158,14 @@ export function buildResumeRoom(w: number, d: number): RoomBuild {
   mesh(group, new THREE.BoxGeometry(2.6, 0.3, 3.4), white(), -3.9, 4.15, 2.6, 0.2);
   mesh(group, new THREE.BoxGeometry(2.6, 0.5, 3.4), white(), 4, 4.25, 1.4, -0.35);
 
-  const warm = new THREE.PointLight(0xfff3e0, 16, 30);
-  warm.position.set(0, 8.5, 2);
+  const warm = new THREE.PointLight(0xfff3e0, 28, 38);
+  warm.position.set(0, 9, 2);
   group.add(warm);
 
-  return { group, screen, displays: [], cabinet: null };
+  return {
+    group, screen, displays: [], cabinet: null,
+    camLocal: { pos: new THREE.Vector3(7, 9, 7.5), look: new THREE.Vector3(0, 4.2, 1.2) },
+  };
 }
 
 /* ── CONTACT: comms console — radio desk + waveform monitor ──────────────── */
@@ -179,11 +193,17 @@ export function buildContactRoom(w: number, d: number): RoomBuild {
   mesh(group, new THREE.BoxGeometry(3.6, 0.6, 3.6), dark(), 0.6, 2.9, -d / 2 + 7.4);
   mesh(group, new THREE.BoxGeometry(3.6, 4, 0.7), dark(), 0.6, 5, -d / 2 + 9.1);
 
-  const cool = new THREE.PointLight(0xbfe9f5, 14, 26);
-  cool.position.set(1.5, 7.5, -d / 2 + 6);
+  const cool = new THREE.PointLight(0xbfe9f5, 26, 36);
+  cool.position.set(1.5, 8, -d / 2 + 6);
   group.add(cool);
+  const warm2 = new THREE.PointLight(0xfff3e0, 12, 26);
+  warm2.position.set(-4, 8.5, 4);
+  group.add(warm2);
 
-  return { group, screen, displays: [], cabinet: null };
+  return {
+    group, screen, displays: [], cabinet: null,
+    camLocal: { pos: new THREE.Vector3(6, 8.5, 5), look: new THREE.Vector3(1.5, 6.4, -d / 2 + 2.6) },
+  };
 }
 
 /* ── ARCADE: several cabinets, ONE alive ─────────────────────────────────── */
@@ -239,11 +259,14 @@ export function buildArcadeRoom(w: number, d: number): RoomBuild {
     mesh(group, new THREE.BoxGeometry(1.6, 0.25, 1.6), dark(), 2 + rnd() * 4, 0.55 + i * 0.25, 4 + rnd() * 2);
   }
 
-  const dim = new THREE.PointLight(0xfff3e0, 8, 30);
-  dim.position.set(0, 10, 2);
+  const dim = new THREE.PointLight(0xfff3e0, 18, 36);
+  dim.position.set(0, 10, 3);
   group.add(dim);
 
-  return { group, screen: screen ?? new THREE.Mesh(), displays: [], cabinet };
+  return {
+    group, screen: screen ?? new THREE.Mesh(), displays: [], cabinet,
+    camLocal: { pos: new THREE.Vector3(0.5, 7.6, 6.5), look: new THREE.Vector3(-w / 2 + 9.4, 5.6, -d / 2 + 2.4) },
+  };
 }
 
 export function buildRoomFor(id: string, w: number, d: number, projectCount: number): RoomBuild | null {

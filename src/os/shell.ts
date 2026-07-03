@@ -265,9 +265,18 @@ export class OSShell {
       if (!win) return;
       let tries = 0;
       const attempt = () => {
+        if (tries++ > 20) return;
         const card = win.body.querySelector<HTMLElement>(`.project-card[data-category="${projectId}"]`);
-        if (card) card.click();
-        else if (tries++ < 20) window.setTimeout(attempt, 100);
+        if (!card) {
+          window.setTimeout(attempt, 100);
+          return;
+        }
+        card.click();
+        // The panel's listeners mount asynchronously — confirm the record
+        // actually opened, otherwise click again shortly.
+        window.setTimeout(() => {
+          if (!win.body.querySelector('#project-terminal-overlay.is-open')) attempt();
+        }, 180);
       };
       attempt();
     });
@@ -449,8 +458,11 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
       const id = item.dataset.xwDock as AppId | undefined;
       if (!id) return;
       e.preventDefault();
-      cityRef?.teleportToApp(id); // dock = system access: no flight
-      void shell.openApp(id);
+      // Dock: dive into the room, then the window opens from its screen.
+      const dove = cityRef?.dockDive(id, (rect) => {
+        void shell.openApp(id, { originRect: rect ?? undefined });
+      });
+      if (!dove) void shell.openApp(id);
     });
   });
 
@@ -498,6 +510,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
     if (document.querySelector('#project-terminal-overlay.is-open')) return;
     const id = shell.focusedApp;
     if (id) shell.closeApp(id);
+    else cityRef?.exitRoom(); // no window in focus: Escape leaves the room
   });
 
   // Back/forward re-opens the matching app without pushing.
