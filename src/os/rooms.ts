@@ -47,6 +47,9 @@ function shellRoom(group: THREE.Group, w: number, d: number, wallH = 13): void {
     group.add(mesh);
   };
   add(new THREE.BoxGeometry(w, 0.5, d), dark(), 0, 0.25, 0);
+  // Ceiling: the shell fades out while inside — without a lid the portrait
+  // (wide-FOV) framing sees straight over the walls to the outside city.
+  add(new THREE.BoxGeometry(w, 0.5, d), dark(), 0, wallH + 0.25, 0);
   add(new THREE.BoxGeometry(w, wallH, 0.6), wall(), 0, wallH / 2, -d / 2);
   add(new THREE.BoxGeometry(w, wallH, 0.6), wall(), 0, wallH / 2, d / 2);
   add(new THREE.BoxGeometry(0.6, wallH, d), wall(), -w / 2, wallH / 2, 0);

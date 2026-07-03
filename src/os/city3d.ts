@@ -856,6 +856,14 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     ray.setFromCamera(ndc, city.camera);
     const entry = city.rooms.get(city.currentRoom ?? '');
     if (!entry) return;
+    // The live cabinet outranks the generic screen check — in the arcade room
+    // they are the SAME mesh, and the cabinet's job is launching the game.
+    if (city.currentRoom === 'arcade' && entry.build?.cabinet) {
+      if (ray.intersectObject(entry.build.cabinet, false).length > 0) {
+        city.hooks.openCapture?.('Minesweeper', '/hosted/minesweeper/');
+        return;
+      }
+    }
     if (entry.screenMesh) {
       if (ray.intersectObject(entry.screenMesh, false).length > 0) {
         city.hooks.openApp(city.currentRoom ?? '', boundsScreenRect(new THREE.Box3().setFromObject(entry.screenMesh)));
@@ -871,11 +879,6 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
         if (d?.projectId) city.hooks.openProjectRecord?.(d.projectId);
       }
     }
-    if (city.currentRoom === 'arcade' && entry.build.cabinet) {
-      if (ray.intersectObject(entry.build.cabinet, false).length > 0) {
-        city.hooks.openCapture?.('Minesweeper', '/hosted/minesweeper/');
-      }
-    }
   });
 
   // The background is rotatable: dragging the canvas orbits the camera.
@@ -887,6 +890,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     const h = plane.clientHeight;
     city.renderer.setSize(w, h);
     city.camera.aspect = w / h;
+    if (city.mode === 'room') city.camera.fov = roomFov();
     city.camera.updateProjectionMatrix();
     if (city.mode === 'overhead') {
       const offR = REST_POS.clone().sub(REST_TARGET);
@@ -967,8 +971,9 @@ export function settleDesktop(): void {
     r.shellMat.transparent = false;
   });
   setMode('overhead');
-  if (city.camera.near !== 5) {
+  if (city.camera.near !== 5 || city.camera.fov !== BASE_FOV) {
     city.camera.near = 5;
+    city.camera.fov = BASE_FOV;
     city.camera.updateProjectionMatrix();
   }
   {
@@ -1107,6 +1112,18 @@ function updateTags(): void {
 
 let roomTl: gsap.core.Timeline | null = null;
 
+const BASE_FOV = 50;
+
+/** Rooms are framed for landscape. In portrait, hold the horizontal field
+ *  instead — widen the vertical FOV so content walls still fit the frame. */
+function roomFov(): number {
+  if (!city) return BASE_FOV;
+  const aspect = city.camera.aspect;
+  if (aspect >= 1.25) return BASE_FOV;
+  const half = Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2)) * 1.25;
+  return Math.min(92, THREE.MathUtils.radToDeg(2 * Math.atan(half / aspect)));
+}
+
 function setMode(mode: 'overhead' | 'diving' | 'room', roomId: string | null = null): void {
   if (!city) return;
   city.mode = mode;
@@ -1128,6 +1145,8 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
   const c = city;
   const start = c.camera.position.clone();
   const startLook = c.orbitTarget.clone();
+  const startFov = c.camera.fov;
+  const targetFov = roomFov();
   const topY = 66;
   const over = entry.center.clone().setY(topY).add(entry.camIn.clone().sub(entry.center).setY(0).multiplyScalar(0.6));
   const path = new THREE.CatmullRomCurve3([start, over, entry.camIn], false, 'centripetal');
@@ -1152,11 +1171,9 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
       const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
       if (fade < 1) entry.shellMat.transparent = true;
       entry.shellMat.opacity = fade;
-      const near = pos.y < 60 ? 0.8 : 5;
-      if (c.camera.near !== near) {
-        c.camera.near = near;
-        c.camera.updateProjectionMatrix();
-      }
+      c.camera.near = pos.y < 60 ? 0.8 : 5;
+      c.camera.fov = THREE.MathUtils.lerp(startFov, targetFov, THREE.MathUtils.smoothstep(fl.t, 0.35, 1));
+      c.camera.updateProjectionMatrix();
     },
   });
   return true;
@@ -1194,6 +1211,7 @@ export function exitRoom(fast = false): void {
   }
   setMode('diving', null);
   const from = c.camera.position.clone();
+  const fromFov = c.camera.fov;
   const fl = { t: 0 };
   roomTl = gsap.timeline({
     onComplete: () => {
@@ -1220,11 +1238,9 @@ export function exitRoom(fast = false): void {
       const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
       entry.shellMat.opacity = fade;
       if (fade >= 1) entry.shellMat.transparent = false;
-      const near = c.camera.position.y < 60 ? 0.8 : 5;
-      if (c.camera.near !== near) {
-        c.camera.near = near;
-        c.camera.updateProjectionMatrix();
-      }
+      c.camera.near = c.camera.position.y < 60 ? 0.8 : 5;
+      c.camera.fov = THREE.MathUtils.lerp(fromFov, BASE_FOV, THREE.MathUtils.smoothstep(fl.t, 0, 0.7));
+      c.camera.updateProjectionMatrix();
     },
   });
 }

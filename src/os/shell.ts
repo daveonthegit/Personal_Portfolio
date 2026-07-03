@@ -580,6 +580,13 @@ function mountMobileMapHome(): void {
           const spec = APP_BY_ID.get(id as AppId);
           if (spec) window.location.href = spec.route;
         },
+        // No windowing on mobile — in-room surfaces navigate instead.
+        openProjectRecord: (projectId) => {
+          window.location.href = `/projects#record=${encodeURIComponent(projectId)}`;
+        },
+        openCapture: (_title, url) => {
+          window.location.href = url;
+        },
       });
       if (ok) {
         if (!document.body.classList.contains('xw-introing')) m.showTags();

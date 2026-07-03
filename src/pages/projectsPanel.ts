@@ -263,6 +263,16 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   };
   overlay.addEventListener('click', onOverlayClick);
 
+  // Deep link from the city's display wall (mobile navigates instead of
+  // opening a window): /projects#record=<id> lands with that record open.
+  const recordLink = window.location.hash.match(/^#record=(.+)$/);
+  if (recordLink) {
+    const card = root.querySelector<HTMLElement>(
+      `.project-card[data-category="${decodeURIComponent(recordLink[1] ?? '')}"]`,
+    );
+    if (card) window.setTimeout(() => card.click(), 80);
+  }
+
   /* ───────────────────────── signal view (graph lens) ─────────────────────── */
 
   const signalRoot = root.querySelector<HTMLElement>('[data-signal-root]');
