@@ -15,6 +15,7 @@
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { REGION_STATES, METRO_COAST, PROJ } from './mapdata';
+import { buildRoomFor, type RoomBuild } from './rooms';
 
 /* ── Tunables ─────────────────────────────────────────────────────────────── */
 
@@ -59,6 +60,17 @@ function lcg(seed: number): () => number {
 
 interface CityHooks {
   openApp: (id: string, originRect: DOMRect | null) => void;
+  openCapture?: (title: string, url: string) => void;
+  openProjectRecord?: (projectId: string) => void;
+}
+
+interface RoomEntry {
+  shellMat: THREE.MeshLambertMaterial;
+  build: RoomBuild | null;
+  center: THREE.Vector3;
+  camIn: THREE.Vector3;
+  camLook: THREE.Vector3;
+  leds: THREE.Mesh[];
 }
 
 interface City {
@@ -80,6 +92,10 @@ interface City {
   packets: Array<{ mesh: THREE.Mesh; pts: THREE.Vector3[]; lens: number[]; total: number; speed: number; phase: number }>;
   shellMat: THREE.MeshLambertMaterial;
   person: THREE.Group;
+  rooms: Map<string, RoomEntry>;
+  mode: 'overhead' | 'diving' | 'room';
+  currentRoom: string | null;
+  exitBtn: HTMLElement;
   flights: Array<{ mesh: THREE.Mesh; a: THREE.Vector3; b: THREE.Vector3; total: number; speed: number; phase: number }>;
   subjectEdges: THREE.LineSegments;
   clock: THREE.Clock;
@@ -302,6 +318,8 @@ function buildCity(scene: THREE.Scene): {
   subjectEdges: THREE.LineSegments;
   shellMat: THREE.MeshLambertMaterial;
   person: THREE.Group;
+  roomShells: Map<string, { shellMat: THREE.MeshLambertMaterial; build: RoomBuild | null; screen: THREE.Mesh | null }>;
+  dossierScreen: THREE.Mesh | null;
 } {
   // Endless dark base so the textured ground never shows a horizon edge.
   const basePlane = new THREE.Mesh(
@@ -375,8 +393,9 @@ function buildCity(scene: THREE.Scene): {
   let subjectBounds = new THREE.Box3();
 
   positions.forEach((p, i) => {
-    if (p.anchor?.id === 'dossier') {
-      // Standalone shell handles this one — zero the instance permanently.
+    if (p.anchor) {
+      // Every app building gets a standalone fading shell + a room inside —
+      // its instance is zeroed permanently.
       m.makeScale(0.0001, 0.0001, 0.0001).setPosition(p.x, 0, p.z);
     } else {
       m.makeScale(p.w, p.h, p.d).setPosition(p.x, 0, p.z);
@@ -424,9 +443,25 @@ function buildCity(scene: THREE.Scene): {
   group.updateMatrixWorld(true);
 
   // Subject building highlight — cyan edges, pulsed during the lock-on.
+  const roomShells = new Map<string, { shellMat: THREE.MeshLambertMaterial; build: RoomBuild | null; screen: THREE.Mesh | null }>();
+  for (const p of positions) {
+    if (!p.anchor || p.anchor.id === 'dossier') continue;
+    const sm = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: false });
+    const shell = new THREE.Mesh(new THREE.BoxGeometry(p.w, p.h, p.d), sm);
+    shell.position.set(p.x, p.h / 2, p.z);
+    group.add(shell);
+    const build = buildRoomFor(p.anchor.id, p.w - 2, p.d - 2, 23);
+    if (build) {
+      build.group.position.set(p.x, 0, p.z);
+      group.add(build.group);
+    }
+    roomShells.set(p.anchor.id, { shellMat: sm, build, screen: build?.screen ?? null });
+  }
+
   let subjectEdges = new THREE.LineSegments();
   let shellMat = new THREE.MeshLambertMaterial();
   let person = new THREE.Group();
+  let dossierScreen: THREE.Mesh | null = null;
   for (const p of positions) {
     if (p.anchor?.id !== 'dossier') continue;
 
@@ -490,6 +525,7 @@ function buildCity(scene: THREE.Scene): {
     );
     screen.position.set(0, 7.4, -6.9);
     room.add(screen);
+    dossierScreen = screen;
     solid(new THREE.BoxGeometry(1, 1.8, 0.5), dark, 0, 5.2, -7.3);           // monitor stand
     const screenGlow = new THREE.PointLight(0xbfe9f5, 26, 34);
     screenGlow.position.set(0, 7.4, -4.4);
@@ -535,6 +571,25 @@ function buildCity(scene: THREE.Scene): {
     solid(new THREE.BoxGeometry(4, 4.6, 0.7), dark, 0, 5.3, 2.6);
     solid(new THREE.CylinderGeometry(0.25, 0.25, 2.6, 8), grey, 0, 1.45, 0.6);
 
+    // Lived-in props: second monitor, framed posters, plant, books, bottle
+    solid(new THREE.BoxGeometry(4.4, 3.2, 0.4), dark, -5.2, 6.6, -7, 0.35);   // second monitor
+    const screen2 = new THREE.Mesh(new THREE.PlaneGeometry(3.9, 2.7), new THREE.MeshBasicMaterial({ color: 0x1d2b31 }));
+    screen2.position.set(-5.05, 6.6, -6.75);
+    screen2.rotation.y = 0.35;
+    room.add(screen2);
+    solid(new THREE.BoxGeometry(3.4, 4.6, 0.25), white, -9, 8.2, -RD / 2 + 0.75);   // posters on the far wall
+    solid(new THREE.BoxGeometry(3, 4.2, 0.15), dark, -9, 8.2, -RD / 2 + 0.9);
+    solid(new THREE.BoxGeometry(4.6, 3.2, 0.25), white, 8.4, 8.6, -RD / 2 + 0.75);
+    solid(new THREE.BoxGeometry(4.2, 2.8, 0.15), grey, 8.4, 8.6, -RD / 2 + 0.9);
+    solid(new THREE.CylinderGeometry(1, 1.3, 2.2, 10), grey, RW / 2 - 3, 1.35, -RD / 2 + 3); // planter
+    solid(new THREE.SphereGeometry(1.9, 10, 8), new THREE.MeshLambertMaterial({ color: 0x55604a }), RW / 2 - 3, 3.9, -RD / 2 + 3);
+    solid(new THREE.BoxGeometry(1.6, 1.1, 2.4), grey, -4.9, 5, -5.2, 0.3);    // book stack on desk
+    solid(new THREE.BoxGeometry(1.5, 0.5, 2.2), white, -4.85, 5.8, -5.2, 0.5);
+    solid(new THREE.CylinderGeometry(0.3, 0.3, 1.4, 8), white, 5.6, 5.4, -6.2); // bottle
+    // Headphones on a stand
+    solid(new THREE.CylinderGeometry(0.15, 0.15, 2.6, 6), grey, -8.6, 5.9, -5.4);
+    solid(new THREE.SphereGeometry(1, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), dark, -8.6, 7, -5.4);
+
     // ── The person: solid figure, seated, facing the screen ──
     person = new THREE.Group();
     const skin = new THREE.MeshLambertMaterial({ color: 0xd8d2c4 });
@@ -547,15 +602,21 @@ function buildCity(scene: THREE.Scene): {
       return mesh;
     };
     part(new THREE.BoxGeometry(3.3, 4.2, 1.9), cloth, 0, 5.4, 0.2);            // torso
+    part(new THREE.BoxGeometry(3.7, 1, 2.1), cloth, 0, 7.15, 0.2);             // shoulders
     part(new THREE.SphereGeometry(1.35, 18, 14), skin, 0, 8.55, 0);            // head
+    part(new THREE.SphereGeometry(1.42, 18, 12, 0, Math.PI * 2, 0, Math.PI / 2.4), dark, 0, 8.75, -0.12); // hair
     part(new THREE.CylinderGeometry(0.5, 0.6, 0.7, 10), skin, 0, 7.25, 0);     // neck
-    part(new THREE.BoxGeometry(1, 1, 3.4), cloth, -1.9, 5.6, -1.3, -0.35);     // upper arms reach the desk
-    part(new THREE.BoxGeometry(1, 1, 3.4), cloth, 1.9, 5.6, -1.3, -0.35);
-    part(new THREE.BoxGeometry(0.9, 0.7, 1.6), skin, -1.9, 4.85, -3.3);        // hands on the keyboard
-    part(new THREE.BoxGeometry(0.9, 0.7, 1.6), skin, 1.9, 4.85, -3.3);
+    part(new THREE.BoxGeometry(0.95, 2.2, 0.95), cloth, -2.1, 5.9, 0, 0.25);   // upper arms down…
+    part(new THREE.BoxGeometry(0.95, 2.2, 0.95), cloth, 2.1, 5.9, 0, 0.25);
+    part(new THREE.BoxGeometry(0.85, 0.85, 2.6), cloth, -2.15, 4.75, -1.7, -0.12); // …elbows bend to the desk
+    part(new THREE.BoxGeometry(0.85, 0.85, 2.6), cloth, 2.15, 4.75, -1.7, -0.12);
+    part(new THREE.BoxGeometry(0.9, 0.65, 1.5), skin, -2.1, 4.8, -3.2);        // hands on the keyboard
+    part(new THREE.BoxGeometry(0.9, 0.65, 1.5), skin, 2.1, 4.8, -3.2);
     part(new THREE.BoxGeometry(3.1, 1.3, 3.4), cloth, 0, 3.55, -0.9);          // thighs forward
     part(new THREE.BoxGeometry(1.2, 2.6, 1.2), cloth, -0.9, 1.6, -2.2);        // shins
     part(new THREE.BoxGeometry(1.2, 2.6, 1.2), cloth, 0.9, 1.6, -2.2);
+    part(new THREE.BoxGeometry(1.3, 0.5, 2.1), dark, -0.9, 0.5, -2.7);         // shoes
+    part(new THREE.BoxGeometry(1.3, 0.5, 2.1), dark, 0.9, 0.5, -2.7);
     person.position.set(0, 0, 1.2);
     room.add(person);
     group.add(room);
@@ -576,7 +637,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person };
+  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen };
 }
 
 function lcgHash(i: number): number {
@@ -615,7 +676,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person } = buildCity(scene);
+  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen } = buildCity(scene);
 
   // Aircraft markers flying the air routes (region scale, ink triangles).
   const flights: City['flights'] = [];
@@ -680,11 +741,23 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     return { spec, world, tag };
   });
 
+  // Exit control — visible while inside a room.
+  const exitBtn = document.createElement('button');
+  exitBtn.type = 'button';
+  exitBtn.className = 'xw-city-exit';
+  exitBtn.innerHTML = '<span aria-hidden="true">\u25c2</span> City';
+  exitBtn.addEventListener('click', () => exitRoom());
+  plane.appendChild(exitBtn);
+
   const off = REST_POS.clone().sub(REST_TARGET);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
     subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
     shellMat, person, flights,
+    rooms: new Map<string, RoomEntry>(),
+    mode: 'overhead' as const,
+    currentRoom: null,
+    exitBtn,
     orbitTarget: REST_TARGET.clone(),
     orbit: {
       az: Math.atan2(off.x, off.z),
@@ -693,6 +766,81 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     },
     clock: new THREE.Clock(),
   };
+
+  // Room registry: interior camera + look targets from the REAL transforms.
+  {
+    islandGroup.updateMatrixWorld(true);
+    const q2 = islandGroup.quaternion;
+    const fwd2 = new THREE.Vector3(0, 0, 1).applyQuaternion(q2);
+    const right2 = new THREE.Vector3(1, 0, 0).applyQuaternion(q2);
+    const register = (id: string, sm: THREE.MeshLambertMaterial, build: RoomBuild | null, screenMesh: THREE.Mesh | null) => {
+      const world = anchorWorlds.get(id);
+      if (!world) return;
+      const center = world.clone().setY(0);
+      const camIn = center.clone().setY(10.5)
+        .add(fwd2.clone().multiplyScalar(7.2))
+        .add(right2.clone().multiplyScalar(9.5));
+      const camLook = new THREE.Vector3();
+      if (screenMesh) screenMesh.getWorldPosition(camLook);
+      else camLook.copy(center).setY(6);
+      const leds: THREE.Mesh[] = [];
+      build?.group.traverse((o) => {
+        if ((o as THREE.Mesh).isMesh && o.userData.blinkPhase !== undefined) leds.push(o as THREE.Mesh);
+      });
+      city!.rooms.set(id, { shellMat: sm, build, center, camIn, camLook, leds });
+    };
+    register('dossier', shellMat, null, dossierScreen);
+    for (const [id, entry] of roomShells) register(id, entry.shellMat, entry.build, entry.screen);
+  }
+
+  // Featured previews onto the projects display wall (real images, real ids).
+  void fetch('/api/projects')
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+    .then((projects: Array<{ id: string; image?: string; featured?: boolean }>) => {
+      const entry = city?.rooms.get('projects');
+      if (!entry?.build) return;
+      const featured = projects.filter((pr) => pr.featured && pr.image).slice(0, entry.build.displays.length);
+      const loader = new THREE.TextureLoader();
+      featured.forEach((pr, i) => {
+        const d = entry.build!.displays[i];
+        if (!d) return;
+        d.projectId = pr.id;
+        loader.load(pr.image!, (tex) => {
+          tex.colorSpace = THREE.SRGBColorSpace;
+          (d.mesh.material as THREE.MeshBasicMaterial).map = tex;
+          (d.mesh.material as THREE.MeshBasicMaterial).color.set(0xffffff);
+          (d.mesh.material as THREE.MeshBasicMaterial).needsUpdate = true;
+        });
+      });
+    })
+    .catch(() => { /* displays stay dark */ });
+
+  // Clickable in-room surfaces (displays, the live cabinet).
+  renderer.domElement.addEventListener('click', (e) => {
+    if (!city || city.mode !== 'room') return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const ndc = new THREE.Vector2(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(ndc, city.camera);
+    const entry = city.rooms.get(city.currentRoom ?? '');
+    if (!entry?.build) return;
+    if (city.currentRoom === 'projects') {
+      const hits = ray.intersectObjects(entry.build.displays.map((d) => d.mesh), false);
+      const first = hits[0];
+      if (first) {
+        const d = entry.build.displays.find((x) => x.mesh === first.object);
+        if (d?.projectId) city.hooks.openProjectRecord?.(d.projectId);
+      }
+    }
+    if (city.currentRoom === 'arcade' && entry.build.cabinet) {
+      if (ray.intersectObject(entry.build.cabinet, false).length > 0) {
+        city.hooks.openCapture?.('Minesweeper', '/hosted/minesweeper/');
+      }
+    }
+  });
 
   // The background is rotatable: dragging the canvas orbits the camera.
   bindOrbitDrag(renderer.domElement);
@@ -773,6 +921,12 @@ export function settleDesktop(): void {
   (city.subjectEdges.material as THREE.LineBasicMaterial).opacity = 0;
   city.shellMat.opacity = 1;
   city.shellMat.transparent = false;
+  roomTl?.kill();
+  city.rooms.forEach((r) => {
+    r.shellMat.opacity = 1;
+    r.shellMat.transparent = false;
+  });
+  setMode('overhead');
   if (city.camera.near !== 5) {
     city.camera.near = 5;
     city.camera.updateProjectionMatrix();
@@ -784,7 +938,20 @@ export function settleDesktop(): void {
 function tick(): void {
   if (!city) return;
   const t = city.clock.getElapsedTime();
-  if (!introActive) {
+  if (!introActive && city.mode === 'room') {
+    const entry = city.rooms.get(city.currentRoom ?? '');
+    if (entry) {
+      // Gentle handheld sway inside the room.
+      city.camera.position.copy(entry.camIn);
+      city.camera.position.x += Math.sin(t * 0.4) * 0.25;
+      city.camera.position.y += Math.sin(t * 0.31) * 0.18;
+      city.camera.lookAt(entry.camLook);
+      for (const led of entry.leds) {
+        (led.material as THREE.MeshBasicMaterial).opacity =
+          0.25 + 0.75 * (0.5 + 0.5 * Math.sin(t * 2.4 + (led.userData.blinkPhase as number)));
+      }
+    }
+  } else if (!introActive && city.mode === 'overhead') {
     // Camera orbits a MOVING focus (rest point, or the building being visited),
     // breathing slightly — a system idly watching.
     const az = city.orbit.az + Math.sin(t * 0.07) * 0.045;
@@ -823,7 +990,7 @@ function bindOrbitDrag(el: HTMLElement): void {
   let lastY = 0;
   el.classList.add('xw-city-canvas--grab');
   el.addEventListener('pointerdown', (e) => {
-    if (introActive || !city) return;
+    if (introActive || !city || city.mode !== 'overhead') return;
     dragging = true;
     lastX = e.clientX;
     lastY = e.clientY;
@@ -879,6 +1046,119 @@ function updateTags(): void {
 
 /* ── Tag → panel → window ─────────────────────────────────────────────────── */
 
+let roomTl: gsap.core.Timeline | null = null;
+
+function setMode(mode: 'overhead' | 'diving' | 'room', roomId: string | null = null): void {
+  if (!city) return;
+  city.mode = mode;
+  city.currentRoom = roomId;
+  city.exitBtn.classList.toggle('xw-city-exit--on', mode === 'room');
+}
+
+/** Fly INTO an app's room: over the roof, through the fading facade, settle
+ *  on the interior view. Resolves with the in-scene screen's viewport rect. */
+export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) => void): boolean {
+  if (!city || introActive) return false;
+  const entry = city.rooms.get(id);
+  if (!entry) return false;
+  roomTl?.kill();
+  setMode('diving', id);
+
+  const c = city;
+  const start = c.camera.position.clone();
+  const startLook = c.orbitTarget.clone();
+  const topY = 66;
+  const over = entry.center.clone().setY(topY).add(entry.camIn.clone().sub(entry.center).setY(0).multiplyScalar(0.6));
+  const path = new THREE.CatmullRomCurve3([start, over, entry.camIn], false, 'centripetal');
+  const fl = { t: 0 };
+  roomTl = gsap.timeline({
+    onComplete: () => {
+      setMode('room', id);
+      const rect = entry.build?.screen ?? null;
+      onArrive(rect ? boundsScreenRect(new THREE.Box3().setFromObject(rect)) : null);
+    },
+  });
+  roomTl.to(fl, {
+    t: 1,
+    duration: 1.4,
+    ease: 'power2.inOut',
+    onUpdate: () => {
+      const pos = path.getPoint(fl.t);
+      c.camera.position.copy(pos);
+      const look = startLook.clone().lerp(entry.camLook, THREE.MathUtils.smoothstep(fl.t, 0.25, 0.9));
+      c.camera.lookAt(look);
+      const dist = pos.distanceTo(entry.center.clone().setY(pos.y * 0.4));
+      const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
+      if (fade < 1) entry.shellMat.transparent = true;
+      entry.shellMat.opacity = fade;
+      const near = pos.y < 60 ? 0.8 : 5;
+      if (c.camera.near !== near) {
+        c.camera.near = near;
+        c.camera.updateProjectionMatrix();
+      }
+    },
+  });
+  return true;
+}
+
+/** Dock behavior: no flight. If inside a room, step out quickly; stay overhead. */
+export function teleportToApp(id: string): void {
+  if (!city || introActive) return;
+  if (city.mode === 'room' || city.mode === 'diving') {
+    exitRoom(true);
+  } else {
+    const a = city.anchors.find((x) => x.spec.id === id);
+    if (a) diveToward(a.world);
+  }
+}
+
+/** Leave the current room: ascend out, facade heals, overhead orbit resumes. */
+export function exitRoom(fast = false): void {
+  if (!city) return;
+  const c = city;
+  const entry = c.rooms.get(c.currentRoom ?? '');
+  roomTl?.kill();
+  if (!entry || c.mode === 'overhead') {
+    setMode('overhead');
+    return;
+  }
+  setMode('diving', null);
+  const from = c.camera.position.clone();
+  const fl = { t: 0 };
+  roomTl = gsap.timeline({
+    onComplete: () => {
+      entry.shellMat.opacity = 1;
+      entry.shellMat.transparent = false;
+      setMode('overhead');
+      // Hand the orbit back where the camera actually is.
+      const off2 = REST_POS.clone().sub(REST_TARGET);
+      c.orbit.az = Math.atan2(off2.x, off2.z);
+      c.orbit.pol = Math.acos(off2.y / off2.length());
+      c.orbit.r = off2.length();
+      c.orbitTarget.copy(REST_TARGET);
+    },
+  });
+  roomTl.to(fl, {
+    t: 1,
+    duration: fast ? 0.55 : 1.0,
+    ease: 'power2.inOut',
+    onUpdate: () => {
+      c.camera.position.lerpVectors(from, REST_POS, fl.t);
+      const look = entry.camLook.clone().lerp(REST_TARGET, THREE.MathUtils.smoothstep(fl.t, 0.15, 0.8));
+      c.camera.lookAt(look);
+      const dist = c.camera.position.distanceTo(entry.center.clone().setY(c.camera.position.y * 0.4));
+      const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
+      entry.shellMat.opacity = fade;
+      if (fade >= 1) entry.shellMat.transparent = false;
+      const near = c.camera.position.y < 60 ? 0.8 : 5;
+      if (c.camera.near !== near) {
+        c.camera.near = near;
+        c.camera.updateProjectionMatrix();
+      }
+    },
+  });
+}
+
 /** Travel the orbit focus TO an anchor's building (interiors phase 1). */
 function diveToward(world: THREE.Vector3): void {
   if (!city) return;
@@ -904,8 +1184,9 @@ export function diveTowardApp(id: string): void {
 
 function openFromTag(spec: AppAnchor, tag: HTMLElement): void {
   if (!city) return;
-  const anchor = city.anchors.find((a) => a.spec.id === spec.id);
-  if (anchor) diveToward(anchor.world);
+  if (diveIntoRoom(spec.id, (screenRect) => city?.hooks.openApp(spec.id, screenRect))) {
+    return;
+  }
   const r = tag.getBoundingClientRect();
   const panel = document.createElement('div');
   panel.className = 'xw-city-panel';

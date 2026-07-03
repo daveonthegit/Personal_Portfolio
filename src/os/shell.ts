@@ -46,6 +46,9 @@ const APPS: AppSpec[] = [
 
 const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 
+/** Set once the 3D City mounts; the shell talks back for room exits etc. */
+let cityRef: typeof import('./city3d') | null = null;
+
 function appForPath(pathname: string): AppSpec | null {
   const path = (pathname.replace(/\/+$/, '') || '/').toLowerCase();
   if (path === '/' || path === '/home') return APP_BY_ID.get('dossier') ?? null;
@@ -251,6 +254,23 @@ export class OSShell {
     this.windows.delete(id);
     if (this.focused === id) this.focused = null;
     this.updateDock();
+    // Closing the last window means leaving the building (exit grammar).
+    if (this.windows.size === 0) cityRef?.exitRoom();
+  }
+
+  /** Open the Projects app and jump straight to one record (room displays). */
+  openProjectRecord(projectId: string): void {
+    void this.openApp('projects').then(() => {
+      const win = this.windows.get('projects');
+      if (!win) return;
+      let tries = 0;
+      const attempt = () => {
+        const card = win.body.querySelector<HTMLElement>(`.project-card[data-category="${projectId}"]`);
+        if (card) card.click();
+        else if (tries++ < 20) window.setTimeout(attempt, 100);
+      };
+      attempt();
+    });
   }
 
   private setMinimized(win: OpenWindow, minimized: boolean): void {
@@ -406,15 +426,16 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
   shell.adoptInitial(article, initialApp.id);
 
   // The City (ADR 0002) — lazy chunk; SVG wallpaper stays if WebGL is out.
-  let cityApi: typeof import('./city3d') | null = null;
   void import('./city3d')
     .then((m) => {
       const ok = m.mountCity(plane, {
         openApp: (id, rect) => {
           void shell.openApp(id as AppId, { originRect: rect ?? undefined });
         },
+        openCapture: (title, url) => shell.openCapture(title, url),
+        openProjectRecord: (projectId) => shell.openProjectRecord(projectId),
       });
-      if (ok) cityApi = m;
+      if (ok) cityRef = m;
       // During the apex intro the flight reveals the tags itself.
       if (ok && !document.body.classList.contains('xw-introing')) m.showTags();
     })
@@ -428,7 +449,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
       const id = item.dataset.xwDock as AppId | undefined;
       if (!id) return;
       e.preventDefault();
-      cityApi?.diveTowardApp(id); // the nav flies you to the location too
+      cityRef?.teleportToApp(id); // dock = system access: no flight
       void shell.openApp(id);
     });
   });
