@@ -49,8 +49,14 @@ function bindSkipLink(): void {
   const skip = document.querySelector<HTMLAnchorElement>('.xiaoos-skip-link');
   const mainEl = document.getElementById('main-content');
   if (!skip || !mainEl) return;
-  skip.addEventListener('click', () => {
-    window.setTimeout(() => mainEl.focus(), 0);
+  skip.addEventListener('click', e => {
+    const windowBody = document.querySelector<HTMLElement>('.xw-window--focused .xw-window-body');
+    if (windowBody) {
+      e.preventDefault();
+      windowBody.focus({ preventScroll: true });
+    } else {
+      window.setTimeout(() => mainEl.focus(), 0);
+    }
   });
 }
 

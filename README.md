@@ -7,7 +7,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 - **Go Web Server** with clean routing and template rendering
 - **TypeScript Frontend** with modern build system (esbuild + Tailwind CSS)
 - **LaTeX Resume Integration** - Edit `static/assets/resume.tex` and auto-build to PDF
-- **Responsive Design** with dark/light theme support
+- **xiaoOS interface** with a warm dark palette, desktop windows and mobile documents
 - **Interactive Components**: Contact form, project filtering, smooth animations
 - **Resume Serving**: Multiple formats (HTML, PDF, LaTeX source)
 
@@ -21,7 +21,7 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 **Frontend:**
 - TypeScript with esbuild
 - Tailwind CSS with PostCSS
-- Alpine.js for interactivity
+- Vanilla TypeScript, GSAP and a lazy-loaded three.js city
 
 **Resume System:**
 - LaTeX source editing
@@ -99,6 +99,39 @@ npm run build:css
 npm run build:resume
 ```
 
+## Intro, accessibility and browser checks
+
+- `/` plays the preserved X-grid → strike bars → diamond → System Loading boot, then the city acquisition and Dossier arrival. `/home` and other document routes do not replay it; `/home#file` opens the Dossier directly on mobile. Section hashes and `?noboot=1` also bypass the intro without losing the destination.
+- **Bypass intro** is a server-rendered link, available before JavaScript downloads. Escape cancels the entire chain, including pending imports and nested timelines. **Replay intro** starts a fresh front-door visit.
+- The animation budget is eight seconds **after the frontend starts**, not a promise about network load time. An independent watchdog releases the document if animation stalls; an empty boot cover also fails open through CSS when the entry script cannot load.
+- Reduced motion keeps a short, static sequence of the same narrative stages, without flashes, camera movement or a WebGL download. Unavailable or late WebGL uses the SVG acquisition. The city prepares shader variants and uploads textures across tasks; Projects-room textures load only when that room is entered.
+- Project build notes use native disclosure elements. Full project documents remain readable when the interactive index fails. Reveals enhance already-visible content, never gate it. The project dialog contains Tab focus and returns focus on Escape; app windows restore focus to their dock controls.
+
+Build and run the usual Go/TypeScript checks:
+
+```bash
+npm run build
+npm run type-check
+go test ./...
+go vet ./...
+```
+
+Optional real-browser regression/measurement commands require **Node 22+** (built-in WebSocket), an existing Chrome/Chromium, a local server, and a dedicated browser profile. No additional test packages are required. For example on macOS, in separate terminals:
+
+```bash
+PORT=18437 go run .
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --headless=new --remote-debugging-port=18438 \
+  --user-data-dir="$PWD/.local/chrome-checks" --no-first-run about:blank
+npm run test:browser
+npm run measure:intro -- after desktop
+npm run measure:intro -- after mobile
+```
+
+`PORTFOLIO_URL` and `CHROME_PORT` override the regression script's endpoints. The measurement script accepts the server URL as its third argument and uses Chrome port 18438. Both tools write to `docs/evidence/intro-ux/`; screenshots are verified as nonempty files. Tests never send a contact message. Use a **dedicated** browser, not your everyday profile.
+
+Review, measurement settings, limitations and before/after screenshots: [Intro and UX review](docs/intro-ux-review.md). Design context: [PRODUCT.md](PRODUCT.md) and [.impeccable.md](.impeccable.md). Impeccable's optional live config targets `templates/base.html`; live script injection was not enabled and the Go CSP in `middleware.go` was not changed.
+
 ## Resume Management
 
 Your resume is managed via LaTeX for professional typesetting:
@@ -137,7 +170,7 @@ Edit `config/personal.go` to update:
 - Interests
 
 ### Projects:
-Update the `loadProjects()` function in `main.go` or create a separate data file.
+Update `LoadProjects()` in `projects.go`. Reuse supported project facts; do not infer individual ownership or outcomes for team projects.
 
 ### Styling:
 - Main styles: `src/styles/main.css`
@@ -145,7 +178,7 @@ Update the `loadProjects()` function in `main.go` or create a separate data file
 - Colors and themes can be customized in the Tailwind config
 
 ### Templates:
-HTML templates will be in `templates/` directory (to be created).
+Go HTML templates live in `templates/`; `base.html` is the shared document shell.
 
 ## Deployment
 
@@ -187,12 +220,12 @@ Personal_Portfolio/
 │   └── js/
 │       └── main.js          # Compiled JavaScript
 ├── src/                     # TypeScript source
-│   ├── components/          # Alpine.js components
+│   ├── components/          # TypeScript components
 │   ├── styles/              # CSS source
 │   ├── types/               # TypeScript types
 │   └── utils/               # Utility functions
 ├── scripts/                 # Build scripts
-├── templates/               # HTML templates (to be created)
+├── templates/               # Server-rendered HTML templates
 ├── main.go                  # Go web server
 ├── go.mod                   # Go dependencies
 ├── package.json             # Node.js dependencies
@@ -201,7 +234,7 @@ Personal_Portfolio/
 
 ## Available Scripts
 
-- `npm run build` - Build everything (TS, CSS, Resume)
+- `npm run build` - Build TypeScript and CSS (resume compilation is separate)
 - `npm run dev` - Development mode with auto-reload
 - `npm run build:ts` - Build TypeScript only
 - `npm run build:css` - Build CSS only

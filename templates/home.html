@@ -23,11 +23,17 @@
           {{.Personal.Name}}<span class="xw-display-stop" aria-hidden="true">.</span>
         </h1>
 
-        <p class="xw-tagline" data-xw-reveal>{{.Personal.Tagline}}</p>
+        <p class="xw-role" data-xw-reveal>{{.Personal.Title}}</p>
+        <p class="xw-tagline" data-xw-reveal>Full-stack web applications, lead-generation flows and data-driven optimization.</p>
 
-        <div class="xw-bio" data-xw-reveal>
+        {{range $i, $role := .Personal.Experience}}{{if eq $i 0}}{{with $role.Description}}
+        <p class="xw-current-work" data-xw-reveal>{{index . 0}}.</p>
+        {{end}}{{end}}{{end}}
+
+        <details class="xw-build-notes xw-bio" data-xw-reveal>
+          <summary>Approach &amp; current work</summary>
           {{range split "\n\n" .Personal.Bio}}<p>{{.}}</p>{{end}}
-        </div>
+        </details>
 
         <div class="xw-hero-cta" data-xw-reveal>
           <a href="#projects" class="xw-cta xw-cta--primary">See selected work<span aria-hidden="true"> →</span></a>
@@ -43,7 +49,7 @@
           <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
           <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
           <img
-            src="{{asset "/static/images/Profile_Picture.jpg"}}"
+            src="{{asset "/static/images/profile-840.jpg"}}"
             alt="Portrait of {{.Personal.Name}}"
             width="420" height="520" loading="eager" decoding="async" />
         </figure>
@@ -58,8 +64,8 @@
             <dd>{{.Personal.Location}}</dd>
           </div>
           <div class="xw-fact">
-            <dt>Starting</dt>
-            <dd>Junior Web Developer, June 2026</dd>
+            <dt>Since</dt>
+            <dd>{{range .Personal.Experience}}{{if not .EndDate}}{{.StartDate.Format "Jan 2006"}}{{end}}{{end}}</dd>
           </div>
           <div class="xw-fact">
             <dt>Links</dt>
@@ -132,6 +138,11 @@
         <h3 class="xw-work-title">{{$p.Title}}</h3>
         <p class="xw-work-lede">{{if $p.ShortDescription}}{{$p.ShortDescription}}{{else}}{{$p.Description}}{{end}}</p>
 
+        <details class="xw-build-notes">
+          <summary>How it’s built</summary>
+          <p>{{$p.Description}}</p>
+        </details>
+
         {{if $p.Technologies}}
         <ul class="xw-work-tech" role="list" aria-label="Stack">
           {{range $p.Technologies}}<li>{{.}}</li>{{end}}
@@ -141,7 +152,7 @@
         <div class="xw-work-links">
           {{if $p.LiveURL}}<a href="{{$p.LiveURL}}" target="_blank" rel="noopener noreferrer" class="xw-link">Live<span aria-hidden="true"> ↗</span></a>{{end}}
           {{if $p.GitHubURL}}<a href="{{$p.GitHubURL}}" target="_blank" rel="noopener noreferrer" class="xw-link">Source<span aria-hidden="true"> ↗</span></a>{{end}}
-          <a href="/projects#{{$p.ID}}" class="xw-link xw-link--muted">Details<span aria-hidden="true"> →</span></a>
+          <a href="/projects#record={{$p.ID}}" class="xw-link xw-link--muted">Details<span aria-hidden="true"> →</span></a>
         </div>
       </li>
       {{end}}

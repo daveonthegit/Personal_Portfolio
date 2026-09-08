@@ -1,0 +1,291 @@
+{
+  "label": "before",
+  "profile": "mobile",
+  "settings": {
+    "cpu": 4,
+    "latencyMs": 150,
+    "downloadBytesPerSecond": 200000,
+    "cache": "disabled",
+    "browser": "Chrome headless, local macOS"
+  },
+  "phases": [
+    {
+      "phase": "boot",
+      "at": 2761.2
+    },
+    {
+      "phase": "city",
+      "at": 8561
+    },
+    {
+      "phase": "ready",
+      "at": 16094
+    }
+  ],
+  "frames": {
+    "loading": {
+      "count": 48,
+      "p95": 16.800000000000182,
+      "max": 1690.4999999523163,
+      "over50ms": 2
+    },
+    "boot": {
+      "count": 338,
+      "p95": 16.800000000000182,
+      "max": 116.69999999999982,
+      "over50ms": 1
+    },
+    "city": {
+      "count": 437,
+      "p95": 16.799999999999272,
+      "max": 100,
+      "over50ms": 3
+    },
+    "ready": {
+      "count": 595,
+      "p95": 16.799999999999272,
+      "max": 33.30000000000291,
+      "over50ms": 0
+    }
+  },
+  "longTasks": [
+    {
+      "at": 1874.7000000476837,
+      "duration": 106,
+      "phase": "loading"
+    },
+    {
+      "at": 2750.5999999046326,
+      "duration": 61,
+      "phase": "boot"
+    },
+    {
+      "at": 7328.899999856949,
+      "duration": 74,
+      "phase": "boot"
+    },
+    {
+      "at": 11695.299999952316,
+      "duration": 101,
+      "phase": "city"
+    }
+  ],
+  "errors": [],
+  "url": "http://localhost:18437/home",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "dpr": 3
+  },
+  "paints": [
+    {
+      "name": "first-paint",
+      "at": 1988
+    },
+    {
+      "name": "first-contentful-paint",
+      "at": 1988
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "transfer": 1332,
+      "decoded": 20489,
+      "duration": 183.39999985694885
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap",
+      "transfer": 751,
+      "decoded": 726,
+      "duration": 175.40000009536743
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=51e46f5fee811ef6145a",
+      "transfer": 111924,
+      "decoded": 111624,
+      "duration": 1690
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg?v=51e46f5fee811ef6145a",
+      "transfer": 473900,
+      "decoded": 473600,
+      "duration": 5631.900000095367
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=51e46f5fee811ef6145a",
+      "transfer": 47741,
+      "decoded": 47441,
+      "duration": 892.7000000476837
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "transfer": 86488,
+      "decoded": 86188,
+      "duration": 1550.6999998092651
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-CSAICXPA.js",
+      "transfer": 582886,
+      "decoded": 582586,
+      "duration": 4559.5
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "transfer": 2957,
+      "decoded": 2657,
+      "duration": 215.80000019073486
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "transfer": 0,
+      "decoded": 0,
+      "duration": 224.09999990463257
+    },
+    {
+      "url": "http://localhost:18437/api/projects",
+      "transfer": 16775,
+      "decoded": 16475,
+      "duration": 237.70000004768372
+    },
+    {
+      "url": "http://localhost:18437/static/images/Forgearena.png",
+      "transfer": 142058,
+      "decoded": 141758,
+      "duration": 3508.5
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png",
+      "transfer": 495839,
+      "decoded": 495539,
+      "duration": 10550.399999856949
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png",
+      "transfer": 993341,
+      "decoded": 993041,
+      "duration": 15681.199999809265
+    },
+    {
+      "url": "http://localhost:18437/static/images/outfai-redesign.png",
+      "transfer": 1022938,
+      "decoded": 1022638,
+      "duration": 15829.899999856949
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg",
+      "transfer": 473900,
+      "decoded": 473600,
+      "duration": 10021.199999809265
+    }
+  ],
+  "overflow": false,
+  "requests": [
+    {
+      "url": "http://localhost:18437/",
+      "status": 200,
+      "mime": "text/html"
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgsAXHNlYzg.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q131nj-o.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYbSB4Zh.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "status": 200,
+      "mime": "application/json"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-CSAICXPA.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/api/projects",
+      "status": 200,
+      "mime": "application/json"
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/outfai-redesign.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Forgearena.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg",
+      "status": 200,
+      "mime": "image/jpeg"
+    }
+  ],
+  "exceptions": []
+}

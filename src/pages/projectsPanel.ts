@@ -54,7 +54,13 @@ export function mountProjectsPage(root: HTMLElement): () => void {
 
   /* ──────────────────────────────── filters ──────────────────────────────── */
 
+  const filterSelect = root.querySelector<HTMLSelectElement>('[data-project-filter]');
   const applyFilter = (filter: string) => {
+    if (filterSelect) filterSelect.value = filter;
+    filterButtons.forEach(button => {
+      button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+      button.classList.toggle('is-active', button.dataset.filter === filter);
+    });
     projectCards.forEach((card) => {
       const type = card.getAttribute('data-type');
       card.style.display = filter === 'all' || type === filter ? '' : 'none';
@@ -82,6 +88,8 @@ export function mountProjectsPage(root: HTMLElement): () => void {
     }
   };
 
+  const onSelectFilter = () => applyFilter(filterSelect?.value ?? 'all');
+  filterSelect?.addEventListener('change', onSelectFilter);
   const filterDisposers: (() => void)[] = [];
   filterButtons.forEach((button) => {
     const onClick = () => {
@@ -120,9 +128,11 @@ export function mountProjectsPage(root: HTMLElement): () => void {
 
   /* ────────────────────────────── modal open/close ───────────────────────── */
 
-  let lastFocus: Element | null = null;
+  let lastFocus: HTMLElement | SVGElement | null = null;
+  let closeTimer: number | undefined;
 
   const showModal = () => {
+    window.clearTimeout(closeTimer);
     overlay.classList.remove('hidden');
     // Force reflow before toggling the open class so the transition plays.
     void overlay.offsetWidth;
@@ -131,20 +141,32 @@ export function mountProjectsPage(root: HTMLElement): () => void {
 
   const closeModal = () => {
     overlay.classList.remove('is-open');
-    window.setTimeout(() => {
+    window.clearTimeout(closeTimer);
+    closeTimer = window.setTimeout(() => {
       overlay.classList.add('hidden');
-      termImg.src = '';
-      if (lastFocus && typeof (lastFocus as HTMLElement).focus === 'function') {
-        (lastFocus as HTMLElement).focus();
-      }
+      termImg.removeAttribute('src');
+      if (lastFocus?.isConnected) lastFocus.focus();
       lastFocus = null;
     }, 180);
   };
 
   const onEscape = (e: KeyboardEvent) => {
-    if (e.key !== 'Escape') return;
     if (overlay.classList.contains('hidden')) return;
+    if (e.key === 'Tab') {
+      const controls = Array.from(overlay.querySelectorAll<HTMLElement>('button, a[href], input, [tabindex="0"]'))
+        .filter(el => el.getClientRects().length > 0);
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !overlay.contains(document.activeElement))) {
+        e.preventDefault(); last?.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
+        e.preventDefault(); first?.focus();
+      }
+      return;
+    }
+    if (e.key !== 'Escape') return;
     e.preventDefault();
+    e.stopImmediatePropagation();
     closeModal();
   };
   document.addEventListener('keydown', onEscape);
@@ -247,7 +269,7 @@ export function mountProjectsPage(root: HTMLElement): () => void {
         termLinks.appendChild(a);
       }
 
-      lastFocus = document.activeElement;
+      lastFocus = card;
       showModal();
       requestAnimationFrame(() => closeBtn.focus());
     };
@@ -267,10 +289,11 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   // opening a window): /projects#record=<id> lands with that record open.
   const recordLink = window.location.hash.match(/^#record=(.+)$/);
   if (recordLink) {
-    const card = root.querySelector<HTMLElement>(
-      `.project-card[data-category="${decodeURIComponent(recordLink[1] ?? '')}"]`,
-    );
-    if (card) window.setTimeout(() => card.click(), 80);
+    try {
+      const id = decodeURIComponent(recordLink[1] ?? '');
+      const card = Array.from(projectCards).find(card => card.dataset.category === id);
+      card?.click();
+    } catch { /* malformed bookmarks leave the usable project index open */ }
   }
 
   /* ───────────────────────── signal view (graph lens) ─────────────────────── */
@@ -386,6 +409,7 @@ export function mountProjectsPage(root: HTMLElement): () => void {
       const open = () => {
         const id = el.getAttribute('data-id');
         root.querySelector<HTMLElement>(`.project-card[data-category="${id}"]`)?.click();
+        lastFocus = el;
       };
       el.addEventListener('click', open);
       el.addEventListener('keydown', (e) => {
@@ -398,7 +422,10 @@ export function mountProjectsPage(root: HTMLElement): () => void {
   };
 
   const setView = (view: string) => {
-    viewButtons.forEach((b) => b.classList.toggle('is-active', b.dataset.view === view));
+    viewButtons.forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.view === view);
+      b.setAttribute('aria-pressed', String(b.dataset.view === view));
+    });
     const signal = view === 'signal';
     if (signal) buildSignalView();
     signalRoot?.classList.toggle('hidden', !signal);
@@ -411,11 +438,20 @@ export function mountProjectsPage(root: HTMLElement): () => void {
     viewDisposers.push(() => b.removeEventListener('click', onClick));
   });
 
-  // Initial filter state: everything visible.
+  // Only retire the native documents once the interactive alternative is ready.
+  const documents = root.querySelector<HTMLElement>('[data-project-documents]');
+  if (documents) documents.hidden = true;
   applyFilter('all');
+  setView('list');
 
   return () => {
+    window.clearTimeout(closeTimer);
+    overlay.classList.remove('is-open');
+    overlay.classList.add('hidden');
+    termImg.removeAttribute('src');
+    if (documents) documents.hidden = false;
     document.removeEventListener('keydown', onEscape);
+    filterSelect?.removeEventListener('change', onSelectFilter);
     filterDisposers.forEach((d) => d());
     cardDisposers.forEach((d) => d());
     viewDisposers.forEach((d) => d());

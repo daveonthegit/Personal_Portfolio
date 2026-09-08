@@ -1,0 +1,21 @@
+FAIL front-door intro completes within 8.5s after startup Expected values to be strictly equal:
+
+false !== true
+
+FAIL bypass remains keyboard-accessible across boot and city loading Expected values to be strictly equal:
+
+false !== true
+
+FAIL noboot preserves a section deep link Expected values to be strictly equal:
+
+'' !== '#experience'
+
+FAIL reduced motion preserves narrative without WebGL or camera flight Expected values to be strictly equal:
+
+false !== true
+
+FAIL mobile arrival opens the Dossier; map remains available Expected values to be strictly equal:
+
+false !== true
+
+5 failed: front-door intro completes within 8.5s after startup, bypass remains keyboard-accessible across boot and city loading, noboot preserves a section deep link, reduced motion preserves narrative without WebGL or camera flight, mobile arrival opens the Dossier; map remains available

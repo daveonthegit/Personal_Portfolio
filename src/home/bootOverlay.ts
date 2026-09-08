@@ -1,145 +1,113 @@
 import { StartupAnimation } from '../components/StartupAnimation';
-import { mountZoomInCover, playZoomIn, removeZoomIn } from '../os/zoomIn';
+import { mountZoomInCover, playZoomIn } from '../os/zoomIn';
 
-/**
- * Boot overlay coordinator — the front-door cinematic chain.
- *
- * - **`/`** — boot sequence → Zoom-In (map → NYC → subject file) → desktop
- *   reveal. The page beneath is the same home template the OS shell already
- *   mounted, so the finale is a dissolve + `history.replaceState('/home')`,
- *   not a reload. The full intro always plays (project rule); Bypass/Escape
- *   are the visitor's way out at any moment.
- * - **`/home`** — no splash, no redirect (nav / bookmarks land here without intro).
- *
- * Skip animation on **`/`** only when `?noboot=1` (still canonicalizes to `/home`).
- */
-const BODY_READY_CLASS = 'xw-boot-done';
-const BODY_BOOTING_CLASS = 'xw-booting';
-
-function clearOverlay(): void {
-  const overlay = document.getElementById('startup-animation');
-  if (overlay && overlay.parentNode) {
-    overlay.parentNode.removeChild(overlay);
-  }
-}
-
-function markBooted(): void {
-  document.body.classList.remove(BODY_BOOTING_CLASS);
-  // Apex first-paint cover class — previously cleared by the full-page redirect;
-  // with the in-place reveal it must be removed explicitly.
-  document.body.classList.remove('xw-boot-pending');
-  // Intro veil (hides OS chrome while the 3D flight plays over the canvas).
-  document.body.classList.remove('xw-introing');
-  document.body.classList.add(BODY_READY_CLASS);
-}
-
-function normalizePathname(): string {
-  let path = window.location.pathname || '/';
-  if (!path.startsWith('/')) path = `/${path}`;
-  path = path.replace(/\/+$/, '') || '/';
-  return path;
-}
-
-function isApexPath(): boolean {
-  return normalizePathname() === '/';
-}
-
-function hasNobootQuery(): boolean {
-  try {
-    return new URLSearchParams(window.location.search).get('noboot') === '1';
-  } catch {
-    return false;
-  }
-}
-
-/** Canonicalize `/` → `/home` without reloading the already-rendered page. */
-function canonicalizeToHome(): void {
-  try {
-    window.history.replaceState(null, '', '/home');
-  } catch {
-    window.location.replace('/home');
-  }
-}
-
+/** One bounded, cancellable front-door arrival. Deep links never require it. */
 export function initBootOverlay(): void {
-  const page = document.body?.dataset?.page;
+  const body = document.body;
+  const apex = (location.pathname.replace(/\/+$/, '') || '/') === '/';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bypass = document.getElementById('xw-intro-bypass');
+  const originalHash = location.hash;
+  const abort = new AbortController();
+  let startup: StartupAnimation | null = null;
+  let ended = false;
+  let watchdog: number | undefined;
+  let cityModule: typeof import('../os/city3d') | null = null;
 
-  if (page !== 'home') {
-    clearOverlay();
-    markBooted();
-    return;
-  }
-
-  // /home — never show splash, never client-redirect (canonical browsing URL).
-  if (!isApexPath()) {
-    clearOverlay();
-    markBooted();
-    return;
-  }
-
-  // Only `/` from here on (same home template as /home).
-
-  if (hasNobootQuery()) {
-    clearOverlay();
-    markBooted();
-    canonicalizeToHome();
-    return;
-  }
-
-  document.body.classList.add(BODY_BOOTING_CLASS);
-
-  const finish = () => {
-    markBooted();
-    canonicalizeToHome();
+  const finish = (skipped = false, reason = skipped ? 'bypass' : 'complete') => {
+    if (ended) return;
+    ended = true;
+    const returnFocus = skipped || document.activeElement === bypass;
+    window.clearTimeout(watchdog);
+    if (skipped) {
+      abort.abort();
+      startup?.skip();
+      cityModule?.settleDesktop();
+    }
+    document.getElementById('startup-animation')?.remove();
+    bypass?.remove();
+    document.removeEventListener('keydown', onKey);
+    body.classList.remove('xw-booting', 'xw-boot-pending', 'xw-introing');
+    body.classList.add('xw-boot-done');
+    if (apex) {
+      const url = new URL(location.href);
+      url.pathname = '/home';
+      url.searchParams.delete('noboot');
+      history.replaceState(null, '', url.pathname + url.search + originalHash);
+    }
+    performance.mark('xw:intro-ready', { detail: reason });
+    // The Companion App subscribes before the asynchronous arrival completes.
+    window.dispatchEvent(new CustomEvent('xw:intro-ready', { detail: { apex } }));
+    if (returnFocus) {
+      const target = document.querySelector<HTMLElement>('.xw-window[data-app="dossier"] .xw-window-body')
+        ?? document.getElementById('main-content');
+      target?.focus({ preventScroll: true });
+    }
+  };
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key !== 'Escape') return;
+    // Do not let this same Escape close the newly revealed Dossier.
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    finish(true);
   };
 
-  // The full intro ALWAYS plays (project rule — owner's decision overrides the
-  // reduced-motion skip). Bypass/Escape remain the visitor's way out.
-  // 3D City intro (ADR 0002) on every form factor — mobile plays it fullscreen
-  // in the map panel; the SVG ladder remains the no-WebGL fallback.
-  const wants3D = true;
-  // Warm the chunk during the boot animation; the shell mounts the scene.
-  const cityP = wants3D
-    ? import('../os/city3d').catch(() => null)
-    : Promise.resolve(null);
-  if (wants3D) document.body.classList.add('xw-introing');
+  if (body.dataset.page !== 'home' || !apex || new URLSearchParams(location.search).get('noboot') === '1' || originalHash) {
+    finish();
+    return;
+  }
 
-  const runSvgFallback = (existingCover: HTMLElement | null) => {
-    const cover = existingCover ?? mountZoomInCover();
-    playZoomIn(cover, finish);
-  };
+  const bootCover = document.getElementById('startup-animation');
+  if (bootCover && getComputedStyle(bootCover).visibility === 'hidden') {
+    // CSS already uncovered the document during a slow entry-script download.
+    finish(true, 'late-start');
+    return;
+  }
+
+  performance.mark('xw:intro-start');
+  body.classList.add('xw-booting', 'xw-introing');
+  bypass?.focus({ preventScroll: true });
+  document.addEventListener('keydown', onKey, { signal: abort.signal });
+  bypass?.addEventListener('click', e => { e.preventDefault(); finish(true); }, { signal: abort.signal });
+  // A stalled import, hidden-tab timeline, or failed GPU must never hold the file.
+  watchdog = window.setTimeout(() => finish(true, 'deadline'), 8000);
+  const cityP = reduced ? Promise.resolve(null) : import('../os/city3d')
+    .then(async m => {
+      cityModule = m;
+      // Shell and coordinator share the chunk. Mount occurs in the shell's import continuation.
+      await new Promise<void>(resolve => window.setTimeout(resolve, 0));
+      await m.prepareIntro();
+      if (ended) m.settleDesktop();
+      return m;
+    }).catch(() => null);
 
   try {
-    // For the SVG path the cover pre-mounts beneath the boot layer so the boot
-    // fade lands black-on-black. The 3D path renders under a transparent HUD
-    // (the canvas is the desktop plane), so no cover is needed.
-    const svgCover = wants3D ? null : mountZoomInCover();
-
-    // eslint-disable-next-line no-new
-    new StartupAnimation({
-      onFinish: (skipped) => {
-        if (skipped) {
-          if (svgCover) removeZoomIn(svgCover);
-          void cityP.then((m) => m?.settleDesktop());
-          finish();
-          return;
-        }
-        void cityP.then((m) => {
-          if (m && m.cityMounted()) {
-            const hud = document.createElement('div');
-            hud.className = 'xw-zoomin xw-zoomin--clear';
-            document.body.appendChild(hud);
-            if (m.playIntro(hud, finish)) return;
-            hud.remove();
+    startup = new StartupAnimation({
+      onFinish: skipped => {
+        if (ended) return;
+        if (skipped) { finish(true); return; }
+        // Do not replace a boot graphic with an empty screen while waiting for 3D.
+        const cover = mountZoomInCover();
+        void Promise.race([
+          cityP,
+          new Promise<null>(resolve => window.setTimeout(() => resolve(null), 350)),
+        ]).then(m => {
+          if (ended) { cover.remove(); return; }
+          if (m?.cityMounted()) {
+            cover.classList.add('xw-zoomin--clear');
+            if (m.playIntro(cover, () => finish(), abort.signal)) {
+              performance.mark('xw:intro-city', { detail: 'webgl' });
+              return;
+            }
           }
-          runSvgFallback(svgCover);
-        });
+          // A late scene is only a backdrop; it must not start another intro.
+          void cityP.then(late => late?.settleDesktop());
+          performance.mark('xw:intro-city', { detail: reduced ? 'quiet' : 'svg' });
+          playZoomIn(cover, () => finish(), abort.signal);
+        }).catch(() => { cover.remove(); finish(true, 'failure'); });
       },
     });
-  } catch (error) {
-    console.error('bootOverlay: failed to start animation', error);
-    clearOverlay();
-    markBooted();
-    canonicalizeToHome();
+  } catch {
+    finish(true, 'failure');
   }
 }

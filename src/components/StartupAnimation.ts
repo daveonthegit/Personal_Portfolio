@@ -28,6 +28,8 @@ export class StartupAnimation {
   private isAnimating = false;
   private tl: gsap.core.Timeline | null = null;
   private skipped = false;
+  private finishing = false;
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly onEscape = (e: KeyboardEvent): void => {
     if (e.key === 'Escape') this.skip();
   };
@@ -126,7 +128,7 @@ export class StartupAnimation {
               <div class="xiaoos-progress-bar-fill" id="xiaoos-progress-bar"></div>
           </div>
           <div class="xiaoos-hint-text">
-              SYSTEM.TIP: Loading workspace. Scroll to move through about, work, experience, and contact.
+              Opening David Xiao’s file. Profile, selected work, experience and contact.
           </div>
       </div>
 
@@ -151,6 +153,12 @@ export class StartupAnimation {
       document.body.appendChild(overlay);
     }
     this.container = overlay;
+    overlay.removeAttribute('aria-hidden');
+    overlay.querySelector('.xiaoos-display-area')?.setAttribute('aria-hidden', 'true');
+    // The coordinator's server-rendered link spans every intro phase.
+    if (document.getElementById('xw-intro-bypass')) {
+      overlay.querySelector<HTMLElement>('#xiaoos-skip-btn')!.hidden = true;
+    }
 
     // Skip control — the intro is a bounded courtesy, never a gate.
     const skipBtn = overlay.querySelector<HTMLButtonElement>('#xiaoos-skip-btn');
@@ -171,9 +179,26 @@ export class StartupAnimation {
     }
   }
 
-  private async startAnimation(): Promise<void> {
+  private startAnimation(): void {
     if (this.isAnimating) return;
     this.isAnimating = true;
+    this.skipped = false;
+    this.finishing = false;
+
+    if (this.reducedMotion) {
+      // Keep the identity and narrative, not flashes, zooms or moving geometry.
+      this.tl = gsap.timeline({ onComplete: () => this.redirectToHome() })
+        .set('.xiaoos-x-item', { opacity: 1 })
+        .set('#xiaoos-bottom-ui', { opacity: 1 })
+        .set('#xiaoos-x-grid', { opacity: 0 }, 0.4)
+        .set('.xiaoos-strike-bar', { width: '100%' }, 0.4)
+        .set('#xiaoos-strike-bars', { opacity: 0 }, 0.7)
+        .set('.xiaoos-shape-1', { opacity: 1 }, 0.7)
+        .set('.xiaoos-shape-1', { opacity: 0 }, 1.05)
+        .set('#xiaoos-sys-blocks', { opacity: 1 }, 1.05)
+        .to({}, { duration: 0.45 });
+      return;
+    }
 
     // Resets
     gsap.set("#xiaoos-display-area", { display: "flex" });
@@ -181,7 +206,7 @@ export class StartupAnimation {
     gsap.set("#xiaoos-reveal-solid", { scale: 0, opacity: 1 });
     
     gsap.set(".xiaoos-x-item", { opacity: 0 });
-    gsap.set(".xiaoos-strike-bar", { width: "0%" });
+    gsap.set(".xiaoos-strike-bar", { width: "100%", scaleX: 0, transformOrigin: 'left center' });
     gsap.set("#xiaoos-strike-bars", { opacity: 1 });
     gsap.set("#xiaoos-transition-diamond", { opacity: 0 });
     gsap.set("#xiaoos-diamond-shape", { scale: 1, opacity: 1 });
@@ -197,7 +222,7 @@ export class StartupAnimation {
     gsap.set("#xiaoos-sys-fast-bar", { width: "85%" });
     
     gsap.set("#xiaoos-bottom-ui", { opacity: 0 });
-    gsap.set("#xiaoos-progress-bar", { width: "0%" });
+    gsap.set("#xiaoos-progress-bar", { width: "100%", scaleX: 0, transformOrigin: 'left center' });
 
     const tl = gsap.timeline();
     this.tl = tl;
@@ -219,7 +244,7 @@ export class StartupAnimation {
 
     // 2. White Bars Strike Out the X's progressively
     tl.to(".xiaoos-strike-bar", {
-        width: "100%",
+        scaleX: 1,
         duration: 0.2,
         stagger: 0.05,
         ease: "power2.inOut"
@@ -230,7 +255,7 @@ export class StartupAnimation {
       .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.06 }, "-=0.1");
 
     // 4. Diamond X glitches (fewer repeats, snappier)
-    tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.03, yoyo: true, repeat: 11 }, "+=0.04");
+    tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.18 }, "+=0.04");
 
     // 5. Bars disappear just before the diamond expansion ends
     tl.to("#xiaoos-strike-bars", { opacity: 0, duration: 0.06 }, "-=0.14");
@@ -276,8 +301,8 @@ export class StartupAnimation {
       .to(".xiaoos-sys-b2", { width: SYS_BAR.b2, duration: 0.55, ease: "power1.inOut" }, "+=0.04")
       .to(".xiaoos-sys-b3", { width: SYS_BAR.b3, duration: 0.55, ease: "power1.inOut" }, "-=0.55");
 
-    tl.to(".xiaoos-sys-text", { opacity: 0, duration: 0.025, yoyo: true, repeat: 4 })
-      .to("#xiaoos-sys-fast-bar-container", { opacity: 1, duration: 0.025, yoyo: true, repeat: 4 }, "<")
+    tl.to(".xiaoos-sys-text", { opacity: 0, duration: 0.12 })
+      .to("#xiaoos-sys-fast-bar-container", { opacity: 1, duration: 0.12 }, "<")
       .set(".xiaoos-sys-text", { visibility: "hidden" });
 
     tl.to("#xiaoos-sys-fast-bar", { width: "100%", duration: 0.38, ease: "power3.inOut" })
@@ -286,7 +311,7 @@ export class StartupAnimation {
     tl.to(".xiaoos-sys-b1, .xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.1 }, "-=0.1");
 
     const totalDuration = tl.duration();
-    tl.to("#xiaoos-progress-bar", { width: "100%", duration: totalDuration, ease: "power1.inOut" }, 0);
+    tl.to("#xiaoos-progress-bar", { scaleX: 1, duration: totalDuration, ease: "power1.inOut" }, 0);
 
     tl.to("#xiaoos-bottom-ui", { opacity: 0, duration: 0.14 })
       .to("#xiaoos-display-area", { display: "none" }, "<");
@@ -299,6 +324,8 @@ export class StartupAnimation {
       .add(() => {
           this.redirectToHome();
       });
+    // Same visual beats, budgeted to leave room for the City in an 8s arrival.
+    tl.timeScale(1.85);
   }
 
   /** Bail out of the intro immediately (bypass button / Escape). */
@@ -310,11 +337,12 @@ export class StartupAnimation {
   }
 
   private redirectToHome(): void {
-    if (!this.container) return;
+    if (!this.container || this.finishing) return;
+    this.finishing = true;
 
     // Fade out overlay
     this.container.style.opacity = '0';
-    this.container.style.transition = 'opacity 0.28s ease-out';
+    this.container.style.transition = this.reducedMotion ? 'none' : 'opacity 0.12s ease-out';
 
     setTimeout(() => {
       if (this.container && this.container.parentNode) {
@@ -325,7 +353,7 @@ export class StartupAnimation {
       this.tl = null;
       document.removeEventListener('keydown', this.onEscape);
       this.options.onFinish?.(this.skipped);
-    }, 280);
+    }, this.skipped || this.reducedMotion ? 0 : 120);
   }
 
   // Public method to manually start animation (useful for testing)

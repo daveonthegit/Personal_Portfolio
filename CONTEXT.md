@@ -109,18 +109,23 @@ plain-English (`PROJECTS`, `CONTACT`, `RESUME`); surveillance flavor lives in th
 navigation. A 30-second skim must still work.
 
 **The fiction is operable by everyone**
-The FULL intro (Boot Sequence + Zoom-In) always plays on the front door — it is never
-skipped by the system, including under `prefers-reduced-motion` (owner's decision,
-2026-07: the cinematic is the product). The visitor's ways out are Bypass and Escape,
-available from the first frame. Every App is keyboard-operable (dock tabbable, Escape
+The intro narrative (Boot Sequence + acquisition + Dossier arrival) plays on the
+front door. Under `prefers-reduced-motion`, the same stages are presented as static
+compositions, without flashes or camera travel; the city chunk is not downloaded.
+This accessible presentation follows the September 2026 intro/UX task and supersedes
+the July requirement to play heavy motion under reduced motion. The visitor's ways
+out are the native Bypass link and Escape, including while scene assets are pending. Every App is keyboard-operable (dock tabbable, Escape
 closes the focused window). Assistive tech reads the semantic substrate, never the
 chrome. Sound is on by default but begins only at the visitor's first gesture (browser
 policy), with a persistent mute.
 
 **The intro is a bounded courtesy**
-Boot Sequence + Zoom-In together stay under ~8 seconds, are skippable from the first
-frame, and play only on the front door (`/`). Deep links and return paths are
-cinematic-free; a replay control lives inside the OS for people who want the show again.
+Boot Sequence + Zoom-In have an eight-second animation budget from frontend startup,
+with an independent fail-open deadline. Network loading is additional, not disguised
+as animation time; the native Bypass link is available before the frontend loads.
+The intro plays only on the front door (`/`). Deep links and return paths are
+cinematic-free; Replay intro in the top bar starts a fresh front-door visit.
+See `docs/intro-ux-review.md` for measured behavior and limitations.
 
 **Machine-readable substrate**
 The fiction is a presentation layer. Every App's content also exists as a plain,

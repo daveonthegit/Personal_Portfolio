@@ -1,0 +1,145 @@
+{
+  "description": "Additional baseline desktop CPU sampling run, 16 seconds, after earlier baseline visits. Self time is sampled JS CPU time, not GPU execution time or isolated long-task duration.",
+  "frames": [
+    {
+      "function": "x",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 10646,
+      "name": "texSubImage2D",
+      "selfMs": 49.9
+    },
+    {
+      "function": "C",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 7094,
+      "name": "onFirstUse",
+      "selfMs": 41.02
+    },
+    {
+      "function": "updateMatrixWorld",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 12900,
+      "name": null,
+      "selfMs": 36.49
+    },
+    {
+      "function": "c",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 1651,
+      "name": "bindVertexArrayObject",
+      "selfMs": 31.68
+    },
+    {
+      "function": "xu",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 18328,
+      "name": "setProgram",
+      "selfMs": 30.57
+    },
+    {
+      "function": "renderBufferDirect",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 17178,
+      "name": null,
+      "selfMs": 26.25
+    },
+    {
+      "function": "rr",
+      "source": "../../../src/os/city3d.ts",
+      "line": 1079,
+      "name": "project",
+      "selfMs": 16.4
+    },
+    {
+      "function": "compose",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 10874,
+      "name": null,
+      "selfMs": 16.25
+    },
+    {
+      "function": "Mo",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 17825,
+      "name": "projectObject",
+      "selfMs": 15.4
+    },
+    {
+      "function": "ic",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 18118,
+      "name": "renderObject",
+      "selfMs": 15.28
+    },
+    {
+      "function": "updateMatrixWorld",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 12900,
+      "name": null,
+      "selfMs": 12.71
+    },
+    {
+      "function": "clear",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 16947,
+      "name": null,
+      "selfMs": 11.42
+    },
+    {
+      "function": "bm",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 5359,
+      "name": "setValueM4",
+      "selfMs": 10.19
+    },
+    {
+      "function": "multiplyMatrices",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 10407,
+      "name": null,
+      "selfMs": 9.99
+    },
+    {
+      "function": "Fh",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 6233,
+      "name": "WebGLShader",
+      "selfMs": 9.82
+    },
+    {
+      "function": "Mo",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 17825,
+      "name": "projectObject",
+      "selfMs": 9.77
+    },
+    {
+      "function": "multiplyMatrices",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 10407,
+      "name": null,
+      "selfMs": 8.9
+    },
+    {
+      "function": "render",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 17603,
+      "name": null,
+      "selfMs": 7.71
+    },
+    {
+      "function": "tt",
+      "source": "../../../node_modules/three/build/three.module.js",
+      "line": 10208,
+      "name": "useProgram",
+      "selfMs": 7.51
+    },
+    {
+      "function": "updateMatrixWorld",
+      "source": "../../../node_modules/three/build/three.core.js",
+      "line": 12900,
+      "name": null,
+      "selfMs": 7.42
+    }
+  ]
+}

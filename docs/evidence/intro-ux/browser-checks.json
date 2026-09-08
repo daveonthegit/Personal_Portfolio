@@ -1,0 +1,87 @@
+{
+  "results": [
+    {
+      "name": "front-door choreography completes within 8.5s, without the deadline masking it",
+      "pass": true
+    },
+    {
+      "name": "Replay starts a new boot; Enter bypass preserves query parameters",
+      "pass": true
+    },
+    {
+      "name": "Escape during a pending city import reveals the file; late completion cannot resurrect intro",
+      "pass": true
+    },
+    {
+      "name": "city-phase bypass cancels nested timelines and retains the Dossier",
+      "pass": true
+    },
+    {
+      "name": "noboot and section deep links retain their destination",
+      "pass": true
+    },
+    {
+      "name": "malformed bookmark leaves the Dossier usable",
+      "pass": true
+    },
+    {
+      "name": "reduced motion keeps static narrative, without downloading WebGL",
+      "pass": true
+    },
+    {
+      "name": "missing city chunk runs the SVG fallback and exposes content",
+      "pass": true
+    },
+    {
+      "name": "stalled animation frames hit the bounded fail-open deadline",
+      "pass": true
+    },
+    {
+      "name": "failed entry script leaves a native bypass and automatically uncovers content",
+      "pass": true
+    },
+    {
+      "name": "late entry script cannot replay after CSS has uncovered the document",
+      "pass": true
+    },
+    {
+      "name": "selected-work detail link opens the right record; modal traps Tab and restores focus",
+      "pass": true
+    },
+    {
+      "name": "project filters expose selection state and hide nonmatching cards",
+      "pass": true
+    },
+    {
+      "name": "Signal view returns modal focus to its visible graph node",
+      "pass": true
+    },
+    {
+      "name": "window close returns focus; reopening cached Dossier preserves build notes",
+      "pass": true
+    },
+    {
+      "name": "rapid navigation keeps the latest app, with a visible loading state",
+      "pass": true
+    },
+    {
+      "name": "contact validation does not send a message",
+      "pass": true
+    },
+    {
+      "name": "mobile intro arrives in the Dossier; touch scroll and Map tab work",
+      "pass": true
+    },
+    {
+      "name": "responsive documents fit at 320, 390, 768 and desktop widths; screenshots exist",
+      "pass": true
+    },
+    {
+      "name": "normal browser paths have no uncaught exceptions or failed HTTP responses",
+      "pass": true
+    }
+  ],
+  "exceptions": [],
+  "consoleProblems": [],
+  "failedResponses": []
+}

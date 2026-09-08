@@ -20,6 +20,9 @@ main
 # Go workspace file
 go.work
 
+# Local browser profiles, development server binaries and diagnostic scratch
+.local/
+
 # Local Go caches (never commit)
 .gocache/
 .gomodcache/
