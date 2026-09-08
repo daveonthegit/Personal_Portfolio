@@ -1,0 +1,9 @@
+{
+  "status": "inconclusive",
+  "method": "One attempted CDP Page.captureScreenshot surface-versus-view comparison in the existing dedicated Chrome at a 1440x900 System Loading checkpoint, with debugger pause intended to hold the JS animation state fixed.",
+  "protocolSupport": "The running browser's /json/protocol advertises optional experimental fromSurface: capture from surface (true, default) rather than view (false).",
+  "result": "The comparison command timed out after 30 seconds. Neither requested PNG was created, so no paired pixels or crop could be inspected. The exact blocking protocol call was not recorded.",
+  "conclusion": "Cannot distinguish actual compositor/stacking/animation behavior from capture-path behavior. Existing computed-style and hit-testing observations do not prove visible rendering. No capture defect or rendering fix is claimed.",
+  "cleanup": "Closed only the comparison-created browser tab. Preview HTTP 200 verified; dedicated browser and local server retained. No OS permissions, desktop-wide screenshots, shared-session restart, or additional capture attempts.",
+  "followUp": "Captain confirmation of visible Bypass and static loading copy during System Loading remains outstanding."
+}

@@ -1,0 +1,227 @@
+{
+  "label": "after-repeat",
+  "profile": "desktop",
+  "settings": {
+    "cpu": 1,
+    "latencyMs": 0,
+    "downloadBytesPerSecond": "unthrottled",
+    "cache": "disabled",
+    "browser": "Chrome headless, local macOS"
+  },
+  "phases": [
+    {
+      "phase": "boot",
+      "at": 38.8
+    },
+    {
+      "phase": "city",
+      "at": 3055.3
+    },
+    {
+      "phase": "ready",
+      "at": 7688.4
+    }
+  ],
+  "frames": {
+    "boot": {
+      "count": 180,
+      "p95": 16.80000000000001,
+      "max": 34.59999995231628,
+      "over50ms": 0
+    },
+    "city": {
+      "count": 278,
+      "p95": 16.799999999999272,
+      "max": 16.800000000000182,
+      "over50ms": 0
+    },
+    "ready": {
+      "count": 1100,
+      "p95": 16.700000000000728,
+      "max": 16.80000000000291,
+      "over50ms": 0
+    }
+  },
+  "longTasks": [],
+  "errors": [],
+  "url": "http://localhost:18437/home",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "dpr": 1
+  },
+  "paints": [
+    {
+      "name": "first-paint",
+      "at": 80
+    },
+    {
+      "name": "first-contentful-paint",
+      "at": 80
+    }
+  ],
+  "marks": [
+    {
+      "name": "xw:intro-start",
+      "at": 44.30000019073486,
+      "detail": null
+    },
+    {
+      "name": "xw:intro-city",
+      "at": 3054.4000000953674,
+      "detail": "webgl"
+    },
+    {
+      "name": "xw:intro-ready",
+      "at": 7473.200000047684,
+      "detail": "complete"
+    }
+  ],
+  "resources": [
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=68d8e40255acb3531417",
+      "transfer": 114705,
+      "decoded": 114405,
+      "duration": 2.8000001907348633
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "transfer": 1332,
+      "decoded": 20489,
+      "duration": 29
+    },
+    {
+      "url": "http://localhost:18437/static/images/profile-840.jpg?v=68d8e40255acb3531417",
+      "transfer": 94727,
+      "decoded": 94427,
+      "duration": 2.799999952316284
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=68d8e40255acb3531417",
+      "transfer": 52380,
+      "decoded": 52080,
+      "duration": 2.5999999046325684
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "transfer": 86488,
+      "decoded": 86188,
+      "duration": 2.0999999046325684
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-7CIPCL5V.js",
+      "transfer": 584536,
+      "decoded": 584236,
+      "duration": 3
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "transfer": 2957,
+      "decoded": 2657,
+      "duration": 1.2999999523162842
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project-preview.jpg?v=68d8e40255acb3531417",
+      "transfer": 97642,
+      "decoded": 97342,
+      "duration": 2.6000001430511475
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit-preview.jpg?v=68d8e40255acb3531417",
+      "transfer": 75713,
+      "decoded": 75413,
+      "duration": 2.5999999046325684
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "transfer": 0,
+      "decoded": 0,
+      "duration": 20.300000190734863
+    }
+  ],
+  "overflow": false,
+  "requests": [
+    {
+      "url": "http://localhost:18437/",
+      "status": 200,
+      "mime": "text/html"
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "http://localhost:18437/static/images/profile-840.jpg?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q131nj-o.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYbSB4Zh.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgsAXHNlYzg.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-7CIPCL5V.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit-preview.jpg?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project-preview.jpg?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "status": 200,
+      "mime": "application/json"
+    }
+  ],
+  "exceptions": [],
+  "consoleProblems": []
+}

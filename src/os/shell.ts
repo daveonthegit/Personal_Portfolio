@@ -33,6 +33,7 @@ interface OpenWindow {
   minimized: boolean;
   /** App-specific teardown (projects panel disposer, contact form unbind). */
   dispose?: () => void;
+  ready?: Promise<void>;
 }
 
 const APPS: AppSpec[] = [
@@ -48,6 +49,11 @@ const APP_BY_ID = new Map(APPS.map((a) => [a.id, a]));
 
 /** Set once the 3D City mounts; the shell talks back for room exits etc. */
 let cityRef: typeof import('./city3d') | null = null;
+
+function decodeFragment(value: string): string {
+  try { return decodeURIComponent(value); }
+  catch { return value; } // A malformed bookmark should leave the document usable.
+}
 
 function appForPath(pathname: string): AppSpec | null {
   const path = (pathname.replace(/\/+$/, '') || '/').toLowerCase();
@@ -71,10 +77,17 @@ export class OSShell {
   private windows = new Map<AppId, OpenWindow>();
   private zCounter = 10;
   private focused: AppId | null = null;
+  private openRequest = 0;
+  private readonly loadingStatus: HTMLElement;
   private readonly contentCache = new Map<AppId, HTMLElement>();
 
   constructor(plane: HTMLElement) {
     this.plane = plane;
+    this.loadingStatus = document.createElement('p');
+    this.loadingStatus.className = 'xw-app-loading';
+    this.loadingStatus.setAttribute('role', 'status');
+    this.loadingStatus.hidden = true;
+    plane.appendChild(this.loadingStatus);
   }
 
   /* ────────────────────────────── window lifecycle ───────────────────────── */
@@ -83,32 +96,39 @@ export class OSShell {
     const spec = APP_BY_ID.get(id);
     if (!spec) return;
 
-    // One location at a time: opening an app retires the other app windows
-    // (live-capture windows are independent and stay).
-    for (const otherId of Array.from(this.windows.keys())) {
-      if (otherId !== id) this.closeApp(otherId);
-    }
-
+    const request = ++this.openRequest;
+    this.loadingStatus.hidden = true;
     const existing = this.windows.get(id);
     if (existing) {
       if (existing.minimized) this.setMinimized(existing, false);
       this.focusWindow(id);
+      existing.body.focus({ preventScroll: true });
       if (opts.push !== false) this.syncUrl(spec);
       return;
     }
 
+    this.loadingStatus.textContent = `Opening ${spec.title}…`;
+    this.loadingStatus.hidden = false;
     const article = await this.resolveContent(spec);
+    // Latest navigation wins. A slow response cannot reopen an abandoned app.
+    if (request !== this.openRequest) return;
+    this.loadingStatus.hidden = true;
     if (!article) {
       // Fetch failed — fall back to a real navigation so the user still lands there.
       window.location.href = spec.route;
       return;
     }
 
+    // Keep the current document available while its replacement is loading.
+    for (const otherId of Array.from(this.windows.keys())) {
+      if (otherId !== id) this.closeApp(otherId);
+    }
     const win = this.createWindow(spec, article);
     this.windows.set(id, win);
     this.plane.appendChild(win.el);
     this.initAppRuntime(win);
     this.focusWindow(id);
+    win.body.focus({ preventScroll: true });
     this.updateDock();
     if (opts.originRect) this.growFrom(win, opts.originRect);
     if (opts.push !== false) this.syncUrl(spec);
@@ -191,8 +211,10 @@ export class OSShell {
         <button type="button" class="xw-window-btn" data-xw-win="close" aria-label="Close ${spec.title}">×</button>
       </span>`;
 
+    this.contentCache.set(spec.id, article);
     const body = document.createElement('div');
     body.className = 'xw-window-body';
+    body.tabIndex = -1;
     body.appendChild(article);
 
     el.appendChild(titlebar);
@@ -219,9 +241,9 @@ export class OSShell {
 
   private initAppRuntime(win: OpenWindow): void {
     if (win.spec.id === 'projects') {
-      void import('../pages/projectsPanel')
+      win.ready = import('../pages/projectsPanel')
         .then((mod) => {
-          win.dispose = mod.mountProjectsPage(win.body);
+          if (win.el.isConnected) win.dispose = mod.mountProjectsPage(win.body);
         })
         .catch((error) => console.error('shell: projects panel failed to mount', error));
     }
@@ -232,14 +254,14 @@ export class OSShell {
     if (win.spec.id === 'resume') {
       void import('../pages/resumeTimeline')
         .then((mod) => {
-          win.dispose = mod.mountResumeLens(win.body);
+          if (win.el.isConnected) win.dispose = mod.mountResumeLens(win.body);
         })
         .catch((error) => console.error('shell: resume lens failed to mount', error));
     }
     if (win.spec.id === 'dossier') {
       void import('../pages/dossierLive')
         .then((mod) => {
-          win.dispose = mod.mountDossierLive(win.body);
+          if (win.el.isConnected) win.dispose = mod.mountDossierLive(win.body);
         })
         .catch((error) => console.error('shell: dossier live failed to mount', error));
     }
@@ -248,9 +270,11 @@ export class OSShell {
   closeApp(id: AppId): void {
     const win = this.windows.get(id);
     if (!win) return;
+    const restoreFocus = win.el.contains(document.activeElement);
     win.dispose?.();
     win.el.remove();
-    // Keep the article cached so reopening is instant and state-cheap.
+    if (restoreFocus) document.querySelector<HTMLElement>(`[data-xw-dock="${id}"]`)?.focus();
+    // The article is cached by createWindow; reopening retains document state.
     this.windows.delete(id);
     if (this.focused === id) this.focused = null;
     this.updateDock();
@@ -260,32 +284,26 @@ export class OSShell {
 
   /** Open the Projects app and jump straight to one record (room displays). */
   openProjectRecord(projectId: string): void {
-    void this.openApp('projects').then(() => {
+    void this.openApp('projects').then(async () => {
       const win = this.windows.get('projects');
       if (!win) return;
-      let tries = 0;
-      const attempt = () => {
-        if (tries++ > 20) return;
-        const card = win.body.querySelector<HTMLElement>(`.project-card[data-category="${projectId}"]`);
-        if (!card) {
-          window.setTimeout(attempt, 100);
-          return;
-        }
-        card.click();
-        // The panel's listeners mount asynchronously — confirm the record
-        // actually opened, otherwise click again shortly.
-        window.setTimeout(() => {
-          if (!win.body.querySelector('#project-terminal-overlay.is-open')) attempt();
-        }, 180);
-      };
-      attempt();
+      await win.ready;
+      if (!win.el.isConnected) return;
+      // Open once, only after listeners exist. Retry-clicking could reopen a
+      // record the visitor had already dismissed with Escape.
+      const card = Array.from(win.body.querySelectorAll<HTMLElement>('.project-card'))
+        .find(card => card.dataset.category === projectId);
+      card?.click();
     });
   }
 
   private setMinimized(win: OpenWindow, minimized: boolean): void {
     win.minimized = minimized;
     win.el.classList.toggle('xw-window--minimized', minimized);
-    if (minimized && this.focused === win.spec.id) this.focused = null;
+    if (minimized && this.focused === win.spec.id) {
+      this.focused = null;
+      document.querySelector<HTMLElement>(`[data-xw-dock="${win.spec.id}"]`)?.focus();
+    }
     if (!minimized) this.focusWindow(win.spec.id);
     this.updateDock();
   }
@@ -433,9 +451,14 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
 
   const shell = new OSShell(plane);
   shell.adoptInitial(article, initialApp.id);
+  if (location.hash && !location.hash.startsWith('#record=')) {
+    requestAnimationFrame(() => document.getElementById(decodeFragment(location.hash.slice(1)))?.scrollIntoView({ behavior: 'instant' }));
+  }
 
-  // The City (ADR 0002) — lazy chunk; SVG wallpaper stays if WebGL is out.
-  void import('./city3d')
+  // Reduced motion retains the static wallpaper and direct application controls.
+  // No WebGL download or automatic camera movement is needed for the quiet path.
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduced) void import('./city3d')
     .then((m) => {
       const ok = m.mountCity(plane, {
         openApp: (id, rect) => {
@@ -456,7 +479,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
   document.querySelectorAll<HTMLAnchorElement>('#xw-dock [data-xw-dock]').forEach((item) => {
     item.addEventListener('click', (e) => {
       const id = item.dataset.xwDock as AppId | undefined;
-      if (!id) return;
+      if (!id || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
       e.preventDefault();
       // Dock: dive into the room, then the window opens from its screen.
       const dove = cityRef?.dockDive(id, (rect) => {
@@ -469,7 +492,7 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
   // In-window links: app routes open windows; hash links scroll within the window.
   plane.addEventListener('click', (e) => {
     const anchor = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
-    if (!anchor) return;
+    if (!anchor || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     const href = anchor.getAttribute('href') ?? '';
 
     // Live capture: run the subject's software in a child window, not a tab.
@@ -480,10 +503,10 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
     }
 
     if (href.startsWith('#')) {
-      const target = anchor.closest('.xw-window-body')?.querySelector(href);
+      const target = document.getElementById(decodeFragment(href.slice(1)));
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' });
       }
       return;
     }
@@ -494,10 +517,13 @@ function activateDesktop(initialApp: AppSpec, article: HTMLElement): void {
     // Only intercept plain app-route clicks; /resume/pdf etc. navigate normally.
     if (!app || (url.pathname !== app.route && !(app.id === 'dossier' && (url.pathname === '/' || url.pathname === '/home')))) return;
     e.preventDefault();
+    if (app.id === 'projects' && url.hash.startsWith('#record=')) {
+      shell.openProjectRecord(decodeFragment(url.hash.slice(8)));
+      return;
+    }
     void shell.openApp(app.id).then(() => {
       if (url.hash) {
-        const win = document.querySelector(`.xw-window[data-app="${app.id}"] .xw-window-body`);
-        win?.querySelector(url.hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById(decodeFragment(url.hash.slice(1)))?.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' });
       }
     });
   });
@@ -530,12 +556,10 @@ export function initOSShell(): void {
   if (desktopMode) {
     activateDesktop(initialApp, article);
   } else {
-    // Companion App presentation: the MAP is the main nav. /home is a
-    // fullscreen city hub (tags navigate); the dossier document lives behind
-    // its tag at /home#file; every other view gets a floating "back to map".
+    // Companion App: the dock owns navigation, including Map. The intro
+    // arrives in /home#file; a direct /home visit opens the city hub.
     document.body.classList.add('xw-os-mobile');
-    if (initialApp.id === 'dossier') mountMobileMapHome();
-    else mountMapBackLink();
+    if (initialApp.id === 'dossier' && !matchMedia('(prefers-reduced-motion: reduce)').matches) mountMobileMapHome();
   }
 }
 
@@ -550,9 +574,16 @@ function mountMobileMapHome(): void {
 
   const setView = (map: boolean, sync = true) => {
     document.body.classList.toggle('xw-map-view', map);
+    const mapTab = document.querySelector('.xw-dock-item--mob');
+    const fileTab = document.querySelector('[data-xw-dock="dossier"]');
+    if (map) { mapTab?.setAttribute('aria-current', 'page'); fileTab?.removeAttribute('aria-current'); }
+    else { fileTab?.setAttribute('aria-current', 'page'); mapTab?.removeAttribute('aria-current'); }
     if (sync) {
       try {
-        window.history.replaceState(null, '', map ? '/home' : '/home#file');
+        const url = new URL(window.location.href);
+        url.pathname = '/home';
+        url.hash = map ? '' : 'file';
+        window.history.replaceState(null, '', url.pathname + url.search + url.hash);
       } catch {
         /* URL cosmetics only */
       }
@@ -560,14 +591,16 @@ function mountMobileMapHome(): void {
     if (!map) window.scrollTo(0, 0);
   };
 
-  const back = document.createElement('button');
-  back.type = 'button';
-  back.className = 'xw-map-back';
-  back.innerHTML = '<span aria-hidden="true">◂</span> Map';
-  back.addEventListener('click', () => setView(true));
-  document.body.appendChild(back);
-
-  window.addEventListener('hashchange', () => setView(window.location.hash !== '#file', false));
+  setView(!window.location.hash, false);
+  window.addEventListener('hashchange', () => setView(!window.location.hash, false));
+  window.addEventListener('xw:intro-ready', e => {
+    if (e instanceof CustomEvent && e.detail?.apex && !window.location.hash) setView(false);
+  }, { once: true });
+  document.querySelector('.xw-dock-item--mob')?.addEventListener('click', e => {
+    if (e instanceof MouseEvent && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) return;
+    e.preventDefault();
+    setView(true);
+  });
 
   void import('./city3d')
     .then((m) => {
@@ -590,28 +623,17 @@ function mountMobileMapHome(): void {
       });
       if (ok) {
         if (!document.body.classList.contains('xw-introing')) m.showTags();
-        setView(window.location.hash !== '#file', false);
+        setView(!window.location.hash, false);
       } else {
         // No WebGL: plain document companion, no map hub.
         panel.remove();
-        back.remove();
         document.body.classList.remove('xw-map-home');
         document.body.classList.remove('xw-map-view');
       }
     })
     .catch(() => {
       panel.remove();
-      back.remove();
       document.body.classList.remove('xw-map-home');
       document.body.classList.remove('xw-map-view');
     });
-}
-
-/** Floating return-to-map control on non-home mobile views. */
-function mountMapBackLink(): void {
-  const a = document.createElement('a');
-  a.href = '/home';
-  a.className = 'xw-map-back';
-  a.innerHTML = '<span aria-hidden="true">◂</span> Map';
-  document.body.appendChild(a);
 }

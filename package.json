@@ -13,6 +13,8 @@
     "dev": "concurrently \"npm run watch\" \"go run .\"",
     "build:full": "npm run build:ts && npm run build:css && npm run build:resume",
     "type-check": "tsc --noEmit",
+    "test:browser": "node scripts/browser-regression.mjs",
+    "measure:intro": "node scripts/intro-measure.mjs",
     "heroku-prebuild": "echo 'Installing dependencies...'",
     "heroku-postbuild": "npm run build"
   },

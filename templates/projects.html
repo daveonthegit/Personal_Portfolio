@@ -17,6 +17,43 @@
     </div>
   </header>
 
+  <p class="xw-featured-copy">Open a project for implementation notes, technologies and source links.</p>
+
+  {{/* Readable even if the interactive index fails to load. */}}
+  <section data-project-documents aria-label="Project documents">
+    {{range .Projects}}
+    <details class="xw-build-notes">
+      <summary>{{.Title}}</summary>
+      <p>{{.Description}}</p>
+      <p>{{range .Technologies}}{{.}} · {{end}}</p>
+      {{if .GitHubURL}}<a class="xw-link" href="{{.GitHubURL}}">Source code for {{.Title}}</a>{{end}}
+      {{if .LiveURL}}<a class="xw-link" href="{{.LiveURL}}">Visit {{.Title}}</a>{{end}}
+      {{if .HostedPath}}<a class="xw-link" href="/hosted/{{.HostedPath}}/">Play {{.Title}}</a>{{end}}
+    </details>
+    {{end}}
+  </section>
+
+  <div class="xw-projects-toolbar" role="group" aria-label="Filter projects by type">
+    <div class="xw-filter-buttons">
+      <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">Filter</span>
+      <button type="button" class="xw-filter filter-btn is-active" data-filter="all">All</button>
+      {{range $t := .ProjectTypes}}
+      <button type="button" class="xw-filter filter-btn" data-filter="{{$t}}">{{$t}}</button>
+      {{end}}
+    </div>
+    <label class="xw-filter-select">
+      <span class="sr-only">Filter projects by type</span>
+      <select data-project-filter>
+        <option value="all">All projects</option>
+        {{range $t := .ProjectTypes}}<option value="{{$t}}">{{$t}}</option>{{end}}
+      </select>
+    </label>
+    <div class="xw-project-views" role="group" aria-label="Project view">
+      <button type="button" class="xw-filter view-btn is-active" data-view="list">List</button>
+      <button type="button" class="xw-filter view-btn" data-view="signal">Signal</button>
+    </div>
+  </div>
+
   {{/* ─────────────────────────────── Featured first ───────────────────────────── */}}
   {{if .FeaturedProjects}}
   <section class="xw-featured-projects" aria-labelledby="featured-projects-heading">
@@ -90,19 +127,6 @@
     </ul>
   </section>
   {{end}}
-
-  {{/* ────────────────────────────────── Filters ──────────────────────────────── */}}
-  <div class="xw-projects-toolbar" role="toolbar" aria-label="Filter projects by type">
-    <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">Filter</span>
-    <button type="button" class="xw-filter filter-btn is-active" data-filter="all">All</button>
-    {{range $t := .ProjectTypes}}
-    <button type="button" class="xw-filter filter-btn" data-filter="{{$t}}">{{$t}}</button>
-    {{end}}
-    <span class="xw-projects-toolbar-spacer" aria-hidden="true"></span>
-    <span class="xw-caps xw-caps--muted xw-projects-toolbar-label">View</span>
-    <button type="button" class="xw-filter view-btn is-active" data-view="list">List</button>
-    <button type="button" class="xw-filter view-btn" data-view="signal">Signal</button>
-  </div>
 
   {{/* Signal view — records as a graph linked by distinctive shared tech (TS builds it) */}}
   <div class="xw-signal-view hidden" data-signal-root aria-label="Projects as a signal graph"></div>
@@ -234,7 +258,7 @@
               <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
               <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
               <span class="xw-bracket xw-bracket-br" aria-hidden="true"></span>
-              <img id="term-project-img" src="" alt="" class="xw-modal-img">
+              <img id="term-project-img" alt="" class="xw-modal-img">
               <span class="xw-rec" id="term-rec" aria-hidden="true" hidden><span class="xw-rec-dot"></span>REC</span>
               <span class="xw-feed-lost" id="term-feed-lost" aria-hidden="true" hidden>FEED LOST</span>
             </div>

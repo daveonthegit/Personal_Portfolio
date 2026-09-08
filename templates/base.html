@@ -8,7 +8,6 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{{asset "/static/favicon.svg"}}">
-    <link rel="icon" type="image/x-icon" href="{{asset "/static/favicon.ico"}}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -28,7 +27,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{asset "/static/css/main.css"}}" rel="stylesheet">
@@ -42,7 +40,8 @@
     <a href="#main-content" class="xiaoos-skip-link">Skip to main content</a>
 
     <!-- Boot overlay: full intro only on /; then replace → /home. /home has no splash (see bootOverlay.ts). -->
-    <div id="startup-animation" aria-hidden="true"></div>
+    <div id="startup-animation"></div>
+    {{if .IsApex}}<a href="/home" id="xw-intro-bypass" class="xw-intro-bypass">Bypass intro <span aria-hidden="true">Esc</span></a>{{end}}
 
     <!-- Minimal fixed top bar -->
     <header class="xw-topbar" role="banner">
@@ -61,6 +60,7 @@
             </nav>
 
             <div class="xw-meta">
+                <a href="/" class="xw-replay">Replay intro</a>
                 <span class="xw-clock tabular-nums" id="xw-clock" aria-hidden="true">--:--:--</span>
                 <button type="button" class="xw-nav-toggle" id="xw-nav-toggle" aria-label="Toggle navigation" aria-controls="xw-mobile-nav" aria-expanded="false">
                     <span></span><span></span><span></span>

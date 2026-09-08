@@ -1,0 +1,292 @@
+{
+  "label": "before-repeat",
+  "profile": "desktop",
+  "settings": {
+    "cpu": 1,
+    "latencyMs": 0,
+    "downloadBytesPerSecond": "unthrottled",
+    "cache": "disabled",
+    "browser": "Chrome headless, local macOS"
+  },
+  "phases": [
+    {
+      "phase": "boot",
+      "at": 56
+    },
+    {
+      "phase": "city",
+      "at": 5872.6
+    },
+    {
+      "phase": "ready",
+      "at": 13955.5
+    }
+  ],
+  "frames": {
+    "boot": {
+      "count": 348,
+      "p95": 16.700000000000728,
+      "max": 50.39999985694885,
+      "over50ms": 1
+    },
+    "city": {
+      "count": 480,
+      "p95": 16.700000000000728,
+      "max": 100,
+      "over50ms": 1
+    },
+    "ready": {
+      "count": 724,
+      "p95": 16.700000000000728,
+      "max": 16.80000000000291,
+      "over50ms": 0
+    }
+  },
+  "longTasks": [
+    {
+      "at": 9006.700000047684,
+      "duration": 100,
+      "phase": "city"
+    }
+  ],
+  "errors": [],
+  "url": "http://localhost:18437/home",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "dpr": 1
+  },
+  "paints": [
+    {
+      "name": "first-paint",
+      "at": 112
+    },
+    {
+      "name": "first-contentful-paint",
+      "at": 112
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "transfer": 1332,
+      "decoded": 20489,
+      "duration": 35.40000009536743
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap",
+      "transfer": 751,
+      "decoded": 726,
+      "duration": 52.5
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=51e46f5fee811ef6145a",
+      "transfer": 111924,
+      "decoded": 111624,
+      "duration": 3.5
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg?v=51e46f5fee811ef6145a",
+      "transfer": 473900,
+      "decoded": 473600,
+      "duration": 4.3999998569488525
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=51e46f5fee811ef6145a",
+      "transfer": 47741,
+      "decoded": 47441,
+      "duration": 3.299999952316284
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "transfer": 86488,
+      "decoded": 86188,
+      "duration": 1.7000000476837158
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-CSAICXPA.js",
+      "transfer": 582886,
+      "decoded": 582586,
+      "duration": 1.8999998569488525
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "transfer": 2957,
+      "decoded": 2657,
+      "duration": 1
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png?v=51e46f5fee811ef6145a",
+      "transfer": 495839,
+      "decoded": 495539,
+      "duration": 3.5
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png?v=51e46f5fee811ef6145a",
+      "transfer": 993341,
+      "decoded": 993041,
+      "duration": 4.299999952316284
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "transfer": 0,
+      "decoded": 0,
+      "duration": 240.29999995231628
+    },
+    {
+      "url": "http://localhost:18437/api/projects",
+      "transfer": 16775,
+      "decoded": 16475,
+      "duration": 1.1999998092651367
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png",
+      "transfer": 495839,
+      "decoded": 495539,
+      "duration": 5.400000095367432
+    },
+    {
+      "url": "http://localhost:18437/static/images/Forgearena.png",
+      "transfer": 142058,
+      "decoded": 141758,
+      "duration": 5.3999998569488525
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png",
+      "transfer": 993341,
+      "decoded": 993041,
+      "duration": 7.3999998569488525
+    },
+    {
+      "url": "http://localhost:18437/static/images/outfai-redesign.png",
+      "transfer": 1022938,
+      "decoded": 1022638,
+      "duration": 8.799999952316284
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg",
+      "transfer": 473900,
+      "decoded": 473600,
+      "duration": 6.299999952316284
+    }
+  ],
+  "overflow": false,
+  "requests": [
+    {
+      "url": "http://localhost:18437/",
+      "status": 200,
+      "mime": "text/html"
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q131nj-o.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYbSB4Zh.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgsAXHNlYzg.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png?v=51e46f5fee811ef6145a",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-CSAICXPA.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "http://localhost:18437/api/projects",
+      "status": 200,
+      "mime": "application/json"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Kyarafit.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/portfolio-project.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/outfai-redesign.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Forgearena.png",
+      "status": 200,
+      "mime": "image/png"
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "status": 200,
+      "mime": "application/json"
+    },
+    {
+      "url": "http://localhost:18437/static/images/Profile_Picture.jpg",
+      "status": 200,
+      "mime": "image/jpeg"
+    }
+  ],
+  "exceptions": []
+}

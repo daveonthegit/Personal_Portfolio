@@ -39,7 +39,7 @@ export function mountZoomInCover(): HTMLElement {
       <span class="xw-zi-lockrect" id="xw-zi-lockrect"></span>
       <span class="xw-zi-connector" id="xw-zi-connector"></span>
       <div class="xw-zi-card" id="xw-zi-card">
-        <img class="xw-zi-card-photo" src="/static/images/Profile_Picture.jpg" alt="" />
+        <img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" />
         <div class="xw-zi-card-body">
           <span class="xw-zi-card-name">XIAO, DAVID</span>
           <span class="xw-zi-card-line">WEB DEVELOPER — SECCO SQUARED</span>
@@ -54,6 +54,10 @@ export function mountZoomInCover(): HTMLElement {
     </div>
     <div class="xw-zi-status" id="xw-zi-status" role="status" aria-live="polite"></div>
     <button type="button" class="xw-zi-skip" id="xw-zi-skip">Bypass ▸</button>`;
+  gsap.set(overlay.querySelectorAll('.xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector, #xw-zi-card'), { autoAlpha: 0 });
+  const portrait = document.querySelector<HTMLImageElement>('.xw-portrait img');
+  if (portrait) overlay.querySelector<HTMLImageElement>('.xw-zi-card-photo')!.src = portrait.src;
+  if (document.getElementById('xw-intro-bypass')) overlay.querySelector<HTMLButtonElement>('.xw-zi-skip')!.hidden = true;
   document.body.appendChild(overlay);
   return overlay;
 }
@@ -92,7 +96,34 @@ function formatCoords(cam: Cam): string {
  * Run the ladder on a previously mounted overlay. `onReveal` fires when the
  * desktop handoff starts (mark boot done / canonicalize URL there).
  */
-export function playZoomIn(overlay: HTMLElement, onReveal: () => void): void {
+export function playZoomIn(overlay: HTMLElement, onReveal: () => void, signal?: AbortSignal): void {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // A static acquisition sequence, not a flight: every narrative phase remains.
+    overlay.classList.add('xw-zoomin--quiet');
+    const status = overlay.querySelector<HTMLElement>('#xw-zi-status');
+    const card = overlay.querySelector<HTMLElement>('#xw-zi-card');
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      tl.kill();
+      signal?.removeEventListener('abort', finish);
+      document.removeEventListener('keydown', key);
+      overlay.remove();
+      onReveal();
+    };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') finish(); };
+    const tl = gsap.timeline({ onComplete: finish })
+      .add(() => { if (status) status.textContent = 'Acquiring: northeast corridor'; }, 0)
+      .add(() => { if (status) status.textContent = 'Target: New York metro'; }, 0.5)
+      .set(card, { opacity: 1, visibility: 'visible' }, 1)
+      .add(() => { if (status) status.textContent = 'Subject identified. Opening Dossier.'; }, 1)
+      .to({}, { duration: 0.65 });
+    signal?.addEventListener('abort', finish, { once: true });
+    document.addEventListener('keydown', key);
+    overlay.querySelector('.xw-zi-skip')?.addEventListener('click', finish);
+    return;
+  }
   const cam$ = overlay.querySelector<SVGGElement>('#xw-zi-cam');
   const chip = overlay.querySelector<HTMLElement>('#xw-zi-chip');
   const status = overlay.querySelector<HTMLElement>('#xw-zi-status');
@@ -119,33 +150,37 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void): void {
   applyCam();
 
   let finished = false;
+  let cancelled = false;
   let revealed = false;
   let lockTl: gsap.core.Timeline | null = null;
+  let morphTl: gsap.core.Timeline | null = null;
   const reveal = () => {
     if (revealed) return;
     revealed = true;
     onReveal();
   };
   const finish = (fast: boolean) => {
-    if (finished) return;
+    if (cancelled) return;
+    cancelled = true;
     finished = true;
     tl.kill();
     lockTl?.kill();
+    morphTl?.kill();
+    gsap.killTweensOf([overlay, ...overlay.querySelectorAll('*')]);
     document.removeEventListener('keydown', onKey);
+    signal?.removeEventListener('abort', cancel);
     reveal();
-    gsap.to(overlay, {
-      opacity: 0,
-      duration: fast ? 0.15 : 0.3,
-      ease: 'power2.out',
-      onComplete: () => overlay.remove(),
-    });
+    if (fast) overlay.remove();
+    else gsap.to(overlay, { opacity: 0, duration: 0.2, onComplete: () => overlay.remove() });
   };
 
   const onKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') finish(true);
   };
+  const cancel = () => finish(true);
   document.addEventListener('keydown', onKey);
-  skipBtn.addEventListener('click', () => finish(true));
+  signal?.addEventListener('abort', cancel, { once: true });
+  skipBtn.addEventListener('click', cancel);
 
   const setStatus = (text: string) => {
     status.textContent = text;
@@ -216,7 +251,7 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void): void {
   gsap.set('#xw-zi-metro-layer, #xw-zi-grid-layer, #xw-zi-block-layer', { autoAlpha: 0 });
   gsap.set('.xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector, #xw-zi-card', { autoAlpha: 0 });
 
-  const tl = gsap.timeline();
+  const tl = gsap.timeline().timeScale(1.7);
 
   // ── View 0: the seaboard resolves, night lights first ──
   tl.add(() => setStatus('Acquiring — northeast corridor'), 0)
@@ -290,7 +325,7 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void): void {
 
     setStatus('Subject located');
     const spreads = [240, 96, 30, 6];
-    lockTl = gsap.timeline();
+    lockTl = gsap.timeline().timeScale(1.7);
 
     spreads.forEach((spread, i) => {
       lockTl!
@@ -348,7 +383,11 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void): void {
     const winEl = document.querySelector<HTMLElement>('.xw-window[data-app="dossier"]');
     const target = winEl?.getBoundingClientRect();
 
-    const mtl = gsap.timeline({ onComplete: () => overlay.remove() });
+    const mtl = gsap.timeline({ onComplete: () => {
+      overlay.remove();
+      signal?.removeEventListener('abort', cancel);
+    } }).timeScale(1.7);
+    morphTl = mtl;
     mtl.to(
       '#xw-zi-map, .xw-zi-readout, #xw-zi-status, #xw-zi-chip, .xw-zi-skip, #xw-zi-sweep, .xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector',
       { opacity: 0, duration: 0.18 },

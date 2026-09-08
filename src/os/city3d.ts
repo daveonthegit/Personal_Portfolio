@@ -101,10 +101,33 @@ interface City {
   exitBtn: HTMLElement;
   flights: Array<{ mesh: THREE.Mesh; a: THREE.Vector3; b: THREE.Vector3; total: number; speed: number; phase: number }>;
   subjectEdges: THREE.LineSegments;
-  clock: THREE.Clock;
+  timer: THREE.Timer;
 }
 
 let city: City | null = null;
+let prepared = false;
+let preparation: Promise<void> = Promise.resolve();
+
+/** Prepare shader variants and spread texture uploads across browser tasks. */
+export function prepareIntro(): Promise<void> { return preparation; }
+
+async function warmRenderer(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera): Promise<void> {
+  const shaders = renderer.compileAsync(scene, camera);
+  const textures = new Set<THREE.Texture>();
+  scene.traverse(object => {
+    const mesh = object as THREE.Mesh;
+    if (!mesh.material) return;
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      const map = (material as THREE.MeshBasicMaterial).map;
+      if (map) textures.add(map);
+    }
+  });
+  for (const texture of textures) {
+    await new Promise<void>(resolve => window.setTimeout(resolve, 0));
+    renderer.initTexture(texture);
+  }
+  await shaders;
+}
 
 /** Portrait containers (the Companion App) need a farther rest camera — the
  *  vertical FOV is fixed, so narrow aspects crop the island horizontally. */
@@ -114,7 +137,7 @@ function restRadiusScale(): number {
 }
 
 export function cityMounted(): boolean {
-  return city !== null;
+  return city !== null && prepared;
 }
 
 /* ── Procedural build ─────────────────────────────────────────────────────── */
@@ -762,6 +785,8 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   const off = REST_POS.clone().sub(REST_TARGET);
   const baseAspect = plane.clientWidth / Math.max(1, plane.clientHeight);
   const rScale = THREE.MathUtils.clamp(1.3 / baseAspect, 1, 2.4);
+  const timer = new THREE.Timer();
+  timer.connect(document);
   city = {
     renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
     subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
@@ -776,7 +801,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
       pol: Math.acos(off.y / off.length()),
       r: off.length() * rScale,
     },
-    clock: new THREE.Clock(),
+    timer,
   };
 
   // Room registry: interior camera + look targets from the REAL transforms.
@@ -821,28 +846,6 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     register('dossier', shellMat, null, dossierScreen);
     for (const [id, entry] of roomShells) register(id, entry.shellMat, entry.build, entry.screen);
   }
-
-  // Featured previews onto the projects display wall (real images, real ids).
-  void fetch('/api/projects')
-    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-    .then((projects: Array<{ id: string; image?: string; featured?: boolean }>) => {
-      const entry = city?.rooms.get('projects');
-      if (!entry?.build) return;
-      const featured = projects.filter((pr) => pr.featured && pr.image).slice(0, entry.build.displays.length);
-      const loader = new THREE.TextureLoader();
-      featured.forEach((pr, i) => {
-        const d = entry.build!.displays[i];
-        if (!d) return;
-        d.projectId = pr.id;
-        loader.load(pr.image!, (tex) => {
-          tex.colorSpace = THREE.SRGBColorSpace;
-          (d.mesh.material as THREE.MeshBasicMaterial).map = tex;
-          (d.mesh.material as THREE.MeshBasicMaterial).color.set(0xffffff);
-          (d.mesh.material as THREE.MeshBasicMaterial).needsUpdate = true;
-        });
-      });
-    })
-    .catch(() => { /* displays stay dark */ });
 
   // Clickable in-room surfaces (displays, the live cabinet).
   renderer.domElement.addEventListener('click', (e) => {
@@ -904,6 +907,10 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     new ResizeObserver(() => onResize()).observe(plane);
   }
 
+  // Compile with the detailed city visible, before the altitude gate hides it.
+  // Previously the first dive synchronously compiled these shaders mid-flight.
+  preparation = warmRenderer(renderer, scene, camera);
+
   // If the intro flight is pending, pre-park the camera at its start so the
   // boot fade never glimpses the desktop view (buildings down, geography up).
   if (document.body.classList.contains('xw-introing')) {
@@ -918,8 +925,13 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     flights.forEach((f) => { f.mesh.visible = false; });
   }
 
-  // Full animation always (project rule): the loop runs unconditionally and
-  // pauses only while the tab is hidden.
+  // The region frame has a different visible-light count from the city. Warm
+  // both shader variants, not just the detail hidden by the altitude gate.
+  preparation = Promise.all([preparation, renderer.compileAsync(scene, camera)])
+    .then(() => { prepared = true; if (tagsShown) showTags(); })
+    .catch(() => { prepared = true; });
+
+  // Rendering pauses while the tab or mobile map is hidden.
   renderer.setAnimationLoop(tick);
   document.addEventListener('visibilitychange', () => {
     if (!city) return;
@@ -987,8 +999,13 @@ export function settleDesktop(): void {
 }
 
 function tick(): void {
-  if (!city) return;
-  const t = city.clock.getElapsedTime();
+  if (!city || !prepared) return;
+  // The mobile document hides its map. Don't render an invisible WebGL scene.
+  if (document.body.classList.contains('xw-map-home') &&
+      !document.body.classList.contains('xw-map-view') &&
+      !document.body.classList.contains('xw-introing')) return;
+  city.timer.update();
+  const t = city.timer.getElapsed();
   if (!introActive && city.mode === 'room') {
     const entry = city.rooms.get(city.currentRoom ?? '');
     if (entry) {
@@ -1091,7 +1108,7 @@ let tagsShown = false;
 
 export function showTags(): void {
   tagsShown = true;
-  if (!city) return;
+  if (!city || !prepared) return;
   city.tagLayer.classList.add('xw-city-tags--on');
   // Static mode (reduced motion) has no frame loop — render and position the
   // tags explicitly, or they'd appear stacked and untransformed at origin.
@@ -1124,6 +1141,30 @@ function roomFov(): number {
   return Math.min(92, THREE.MathUtils.radToDeg(2 * Math.atan(half / aspect)));
 }
 
+let previewsRequested = false;
+function loadProjectPreviews(): void {
+  if (previewsRequested) return;
+  previewsRequested = true;
+  void fetch('/api/projects')
+    .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then((projects: Array<{ id: string; image?: string; featured?: boolean }>) => {
+      const entry = city?.rooms.get('projects');
+      if (!entry?.build) return;
+      const loader = new THREE.TextureLoader();
+      projects.filter(p => p.featured && p.image).slice(0, entry.build.displays.length).forEach((p, i) => {
+        const display = entry.build!.displays[i]!;
+        display.projectId = p.id;
+        loader.load(p.image!, texture => {
+          texture.colorSpace = THREE.SRGBColorSpace;
+          const material = display.mesh.material as THREE.MeshBasicMaterial;
+          material.map = texture;
+          material.color.set(0xffffff);
+          material.needsUpdate = true;
+        }, undefined, () => { /* semantic project links remain available */ });
+      });
+    }).catch(() => { previewsRequested = false; });
+}
+
 function setMode(mode: 'overhead' | 'diving' | 'room', roomId: string | null = null): void {
   if (!city) return;
   city.mode = mode;
@@ -1141,6 +1182,7 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
   if (!entry) return false;
   roomTl?.kill();
   setMode('diving', id);
+  if (id === 'projects') loadProjectPreviews();
 
   const c = city;
   const start = c.camera.position.clone();
@@ -1313,7 +1355,7 @@ function boundsScreenRect(b: THREE.Box3): DOMRect | null {
  * Play the intro flight in `overlay` (a transparent HUD layer above the canvas).
  * Returns false when the city isn't mounted (caller falls back to 2D).
  */
-export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
+export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: AbortSignal): boolean {
   if (!city) return false;
   const c = city;
   introActive = true;
@@ -1331,7 +1373,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     <span class="xw-zi-lockrect" id="xw-zi-lockrect"></span>
     <span class="xw-zi-connector" id="xw-zi-connector"></span>
     <div class="xw-zi-card" id="xw-zi-card">
-      <img class="xw-zi-card-photo" src="/static/images/Profile_Picture.jpg" alt="" />
+      <img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" />
       <div class="xw-zi-card-body">
         <span class="xw-zi-card-name">XIAO, DAVID</span>
         <span class="xw-zi-card-line">WEB DEVELOPER — SECCO SQUARED</span>
@@ -1359,6 +1401,9 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   const typeCard = overlay.querySelector<HTMLElement>('#xw-zi-type')!;
   const typeL1 = overlay.querySelector<HTMLElement>('#xw-zi-type-l1')!;
   const typeL2 = overlay.querySelector<HTMLElement>('#xw-zi-type-l2')!;
+  const portrait = document.querySelector<HTMLImageElement>('.xw-portrait img');
+  if (portrait) overlay.querySelector<HTMLImageElement>('.xw-zi-card-photo')!.src = portrait.src;
+  if (document.getElementById('xw-intro-bypass')) skipBtn.hidden = true;
 
   gsap.set('.xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector, #xw-zi-card', { autoAlpha: 0 });
   gsap.set(hbox, { autoAlpha: 0 });
@@ -1379,7 +1424,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   /* White inversion flash — the capture beat. */
   const flashEl = overlay.querySelector<HTMLElement>('#xw-zi-flash')!;
   const flash = () => {
-    gsap.fromTo(flashEl, { opacity: 0 }, { opacity: 0.9, duration: 0.05, yoyo: true, repeat: 1 });
+    gsap.fromTo(flashEl, { opacity: 0 }, { opacity: 0.12, duration: 0.12, yoyo: true, repeat: 1 });
   };
 
 
@@ -1465,6 +1510,10 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   setCam();
 
   let finished = false;
+  let cancelled = false;
+  let lockTimeline: gsap.core.Timeline | null = null;
+  let morphTimeline: gsap.core.Timeline | null = null;
+  let pullTween: gsap.core.Tween | null = null;
   let revealed = false;
   const reveal = () => {
     if (revealed) return;
@@ -1473,24 +1522,28 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     showTags();
   };
   const finish = (fast: boolean) => {
-    if (finished) return;
+    if (cancelled) return;
+    cancelled = true;
     finished = true;
     tl.kill();
+    lockTimeline?.kill();
+    morphTimeline?.kill();
+    pullTween?.kill();
+    gsap.killTweensOf([overlay, ...overlay.querySelectorAll('*')]);
     document.removeEventListener('keydown', onKey);
-    // Snap the scene to its desktop state.
-    flight.t = 1;
-    setCam();
-    setRise(1);
-    c.regionPlane.material.opacity = 0;
-    introActive = false;
+    signal?.removeEventListener('abort', cancel);
+    settleDesktop();
     reveal();
-    gsap.to(overlay, { opacity: 0, duration: fast ? 0.15 : 0.3, onComplete: () => overlay.remove() });
+    if (fast) overlay.remove();
+    else gsap.to(overlay, { opacity: 0, duration: 0.2, onComplete: () => overlay.remove() });
   };
   const onKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') finish(true);
   };
+  const cancel = () => finish(true);
   document.addEventListener('keydown', onKey);
-  skipBtn.addEventListener('click', () => finish(true));
+  signal?.addEventListener('abort', cancel, { once: true });
+  skipBtn.addEventListener('click', cancel);
 
   // Targeting system: viewport-spanning crosshair snaps between candidates,
   // bracket box at the intersection, then flips to LOCK on the target.
@@ -1545,7 +1598,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     [-75.165, 39.953, 'PHILADELPHIA METRO'],
   ];
 
-  const tl = gsap.timeline();
+  const tl = gsap.timeline().timeScale(1.75);
   tl.add(() => setStatus('Acquiring — northeast corridor'), 0)
     .to(microLabels, { autoAlpha: 0.85, duration: 0.3, stagger: 0.06 }, 0.35)
     .to(overlay, { '--xw-zi-veil': 0, duration: 0.01 }, 0);
@@ -1571,7 +1624,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     .to(flight, { t: 1, duration: 4.0, ease: 'power2.inOut', onUpdate: setCam }, '<')
     .add(() => typeIn('NEW YORK,', 'NY.'), '<+0.2')
     .add(() => typeOut(), '<+0.85')
-    .add(() => typeIn('8,584,629', 'PEOPLE.'), '<+0.35')
+    .add(() => typeIn('CITY', 'GRID.'), '<+0.35')
     .add(() => typeOut(), '<+0.85')
     .add(() => typeIn('ONE', 'SUBJECT.'), '<+0.35')
     .add(() => typeOut(), '<+0.75')
@@ -1606,7 +1659,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     gsap.from(hbox, { scale: 1.35, opacity: 0, duration: 0.22, ease: 'power3.out' });
     glitch();
 
-    const ltl = gsap.timeline();
+    const ltl = gsap.timeline().timeScale(1.75);
+    lockTimeline = ltl;
     ltl
       .to({}, { duration: 0.5 })
       .add(() => {
@@ -1628,7 +1682,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
   const pullBackToRest = () => {
     const from = c.camera.position.clone();
     const pull = { k: 0 };
-    gsap.to(pull, {
+    pullTween = gsap.to(pull, {
       k: 1,
       duration: 0.9,
       ease: 'power2.inOut',
@@ -1661,7 +1715,11 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void): boolean {
     const winEl = document.querySelector<HTMLElement>('.xw-window[data-app="dossier"]');
     const target = winEl?.getBoundingClientRect();
     const edgeMat = c.subjectEdges.material as THREE.LineBasicMaterial;
-    const mtl = gsap.timeline({ onComplete: () => overlay.remove() });
+    const mtl = gsap.timeline({ onComplete: () => {
+      overlay.remove();
+      signal?.removeEventListener('abort', cancel);
+    } }).timeScale(1.75);
+    morphTimeline = mtl;
     mtl.to('.xw-zi-readout, #xw-zi-status, #xw-zi-chip, .xw-zi-skip, .xw-zi-sweep, .xw-zi-bkt, #xw-zi-lockrect, #xw-zi-connector', {
       opacity: 0, duration: 0.18,
     });

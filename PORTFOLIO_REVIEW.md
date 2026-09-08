@@ -1,5 +1,9 @@
 # Personal Portfolio Review
 
+Latest intro/UI review and implementation evidence: [September 2026 review](docs/intro-ux-review.md).
+
+The report below is historical; its findings describe March 2026, not the current implementation.
+
 Date: 2026-03-27
 
 ## Executive Summary

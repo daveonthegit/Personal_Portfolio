@@ -33,6 +33,16 @@ Constraints on the adoption:
   no model pipeline.
 - Rendering pauses when the tab is hidden; reduced-motion gets a static frame.
 
+## September 2026 implementation note
+
+The current primary path also supports the mobile Companion App. Reduced motion
+keeps the full arrival narrative as static boot/acquisition compositions and does
+not load three.js. The SVG acquisition is also the fallback for a failed or late
+scene. Shader variants are prepared before the flight, texture uploads yield
+between tasks, and room-only preview images are deferred until that room is visited.
+The eight-second animation deadline is independent of asset loading; measured
+navigation-to-content times and remaining limitations are in `../intro-ux-review.md`.
+
 ## Consequences
 
 - Real dependency (~150KB gz chunk) and a GPU requirement for the primary path.

@@ -12,7 +12,7 @@
   --xw-bg-soft:     #161513;   /* alt band */
   --xw-ink:         #f4efe6;   /* off-white headline + body */
   --xw-ink-muted:   #a39d92;   /* secondary text */
-  --xw-ink-faint:   #6e675e;   /* labels, meta */
+  --xw-ink-faint:   #9b9388;   /* labels/meta: AA on the warm dark surfaces */
   --xw-hairline:    rgba(244, 239, 230, 0.08);
   --xw-hairline-hi: rgba(244, 239, 230, 0.14);
   --xw-accent:      #00d2ff;   /* cyan — the only chromatic accent */
@@ -41,7 +41,8 @@
   --z-topbar: 40;
   --z-mobile-nav: 45;
   --z-modal: 50;
-  --z-boot: 100;
+  --z-boot: 10000;
+  --z-boot-controls: 10001;
 
   /* Back-compat aliases — older components still reference these names. */
   --color-bg:            var(--xw-bg);
@@ -123,7 +124,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: var(--z-boot);
     padding: max(0px, env(safe-area-inset-top)) max(0px, env(safe-area-inset-right)) max(0px, env(safe-area-inset-bottom)) max(0px, env(safe-area-inset-left));
     box-sizing: border-box;
     -webkit-text-size-adjust: 100%;
@@ -690,6 +691,10 @@ body.xw-mobile-nav-lock {
 #startup-animation:empty {
   pointer-events: none;
 }
+body.xw-boot-pending #startup-animation:empty {
+  animation: xw-boot-failsafe 0s 8s forwards;
+}
+@keyframes xw-boot-failsafe { to { visibility: hidden; } }
 
 /* Apex ("/") first paint: cover the server-rendered portfolio with an opaque black
    layer so davidx.tech never flashes content before the boot animation mounts.
@@ -702,7 +707,7 @@ body.xw-boot-pending #startup-animation {
   position: fixed;
   inset: 0;
   background: #000;
-  z-index: 10000;
+  z-index: var(--z-boot);
   pointer-events: none;
 }
 .xw-main:focus-visible {
@@ -737,19 +742,81 @@ body.xw-boot-pending #startup-animation {
 
 /* ---- Revealer animations ------------------------------------------- */
 
-[data-xw-reveal].xw-reveal-ready {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
-    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
+/* Content is visible even if an observer, asset, or animation never finishes. */
+[data-xw-reveal].xw-reveal-ready { opacity: 1; }
 [data-xw-reveal].xw-reveal-shown {
-  opacity: 1;
-  transform: translateY(0);
+  animation: xw-document-enter 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes xw-document-enter {
+  from { opacity: 0.75; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---- Focus rings --------------------------------------------------- */
+:where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--xw-accent);
+  outline-offset: 3px;
+}
+
+.xw-intro-bypass {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  z-index: var(--z-boot-controls);
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--xw-bg);
+  border: 1px solid var(--xw-ink-muted);
+  color: var(--xw-ink);
+  font: 0.8rem var(--xw-mono);
+  text-decoration: none;
+}
+.xw-intro-bypass span { color: var(--xw-ink-muted); }
+.xw-replay {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font: 0.72rem var(--xw-mono);
+  color: var(--xw-ink-muted);
+}
+.xw-role { margin: 1rem 0 0; color: var(--xw-accent); font-weight: 500; }
+.xw-current-work { max-width: 65ch; color: var(--xw-ink-muted); font-size: 1rem; line-height: 1.65; }
+.xw-build-notes {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--xw-hairline-hi);
+  color: var(--xw-ink-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.xw-build-notes summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--xw-ink);
+}
+.xw-build-notes p { max-width: 70ch; margin: 0.5rem 0 1rem; }
+.xw-zoomin--quiet #xw-zi-map { opacity: 0.3; }
+.xw-zoomin--quiet .xw-zi-card {
+  left: 50%; top: 40%; transform: translate(-50%, -50%);
+  width: min(320px, calc(100vw - 32px));
+}
+.xw-zoomin--quiet .xw-zi-sweep,
+.xw-zoomin--quiet .xw-zi-bkt,
+.xw-zoomin--quiet #xw-zi-lockrect,
+.xw-zoomin--quiet #xw-zi-connector { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  [data-xw-reveal], .xw-window, .xw-obs-dot, .xw-rec-dot {
+    animation: none !important;
+    transition: none !important;
+    transform: none;
+  }
+}
+
 
 .xw-topbar a:focus-visible,
 .xw-mobile-nav a:focus-visible,
@@ -922,6 +989,10 @@ body.xw-boot-pending #startup-animation {
 }
 @media (max-width: 900px) {
   .xw-hero-grid { grid-template-columns: 1fr; }
+  .xw-hero { padding-top: 2rem; }
+  .xw-section { --xw-section-pad: 3rem; }
+  .xw-replay { font-size: 0.65rem; }
+  .xw-clock { display: none; }
 }
 
 .xw-hero-lead { min-width: 0; }
@@ -1641,7 +1712,7 @@ body.xw-boot-pending #startup-animation {
 .xw-projects-page {
   max-width: var(--xw-rail-wide, 1280px);
   margin: 0 auto;
-  padding: clamp(4rem, 8vh, 6rem) clamp(1.25rem, 4vw, 3rem) 5rem;
+  padding: clamp(2rem, 5vh, 4rem) clamp(1.25rem, 4vw, 3rem) 5rem;
   color: var(--xw-ink);
 }
 
@@ -1649,7 +1720,7 @@ body.xw-boot-pending #startup-animation {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: clamp(2rem, 4vh, 3rem);
+  margin-bottom: 1rem;
 }
 .xw-projects-head-row {
   display: flex;
@@ -1727,6 +1798,20 @@ body.xw-boot-pending #startup-animation {
 }
 
 /* -- Filter toolbar --------------------------------------------------- */
+.xw-filter-buttons, .xw-project-views { display: flex; align-items: center; gap: 0.5rem; }
+.xw-filter-buttons { flex-wrap: wrap; }
+.xw-project-views { margin-left: auto; }
+.xw-filter-select { display: none; min-width: 0; }
+.xw-filter-select select {
+  width: 100%; min-height: 44px; padding: 8px;
+  color: var(--xw-ink); background: var(--xw-bg);
+  border: 1px solid var(--xw-hairline-hi);
+}
+@media (max-width: 760px) {
+  .xw-filter-buttons { display: none; }
+  .xw-filter-select { display: block; flex: 1; }
+}
+
 
 .xw-projects-toolbar {
   display: flex;
@@ -1918,6 +2003,7 @@ body.xw-boot-pending #startup-animation {
 .xw-proj-item:nth-child(3n+2) > .xw-proj-card { grid-column: span 5; }
 .xw-proj-item:nth-child(3n)   > .xw-proj-card { grid-column: span 12; }
 @media (max-width: 900px) {
+  .xw-proj-grid--featured .xw-proj-item:nth-child(n) > .xw-proj-card,
   .xw-proj-item > .xw-proj-card,
   .xw-proj-item:nth-child(3n+1) > .xw-proj-card,
   .xw-proj-item:nth-child(3n+2) > .xw-proj-card,
@@ -2461,9 +2547,11 @@ body.xw-os .xw-dock {
   color: var(--xw-ink);
 }
 .xw-dock-label {
+  background: var(--xw-bg);
+  padding: 2px 4px;
   font-family: var(--xw-mono);
-  font-size: 0.55rem;
-  letter-spacing: var(--xw-tracking-caps);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 /* Open-app tick — the one semantic cyan in the dock. */
@@ -2516,8 +2604,8 @@ body.xw-os .xw-projects-back { display: none; }
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 38px;
-  padding: 0 10px 0 14px;
+  height: 48px;
+  padding: 0 4px 0 14px;
   border-bottom: 1px solid var(--xw-hairline);
   background: var(--xw-bg-soft);
   cursor: grab;
@@ -2550,8 +2638,8 @@ body.xw-os .xw-projects-back { display: none; }
 .xw-window-btn {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   font-family: var(--xw-mono);
   font-size: 0.85rem;
   line-height: 1;
@@ -2572,6 +2660,21 @@ body.xw-os .xw-projects-back { display: none; }
   overflow: auto;
   overscroll-behavior: contain;
 }
+
+.xw-app-loading {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: var(--z-topbar);
+  padding: 12px 18px;
+  background: var(--xw-bg);
+  color: var(--xw-ink);
+  border: 1px solid var(--xw-hairline-hi);
+}
+.xw-window .xw-projects-page { padding-top: 1.5rem; }
+.xw-projects-page > .xw-featured-copy { margin-bottom: 1.5rem; }
+.xw-filter { min-height: 44px; }
+h1, h2, h3 { text-wrap: balance; }
 
 /* Page-scale sections compress inside a window. */
 .xw-window .xw-section {
@@ -2627,7 +2730,7 @@ body.xw-os-mobile .xw-dock-item--open .xw-dock-glyph::after { content: none; }
 .xw-zoomin {
   position: fixed;
   inset: 0;
-  z-index: 9999; /* under the apex boot cover (10000), above everything else */
+  z-index: calc(var(--z-boot) - 1);
   background: #000;
 }
 
@@ -2865,7 +2968,8 @@ body.xw-introing .xw-topbar,
 body.xw-introing .xw-dock,
 body.xw-introing .xw-window,
 body.xw-introing .xw-status,
-body.xw-introing .xw-section-rail {
+body.xw-introing .xw-section-rail,
+body.xw-introing .xw-city-tags {
   visibility: hidden;
 }
 
@@ -3244,7 +3348,7 @@ body.xw-introing .xw-city-mobile {
   inset: 0;
   height: auto;
   min-height: 0;
-  z-index: 9998; /* beneath the intro HUD (9999) and boot cover (10000) */
+  z-index: calc(var(--z-boot) - 2);
   border-bottom: none;
 }
 
@@ -3272,29 +3376,6 @@ body.xw-map-home .xw-city-mobile {
 body.xw-map-home.xw-map-view .xw-city-mobile { display: block; }
 body.xw-map-home.xw-map-view #main-content { display: none; }
 
-/* Floating return-to-map control (mobile only) */
-.xw-map-back {
-  display: none;
-  position: fixed;
-  right: 14px;
-  bottom: calc(72px + env(safe-area-inset-bottom));
-  z-index: var(--z-topbar);
-  align-items: center;
-  gap: 6px;
-  font-family: var(--xw-mono);
-  font-size: var(--xw-fs-caps);
-  letter-spacing: var(--xw-tracking-caps);
-  text-transform: uppercase;
-  color: var(--xw-ink);
-  background: rgba(11, 10, 9, 0.92);
-  border: 1px solid var(--xw-hairline-hi);
-  padding: 9px 14px;
-  cursor: pointer;
-  text-decoration: none;
-}
-body.xw-os-mobile .xw-map-back { display: inline-flex; }
-body.xw-map-home.xw-map-view .xw-map-back { display: none; }
-
 /* ── MK12-grammar intro additions ── */
 .xw-zi-type {
   position: fixed;
@@ -3305,7 +3386,7 @@ body.xw-map-home.xw-map-view .xw-map-back { display: none; }
   pointer-events: none;
   font-family: var(--xw-display);
   font-weight: 700;
-  font-size: clamp(56px, 11vw, 160px);
+  font-size: clamp(2.5rem, 8vw, 6rem);
   line-height: 0.95;
   letter-spacing: -0.015em;
   color: var(--xw-ink);

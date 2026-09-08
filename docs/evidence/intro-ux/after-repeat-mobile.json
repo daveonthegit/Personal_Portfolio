@@ -1,0 +1,232 @@
+{
+  "label": "after-repeat",
+  "profile": "mobile",
+  "settings": {
+    "cpu": 4,
+    "latencyMs": 150,
+    "downloadBytesPerSecond": 200000,
+    "cache": "disabled",
+    "browser": "Chrome headless, local macOS"
+  },
+  "phases": [
+    {
+      "phase": "boot",
+      "at": 2406.8
+    },
+    {
+      "phase": "city",
+      "at": 5423.4
+    },
+    {
+      "phase": "ready",
+      "at": 10023.2
+    }
+  ],
+  "frames": {
+    "loading": {
+      "count": 33,
+      "p95": 66.70000000000005,
+      "max": 1636.6999998569488,
+      "over50ms": 2
+    },
+    "boot": {
+      "count": 179,
+      "p95": 16.700000000000728,
+      "max": 50,
+      "over50ms": 0
+    },
+    "city": {
+      "count": 266,
+      "p95": 16.799999999999272,
+      "max": 133.30000000000018,
+      "over50ms": 1
+    },
+    "ready": {
+      "count": 960,
+      "p95": 16.700000000000728,
+      "max": 16.80000000000291,
+      "over50ms": 0
+    }
+  },
+  "longTasks": [
+    {
+      "at": 1807.5,
+      "duration": 79,
+      "phase": "loading"
+    },
+    {
+      "at": 2399,
+      "duration": 60,
+      "phase": "boot"
+    },
+    {
+      "at": 5537.299999952316,
+      "duration": 147,
+      "phase": "city"
+    },
+    {
+      "at": 7490.400000095367,
+      "duration": 52,
+      "phase": "city"
+    }
+  ],
+  "errors": [],
+  "url": "http://localhost:18437/home#file",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "dpr": 3
+  },
+  "paints": [
+    {
+      "name": "first-paint",
+      "at": 1896
+    },
+    {
+      "name": "first-contentful-paint",
+      "at": 1896
+    }
+  ],
+  "marks": [
+    {
+      "name": "xw:intro-start",
+      "at": 2405.2999999523163,
+      "detail": null
+    },
+    {
+      "name": "xw:intro-city",
+      "at": 5707.700000047684,
+      "detail": "webgl"
+    },
+    {
+      "name": "xw:intro-ready",
+      "at": 9842.5,
+      "detail": "complete"
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "transfer": 1332,
+      "decoded": 20489,
+      "duration": 163.20000004768372
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=68d8e40255acb3531417",
+      "transfer": 114705,
+      "decoded": 114405,
+      "duration": 1627
+    },
+    {
+      "url": "http://localhost:18437/static/images/profile-840.jpg?v=68d8e40255acb3531417",
+      "transfer": 94727,
+      "decoded": 94427,
+      "duration": 1453.6000001430511
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=68d8e40255acb3531417",
+      "transfer": 52380,
+      "decoded": 52080,
+      "duration": 958.3999998569489
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "transfer": 86488,
+      "decoded": 86188,
+      "duration": 1117.1000001430511
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-7CIPCL5V.js",
+      "transfer": 584536,
+      "decoded": 584236,
+      "duration": 3123.4000000953674
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "transfer": 2957,
+      "decoded": 2657,
+      "duration": 193
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "transfer": 0,
+      "decoded": 0,
+      "duration": 177.59999990463257
+    }
+  ],
+  "overflow": false,
+  "requests": [
+    {
+      "url": "http://localhost:18437/",
+      "status": 200,
+      "mime": "text/html"
+    },
+    {
+      "url": "http://localhost:18437/static/css/main.css?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap",
+      "status": 200,
+      "mime": "text/css"
+    },
+    {
+      "url": "http://localhost:18437/static/images/profile-840.jpg?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "image/jpeg"
+    },
+    {
+      "url": "http://localhost:18437/static/js/main.js?v=68d8e40255acb3531417",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlRFgsAXHNlYzg.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q131nj-o.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/chunk-WUNB7BK3.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYbSB4Zh.woff2",
+      "status": 200,
+      "mime": "font/woff2"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/dossierLive-VQDECBPG.js",
+      "status": 200,
+      "mime": "text/javascript"
+    },
+    {
+      "url": "https://api.github.com/users/daveonthegit/events/public?per_page=10",
+      "status": 200,
+      "mime": "application/json"
+    },
+    {
+      "url": "http://localhost:18437/static/js/chunks/city3d-7CIPCL5V.js",
+      "status": 200,
+      "mime": "text/javascript"
+    }
+  ],
+  "exceptions": [],
+  "consoleProblems": []
+}
