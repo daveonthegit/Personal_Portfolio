@@ -147,6 +147,31 @@ try {
     await waitFor(isReady,1500);
     assert.equal(await c.eval(`performance.getEntriesByName('xw:intro-ready').at(-1).detail`),'late-start');
   });
+  await check('screen cues follow rooms, launch the cabinet by keyboard, and hide on exit', async () => {
+    await navigate('/home');
+    await waitFor(`!!document.querySelector('.xw-city-canvas')`);
+    await c.eval(`(async () => {
+      const url = performance.getEntriesByType('resource').find(e => e.name.includes('city3d-')).name;
+      window.__screenCueScene = await import(url);
+      await window.__screenCueScene.prepareIntro();
+    })()`);
+    assert.equal(await c.eval(`document.querySelectorAll('.xw-screen-hint:not([hidden])').length`),0);
+    await click('[aria-label="Close Dossier"]');
+    assert.equal(await c.eval(`window.__screenCueScene.diveIntoRoom('arcade', () => {})`),true);
+    await waitFor(`!!document.querySelector('.xw-screen-hint[aria-label="Play Minesweeper"]:not([hidden])')`);
+    await c.eval(`document.querySelector('.xw-screen-hint[aria-label="Play Minesweeper"]').focus()`);
+    await press('Enter', { text: '\r' });
+    await waitFor(`!!document.querySelector('.xw-window--capture iframe[src="/hosted/minesweeper/"]')`);
+    await click('[aria-label="Close capture"]');
+    await c.eval(`window.__screenCueScene.exitRoom(true)`);
+    assert.equal(await c.eval(`document.querySelectorAll('.xw-screen-hint:not([hidden])').length`),0);
+    await sleep(700);
+    await c.eval(`window.__screenCueScene.diveIntoRoom('projects', () => {})`);
+    await waitFor(`document.querySelectorAll('.xw-screen-hint:not([hidden])[aria-label^="Open featured project"]').length === 4`);
+    await click('.xw-screen-hint:not([hidden])[aria-label="Open featured project 1"]');
+    await waitFor(`document.querySelector('#project-terminal-overlay')?.classList.contains('is-open')`);
+  });
+
   // Quiet desktop mode isolates document interaction from optional camera travel.
   await c.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
   await check('selected-work detail link opens the right record; modal traps Tab and restores focus', async () => {

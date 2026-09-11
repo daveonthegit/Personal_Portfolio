@@ -16,6 +16,10 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { REGION_STATES, METRO_COAST, PROJ } from './mapdata';
 import { buildRoomFor, type RoomBuild } from './rooms';
+import { addBuilding, buildUrbanDetail, type BuildingLot } from './architecture';
+import { ModelKit } from './modelKit';
+import { addRoomDetail } from './roomDetail';
+import { ScreenHints } from './screenHints';
 
 /* ── Tunables ─────────────────────────────────────────────────────────────── */
 
@@ -83,8 +87,7 @@ interface City {
   islandGroup: THREE.Group;
   regionPlane: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   metroPlane: THREE.Mesh;
-  buildings: THREE.InstancedMesh;
-  buildingBase: THREE.Matrix4[];
+  buildings: THREE.Group;
   subjectBounds: THREE.Box3;
   anchors: Array<{ spec: AppAnchor; world: THREE.Vector3; tag: HTMLElement }>;
   tagLayer: HTMLElement;
@@ -99,6 +102,7 @@ interface City {
   mode: 'overhead' | 'diving' | 'room';
   currentRoom: string | null;
   exitBtn: HTMLElement;
+  screenHints: ScreenHints;
   flights: Array<{ mesh: THREE.Mesh; a: THREE.Vector3; b: THREE.Vector3; total: number; speed: number; phase: number }>;
   subjectEdges: THREE.LineSegments;
   timer: THREE.Timer;
@@ -340,10 +344,31 @@ function buildMetroTexture(): THREE.CanvasTexture {
   return new THREE.CanvasTexture(c);
 }
 
+/** App facade details share the shell material, including its dive fade. */
+function addShellDetail(group: THREE.Group, p: { x: number; z: number; w: number; d: number; h: number }, material: THREE.MeshLambertMaterial): void {
+  const kit = new ModelKit();
+  for (let y = 4; y < p.h; y += 4.5) {
+    kit.box(p.w + 0.8, 0.45, p.d + 0.8, p.x, y, p.z);
+  }
+  for (let x = -p.w / 2 + 1; x < p.w / 2; x += 4.5) {
+    for (const side of [-1, 1]) kit.box(0.55, p.h, 0.6, p.x + x, p.h / 2, p.z + side * p.d / 2);
+  }
+  kit.box(p.w + 1.2, 1, p.d + 1.2, p.x, p.h, p.z);
+  kit.box(p.w * 0.5, 3, p.d * 0.5, p.x, p.h + 1.5, p.z);
+  const detail = new THREE.Group();
+  kit.finish(detail);
+  detail.traverse(object => {
+    if (object instanceof THREE.Mesh) {
+      object.material.dispose();
+      object.material = material;
+    }
+  });
+  group.add(detail);
+}
+
 function buildCity(scene: THREE.Scene): {
   islandGroup: THREE.Group;
-  buildings: THREE.InstancedMesh;
-  buildingBase: THREE.Matrix4[];
+  buildings: THREE.Group;
   subjectBounds: THREE.Box3;
   anchorWorlds: Map<string, THREE.Vector3>;
   packets: City['packets'];
@@ -385,9 +410,9 @@ function buildCity(scene: THREE.Scene): {
   ground.position.y = 0.2;
   group.add(ground);
 
-  // Buildings — instanced white boxes on the street grid
+  // Deterministic building lots on the street grid.
   const rnd = lcg(4711);
-  const positions: Array<{ x: number; z: number; w: number; d: number; h: number; anchor?: AppAnchor }> = [];
+  const positions: Array<BuildingLot & { anchor?: AppAnchor }> = [];
   for (let z = -620; z < 620; z += 26) {
     for (let x = -220; x < 220; x += 40) {
       const cx = x + 20;
@@ -416,33 +441,26 @@ function buildCity(scene: THREE.Scene): {
     best.anchor = spec;
   }
 
-  const geo = new THREE.BoxGeometry(1, 1, 1);
-  geo.translate(0, 0.5, 0); // grow upward from ground
-  const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  const mesh = new THREE.InstancedMesh(geo, mat, positions.length);
-  const m = new THREE.Matrix4();
-  const col = new THREE.Color();
-  const base: THREE.Matrix4[] = [];
+  // Landmark-inspired crowns give the two skyline clusters distinct silhouettes.
+  for (const landmark of [
+    { kind: 'empire', x: 100, z: -70, height: 142 },
+    { kind: 'chrysler', x: 180, z: -170, height: 126 },
+    { kind: 'trade', x: -20, z: 550, height: 157 },
+  ] as const) {
+    const lot = positions.filter(p => !p.anchor && !p.landmark).sort((a, b) =>
+      (a.x - landmark.x) ** 2 + (a.z - landmark.z) ** 2 - ((b.x - landmark.x) ** 2 + (b.z - landmark.z) ** 2),
+    )[0];
+    if (lot) { lot.h = landmark.height; lot.landmark = landmark.kind; }
+  }
+  const buildings = new THREE.Group();
+  buildings.name = 'city-architecture';
+  // Batch by finish: thousands of facade bays still cost only a few draws.
+  const kit = new ModelKit();
+  positions.forEach((p, i) => { if (!p.anchor) addBuilding(kit, p, i); });
+  kit.finish(buildings);
+  buildings.add(buildUrbanDetail());
+  group.add(buildings);
   let subjectBounds = new THREE.Box3();
-
-  positions.forEach((p, i) => {
-    if (p.anchor) {
-      // Every app building gets a standalone fading shell + a room inside —
-      // its instance is zeroed permanently.
-      m.makeScale(0.0001, 0.0001, 0.0001).setPosition(p.x, 0, p.z);
-    } else {
-      m.makeScale(p.w, p.h, p.d).setPosition(p.x, 0, p.z);
-    }
-    mesh.setMatrixAt(i, m);
-    base.push(m.clone());
-    // Grayscale variance so the mass doesn't read flat
-    const v = 0.72 + lcgHash(i) * 0.28;
-    mesh.setColorAt(i, col.setRGB(v, v, v * 0.995));
-  });
-  mesh.instanceMatrix.needsUpdate = true;
-  if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-
-  group.add(mesh);
 
   // Cyan data arteries (the system's traffic) — faint lines + traveling packets.
   const routePts: THREE.Vector3[][] = [
@@ -479,10 +497,11 @@ function buildCity(scene: THREE.Scene): {
   const roomShells = new Map<string, { shellMat: THREE.MeshLambertMaterial; build: RoomBuild | null; screen: THREE.Mesh | null }>();
   for (const p of positions) {
     if (!p.anchor || p.anchor.id === 'dossier') continue;
-    const sm = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: false });
+    const sm = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, depthWrite: false });
     const shell = new THREE.Mesh(new THREE.BoxGeometry(p.w, p.h, p.d), sm);
     shell.position.set(p.x, p.h / 2, p.z);
     group.add(shell);
+    addShellDetail(group, p, sm);
     const build = buildRoomFor(p.anchor.id, p.w - 2, p.d - 2, 23);
     if (build) {
       build.group.position.set(p.x, 0, p.z);
@@ -505,12 +524,14 @@ function buildCity(scene: THREE.Scene): {
     subjectEdges.position.set(p.x, p.h / 2, p.z);
     group.add(subjectEdges);
 
-    // The subject's building is a standalone SHELL (its instance is zeroed
-    // below) so the camera can fade through the facade into the room.
-    shellMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true });
+    // The subject's building is a standalone shell so the camera can fade
+    // through the facade into the room. Keep its shader transparent even at
+    // opacity 1: toggling that flag can leave OPAQUE shader variants cached.
+    shellMat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, depthWrite: false });
     const shell = new THREE.Mesh(new THREE.BoxGeometry(p.w, p.h, p.d), shellMat);
     shell.position.set(p.x, p.h / 2, p.z);
     group.add(shell);
+    addShellDetail(group, p, shellMat);
 
     // ── The room: SOLID geometry (the white-city language, indoors) ──
     const room = new THREE.Group();
@@ -652,6 +673,7 @@ function buildCity(scene: THREE.Scene): {
     part(new THREE.BoxGeometry(1.3, 0.5, 2.1), dark, 0.9, 0.5, -2.7);
     person.position.set(0, 0, 1.2);
     room.add(person);
+    addRoomDetail(room, RW, RD, 'dossier');
     group.add(room);
   }
 
@@ -670,12 +692,7 @@ function buildCity(scene: THREE.Scene): {
       ).applyMatrix4(group.matrixWorld);
     }
   }
-  return { islandGroup: group, buildings: mesh, buildingBase: base, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen };
-}
-
-function lcgHash(i: number): number {
-  const s = ((i + 7) * 1103515245 + 12345) & 0x7fffffff;
-  return s / 0x7fffffff;
+  return { islandGroup: group, buildings, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen };
 }
 
 /* ── Mounting ─────────────────────────────────────────────────────────────── */
@@ -709,7 +726,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   dir.position.set(-400, 600, 300);
   scene.add(dir);
 
-  const { islandGroup, buildings, buildingBase, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen } = buildCity(scene);
+  const { islandGroup, buildings, subjectBounds, anchorWorlds, packets, metroPlane, subjectEdges, shellMat, person, roomShells, dossierScreen } = buildCity(scene);
 
   // Aircraft markers flying the air routes (region scale, ink triangles).
   const flights: City['flights'] = [];
@@ -788,13 +805,14 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
   const timer = new THREE.Timer();
   timer.connect(document);
   city = {
-    renderer, scene, camera, islandGroup, regionPlane, buildings, buildingBase,
+    renderer, scene, camera, islandGroup, regionPlane, buildings,
     subjectBounds, anchors, tagLayer, hooks, riseT: 1, packets, metroPlane, subjectEdges,
     shellMat, person, flights,
     rooms: new Map<string, RoomEntry>(),
     mode: 'overhead' as const,
     currentRoom: null,
     exitBtn,
+    screenHints: new ScreenHints(plane),
     orbitTarget: REST_TARGET.clone(),
     orbit: {
       az: Math.atan2(off.x, off.z),
@@ -847,6 +865,23 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
     for (const [id, entry] of roomShells) register(id, entry.shellMat, entry.build, entry.screen);
   }
 
+  // Labels and canvas clicks share actions. Register the live cabinet only once.
+  for (const [id, entry] of city.rooms) {
+    if (entry.build?.cabinet) {
+      city.screenHints.add(id, entry.build.cabinet, 'Play', 'Play Minesweeper',
+        () => hooks.openCapture?.('Minesweeper', '/hosted/minesweeper/'), () => !!hooks.openCapture);
+    } else if (entry.screenMesh) {
+      const screen = entry.screenMesh;
+      const label = APP_ANCHORS.find(anchor => anchor.id === id)?.label.toLowerCase() ?? id;
+      city.screenHints.add(id, screen, 'Open', `Open ${label}`,
+        () => hooks.openApp(id, boundsScreenRect(new THREE.Box3().setFromObject(screen))));
+    }
+    for (const [index, display] of (entry.build?.displays ?? []).entries()) {
+      city.screenHints.add(id, display.mesh, 'View project', `Open featured project ${index + 1}`,
+        () => hooks.openProjectRecord?.(display.projectId), () => !!display.projectId && !!hooks.openProjectRecord);
+    }
+  }
+
   // Clickable in-room surfaces (displays, the live cabinet).
   renderer.domElement.addEventListener('click', (e) => {
     if (!city || city.mode !== 'room') return;
@@ -855,33 +890,7 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
       ((e.clientX - rect.left) / rect.width) * 2 - 1,
       -((e.clientY - rect.top) / rect.height) * 2 + 1,
     );
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(ndc, city.camera);
-    const entry = city.rooms.get(city.currentRoom ?? '');
-    if (!entry) return;
-    // The live cabinet outranks the generic screen check — in the arcade room
-    // they are the SAME mesh, and the cabinet's job is launching the game.
-    if (city.currentRoom === 'arcade' && entry.build?.cabinet) {
-      if (ray.intersectObject(entry.build.cabinet, false).length > 0) {
-        city.hooks.openCapture?.('Minesweeper', '/hosted/minesweeper/');
-        return;
-      }
-    }
-    if (entry.screenMesh) {
-      if (ray.intersectObject(entry.screenMesh, false).length > 0) {
-        city.hooks.openApp(city.currentRoom ?? '', boundsScreenRect(new THREE.Box3().setFromObject(entry.screenMesh)));
-        return;
-      }
-    }
-    if (!entry.build) return;
-    if (city.currentRoom === 'projects') {
-      const hits = ray.intersectObjects(entry.build.displays.map((d) => d.mesh), false);
-      const first = hits[0];
-      if (first) {
-        const d = entry.build.displays.find((x) => x.mesh === first.object);
-        if (d?.projectId) city.hooks.openProjectRecord?.(d.projectId);
-      }
-    }
+    city.screenHints.activateAt(city.camera, city.currentRoom ?? '', ndc);
   });
 
   // The background is rotatable: dragging the canvas orbits the camera.
@@ -946,21 +955,12 @@ export function mountCity(plane: HTMLElement, hooks: CityHooks): boolean {
 
 let introActive = false;
 
-/** Building-rise wave: 0 = flat ground, 1 = full skyline. */
+/** Miniature rise: 0 = flat ground, 1 = full skyline and attached roof detail. */
 function applyRise(c: City, r: number): void {
   if (r === c.riseT) return;
   c.riseT = r;
-  const m = new THREE.Matrix4();
-  const s = new THREE.Vector3();
-  const q = new THREE.Quaternion();
-  const p = new THREE.Vector3();
-  c.buildingBase.forEach((bm, i) => {
-    bm.decompose(p, q, s);
-    const wave = THREE.MathUtils.clamp(r * 1.6 - lcgHash(i * 3) * 0.6, 0, 1);
-    m.makeScale(s.x, Math.max(0.01, s.y * wave), s.z).setPosition(p.x, 0, p.z);
-    c.buildings.setMatrixAt(i, m);
-  });
-  c.buildings.instanceMatrix.needsUpdate = true;
+  // Scale the complete miniature so roof equipment stays attached on arrival.
+  c.buildings.scale.y = Math.max(0.001, r);
 }
 
 /** Snap the scene straight to its desktop state (intro skipped or absent). */
@@ -976,11 +976,9 @@ export function settleDesktop(): void {
   city.flights.forEach((f) => { f.mesh.visible = false; });
   (city.subjectEdges.material as THREE.LineBasicMaterial).opacity = 0;
   city.shellMat.opacity = 1;
-  city.shellMat.transparent = false;
   roomTl?.kill();
   city.rooms.forEach((r) => {
     r.shellMat.opacity = 1;
-    r.shellMat.transparent = false;
   });
   setMode('overhead');
   if (city.camera.near !== 5 || city.camera.fov !== BASE_FOV) {
@@ -1053,6 +1051,7 @@ function tick(): void {
     pk.mesh.position.lerpVectors(pk.pts[i - 1]!, pk.pts[i]!, frac);
   }
   city.renderer.render(city.scene, city.camera);
+  city.screenHints.update(city.camera, city.mode === 'room' ? city.currentRoom : null);
   updateTags();
 }
 
@@ -1169,6 +1168,7 @@ function setMode(mode: 'overhead' | 'diving' | 'room', roomId: string | null = n
   if (!city) return;
   city.mode = mode;
   city.currentRoom = roomId;
+  city.screenHints.update(city.camera, mode === 'room' ? roomId : null);
   city.exitBtn.classList.toggle('xw-city-exit--on', mode === 'room');
   // Map tags belong to the overhead view — inside they're floating noise.
   city.tagLayer.classList.toggle('xw-city-tags--away', mode !== 'overhead');
@@ -1211,7 +1211,6 @@ export function diveIntoRoom(id: string, onArrive: (screenRect: DOMRect | null) 
       c.camera.lookAt(look);
       const dist = pos.distanceTo(entry.center.clone().setY(pos.y * 0.4));
       const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
-      if (fade < 1) entry.shellMat.transparent = true;
       entry.shellMat.opacity = fade;
       c.camera.near = pos.y < 60 ? 0.8 : 5;
       c.camera.fov = THREE.MathUtils.lerp(startFov, targetFov, THREE.MathUtils.smoothstep(fl.t, 0.35, 1));
@@ -1258,7 +1257,6 @@ export function exitRoom(fast = false): void {
   roomTl = gsap.timeline({
     onComplete: () => {
       entry.shellMat.opacity = 1;
-      entry.shellMat.transparent = false;
       setMode('overhead');
       // Hand the orbit back where the camera actually is.
       const off2 = REST_POS.clone().sub(REST_TARGET);
@@ -1279,7 +1277,6 @@ export function exitRoom(fast = false): void {
       const dist = c.camera.position.distanceTo(entry.center.clone().setY(c.camera.position.y * 0.4));
       const fade = THREE.MathUtils.clamp((dist - 22) / 90, 0, 1);
       entry.shellMat.opacity = fade;
-      if (fade >= 1) entry.shellMat.transparent = false;
       c.camera.near = c.camera.position.y < 60 ? 0.8 : 5;
       c.camera.fov = THREE.MathUtils.lerp(fromFov, BASE_FOV, THREE.MathUtils.smoothstep(fl.t, 0, 0.7));
       c.camera.updateProjectionMatrix();
@@ -1468,7 +1465,6 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
     // Facade fades as the camera closes; a single blink as we cross it.
     const dist = pos.distanceTo(bCenter);
     const fade = THREE.MathUtils.clamp((dist - 26) / 120, 0, 1);
-    if (fade < 1) c.shellMat.transparent = true;
     c.shellMat.opacity = fade;
     if (!shellFlashed && fade < 0.45) {
       shellFlashed = true;
@@ -1693,7 +1689,6 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
         const dist = c.camera.position.distanceTo(bCenter);
         const fade = THREE.MathUtils.clamp((dist - 26) / 120, 0, 1);
         c.shellMat.opacity = fade;
-        if (fade >= 1) c.shellMat.transparent = false;
         const near = c.camera.position.y < 140 ? 0.8 : 5;
         if (c.camera.near !== near) {
           c.camera.near = near;

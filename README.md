@@ -112,9 +112,12 @@ Build and run the usual Go/TypeScript checks:
 ```bash
 npm run build
 npm run type-check
+npm run test:models
 go test ./...
 go vet ./...
 ```
+
+The procedural miniature's design and geometry budgets are recorded in [`DESIGN.md`](DESIGN.md). `npm run test:models` validates batched geometry and the interior screen/handoff contracts without a browser.
 
 Optional real-browser regression/measurement commands require **Node 22+** (built-in WebSocket), an existing Chrome/Chromium, a local server, and a dedicated browser profile. No additional test packages are required. For example on macOS, in separate terminals:
 

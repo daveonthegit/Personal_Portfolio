@@ -3510,6 +3510,47 @@ body.xw-map-home.xw-map-view #main-content { display: none; }
 }
 .xw-zi-hbox--entity::before { content: none; }
 
+/* Small screen-anchored actions, not another layer of map labels. */
+.xw-screen-hints {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.xw-screen-hint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 9px;
+  border: 1px solid var(--xw-hairline-hi);
+  border-radius: 2px;
+  background: var(--xw-bg);
+  color: var(--xw-ink);
+  font-family: var(--xw-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.xw-screen-hint[hidden] { display: none; }
+.xw-screen-hint > span { color: var(--xw-ink-muted); }
+.xw-screen-hint:hover,
+.xw-screen-hint:focus-visible {
+  color: var(--xw-accent);
+  border-color: var(--xw-accent);
+}
+.xw-screen-hint:hover > span,
+.xw-screen-hint:focus-visible > span { color: inherit; }
+.xw-screen-hint:focus-visible {
+  outline: 2px solid var(--xw-accent);
+  outline-offset: 3px;
+}
+.xw-screen-hint:active { background: var(--xw-bg-elev); }
+
 /* Exit-room control — visible while the camera is inside a building. */
 .xw-city-exit {
   display: none;
