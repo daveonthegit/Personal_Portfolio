@@ -73,7 +73,7 @@ function mesh(
 export function buildProjectsRoom(w: number, d: number, projectCount: number): RoomBuild {
   const group = new THREE.Group();
   shellRoom(group, w, d);
-  addRoomDetail(group, w, d, 'projects');
+  addRoomDetail(group, w, d, 'projects', { projectCount });
   const rnd = lcg(2077);
 
   // Rack columns along the WEST wall — sightline to the display wall stays

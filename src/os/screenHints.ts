@@ -60,7 +60,8 @@ export class ScreenHints {
         visible &&= this.point.z >= -1 && this.point.z <= 1 && x > 70 && x < width - 70 && y > 24 && y < height - 24;
         if (visible) target.button.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
       }
-      if (target.button.hidden === visible) target.button.hidden = !visible;
+      const hidden = !visible;
+      if (target.button.hidden !== hidden) target.button.hidden = hidden;
     }
   }
 

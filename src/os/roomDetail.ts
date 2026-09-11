@@ -3,15 +3,31 @@ import { FINISH as F, ModelKit } from './modelKit';
 
 /** Front plane of the projects racks, relative to the rack column centre. */
 export const RACK_FACE = 1.2;
+/** Unit bays per rack row, and the row pitch/base the project units sit on. */
+export const RACK_BAYS = 6;
+const RACK_ROW_PITCH = 2.1;
+const RACK_ROW_BASE = 1.6;
+
+/**
+ * Vertical band of each rack face that the per-project units and their status
+ * LEDs claim. Shared rack trim stays out of it, so neither buries the other.
+ */
+export function rackUnitBand(projectCount: number): { min: number; max: number } {
+  const perRack = Math.ceil(Math.max(projectCount, 0) / 2);
+  const rows = Math.max(1, Math.ceil(perRack / RACK_BAYS));
+  return { min: RACK_ROW_BASE - 0.35, max: RACK_ROW_BASE + (rows - 1) * RACK_ROW_PITCH + 1.6 };
+}
 
 export interface RoomDetailOptions {
   /** Rooms built without a lid get no raceways or suspended luminaires. */
   ceiling?: boolean;
+  /** Projects rooms reserve rack face bays for this many real projects. */
+  projectCount?: number;
 }
 
 /** Physical detail only: no fake telemetry and no extra animated lights. */
 export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: string, options: RoomDetailOptions = {}): void {
-  const { ceiling = true } = options;
+  const { ceiling = true, projectCount = 0 } = options;
   const kit = new ModelKit();
   const back = -d / 2 + 0.4;
   // Seams, skirting and structural ribs define room scale in close-up.
@@ -31,14 +47,16 @@ export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: st
   }
   if (kind === 'projects') {
     const rx = -w / 2 + 2.2;
-    // Everything here stays behind RACK_FACE: the per-project units and their
-    // status LEDs are mounted proud of that plane and must stay readable.
+    // Rack trim sits proud of RACK_FACE so it actually reads, but skips the
+    // band the per-project units and their status LEDs occupy.
+    const band = rackUnitBand(projectCount);
     for (const z of [-4.2, 4.2]) {
-      for (const dz of [-3.1, 3.1]) kit.box(0.25, 8.4, 0.24, rx + RACK_FACE - 0.15, 4.6, z + dz, F.trim);
+      for (const dz of [-3.25, 3.25]) kit.box(0.25, 8.4, 0.24, rx + RACK_FACE + 0.15, 4.6, z + dz, F.trim);
       for (let y = 1; y < 8.5; y += 0.7) {
-        kit.box(0.16, 0.5, 5.8, rx + RACK_FACE - 0.15, y, z, F.recess);
-        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + RACK_FACE - 0.09, y, z + dz, F.dark);
-        kit.box(0.25, 0.12, 0.65, rx + RACK_FACE - 0.13, y, z + 2.1, F.trim);
+        if (y + 0.25 > band.min && y - 0.25 < band.max) continue;
+        kit.box(0.16, 0.5, 5.8, rx + RACK_FACE + 0.1, y, z, F.recess);
+        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + RACK_FACE + 0.2, y, z + dz, F.dark);
+        kit.box(0.25, 0.12, 0.65, rx + RACK_FACE + 0.3, y, z + 2.1, F.trim);
       }
       // Cable bundles run down the rack ends, clear of the project unit bays.
       for (let i = 0; i < 4; i++) {

@@ -3,33 +3,66 @@ import { FINISH as F, ModelKit } from './modelKit';
 
 export interface BuildingLot { x: number; z: number; w: number; d: number; h: number; landmark?: 'empire' | 'chrysler' | 'trade' }
 
-/** Lots per slice. Sized so no slice approaches a dropped frame on mid hardware. */
-export const SKYLINE_SLICE = 48;
+/** Wall-clock budget per slice, well inside a 60fps frame on slow hardware. */
+export const SKYLINE_SLICE_MS = 6;
+/** Upper bound per slice, so a stalled or coarse clock still yields. */
+export const SKYLINE_SLICE_MAX = 24;
+/** Fold parts into per-finish geometry once this many have piled up. Folding
+ *  takes its own slice, so a merge never stacks on top of a build slice. */
+const COMPACT_AT = 12000;
+
+/** Plain massing blocks: the previous skyline's silhouette for one draw. */
+function addMassing(kit: ModelKit, lots: Array<{ lot: BuildingLot }>): void {
+  for (const { lot } of lots) kit.box(lot.w, lot.h, lot.d, lot.x, lot.h / 2, lot.z, F.stone);
+}
+
+function discard(group: THREE.Group): void {
+  group.traverse(object => {
+    if (!(object instanceof THREE.Mesh)) return;
+    object.geometry.dispose();
+    (object.material as THREE.Material).dispose();
+  });
+  group.removeFromParent();
+}
 
 /**
- * Build the skyline in bounded slices instead of one blocking task at mount.
- * `schedule` decides when the next slice runs (rAF in the browser, immediate in
- * tests); the merged batches only reach `target` once the last slice lands, so
- * the skyline still costs one draw per finish.
+ * Build the skyline in time-budgeted slices instead of one blocking task at
+ * mount. A cheap massing proxy is attached synchronously so the very first
+ * frame shows a complete skyline on every path — intro, non-intro wallpaper
+ * mount and the Escape/native bypass alike — and is swapped for the detailed
+ * batches, one draw per finish, when the last slice lands.
  */
 export function buildSkyline(
   target: THREE.Group,
   lots: Array<{ lot: BuildingLot; index: number }>,
   schedule: (slice: () => void) => void,
+  now: () => number = () => performance.now(),
 ): void {
+  if (lots.length === 0) return;
+  const proxy = new THREE.Group();
+  proxy.name = 'skyline-massing';
+  const massing = new ModelKit();
+  addMassing(massing, lots);
+  massing.finish(proxy);
+  target.add(proxy);
+
   const kit = new ModelKit();
   let cursor = 0;
   const slice = (): void => {
-    const end = Math.min(cursor + SKYLINE_SLICE, lots.length);
-    for (; cursor < end; cursor++) {
+    if (kit.pending() > COMPACT_AT) { kit.compact(); schedule(slice); return; }
+    const started = now();
+    let done = 0;
+    while (cursor < lots.length && done < SKYLINE_SLICE_MAX) {
       const entry = lots[cursor]!;
       addBuilding(kit, entry.lot, entry.index);
+      cursor++;
+      done++;
+      if (now() - started >= SKYLINE_SLICE_MS) break;
     }
-    kit.compact();
-    if (cursor < lots.length) schedule(slice);
-    else kit.finish(target);
+    if (cursor < lots.length) { schedule(slice); return; }
+    kit.finish(target);
+    discard(proxy);
   };
-  if (lots.length === 0) return;
   schedule(slice);
 }
 

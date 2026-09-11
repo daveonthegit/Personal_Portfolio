@@ -9,7 +9,7 @@ const dir = await mkdtemp(join(tmpdir(), 'portfolio-models-'));
 try {
   const outfile = join(dir, 'models.mjs');
   await build({ stdin: { contents: `export * from './src/os/architecture'; export * from './src/os/modelKit'; export * from './src/os/rooms'; export * from './src/os/roomDetail'; export { Group, Vector3, Box3, Raycaster } from 'three';`, resolveDir: process.cwd() }, bundle: true, platform: 'node', format: 'esm', outfile });
-  const { ModelKit, Group, Vector3, Box3, Raycaster, addBuilding, buildSkyline, SKYLINE_SLICE, buildUrbanDetail, buildRoomFor, addRoomDetail } = await import(pathToFileURL(outfile));
+  const { ModelKit, Group, Vector3, Box3, Raycaster, addBuilding, buildSkyline, SKYLINE_SLICE_MS, SKYLINE_SLICE_MAX, buildUrbanDetail, buildRoomFor, addRoomDetail } = await import(pathToFileURL(outfile));
   const LOT = i => ({ x: (i % 15) * 40, z: Math.floor(i / 15) * 26, w: 32, d: 19, h: 15 + i % 95 });
   function inspect(group, maxDraws) {
     let draws = 0, vertices = 0;
@@ -37,28 +37,52 @@ try {
   // Batching is only proven by how much geometry each draw actually carries.
   assert.ok(city.vertices / city.draws > 50000, `skyline vertices per draw: ${city.vertices / city.draws}`);
 
-  // Sliced construction: bounded work per slice, identical merged result, and
-  // nothing reaches the scene graph until the last slice lands.
-  const sliced = new Group();
+  // Sliced construction. An index-counting proxy makes each slice's actual lot
+  // consumption observable, and an injected clock exercises the elapsed-time
+  // budget and the hard per-slice cap separately.
   const lots = Array.from({ length: 450 }, (_, i) => ({ lot: LOT(i), index: i }));
-  const queue = [];
-  let attachedEarly = false;
-  buildSkyline(sliced, lots, slice => queue.push(slice));
-  let slices = 0;
-  while (queue.length) {
-    const next = queue.shift();
-    const before = lots.length;
-    next();
-    slices++;
-    if (queue.length && sliced.children.length > 0) attachedEarly = true;
-    assert.ok(before === lots.length);
+  function drain(now) {
+    let reads = 0;
+    const watched = new Proxy(lots, {
+      get(list, key) {
+        if (typeof key === 'string' && /^\d+$/.test(key)) reads++;
+        return list[key];
+      },
+    });
+    const target = new Group();
+    const queue = [];
+    const consumed = [];
+    const proxyPerSlice = [];
+    buildSkyline(target, watched, slice => queue.push(slice), now);
+    reads = 0; // the synchronous massing pass is not part of any slice
+    const massing = target.getObjectByName('skyline-massing');
+    assert.ok(massing, 'a massing proxy stands in from the very first frame');
+    assert.ok(inspect(massing, 1).vertices > 0, 'the proxy is a complete one-draw skyline');
+    let previous = 0;
+    while (queue.length) {
+      queue.shift()();
+      consumed.push(reads - previous);
+      previous = reads;
+      proxyPerSlice.push(Boolean(target.getObjectByName('skyline-massing')));
+    }
+    return { target, consumed, proxyPerSlice };
   }
-  assert.equal(attachedEarly, false, 'sliced skyline attaches once, after the final slice');
-  assert.equal(slices, Math.ceil(lots.length / SKYLINE_SLICE), 'every slice stays bounded');
-  assert.ok(SKYLINE_SLICE <= 64, `slice size stays small: ${SKYLINE_SLICE}`);
-  const slicedStats = inspect(sliced, 6);
-  assert.deepEqual(slicedStats, city, 'sliced build matches the single-task build');
+  // A clock that never advances: the hard cap is the only thing yielding.
+  const capped = drain(() => 0);
+  assert.equal(capped.consumed.reduce((a, b) => a + b, 0), lots.length, 'every lot is built exactly once');
+  assert.ok(Math.max(...capped.consumed) === SKYLINE_SLICE_MAX, `slices fill to the cap: ${Math.max(...capped.consumed)}`);
+  assert.equal(capped.proxyPerSlice.at(-1), false, 'the proxy is retired once the detail lands');
+  assert.ok(capped.proxyPerSlice.slice(0, -1).every(Boolean), 'the proxy covers every intermediate frame');
+  // A clock that burns a full budget per reading: each slice must cut out early.
+  let t = 0;
+  const budgeted = drain(() => (t += SKYLINE_SLICE_MS));
+  assert.equal(budgeted.consumed.reduce((a, b) => a + b, 0), lots.length, 'every lot is built exactly once');
+  assert.ok(Math.max(...budgeted.consumed) <= 1, `the elapsed-time budget cuts a slice short: ${Math.max(...budgeted.consumed)}`);
+  assert.ok(SKYLINE_SLICE_MS <= 8 && SKYLINE_SLICE_MAX <= 32, 'slice bounds stay inside a frame');
+  assert.deepEqual(inspect(capped.target, 6), city, 'sliced build matches the single-task build');
+  assert.deepEqual(inspect(budgeted.target, 6), city, 'slice boundaries do not change the model');
   buildSkyline(new Group(), [], () => assert.fail('empty skyline schedules no work'));
+
   for (const id of ['projects', 'resume', 'contact', 'arcade']) {
     for (const [w, d] of [[28, 15], [32, 18]]) {
       const room = buildRoomFor(id, w, d, 23);
@@ -77,26 +101,43 @@ try {
   }
   assert.equal(buildRoomFor('unknown', 32, 18, 23), null);
 
-  // Regression: shared rack detail must not bury the per-project units/LEDs.
+  // Regression: the rack must show BOTH the per-project units/LEDs and the
+  // shared rack trim from the arrival camera. Sweep the rack face and record
+  // what each ray actually strikes first.
   {
     const room = buildRoomFor('projects', 30, 16, 4);
     room.group.updateMatrixWorld(true);
-    const units = [];
-    room.group.traverse(object => { if (object.userData.projectUnit) units.push(object); });
+    const units = [], detail = [], all = [];
+    room.group.traverse(object => {
+      if (!object.isMesh) return;
+      all.push(object);
+      if (object.userData.projectUnit) units.push(object);
+      if (object.name === 'architectural-detail') detail.push(object);
+    });
     assert.equal(units.length, 8, 'four projects contribute a unit and an LED each');
-    const detail = [];
-    room.group.traverse(object => { if (object.name === 'architectural-detail') detail.push(object); });
     assert.ok(detail.length > 0);
     const ray = new Raycaster();
-    for (const unit of units) {
-      const target = unit.getWorldPosition(new Vector3());
+    const firstHit = target => {
       const from = room.camLocal.pos;
       ray.set(from, target.clone().sub(from).normalize());
-      const own = ray.intersectObject(unit, false)[0];
-      assert.ok(own, 'unit is reachable from the arrival camera');
-      const blocked = ray.intersectObjects(detail, false)[0];
-      assert.ok(!blocked || blocked.distance > own.distance, 'rack detail stays behind the project units');
+      return ray.intersectObjects(all, false)[0]?.object ?? null;
+    };
+    for (const unit of units) {
+      const hit = firstHit(unit.getWorldPosition(new Vector3()));
+      assert.equal(hit, unit, 'nothing stands in front of a project unit or its LED');
     }
+    // The same sweep must also strike rack trim somewhere, or the "richer rack"
+    // is sealed inside the opaque rack box and renders nothing.
+    const rackX = -30 / 2 + 2.2;
+    let trimHits = 0;
+    for (const zC of [-4.2, 4.2]) {
+      for (let y = 1; y < 8.5; y += 0.35) {
+        for (const dz of [-2, 0, 2]) {
+          if (detail.includes(firstHit(new Vector3(rackX + 1.45, y, zC + dz)))) trimHits++;
+        }
+      }
+    }
+    assert.ok(trimHits > 30, `rack trim is visible from the aisle: ${trimHits} hits`);
   }
 
   // Rooms without a lid get no ceiling-hung fixtures.

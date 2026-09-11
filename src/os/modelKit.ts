@@ -32,6 +32,13 @@ export class ModelKit {
     this.add(new THREE.CylinderGeometry(radius, radius, a.distanceTo(b), 6), color, mid.x, mid.y, mid.z, rotation);
   }
 
+  /** Un-merged parts waiting in the kit. */
+  pending(): number {
+    let count = 0;
+    for (const parts of this.parts.values()) count += parts.length;
+    return count;
+  }
+
   /** Fold the parts accumulated so far into one geometry per finish. Lets a
    *  long build amortize its merge cost across slices without adding draws. */
   compact(): void {
