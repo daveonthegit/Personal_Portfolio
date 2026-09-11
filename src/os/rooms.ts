@@ -13,7 +13,7 @@
  */
 
 import * as THREE from 'three';
-import { addRoomDetail, detailCabinet } from './roomDetail';
+import { addRoomDetail, detailCabinet, RACK_FACE } from './roomDetail';
 
 export interface RoomBuild {
   group: THREE.Group;
@@ -89,13 +89,17 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
     for (let i = 0; i < per && placed < projectCount; i++, placed++) {
       const z = zC - 2.9 + (i % 6) * 1.1;
       const y = 1.6 + Math.floor(i / 6) * 2.1 + rnd() * 0.8;
-      mesh(group, new THREE.BoxGeometry(0.15, 0.3, 0.8), unitMat, rackX + 1.28, y, z);
+      // Units and LEDs mount proud of RACK_FACE so the shared rack detail,
+      // which stays behind that plane, can never bury them.
+      const unitX = rackX + RACK_FACE + 0.08;
+      mesh(group, new THREE.BoxGeometry(0.15, 0.3, 0.8), unitMat, unitX, y, z).userData.projectUnit = true;
       const led = mesh(
         group,
         new THREE.BoxGeometry(0.1, 0.24, 0.24),
         new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.4 + rnd() * 0.6 }),
-        rackX + 1.28, y + 0.55, z,
+        unitX, y + 0.55, z,
       );
+      led.userData.projectUnit = true;
       led.userData.blinkPhase = rnd() * Math.PI * 2;
     }
   }

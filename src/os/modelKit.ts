@@ -32,10 +32,22 @@ export class ModelKit {
     this.add(new THREE.CylinderGeometry(radius, radius, a.distanceTo(b), 6), color, mid.x, mid.y, mid.z, rotation);
   }
 
+  /** Fold the parts accumulated so far into one geometry per finish. Lets a
+   *  long build amortize its merge cost across slices without adding draws. */
+  compact(): void {
+    for (const [color, parts] of this.parts) {
+      if (parts.length < 2) continue;
+      const merged = mergeGeometries(parts);
+      if (!merged) throw new Error('Incompatible architectural geometry');
+      parts.forEach(part => part.dispose());
+      this.parts.set(color, [merged]);
+    }
+  }
+
   finish(group: THREE.Group): void {
     for (const [color, parts] of this.parts) {
-      const geometry = mergeGeometries(parts);
-      parts.forEach(part => part.dispose());
+      const geometry = parts.length === 1 ? parts[0]! : mergeGeometries(parts);
+      if (parts.length > 1) parts.forEach(part => part.dispose());
       if (!geometry) throw new Error('Incompatible architectural geometry');
       const mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({ color }));
       mesh.name = 'architectural-detail';

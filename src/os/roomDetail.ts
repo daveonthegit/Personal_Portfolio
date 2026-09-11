@@ -1,8 +1,17 @@
 import * as THREE from 'three';
 import { FINISH as F, ModelKit } from './modelKit';
 
+/** Front plane of the projects racks, relative to the rack column centre. */
+export const RACK_FACE = 1.2;
+
+export interface RoomDetailOptions {
+  /** Rooms built without a lid get no raceways or suspended luminaires. */
+  ceiling?: boolean;
+}
+
 /** Physical detail only: no fake telemetry and no extra animated lights. */
-export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: string): void {
+export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: string, options: RoomDetailOptions = {}): void {
+  const { ceiling = true } = options;
   const kit = new ModelKit();
   const back = -d / 2 + 0.4;
   // Seams, skirting and structural ribs define room scale in close-up.
@@ -12,23 +21,28 @@ export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: st
     kit.box(w - 0.6, 0.32, 0.12, 0, 0.7, side * (d / 2 - 0.35), F.metal);
     kit.box(0.12, 0.32, d - 0.6, side * (w / 2 - 0.35), 0.7, 0, F.metal);
     for (let z = -d / 2 + 2; z < d / 2 - 1; z += 4) kit.box(0.22, 11.8, 0.24, side * (w / 2 - 0.4), 6.4, z, F.metal);
-    // Ceiling raceways, suspended luminaires and a wall grille.
-    kit.box(w - 1, 0.25, 0.35, 0, 12.4, side * (d / 2 - 1), F.metal);
-    kit.box(5.6, 0.18, 0.7, side * w * 0.24, 12.1, 0, F.trim);
+    // Ceiling raceways and suspended luminaires need a lid to hang from.
+    if (ceiling) {
+      kit.box(w - 1, 0.25, 0.35, 0, 12.4, side * (d / 2 - 1), F.metal);
+      kit.box(5.6, 0.18, 0.7, side * w * 0.24, 12.1, 0, F.trim);
+    }
+    // Wall grille.
     for (let y = 9.4; y < 11; y += 0.24) kit.box(0.16, 0.08, 2.4, side * (w / 2 - 0.44), y, 0, F.dark);
   }
   if (kind === 'projects') {
     const rx = -w / 2 + 2.2;
+    // Everything here stays behind RACK_FACE: the per-project units and their
+    // status LEDs are mounted proud of that plane and must stay readable.
     for (const z of [-4.2, 4.2]) {
-      for (const dz of [-3.1, 3.1]) kit.box(0.25, 8.4, 0.24, rx + 1.35, 4.6, z + dz, F.trim);
+      for (const dz of [-3.1, 3.1]) kit.box(0.25, 8.4, 0.24, rx + RACK_FACE - 0.15, 4.6, z + dz, F.trim);
       for (let y = 1; y < 8.5; y += 0.7) {
-        kit.box(0.16, 0.5, 5.8, rx + 1.3, y, z, F.recess);
-        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + 1.4, y, z + dz, F.dark);
-        kit.box(0.25, 0.12, 0.65, rx + 1.5, y, z + 2.1, F.trim);
+        kit.box(0.16, 0.5, 5.8, rx + RACK_FACE - 0.15, y, z, F.recess);
+        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + RACK_FACE - 0.09, y, z + dz, F.dark);
+        kit.box(0.25, 0.12, 0.65, rx + RACK_FACE - 0.13, y, z + 2.1, F.trim);
       }
-      // Cable bundles run down the exposed rack side into a raised floor tray.
+      // Cable bundles run down the rack ends, clear of the project unit bays.
       for (let i = 0; i < 4; i++) {
-        const zz = z - 2.6 + i * 0.22;
+        const zz = z + 3.05 + i * 0.1;
         kit.beam(new THREE.Vector3(rx + 1.8, 8.8, zz), new THREE.Vector3(rx + 1.8, 0.9, zz), 0.06, F.metal);
       }
     }

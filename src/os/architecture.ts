@@ -3,6 +3,36 @@ import { FINISH as F, ModelKit } from './modelKit';
 
 export interface BuildingLot { x: number; z: number; w: number; d: number; h: number; landmark?: 'empire' | 'chrysler' | 'trade' }
 
+/** Lots per slice. Sized so no slice approaches a dropped frame on mid hardware. */
+export const SKYLINE_SLICE = 48;
+
+/**
+ * Build the skyline in bounded slices instead of one blocking task at mount.
+ * `schedule` decides when the next slice runs (rAF in the browser, immediate in
+ * tests); the merged batches only reach `target` once the last slice lands, so
+ * the skyline still costs one draw per finish.
+ */
+export function buildSkyline(
+  target: THREE.Group,
+  lots: Array<{ lot: BuildingLot; index: number }>,
+  schedule: (slice: () => void) => void,
+): void {
+  const kit = new ModelKit();
+  let cursor = 0;
+  const slice = (): void => {
+    const end = Math.min(cursor + SKYLINE_SLICE, lots.length);
+    for (; cursor < end; cursor++) {
+      const entry = lots[cursor]!;
+      addBuilding(kit, entry.lot, entry.index);
+    }
+    kit.compact();
+    if (cursor < lots.length) schedule(slice);
+    else kit.finish(target);
+  };
+  if (lots.length === 0) return;
+  schedule(slice);
+}
+
 /** A miniature, not a GIS model: 1916-style setbacks, lofts and curtain walls. */
 export function addBuilding(kit: ModelKit, p: BuildingLot, index: number): void {
   const { x, z, w, d, h } = p;

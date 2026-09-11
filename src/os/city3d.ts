@@ -16,7 +16,7 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { REGION_STATES, METRO_COAST, PROJ } from './mapdata';
 import { buildRoomFor, type RoomBuild } from './rooms';
-import { addBuilding, buildUrbanDetail, type BuildingLot } from './architecture';
+import { buildSkyline, buildUrbanDetail, type BuildingLot } from './architecture';
 import { ModelKit } from './modelKit';
 import { addRoomDetail } from './roomDetail';
 import { ScreenHints } from './screenHints';
@@ -454,10 +454,13 @@ function buildCity(scene: THREE.Scene): {
   }
   const buildings = new THREE.Group();
   buildings.name = 'city-architecture';
-  // Batch by finish: thousands of facade bays still cost only a few draws.
-  const kit = new ModelKit();
-  positions.forEach((p, i) => { if (!p.anchor) addBuilding(kit, p, i); });
-  kit.finish(buildings);
+  // Batch by finish: thousands of facade bays still cost only a few draws. The
+  // build runs in bounded slices so mounting never blocks the intro's frames.
+  const lots = positions.flatMap((p, index) => (p.anchor ? [] : [{ lot: p, index }]));
+  buildSkyline(buildings, lots, slice => {
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => slice());
+    else slice();
+  });
   buildings.add(buildUrbanDetail());
   group.add(buildings);
   let subjectBounds = new THREE.Box3();
@@ -673,7 +676,7 @@ function buildCity(scene: THREE.Scene): {
     part(new THREE.BoxGeometry(1.3, 0.5, 2.1), dark, 0.9, 0.5, -2.7);
     person.position.set(0, 0, 1.2);
     room.add(person);
-    addRoomDetail(room, RW, RD, 'dossier');
+    addRoomDetail(room, RW, RD, 'dossier', { ceiling: false });
     group.add(room);
   }
 
