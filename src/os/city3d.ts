@@ -468,8 +468,10 @@ function buildCity(scene: THREE.Scene): {
     if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => slice());
     else slice();
   });
-  buildings.add(buildUrbanDetail());
   group.add(buildings);
+  // Ground-level detail is a sibling of the skyline: the intro rise scales only
+  // the towers, so the park, piers and crossings never squash into the ground.
+  group.add(buildUrbanDetail());
   let subjectBounds = new THREE.Box3();
 
   // Cyan data arteries (the system's traffic) — faint lines + traveling packets.
@@ -969,7 +971,7 @@ let introActive = false;
 function applyRise(c: City, r: number): void {
   if (r === c.riseT) return;
   c.riseT = r;
-  // Scale the complete miniature so roof equipment stays attached on arrival.
+  // Scale the skyline group so roof equipment stays attached on arrival.
   c.buildings.scale.y = Math.max(0.001, r);
 }
 

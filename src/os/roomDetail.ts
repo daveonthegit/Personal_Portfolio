@@ -39,7 +39,7 @@ export function rackBaySpan(): { min: number; max: number } {
  * LEDs claim. Shared rack trim stays out of it, so neither buries the other.
  */
 export function rackUnitBand(projectCount: number): { min: number; max: number } {
-  const perRack = Math.ceil(Math.max(projectCount, 0) / 2);
+  const perRack = Math.ceil(Math.max(projectCount, 0) / RACK.columns.length);
   const rows = Math.max(1, Math.ceil(perRack / RACK.bays));
   const top = RACK.rowBase + (rows - 1) * RACK.rowPitch + RACK.rowJitter + RACK.led.rise + RACK.led.h / 2;
   return { min: RACK.rowBase - RACK.unit.h / 2 - 0.2, max: top + 0.13 };
