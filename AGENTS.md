@@ -10,6 +10,8 @@
 
 **Authoritative design system, tokens, and principles:** `[.impeccable.md](.impeccable.md)` (xiaoOS × Wu Wei — hiring-first, warm dark UI, single cyan accent, IBM Plex Sans + Mono, section rail + scroll-spy).
 
+**3D city/interior model direction, construction invariants and geometry budgets:** [`DESIGN.md`](DESIGN.md).
+
 **In one line:** Recruiters and engineers should trust the craft in 30 seconds; the UI should feel like a plausible command-center product, not a template or spectacle.
 
 **Constraint:** Keep the existing xiaoOS boot sequence (`StartupAnimation` + related CSS); refactor tokens or boot copy around it — do not remove the intro wholesale.
@@ -26,7 +28,7 @@
 ## Intro and browser validation
 
 - `src/home/bootOverlay.ts` owns the bounded arrival, cancellation, URL normalization and Dossier handoff. Preserve the quiet reduced-motion narrative and native pre-JS bypass when changing it.
-- Run Go tests, `npm run type-check`, and `npm run build`. Local Chrome/CDP regression and measurement commands are documented in `README.md`; `docs/intro-ux-review.md` explains baseline evidence and limitations.
+- Run Go tests, `npm run type-check`, `npm run test:models`, and `npm run build`. Local Chrome/CDP regression and measurement commands are documented in `README.md`; `docs/intro-ux-review.md` explains baseline evidence and limitations.
 - Personal/career data pointers: `config/personal.go`, `projects.go`, and `docs/adr/0001-career-data-exported-from-career-ops.md`. Do not invent project ownership, outcomes or personal facts while editing presentation.
 
 ## Maintaining this file
