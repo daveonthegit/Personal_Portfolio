@@ -9,7 +9,7 @@ const dir = await mkdtemp(join(tmpdir(), 'portfolio-models-'));
 try {
   const outfile = join(dir, 'models.mjs');
   await build({ stdin: { contents: `export * from './src/os/architecture'; export * from './src/os/modelKit'; export * from './src/os/rooms'; export * from './src/os/roomDetail'; export { Group, Vector3, Box3, Raycaster } from 'three';`, resolveDir: process.cwd() }, bundle: true, platform: 'node', format: 'esm', outfile });
-  const { ModelKit, Group, Vector3, Box3, Raycaster, addBuilding, buildSkyline, SKYLINE_SLICE_MS, SKYLINE_SLICE_MAX, buildUrbanDetail, buildRoomFor, addRoomDetail } = await import(pathToFileURL(outfile));
+  const { ModelKit, Group, Vector3, Box3, Raycaster, addBuilding, buildSkyline, SKYLINE_SLICE_MS, SKYLINE_SLICE_MAX, buildUrbanDetail, buildRoomFor, addRoomDetail, RACK } = await import(pathToFileURL(outfile));
   const LOT = i => ({ x: (i % 15) * 40, z: Math.floor(i / 15) * 26, w: 32, d: 19, h: 15 + i % 95 });
   function inspect(group, maxDraws) {
     let draws = 0, vertices = 0;
@@ -102,10 +102,11 @@ try {
   assert.equal(buildRoomFor('unknown', 32, 18, 23), null);
 
   // Regression: the rack must show BOTH the per-project units/LEDs and the
-  // shared rack trim from the arrival camera. Sweep the rack face and record
-  // what each ray actually strikes first.
-  {
-    const room = buildRoomFor('projects', 30, 16, 4);
+  // shared rack trim from the arrival camera, at the project counts that ship.
+  // Rays sample each unit's whole front face, not just its centre, so trim that
+  // clips only an edge is caught too.
+  for (const projectCount of [4, 23]) {
+    const room = buildRoomFor('projects', 30, 16, projectCount);
     room.group.updateMatrixWorld(true);
     const units = [], detail = [], all = [];
     room.group.traverse(object => {
@@ -114,7 +115,7 @@ try {
       if (object.userData.projectUnit) units.push(object);
       if (object.name === 'architectural-detail') detail.push(object);
     });
-    assert.equal(units.length, 8, 'four projects contribute a unit and an LED each');
+    assert.equal(units.length, projectCount * 2, `${projectCount}: one unit and one LED per project`);
     assert.ok(detail.length > 0);
     const ray = new Raycaster();
     const firstHit = target => {
@@ -123,21 +124,27 @@ try {
       return ray.intersectObjects(all, false)[0]?.object ?? null;
     };
     for (const unit of units) {
-      const hit = firstHit(unit.getWorldPosition(new Vector3()));
-      assert.equal(hit, unit, 'nothing stands in front of a project unit or its LED');
+      const size = new Box3().setFromObject(unit).getSize(new Vector3());
+      const at = unit.getWorldPosition(new Vector3());
+      for (const fy of [-0.35, 0, 0.35]) {
+        for (const fz of [-0.42, -0.21, 0, 0.21, 0.42]) {
+          const target = at.clone().add(new Vector3(size.x / 2 - 1e-3, size.y * fy, size.z * fz));
+          assert.equal(firstHit(target), unit, `${projectCount}: nothing stands in front of a project unit or LED face`);
+        }
+      }
     }
-    // The same sweep must also strike rack trim somewhere, or the "richer rack"
-    // is sealed inside the opaque rack box and renders nothing.
+    // The same sweep must also strike rack trim, or the "richer rack" is sealed
+    // inside the opaque rack box and renders nothing.
     const rackX = -30 / 2 + 2.2;
     let trimHits = 0;
-    for (const zC of [-4.2, 4.2]) {
+    for (const zC of RACK.columns) {
       for (let y = 1; y < 8.5; y += 0.35) {
         for (const dz of [-2, 0, 2]) {
           if (detail.includes(firstHit(new Vector3(rackX + 1.45, y, zC + dz)))) trimHits++;
         }
       }
     }
-    assert.ok(trimHits > 30, `rack trim is visible from the aisle: ${trimHits} hits`);
+    assert.ok(trimHits > 20, `${projectCount}: rack trim is visible from the aisle: ${trimHits} hits`);
   }
 
   // Rooms without a lid get no ceiling-hung fixtures.

@@ -344,19 +344,26 @@ function buildMetroTexture(): THREE.CanvasTexture {
   return new THREE.CanvasTexture(c);
 }
 
-/** App facade details share the shell material, including its dive fade. */
+/**
+ * App facade details share the shell material, including its dive fade. The
+ * parts are built around the shell's own centre and the group is positioned at
+ * the building, so the transparent pass sorts this detail at the same depth as
+ * the shell box it belongs to rather than at the island's origin.
+ */
 function addShellDetail(group: THREE.Group, p: { x: number; z: number; w: number; d: number; h: number }, material: THREE.MeshLambertMaterial): void {
   const kit = new ModelKit();
+  const cy = p.h / 2;
   for (let y = 4; y < p.h; y += 4.5) {
-    kit.box(p.w + 0.8, 0.45, p.d + 0.8, p.x, y, p.z);
+    kit.box(p.w + 0.8, 0.45, p.d + 0.8, 0, y - cy, 0);
   }
   for (let x = -p.w / 2 + 1; x < p.w / 2; x += 4.5) {
-    for (const side of [-1, 1]) kit.box(0.55, p.h, 0.6, p.x + x, p.h / 2, p.z + side * p.d / 2);
+    for (const side of [-1, 1]) kit.box(0.55, p.h, 0.6, x, 0, side * p.d / 2);
   }
-  kit.box(p.w + 1.2, 1, p.d + 1.2, p.x, p.h, p.z);
-  kit.box(p.w * 0.5, 3, p.d * 0.5, p.x, p.h + 1.5, p.z);
+  kit.box(p.w + 1.2, 1, p.d + 1.2, 0, p.h - cy, 0);
+  kit.box(p.w * 0.5, 3, p.d * 0.5, 0, p.h + 1.5 - cy, 0);
   const detail = new THREE.Group();
   kit.finish(detail);
+  detail.position.set(p.x, cy, p.z);
   detail.traverse(object => {
     if (object instanceof THREE.Mesh) {
       object.material.dispose();

@@ -1,12 +1,38 @@
 import * as THREE from 'three';
 import { FINISH as F, ModelKit } from './modelKit';
 
-/** Front plane of the projects racks, relative to the rack column centre. */
-export const RACK_FACE = 1.2;
-/** Unit bays per rack row, and the row pitch/base the project units sit on. */
-export const RACK_BAYS = 6;
-const RACK_ROW_PITCH = 2.1;
-const RACK_ROW_BASE = 1.6;
+/**
+ * Single source of truth for the projects rack face. `buildProjectsRoom` places
+ * the per-project units from these numbers and the shared trim below keeps out
+ * of the bays they claim, so one edit moves both.
+ */
+export const RACK = {
+  /** Front plane of a rack column, relative to its centre. */
+  face: 1.2,
+  /** How far proud of that plane a project unit and its LED are mounted. */
+  proud: 0.08,
+  /** Rack column centres along the west wall. */
+  columns: [-4.2, 4.2],
+  bays: 6,
+  bayFirst: -2.9,
+  bayPitch: 1.1,
+  rowBase: 1.6,
+  rowPitch: 2.1,
+  rowJitter: 0.8,
+  unit: { w: 0.15, h: 0.3, d: 0.8 },
+  led: { w: 0.1, h: 0.24, d: 0.24, rise: 0.55 },
+} as const;
+
+/** Bay slot for the i-th project on one rack column, relative to its centre. */
+export function rackUnitSlot(i: number): { dz: number; row: number } {
+  return { dz: RACK.bayFirst + (i % RACK.bays) * RACK.bayPitch, row: Math.floor(i / RACK.bays) };
+}
+
+/** Depth the bays span on a column, so end posts can clear them. */
+export function rackBaySpan(): { min: number; max: number } {
+  const half = RACK.unit.d / 2;
+  return { min: RACK.bayFirst - half, max: RACK.bayFirst + (RACK.bays - 1) * RACK.bayPitch + half };
+}
 
 /**
  * Vertical band of each rack face that the per-project units and their status
@@ -14,8 +40,9 @@ const RACK_ROW_BASE = 1.6;
  */
 export function rackUnitBand(projectCount: number): { min: number; max: number } {
   const perRack = Math.ceil(Math.max(projectCount, 0) / 2);
-  const rows = Math.max(1, Math.ceil(perRack / RACK_BAYS));
-  return { min: RACK_ROW_BASE - 0.35, max: RACK_ROW_BASE + (rows - 1) * RACK_ROW_PITCH + 1.6 };
+  const rows = Math.max(1, Math.ceil(perRack / RACK.bays));
+  const top = RACK.rowBase + (rows - 1) * RACK.rowPitch + RACK.rowJitter + RACK.led.rise + RACK.led.h / 2;
+  return { min: RACK.rowBase - RACK.unit.h / 2 - 0.2, max: top + 0.13 };
 }
 
 export interface RoomDetailOptions {
@@ -47,20 +74,23 @@ export function addRoomDetail(group: THREE.Group, w: number, d: number, kind: st
   }
   if (kind === 'projects') {
     const rx = -w / 2 + 2.2;
-    // Rack trim sits proud of RACK_FACE so it actually reads, but skips the
-    // band the per-project units and their status LEDs occupy.
+    // Rack trim sits proud of RACK.face so it actually reads, and keeps out of
+    // the bays the per-project units and their status LEDs claim: clear of the
+    // reserved band in y, and clear of the bay span in z for the end posts.
     const band = rackUnitBand(projectCount);
-    for (const z of [-4.2, 4.2]) {
-      for (const dz of [-3.25, 3.25]) kit.box(0.25, 8.4, 0.24, rx + RACK_FACE + 0.15, 4.6, z + dz, F.trim);
+    const bays = rackBaySpan();
+    const postDz = Math.max(-bays.min, bays.max) + 0.12 + 0.05;
+    for (const z of RACK.columns) {
+      for (const dz of [-postDz, postDz]) kit.box(0.25, 8.4, 0.24, rx + RACK.face + 0.15, 4.6, z + dz, F.trim);
       for (let y = 1; y < 8.5; y += 0.7) {
         if (y + 0.25 > band.min && y - 0.25 < band.max) continue;
-        kit.box(0.16, 0.5, 5.8, rx + RACK_FACE + 0.1, y, z, F.recess);
-        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + RACK_FACE + 0.2, y, z + dz, F.dark);
-        kit.box(0.25, 0.12, 0.65, rx + RACK_FACE + 0.3, y, z + 2.1, F.trim);
+        kit.box(0.16, 0.5, 5.8, rx + RACK.face + 0.1, y, z, F.recess);
+        for (let dz = -2.5; dz < 2.6; dz += 0.42) kit.box(0.18, 0.28, 0.12, rx + RACK.face + 0.2, y, z + dz, F.dark);
+        kit.box(0.25, 0.12, 0.65, rx + RACK.face + 0.3, y, z + 2.1, F.trim);
       }
       // Cable bundles run down the rack ends, clear of the project unit bays.
       for (let i = 0; i < 4; i++) {
-        const zz = z + 3.05 + i * 0.1;
+        const zz = z + bays.max + 0.12 + i * 0.1;
         kit.beam(new THREE.Vector3(rx + 1.8, 8.8, zz), new THREE.Vector3(rx + 1.8, 0.9, zz), 0.06, F.metal);
       }
     }

@@ -13,7 +13,7 @@
  */
 
 import * as THREE from 'three';
-import { addRoomDetail, detailCabinet, RACK_FACE } from './roomDetail';
+import { addRoomDetail, detailCabinet, RACK, rackUnitSlot } from './roomDetail';
 
 export interface RoomBuild {
   group: THREE.Group;
@@ -82,22 +82,23 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
   const unitMat = grey();
   let placed = 0;
   const rackX = -w / 2 + 2.2;
-  for (let r = 0; r < 2 && placed < projectCount; r++) {
-    const zC = -4.2 + r * 8.4;
+  for (const zC of RACK.columns) {
+    if (placed >= projectCount) break;
     mesh(group, new THREE.BoxGeometry(2.4, 8.8, 6.8), rackMat, rackX, 4.4, zC);
-    const per = Math.ceil(projectCount / 2);
+    const per = Math.ceil(projectCount / RACK.columns.length);
     for (let i = 0; i < per && placed < projectCount; i++, placed++) {
-      const z = zC - 2.9 + (i % 6) * 1.1;
-      const y = 1.6 + Math.floor(i / 6) * 2.1 + rnd() * 0.8;
-      // Units and LEDs mount proud of RACK_FACE so the shared rack detail,
-      // which stays behind that plane, can never bury them.
-      const unitX = rackX + RACK_FACE + 0.08;
-      mesh(group, new THREE.BoxGeometry(0.15, 0.3, 0.8), unitMat, unitX, y, z).userData.projectUnit = true;
+      const slot = rackUnitSlot(i);
+      const z = zC + slot.dz;
+      const y = RACK.rowBase + slot.row * RACK.rowPitch + rnd() * RACK.rowJitter;
+      // Units and LEDs mount proud of RACK.face, and the shared rack trim keeps
+      // out of the band and bay span they claim, so neither buries the other.
+      const unitX = rackX + RACK.face + RACK.proud;
+      mesh(group, new THREE.BoxGeometry(RACK.unit.w, RACK.unit.h, RACK.unit.d), unitMat, unitX, y, z).userData.projectUnit = true;
       const led = mesh(
         group,
-        new THREE.BoxGeometry(0.1, 0.24, 0.24),
+        new THREE.BoxGeometry(RACK.led.w, RACK.led.h, RACK.led.d),
         new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.4 + rnd() * 0.6 }),
-        unitX, y + 0.55, z,
+        unitX, y + RACK.led.rise, z,
       );
       led.userData.projectUnit = true;
       led.userData.blinkPhase = rnd() * Math.PI * 2;
