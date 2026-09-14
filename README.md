@@ -105,6 +105,7 @@ npm run build:resume
 - **Bypass intro** is a server-rendered link, available before JavaScript downloads. Escape cancels the entire chain, including pending imports and nested timelines. **Replay intro** starts a fresh front-door visit.
 - The animation budget is eight seconds **after the frontend starts**, not a promise about network load time. An independent watchdog releases the document if animation stalls; an empty boot cover also fails open through CSS when the entry script cannot load.
 - Reduced motion keeps a short, static sequence of the same narrative stages, without flashes, camera movement or a WebGL download. Unavailable or late WebGL uses the SVG acquisition. The city prepares shader variants and uploads textures across tasks; Projects-room textures load only when that room is entered.
+- Inside a city room, small screen-anchored buttons (**Open**, **View project**, **Play**) mark the clickable screens. They are ordinary focusable buttons, so Enter works where a click does; clicking the screen itself runs the same action.
 - Project build notes use native disclosure elements. Full project documents remain readable when the interactive index fails. Reveals enhance already-visible content, never gate it. The project dialog contains Tab focus and returns focus on Escape; app windows restore focus to their dock controls.
 
 Build and run the usual Go/TypeScript checks:
@@ -112,9 +113,12 @@ Build and run the usual Go/TypeScript checks:
 ```bash
 npm run build
 npm run type-check
+npm run test:models
 go test ./...
 go vet ./...
 ```
+
+The procedural miniature's design and geometry budgets are recorded in [`DESIGN.md`](DESIGN.md). `npm run test:models` validates batched geometry and the interior screen/handoff contracts without a browser.
 
 Optional real-browser regression/measurement commands require **Node 22+** (built-in WebSocket), an existing Chrome/Chromium, a local server, and a dedicated browser profile. No additional test packages are required. For example on macOS, in separate terminals:
 

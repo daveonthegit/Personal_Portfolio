@@ -1,5 +1,5 @@
 /**
- * App room interiors (interiors phase 2 — docs/interiors-plan.md).
+ * App room interiors (direction and invariants: DESIGN.md).
  *
  * Each App's building contains a procedural, SOLID-geometry room in the city's
  * material language. Rooms share a construction kit; each returns its "screen"
@@ -13,6 +13,7 @@
  */
 
 import * as THREE from 'three';
+import { addRoomDetail, detailCabinet, RACK, rackUnitSlot } from './roomDetail';
 
 export interface RoomBuild {
   group: THREE.Group;
@@ -72,6 +73,7 @@ function mesh(
 export function buildProjectsRoom(w: number, d: number, projectCount: number): RoomBuild {
   const group = new THREE.Group();
   shellRoom(group, w, d);
+  addRoomDetail(group, w, d, 'projects', { projectCount });
   const rnd = lcg(2077);
 
   // Rack columns along the WEST wall — sightline to the display wall stays
@@ -80,20 +82,25 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
   const unitMat = grey();
   let placed = 0;
   const rackX = -w / 2 + 2.2;
-  for (let r = 0; r < 2 && placed < projectCount; r++) {
-    const zC = -4.2 + r * 8.4;
+  for (const zC of RACK.columns) {
+    if (placed >= projectCount) break;
     mesh(group, new THREE.BoxGeometry(2.4, 8.8, 6.8), rackMat, rackX, 4.4, zC);
-    const per = Math.ceil(projectCount / 2);
+    const per = Math.ceil(projectCount / RACK.columns.length);
     for (let i = 0; i < per && placed < projectCount; i++, placed++) {
-      const z = zC - 2.9 + (i % 6) * 1.1;
-      const y = 1.6 + Math.floor(i / 6) * 2.1 + rnd() * 0.8;
-      mesh(group, new THREE.BoxGeometry(0.15, 0.3, 0.8), unitMat, rackX + 1.28, y, z);
+      const slot = rackUnitSlot(i);
+      const z = zC + slot.dz;
+      const y = RACK.rowBase + slot.row * RACK.rowPitch + rnd() * RACK.rowJitter;
+      // Units and LEDs mount proud of RACK.face, and the shared rack trim keeps
+      // out of the band and bay span they claim, so neither buries the other.
+      const unitX = rackX + RACK.face + RACK.proud;
+      mesh(group, new THREE.BoxGeometry(RACK.unit.w, RACK.unit.h, RACK.unit.d), unitMat, unitX, y, z).userData.projectUnit = true;
       const led = mesh(
         group,
-        new THREE.BoxGeometry(0.1, 0.24, 0.24),
+        new THREE.BoxGeometry(RACK.led.w, RACK.led.h, RACK.led.d),
         new THREE.MeshBasicMaterial({ color: 0x00d2ff, transparent: true, opacity: 0.4 + rnd() * 0.6 }),
-        rackX + 1.28, y + 0.55, z,
+        unitX, y + RACK.led.rise, z,
       );
+      led.userData.projectUnit = true;
       led.userData.blinkPhase = rnd() * Math.PI * 2;
     }
   }
@@ -113,7 +120,7 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
   // Main console (the window's birthplace) off to the east side of the wall.
   mesh(group, new THREE.BoxGeometry(6, 0.6, 3.4), white(), w / 2 - 4.6, 3.4, wallZ - 3.4);
   mesh(group, new THREE.BoxGeometry(4.6, 3.2, 0.45), dark(), w / 2 - 4.6, 5.6, wallZ - 4.4);
-  const screen = mesh(group, new THREE.PlaneGeometry(4.1, 2.7), glow(), w / 2 - 4.6, 5.6, wallZ - 4.12, Math.PI);
+  const screen = mesh(group, new THREE.PlaneGeometry(4.1, 2.7), glow(), w / 2 - 4.6, 5.6, wallZ - 4.68, Math.PI);
 
   const cool = new THREE.PointLight(0xbfe9f5, 34, 44);
   cool.position.set(0, 9.5, 2);
@@ -134,6 +141,7 @@ export function buildProjectsRoom(w: number, d: number, projectCount: number): R
 export function buildResumeRoom(w: number, d: number): RoomBuild {
   const group = new THREE.Group();
   shellRoom(group, w, d);
+  addRoomDetail(group, w, d, 'resume');
   const rnd = lcg(1961);
 
   // Filing cabinets along the back wall
@@ -176,6 +184,7 @@ export function buildResumeRoom(w: number, d: number): RoomBuild {
 export function buildContactRoom(w: number, d: number): RoomBuild {
   const group = new THREE.Group();
   shellRoom(group, w, d);
+  addRoomDetail(group, w, d, 'contact');
 
   // Console bench across the back
   mesh(group, new THREE.BoxGeometry(w - 8, 0.7, 4.6), white(), 0, 3.9, -d / 2 + 3.4);
@@ -214,6 +223,7 @@ export function buildContactRoom(w: number, d: number): RoomBuild {
 export function buildArcadeRoom(w: number, d: number): RoomBuild {
   const group = new THREE.Group();
   shellRoom(group, w, d);
+  addRoomDetail(group, w, d, 'arcade');
   const rnd = lcg(8080);
 
   let cabinet: THREE.Mesh | null = null;
@@ -240,12 +250,14 @@ export function buildArcadeRoom(w: number, d: number): RoomBuild {
       new THREE.PlaneGeometry(2.6, 2),
       live ? glow(0xd9f4fb) : new THREE.MeshBasicMaterial({ color: 0x14110e }),
     );
-    scr.position.set(0, 6.1, 1.53);
+    // Tilt without burying the upper edge in the cabinet front.
+    scr.position.set(0, 6.1, 1.7);
     scr.rotation.x = -0.12;
     cab.add(scr);
     const deck = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.5, 1.6), live ? white() : grey());
     deck.position.set(0, 4.6, 1.9);
     cab.add(deck);
+    detailCabinet(cab);
     group.add(cab);
     if (live) {
       cabinet = scr;

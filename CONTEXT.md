@@ -29,10 +29,10 @@ the same 3D scene the intro flight ends on (no cut between cinematic and desktop
 Apps open on top of it.
 
 **City**
-The procedural 3D scene (white block-mass buildings, tilted flown-over camera) that is
-both the Zoom-In's stage and the Desktop's backdrop. App locations live in it as
-Pins with Tags. Falls back to the 2D map presentation where WebGL, motion, or the
-form factor rule it out.
+The procedural 3D scene (an architectural miniature of setback towers, lofts and
+crossings under a tilted flown-over camera) that is both the Zoom-In's stage and
+the Desktop's backdrop. App locations live in it as Pins with Tags. Falls back to
+the 2D map presentation where WebGL, motion, or the form factor rule it out.
 
 **Pin / Tag**
 An App's location in the City: a marker at a building (Pin) with a white plain-English
