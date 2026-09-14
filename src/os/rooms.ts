@@ -1,5 +1,5 @@
 /**
- * App room interiors (interiors phase 2 — docs/interiors-plan.md).
+ * App room interiors (direction and invariants: DESIGN.md).
  *
  * Each App's building contains a procedural, SOLID-geometry room in the city's
  * material language. Rooms share a construction kit; each returns its "screen"
