@@ -61,7 +61,7 @@ func GetPersonalInfo() PersonalInfo {
 		Location: "New York, NY",
 		LinkedIn: "https://linkedin.com/in/david-on-linked",
 		GitHub:   "https://github.com/daveonthegit",
-		Website:  "https://davidx.tech",
+		Website:  "https://davidx.link",
 		Tagline:  "Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and data-driven optimization. I ship A/B-tested Next.js pages, client integrations, and in-house tooling.",
 		NowLine:  "Building production web at Secco Squared — A/B testing pages, optimizing lead-generation funnels, and shipping Next.js client integrations.",
 		Bio: `I'm a Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and reliable delivery. Fluent across TypeScript, React, Next.js, Node.js, Python, Go, and C, I like hard, load-bearing work: A/B testing and optimizing pages, tightening REST APIs, and making systems cheaper to change.

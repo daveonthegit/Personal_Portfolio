@@ -697,7 +697,7 @@ body.xw-boot-pending #startup-animation:empty {
 @keyframes xw-boot-failsafe { to { visibility: hidden; } }
 
 /* Apex ("/") first paint: cover the server-rendered portfolio with an opaque black
-   layer so davidx.tech never flashes content before the boot animation mounts.
+   layer so davidx.link never flashes content before the boot animation mounts.
    StartupAnimation reuses this same #startup-animation element, so the black cover
    transitions seamlessly into the intro. Scoped to apex only — /home is unaffected. */
 body.xw-boot-pending {

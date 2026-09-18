@@ -174,7 +174,7 @@ func NewServer() *Server {
 	if err != nil {
 		log.Fatal("Error parsing templates:", err)
 	}
-	siteURL := strings.TrimSuffix(getEnv("SITE_URL", "https://davidx.tech"), "/")
+	siteURL := strings.TrimSuffix(getEnv("SITE_URL", "https://davidx.link"), "/")
 
 	// Initialize email configuration from environment variables
 	emailConfig := EmailConfig{

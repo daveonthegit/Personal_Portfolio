@@ -128,7 +128,7 @@ func hostOfOrigin(origin string) string {
 }
 
 // contactOriginAllowed guards POST /contact. It uses exact scheme+host matching
-// (not prefix) so a look-alike suffix host like https://davidx.tech.evil.com is
+// (not prefix) so a look-alike suffix host like https://davidx.link.evil.com is
 // rejected. When ALLOWED_ORIGINS is unset it fails safe: same-origin requests
 // (Origin host == request Host) are allowed, cross-origin ones are denied,
 // instead of the previous allow-all behavior.
@@ -181,7 +181,7 @@ func securityHeadersMiddleware(enableHSTS bool, next http.Handler) http.Handler 
 }
 
 type redirectConfig struct {
-	CanonicalHost string // e.g. davidx.tech
+	CanonicalHost string // e.g. davidx.link
 	ApexHost      string // optional alternate host to fold into CanonicalHost
 }
 
