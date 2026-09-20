@@ -1,5 +1,5 @@
 David Xiao
-917-946-7086 | dxiao3043@gmail.com | linkedin.com/in/david-on-linked | github.com/daveonthegit | davidx.tech
+917-946-7086 | dxiao3043@gmail.com | linkedin.com/in/david-on-linked | github.com/daveonthegit | davidx.link
 
 Summary
 Software engineering student graduating with experience building production-ready full-stack and backend systems. Skilled in API design, authentication, data modeling, and Continuous Integration / Continuous Deployment across Go and JavaScript. Hands-on experience modernizing legacy platforms and backend systems.

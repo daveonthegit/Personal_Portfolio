@@ -109,18 +109,18 @@ func TestContactLimiterEnforcesMax(t *testing.T) {
 
 // Fix 3: origin allowlist must be exact-match, rejecting look-alike suffixes.
 func TestContactOriginAllowedRejectsEvilSuffix(t *testing.T) {
-	allowed := []string{"https://davidx.tech"}
+	allowed := []string{"https://davidx.link"}
 
 	evil := httptest.NewRequest(http.MethodPost, "/contact", nil)
-	evil.Header.Set("Origin", "https://davidx.tech.evil.com")
+	evil.Header.Set("Origin", "https://davidx.link.evil.com")
 	if contactOriginAllowed(evil, allowed) {
-		t.Error("evil suffix origin https://davidx.tech.evil.com must be rejected")
+		t.Error("evil suffix origin https://davidx.link.evil.com must be rejected")
 	}
 
 	good := httptest.NewRequest(http.MethodPost, "/contact", nil)
-	good.Header.Set("Origin", "https://davidx.tech")
+	good.Header.Set("Origin", "https://davidx.link")
 	if !contactOriginAllowed(good, allowed) {
-		t.Error("exact allowed origin https://davidx.tech must be permitted")
+		t.Error("exact allowed origin https://davidx.link must be permitted")
 	}
 }
 
@@ -128,7 +128,7 @@ func TestContactOriginAllowedRejectsEvilSuffix(t *testing.T) {
 func TestContactOriginUnsetAllowlistFailsSafe(t *testing.T) {
 	// Cross-origin request with an explicit foreign Origin -> deny.
 	cross := httptest.NewRequest(http.MethodPost, "/contact", nil)
-	cross.Host = "davidx.tech"
+	cross.Host = "davidx.link"
 	cross.Header.Set("Origin", "https://evil.com")
 	if contactOriginAllowed(cross, nil) {
 		t.Error("cross-origin request must be denied when allowlist is unset")
@@ -136,15 +136,15 @@ func TestContactOriginUnsetAllowlistFailsSafe(t *testing.T) {
 
 	// Same-origin request (Origin host == Host) -> allow.
 	same := httptest.NewRequest(http.MethodPost, "/contact", nil)
-	same.Host = "davidx.tech"
-	same.Header.Set("Origin", "https://davidx.tech")
+	same.Host = "davidx.link"
+	same.Header.Set("Origin", "https://davidx.link")
 	if !contactOriginAllowed(same, nil) {
 		t.Error("same-origin request must be allowed when allowlist is unset")
 	}
 
 	// No Origin/Referer at all -> allow (non-browser / same-origin form post).
 	none := httptest.NewRequest(http.MethodPost, "/contact", nil)
-	none.Host = "davidx.tech"
+	none.Host = "davidx.link"
 	if !contactOriginAllowed(none, nil) {
 		t.Error("request with no Origin/Referer should be allowed")
 	}
