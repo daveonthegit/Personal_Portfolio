@@ -1,12 +1,13 @@
+% Generated from cv.md via export-cv.mjs and build-cv-latex.mjs.
+% Template: templates/cv-template.tex; content edits belong in cv.md.
 %-------------------------
-% Resume in Latex
-% Author : Jake Gutierrez
-% Based off of: https://github.com/sb2nov/resume
-% License : MIT
+% Career-Ops LaTeX CV Template
+% Based on: Gabriel Sison / sb2nov resume template
+% License: MIT
 %------------------------
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Random Stuff %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass[letterpaper,11pt]{article}
-
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
 \usepackage{titlesec}
@@ -14,108 +15,157 @@
 \usepackage[usenames,dvipsnames]{color}
 \usepackage{verbatim}
 \usepackage{enumitem}
-\usepackage[hidelinks,bookmarksopen,bookmarksnumbered,pdfstartview=FitH]{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{fancyhdr}
 \usepackage[english]{babel}
 \usepackage{tabularx}
+\usepackage{fontawesome}
+\usepackage{multicol}
+\setlength{\multicolsep}{-3.0pt}
+\setlength{\columnsep}{-1pt}
+\ifdefined\pdfgentounicode
 \input{glyphtounicode}
-
+\fi
 \pagestyle{fancy}
-\fancyhf{}
+\fancyhf{} % clear all header and footer fields
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
-
-\addtolength{\oddsidemargin}{-0.5in}
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.6in}
 \addtolength{\evensidemargin}{-0.5in}
-\addtolength{\textwidth}{1in}
-\addtolength{\topmargin}{-.5in}
-\addtolength{\textheight}{1.15in}
-\setlength{\parskip}{0pt}
-
+\addtolength{\textwidth}{1.19in}
+\addtolength{\topmargin}{-.7in}
+\addtolength{\textheight}{1.4in}
 \urlstyle{same}
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0in}
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-7pt}\scshape\raggedright\large\bfseries
+}{}{0em}{}[\color{black}\titlerule \vspace{0pt}]
+% Ensure that generate pdf is machine readable/ATS parsable
+\ifdefined\pdfgentounicode\pdfgentounicode=1\fi
 
-\titleformat{\section}{\vspace{-2pt}\scshape\raggedright\large}{}{0em}{}[\color{black}\titlerule \vspace{-6pt}]
-\pdfgentounicode=1
-
-\newcommand{\resumeItem}[1]{\item\small{{#1 \vspace{0pt}}}}
-\newcommand{\resumeSubheading}[4]{\vspace{0pt}\item\begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}\textbf{#1}, \textit{\small#3} & #2 \\ \textit{\small#4} & \\ \end{tabular*}\vspace{2pt}}
-\newcommand{\resumeProjectHeading}[2]{\item\begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}\small#1 & #2 \\ \end{tabular*}\vspace{0pt}}
-\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=0pt, topsep=0pt]}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Commands  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-3pt}}
+  }
+}
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-3pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeSubheadingContinue}[2]{
+  \vspace{-3pt}
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeProjectHeading}[2]{
+  \vspace{-3pt}\item
+    \begin{tabular*}{1.0\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textbf{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{0pt}}
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.0in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
-\newcommand{\resumeItemListStart}{\begin{itemize}[itemsep=1pt, topsep=1pt]}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-6pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{0pt}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Heading  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+    \begin{center}
+        % NAME
+        {\Huge\scshape David Xiao}
+        % SUBHEADING
+        \\ New York, NY | 917-946-7086 | \href{https://davidx.link}{davidx.link}\\
+        \small
+        % EMAIL
+        \href{mailto:mailto:dxiao3043@gmail.com}{\raisebox{-0.2\height}\faEnvelope\  \underline{dxiao3043@gmail.com}} ~
+        % LINKEDIN
+        \href{https://linkedin.com/in/david-on-linked}{\raisebox{-0.2\height}\faLinkedin\ \underline{linkedin.com/in/david-on-linked}}  ~
+        % GITHUB
+        \href{https://github.com/daveonthegit}{\raisebox{-0.2\height}\faGithub\ \underline{github.com/daveonthegit}}
+    \end{center}
 
-\begin{center}
-    \textbf{\Huge \scshape David Xiao} \\ \vspace{0pt}
-    \small 917-946-7086 $|$ \href{mailto:dxiao3043@gmail.com}{dxiao3043@gmail.com} $|$ 
-    \href{https://linkedin.com/in/david-on-linked}{linkedin.com/in/david-on-linked} $|$
-    \href{https://github.com/daveonthegit}{github.com/daveonthegit} $|$
-    \href{https://davidx.link}{davidx.link}
-\end{center}
-
-\section{Summary}
-\small Software Engineering student graduating this semester with experience building production-ready full-stack systems. Skilled in API design, authentication, data modeling, and CI/CD across Go and JavaScript stacks, with hands-on experience modernizing legacy platforms.
-
-\section{Work Experience}
-\resumeSubHeadingListStart
-\resumeSubheading{Software Engineer Intern}{June 2025 -- August 2025}{Unadat}{New York, NY}
-\resumeItemListStart
-\resumeItem{Re-architected a legacy JS/PHP monolith into modular components across B2C and B2B flows, cutting feature delivery time by 25\%}
-\resumeItem{Shipped 6+ production features aligned with real user workflows across B2C and B2B platforms}
-\resumeItem{Converted core UI elements into reusable modals and standardized interaction patterns across the platform}
-\resumeItem{Refactored 10+ RESTful endpoints with input validation and query optimization, accelerating API response times by 15\%}
-\resumeItemListEnd
-\resumeSubHeadingListEnd
-\par
-\section{Projects}
-\resumeSubHeadingListStart
-\resumeProjectHeading{\textbf{B2B Task Management Platform} $|$ \emph{PHP, JavaScript, MySQL, GCP}}{June 2025 -- August 2025}
-\resumeItemListStart
-\resumeItem{Built a mobile-optimized task system with escalation logic and multi-round negotiation, supporting 100+ concurrent users}
-\resumeItem{Implemented role-based access controls and delegated approval routing, shortening task turnaround time by 30\%}
-\resumeItem{Unified B2C and B2B flows into a single extensible codebase, reducing maintenance effort by 40\%}
-\resumeItemListEnd
-
-\resumeProjectHeading{\textbf{Kyarafit} $|$ \emph{TypeScript, React Native, Next.js, Expo, Convex, FastAPI, Docker}}{August 2025 -- Present}
-\resumeItemListStart
-\resumeItem{Architected the backend using Convex serverless, leveraging reactive queries for real-time UI sync across web and mobile without a dedicated API server}
-\resumeItem{Built a TypeScript monorepo with a Next.js web app and React Native/Expo mobile client sharing a design-system package and Convex backend}
-\resumeItem{Integrated Better Auth (Google OAuth + email/password) and offline-first SQLite on mobile with a Convex cloud-sync adapter}
-\resumeItemListEnd
-
-\resumeProjectHeading{\textbf{ForgeArena} $|$ \emph{React.js, TypeScript, Node.js, Express.js, CI/CD}}{August 2025 -- December 2025}
-\resumeItemListStart
-\resumeItem{Built a gamified fitness platform with 5-layer architecture supporting avatar progression, quests, and raid boss mechanics}
-\resumeItem{Integrated Gemini API for ML-powered workout recommendations, reducing user planning time by 40\%}
-\resumeItem{Implemented CI/CD with Jenkins and GitHub Actions, achieving 95\% test coverage and automated Heroku deployments}
-\resumeItemListEnd
-
-\resumeProjectHeading{\textbf{RandCompile} $|$ \emph{C, Python, GCC, UNIX}}{February 2025 -- May 2025}
-\resumeItemListStart
-\resumeItem{Strengthened kernel forensic resistance under malicious hypervisor threat models via compile-time ABI randomization and struct obfuscation in a GCC plugin}
-\resumeItem{Automated pointer encryption and modular ABI handling while maintaining compatibility with existing kernel modules}
-\resumeItem{Maintained sub-5\% performance overhead by designing hardened data layouts with minimal runtime cost}
-\resumeItemListEnd
-\resumeSubHeadingListEnd
-\par
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Education  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {CUNY Hunter College}{New York, NY}
+      {B.A. Computer Science}{May 2026}
+  \resumeSubHeadingListEnd
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Experience  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Work Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Secco Squared}{June 2026 -- Present}
+      {Web Developer}{New York, NY}
+      \resumeItemListStart
+            \resumeItem{Cut manual entry by 20 minutes per offer and surfaced 28,560 missed offers by building OfferBridge in Next.js and TypeScript, integrating 23 partner APIs with PostgreSQL-backed review and import tracking}
+            \resumeItem{Enabled live offer/sync queries and guide-grounded workflow navigation by integrating the OpenAI API with 9 permission-scoped tools, bounded call rounds, and confirmation-gated writes}
+            \resumeItem{Made The Weekly Investor (TWI) financial research replayable across 10 snapshot artifact types by building a copilot with read-only SQL data collection, hash-verified Convex snapshots, cited evidence, human-approved mandates, and disabled trade execution}
+            \resumeItem{Saved \$1,300+ per month by rebuilding a video sales funnel with reusable Next.js components and A/B-testing page variants against live traffic}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Unadat}{June 2025 -- August 2025}
+      {Software Engineer Intern}{New York, NY}
+      \resumeItemListStart
+            \resumeItem{Shipped service extractions across several production releases by decomposing a PHP/JavaScript monolith alongside senior engineers and testing changes before code review}
+            \resumeItem{Reduced repeated queries and duplicate UI implementations across REST endpoints, forms, and modals by batching database reads, validating inputs, and consolidating shared React components}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  PROJECTS  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Personal Projects}
 \resumeSubHeadingListStart
-\resumeSubheading{CUNY Hunter College}{New York, NY}{Bachelor of Arts in Computer Science}{May 2026}
+    \resumeProjectHeading
+      {\textbf{Agentflow}}{}
+      \resumeItemListStart
+            \resumeItem{Made AI-generated changes auditable across build, test, and review by creating Agentflow, a Python workflow CLI for developers, with schema-validated outputs, isolated worktrees, replayable events, and human approval tied to verified commits}
+            \resumeItem{Guarded reviewer prompt/model changes against known-good and known-bad fixtures by building a unittest evaluation harness that rejects malformed reviews and blocks approval when blocker findings remain}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{Kyarafit}}{}
+      \resumeItemListStart
+            \resumeItem{Enabled offline use of Kyarafit, a cosplay wardrobe and convention packing planner, across web and mobile by sharing TypeScript models between Next.js/React Native clients and synchronizing SQLite edits through idempotent Convex mutations}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{OutfAI}}{}
+      \resumeItemListStart
+            \resumeItem{Enabled explainable outfit choices from users' own clothes by building OutfAI, a wardrobe planner with mood/weather/style scoring in Convex and typed recommendation queries for its Next.js UI}
+            \resumeItem{Protected outfit ranking and sign-in flows against regressions by writing Vitest unit tests and Playwright browser tests for scoring, public routes, and authentication redirects}
+            \resumeItem{Made OutfAI's web development environment repeatable across host machines by packaging its Next.js server in Docker Compose with a pinned Node.js runtime and hot reload}
+      \resumeItemListEnd
+
+    \resumeProjectHeading
+      {\textbf{ForgeArena}}{}
+      \resumeItemListStart
+            \resumeItem{Enabled workout logging, quests, and leaderboards in ForgeArena, a fitness app for building exercise motivation, by connecting a React UI to layered Node.js/Express APIs and Firestore}
+            \resumeItem{Gated ForgeArena's Vercel deployments on tests, lint, and successful builds by configuring GitHub Actions with Jest suites and a production build check}
+      \resumeItemListEnd
 \resumeSubHeadingListEnd
-\par
-\section{Skills}
-\begin{itemize}[leftmargin=0.15in, label={}]
-\small{\item{
-\textbf{Languages}: JavaScript, TypeScript, Go, Python, SQL, C/C++, PHP \\
-\textbf{Frameworks}: React.js, React Native, Node.js, Express.js, Next.js, FastAPI \\
-\textbf{Databases}: PostgreSQL, MySQL \\
-\textbf{Cloud \& Tools}: Docker, Git, CI/CD (GitHub Actions, Jenkins), GCP, Convex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Technical Skills  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Technical Skills}
+\vspace{-7pt}
+\begin{itemize}
+[leftmargin=0.15in, label={}]\small{\item{
+        \textbf{Languages \& Data}{: TypeScript, Python, JavaScript, SQL, PostgreSQL, Convex} \\
+        \textbf{Full-Stack \& Delivery}{: React, Next.js, Node.js, OpenAI API, Docker, GitHub Actions, Vitest, Playwright} \\
 }}
 \end{itemize}
 

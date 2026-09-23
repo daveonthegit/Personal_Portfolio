@@ -37,11 +37,9 @@ else
     exit 1
 fi
 
-# Optional: Convert to HTML using pandoc if available
-if command -v pandoc &> /dev/null; then
-    echo "Converting to HTML..."
-    pandoc resume.tex -o resume.html --standalone --css=resume.css
-    echo "✅ HTML version created: $RESUME_DIR/resume.html"
-fi
+# resume.html and resume-ats.txt are NOT derived from resume.tex. They are
+# generated from the career-ops export (data/cv.json) by
+# scripts/build-resume-web.mjs — run `npm run build:resume:web`. Converting the
+# .tex here (the old pandoc step) overwrote those files with malformed markup.
 
 echo "Resume build complete!"
