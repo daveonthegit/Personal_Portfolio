@@ -275,66 +275,47 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
-	texPath := "./static/assets/resume.tex"
-	pdfPath := "./static/assets/resume.pdf"
+// serveResumePDF serves the committed resume.pdf under the given
+// Content-Disposition ("inline" for /resume/pdf, "attachment" for
+// /resume/download). Both routes serve identical bytes and differ only in
+// disposition and, deliberately, in caching: when runtime builds are disabled
+// the file is immutable for the life of the deploy, so it is cached for an
+// hour; otherwise a local rebuild may replace it between requests, so the
+// response is marked uncacheable.
+func (s *Server) serveResumePDF(w http.ResponseWriter, r *http.Request, disposition string) {
+	const (
+		texPath = "./static/assets/resume.tex"
+		pdfPath = "./static/assets/resume.pdf"
+	)
 
 	if s.disableRuntimeResumeBuild {
 		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
 			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
 			return
 		}
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
 		w.Header().Set("Cache-Control", "public, max-age=3600")
-		http.ServeFile(w, r, pdfPath)
-		return
+	} else {
+		if err := s.ensureResumePDF(texPath, pdfPath); err != nil {
+			http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
 	}
 
-	if err := s.ensureResumePDF(texPath, pdfPath); err != nil {
-		http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Set headers for PDF display (inline)
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Expires", "0")
+	w.Header().Set("Content-Disposition", disposition+"; filename=\"David_Xiao_Resume.pdf\"")
 
 	http.ServeFile(w, r, pdfPath)
 }
 
+func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
+	s.serveResumePDF(w, r, "inline")
+}
+
 func (s *Server) resumeDownloadHandler(w http.ResponseWriter, r *http.Request) {
-	texPath := "./static/assets/resume.tex"
-	pdfPath := "./static/assets/resume.pdf"
-
-	if s.disableRuntimeResumeBuild {
-		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
-			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
-			return
-		}
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
-		w.Header().Set("Cache-Control", "public, max-age=3600")
-		http.ServeFile(w, r, pdfPath)
-		return
-	}
-
-	if err := s.ensureResumePDF(texPath, pdfPath); err != nil {
-		http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Set headers for PDF download (attachment)
-	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Expires", "0")
-
-	http.ServeFile(w, r, pdfPath)
+	s.serveResumePDF(w, r, "attachment")
 }
 
 // resumeLaTeXEngines are the PDF builders tried, in order, when the committed
