@@ -275,116 +275,92 @@ func (s *Server) resumeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
-	texPath := "./static/assets/resume.tex"
-	pdfPath := "./static/assets/resume.pdf"
+// serveResumePDF serves the committed resume.pdf under the given
+// Content-Disposition ("inline" for /resume/pdf, "attachment" for
+// /resume/download). Both routes serve identical bytes and differ only in
+// disposition and, deliberately, in caching: when runtime builds are disabled
+// the file is immutable for the life of the deploy, so it is cached for an
+// hour; otherwise a local rebuild may replace it between requests, so the
+// response is marked uncacheable.
+func (s *Server) serveResumePDF(w http.ResponseWriter, r *http.Request, disposition string) {
+	const (
+		texPath = "./static/assets/resume.tex"
+		pdfPath = "./static/assets/resume.pdf"
+	)
 
 	if s.disableRuntimeResumeBuild {
 		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
 			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
 			return
 		}
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
 		w.Header().Set("Cache-Control", "public, max-age=3600")
-		http.ServeFile(w, r, pdfPath)
-		return
-	}
-
-	// Check if LaTeX file exists
-	if _, err := os.Stat(texPath); os.IsNotExist(err) {
-		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
-		return
-	}
-
-	// Check if PDF exists and is newer than LaTeX file
-	texInfo, err := os.Stat(texPath)
-	if err != nil {
-		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
-		return
-	}
-
-	pdfInfo, err := os.Stat(pdfPath)
-	needsRebuild := os.IsNotExist(err) || pdfInfo.ModTime().Before(texInfo.ModTime())
-
-	if needsRebuild {
-		// Build PDF from LaTeX
-		if err := s.buildPDFFromLaTeX(texPath, pdfPath); err != nil {
-			// Try using the existing build script as fallback
-			if err := s.buildPDFUsingScript(); err != nil {
-				// If all else fails, create a simple HTML fallback
-				if err := s.createHTMLFallback(texPath, pdfPath); err != nil {
-					http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
-					return
-				}
-			}
+	} else {
+		if err := s.ensureResumePDF(texPath, pdfPath); err != nil {
+			http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
 	}
 
-	// Set headers for PDF display (inline)
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", "inline; filename=\"David_Xiao_Resume.pdf\"")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Expires", "0")
+	w.Header().Set("Content-Disposition", disposition+"; filename=\"David_Xiao_Resume.pdf\"")
 
 	http.ServeFile(w, r, pdfPath)
 }
 
+func (s *Server) resumePDFHandler(w http.ResponseWriter, r *http.Request) {
+	s.serveResumePDF(w, r, "inline")
+}
+
 func (s *Server) resumeDownloadHandler(w http.ResponseWriter, r *http.Request) {
-	texPath := "./static/assets/resume.tex"
-	pdfPath := "./static/assets/resume.pdf"
+	s.serveResumePDF(w, r, "attachment")
+}
 
-	if s.disableRuntimeResumeBuild {
-		if _, err := os.Stat(pdfPath); os.IsNotExist(err) {
-			http.Error(w, "Resume PDF is not available (built at deploy time).", http.StatusServiceUnavailable)
-			return
-		}
-		w.Header().Set("Content-Type", "application/pdf")
-		w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
-		w.Header().Set("Cache-Control", "public, max-age=3600")
-		http.ServeFile(w, r, pdfPath)
-		return
-	}
+// resumeLaTeXEngines are the PDF builders tried, in order, when the committed
+// resume.pdf is missing or the .tex has moved ahead of it.
+var resumeLaTeXEngines = []struct {
+	name string
+	args []string
+}{
+	{"latexmk", []string{"latexmk", "-pdf", "-interaction=nonstopmode", "resume.tex"}},
+	{"lualatex", []string{"lualatex", "-interaction=nonstopmode", "resume.tex"}},
+	{"xelatex", []string{"xelatex", "-interaction=nonstopmode", "resume.tex"}},
+	{"pdflatex", []string{"pdflatex", "-interaction=nonstopmode", "resume.tex"}},
+}
 
-	// Check if LaTeX file exists
-	if _, err := os.Stat(texPath); os.IsNotExist(err) {
-		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
-		return
-	}
-
-	// Check if PDF exists and is newer than LaTeX file
-	texInfo, err := os.Stat(texPath)
-	if err != nil {
-		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
-		return
-	}
-
-	pdfInfo, err := os.Stat(pdfPath)
-	needsRebuild := os.IsNotExist(err) || pdfInfo.ModTime().Before(texInfo.ModTime())
-
-	if needsRebuild {
-		// Build PDF from LaTeX
-		if err := s.buildPDFFromLaTeX(texPath, pdfPath); err != nil {
-			// Try using the existing build script as fallback
-			if err := s.buildPDFUsingScript(); err != nil {
-				// If all else fails, create a simple HTML fallback
-				if err := s.createHTMLFallback(texPath, pdfPath); err != nil {
-					http.Error(w, "Failed to build PDF from LaTeX: "+err.Error(), http.StatusInternalServerError)
-					return
-				}
-			}
+// latexToolchainPresent reports whether any supported LaTeX engine is on PATH.
+func latexToolchainPresent() bool {
+	for _, engine := range resumeLaTeXEngines {
+		if _, err := exec.LookPath(engine.args[0]); err == nil {
+			return true
 		}
 	}
+	return false
+}
 
-	// Set headers for PDF download (attachment)
-	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", "attachment; filename=\"David_Xiao_Resume.pdf\"")
-	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-	w.Header().Set("Pragma", "no-cache")
-	w.Header().Set("Expires", "0")
+// ensureResumePDF makes sure pdfPath is servable.
+//
+// The committed resume.pdf is the approved artifact and is never regenerated
+// over: a rebuild only runs when the PDF is absent entirely. A newer resume.tex
+// no longer triggers one, because whichever engine happens to be installed at
+// runtime would silently replace the approved document with a different render.
+// Rebuild deliberately with `npm run build:resume` (scripts/build-resume.sh).
+func (s *Server) ensureResumePDF(texPath, pdfPath string) error {
+	if _, err := os.Stat(pdfPath); err == nil {
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
 
-	http.ServeFile(w, r, pdfPath)
+	if !latexToolchainPresent() {
+		return fmt.Errorf("no LaTeX toolchain available and %s does not exist", pdfPath)
+	}
+	if err := s.buildPDFFromLaTeX(texPath, pdfPath); err == nil {
+		return nil
+	}
+	return s.buildPDFUsingScript()
 }
 
 func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
@@ -393,15 +369,7 @@ func (s *Server) buildPDFFromLaTeX(texPath, pdfPath string) error {
 		return fmt.Errorf("resolve assets directory: %w", err)
 	}
 
-	engines := []struct {
-		name string
-		args []string
-	}{
-		{"latexmk", []string{"latexmk", "-pdf", "-interaction=nonstopmode", "resume.tex"}},
-		{"lualatex", []string{"lualatex", "-interaction=nonstopmode", "resume.tex"}},
-		{"xelatex", []string{"xelatex", "-interaction=nonstopmode", "resume.tex"}},
-		{"pdflatex", []string{"pdflatex", "-interaction=nonstopmode", "resume.tex"}},
-	}
+	engines := resumeLaTeXEngines
 
 	var lastErr error
 	for _, engine := range engines {
@@ -465,170 +433,21 @@ func (s *Server) buildPDFUsingScript() error {
 	return nil
 }
 
-func (s *Server) createHTMLFallback(texPath, pdfPath string) error {
-	// Create a simple HTML version as fallback
-	htmlPath := strings.Replace(pdfPath, ".pdf", ".html", 1)
-
-	// Read the LaTeX file
-	texContent, err := os.ReadFile(texPath)
-	if err != nil {
-		return err
-	}
-
-	// Convert to HTML
-	htmlContent := s.convertLaTeXToHTML(string(texContent))
-
-	// Write HTML file
-	if err := os.WriteFile(htmlPath, []byte(htmlContent), 0644); err != nil {
-		return err
-	}
-
-	// Update the PDF handler to serve HTML instead
-	return nil
-}
-
 func (s *Server) resumeHTMLHandler(w http.ResponseWriter, r *http.Request) {
-	texPath := "./static/assets/resume.tex"
 	htmlPath := "./static/assets/resume.html"
 
-	if s.disableRuntimeResumeBuild {
-		if _, err := os.Stat(htmlPath); os.IsNotExist(err) {
-			http.Error(w, "Resume HTML is not available (built at deploy time).", http.StatusServiceUnavailable)
-			return
-		}
-		http.ServeFile(w, r, htmlPath)
+	// resume.html is not derived from resume.tex: it is generated from the
+	// career-ops export by scripts/build-resume-web.mjs and committed. Runtime
+	// tex→HTML conversion is therefore never correct here, and the previous
+	// in-process fallback actively corrupted the committed page (unbalanced
+	// anchors and stray LaTeX left in the markup). Serve the committed artifact
+	// as-is on every host, regardless of DISABLE_RUNTIME_RESUME_BUILD.
+	if _, err := os.Stat(htmlPath); os.IsNotExist(err) {
+		http.Error(w, "Resume HTML is not available (built at deploy time).", http.StatusServiceUnavailable)
 		return
 	}
 
-	// Check if LaTeX file exists
-	if _, err := os.Stat(texPath); os.IsNotExist(err) {
-		http.Error(w, "Resume LaTeX file not found", http.StatusNotFound)
-		return
-	}
-
-	// Check if HTML exists and is newer than LaTeX file
-	texInfo, err := os.Stat(texPath)
-	if err != nil {
-		http.Error(w, "Error reading LaTeX file", http.StatusInternalServerError)
-		return
-	}
-
-	htmlInfo, err := os.Stat(htmlPath)
-	needsRebuild := os.IsNotExist(err) || htmlInfo.ModTime().Before(texInfo.ModTime())
-
-	if needsRebuild {
-		// Try to convert LaTeX to HTML using pandoc
-		cmd := exec.Command("pandoc", texPath, "-o", htmlPath, "--mathjax", "--standalone", "--css", "resume.css")
-		cmd.Dir = "./static/assets"
-
-		if err := cmd.Run(); err != nil {
-			// If pandoc fails, try htlatex
-			cmd = exec.Command("htlatex", "resume.tex", "xhtml,2", "charset=utf-8", "")
-			cmd.Dir = "./static/assets"
-
-			if err := cmd.Run(); err != nil {
-				// If both fail, create a simple HTML version from the LaTeX content
-				if err := s.createSimpleHTMLFromLaTeX(texPath, htmlPath); err != nil {
-					http.Error(w, "Failed to create HTML from LaTeX", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-	}
-
-	// Serve the HTML file
 	http.ServeFile(w, r, htmlPath)
-}
-
-func (s *Server) createSimpleHTMLFromLaTeX(texPath, htmlPath string) error {
-	// Read the LaTeX file
-	texContent, err := os.ReadFile(texPath)
-	if err != nil {
-		return err
-	}
-
-	// Simple LaTeX to HTML conversion
-	htmlContent := s.convertLaTeXToHTML(string(texContent))
-
-	// Write the HTML file
-	return os.WriteFile(htmlPath, []byte(htmlContent), 0644)
-}
-
-func (s *Server) convertLaTeXToHTML(texContent string) string {
-	// Basic LaTeX to HTML conversion
-	html := `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>David Xiao - Resume</title>
-    <link rel="stylesheet" href="resume.css">
-</head>
-<body>
-`
-
-	// Extract content between \begin{document} and \end{document}
-	start := "\\begin{document}"
-	end := "\\end{document}"
-	startIdx := strings.Index(texContent, start)
-	endIdx := strings.Index(texContent, end)
-
-	if startIdx == -1 || endIdx == -1 {
-		return html + "<p>Error: Could not find document content</p></body></html>"
-	}
-
-	content := texContent[startIdx+len(start) : endIdx]
-
-	// Convert LaTeX commands to HTML
-	content = strings.ReplaceAll(content, "\\textbf{", "<strong>")
-	content = strings.ReplaceAll(content, "\\textit{", "<em>")
-	content = strings.ReplaceAll(content, "\\href{", "<a href=\"")
-	content = strings.ReplaceAll(content, "\\underline{", "<u>")
-	content = strings.ReplaceAll(content, "\\scshape", "")
-	content = strings.ReplaceAll(content, "\\Huge", "")
-	content = strings.ReplaceAll(content, "\\large", "")
-	content = strings.ReplaceAll(content, "\\small", "")
-	content = strings.ReplaceAll(content, "\\tiny", "")
-
-	// Handle closing braces
-	content = strings.ReplaceAll(content, "}", "</strong>")
-	content = strings.ReplaceAll(content, "}", "</em>")
-	content = strings.ReplaceAll(content, "}", "\">")
-	content = strings.ReplaceAll(content, "}", "</u>")
-
-	// Convert sections
-	content = strings.ReplaceAll(content, "\\section{", "<h2>")
-	content = strings.ReplaceAll(content, "\\subsection{", "<h3>")
-
-	// Convert itemize environments
-	content = strings.ReplaceAll(content, "\\begin{itemize}", "<ul>")
-	content = strings.ReplaceAll(content, "\\end{itemize}", "</ul>")
-	content = strings.ReplaceAll(content, "\\item", "<li>")
-
-	// Convert resumeItem commands
-	content = strings.ReplaceAll(content, "\\resumeItem{", "<li>")
-	content = strings.ReplaceAll(content, "\\resumeSubheading{", "<div class=\"resumeSubheading\">")
-	content = strings.ReplaceAll(content, "\\resumeProjectHeading{", "<div class=\"resumeProjectHeading\">")
-
-	// Handle special characters
-	content = strings.ReplaceAll(content, "\\&", "&")
-	content = strings.ReplaceAll(content, "\\$", "$")
-	content = strings.ReplaceAll(content, "\\%", "%")
-	content = strings.ReplaceAll(content, "\\#", "#")
-	content = strings.ReplaceAll(content, "\\_", "_")
-	content = strings.ReplaceAll(content, "\\{", "{")
-	content = strings.ReplaceAll(content, "\\}", "}")
-
-	// Clean up extra spaces and line breaks
-	content = strings.ReplaceAll(content, "\n\n", "\n")
-	content = strings.TrimSpace(content)
-
-	html += content
-	html += `
-</body>
-</html>`
-
-	return html
 }
 
 func (s *Server) handleContactForm(w http.ResponseWriter, r *http.Request) {

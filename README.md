@@ -1,12 +1,12 @@
 # David Xiao - Personal Portfolio
 
-A modern personal portfolio built with **Go** backend and **TypeScript** frontend, featuring LaTeX resume integration.
+A modern personal portfolio built with **Go** backend and **TypeScript** frontend, serving a resume generated from the career-ops export.
 
 ## Features
 
 - **Go Web Server** with clean routing and template rendering
 - **TypeScript Frontend** with modern build system (esbuild + Tailwind CSS)
-- **LaTeX Resume Integration** - Edit `static/assets/resume.tex` and auto-build to PDF
+- **Resume surfaces** - PDF, HTML and ATS text generated from the career-ops CV export
 - **xiaoOS interface** with a warm dark palette, desktop windows and mobile documents
 - **Interactive Components**: Contact form, project filtering, smooth animations
 - **Resume Serving**: Multiple formats (HTML, PDF, LaTeX source)
@@ -24,8 +24,8 @@ A modern personal portfolio built with **Go** backend and **TypeScript** fronten
 - Vanilla TypeScript, GSAP and a lazy-loaded three.js city
 
 **Resume System:**
-- LaTeX source editing
-- Automated PDF generation
+- `data/cv.json` career-ops export as the single input
+- Deterministic web/ATS generation, committed artifacts served as-is
 - Multiple format serving
 
 ## Prerequisites
@@ -95,8 +95,11 @@ npm run build:ts
 # Build CSS only
 npm run build:css
 
-# Build resume PDF only
+# Build resume PDF from LaTeX (only needed if the PDF is missing)
 npm run build:resume
+
+# Regenerate resume HTML, ATS text and served cv.json
+npm run build:resume:web
 ```
 
 ## Intro, accessibility and browser checks
@@ -138,29 +141,28 @@ Review, measurement settings, limitations and before/after screenshots: [Intro a
 
 ## Resume Management
 
-Your resume is managed via LaTeX for professional typesetting:
+The resume comes from the `career-ops` CV export, not from hand-editing files here.
 
-### Edit Your Resume:
-1. Open `static/assets/resume.tex`
-2. Update your information
-3. Run `npm run build:resume` to generate PDF
+### Update Your Resume:
+1. Replace `data/cv.json` (full export), `static/assets/resume.pdf` and `static/assets/resume.tex` with the new career-ops output.
+2. Run `npm run build:resume:web` to regenerate `static/assets/resume.html`, `static/assets/resume-ats.txt` and the served `static/data/cv.json` (which drops contacts marked `public: false`).
+3. Commit the regenerated artifacts — they are what the server ships.
 
 ### Resume URLs:
-- **HTML Resume Page**: `/resume`
-- **PDF Download**: `/resume/pdf` 
-- **LaTeX Source**: `/resume/tex`
+- **Resume page**: `/resume` (iframes the PDF)
+- **PDF, inline**: `/resume/pdf`
+- **PDF, download**: `/resume/download`
+- **Generated HTML**: `/resume/html`
+- **LaTeX source**: `/static/assets/resume.tex`
 
-### Resume Build Process:
-The build system automatically:
-1. Compiles `resume.tex` to `resume.pdf` using pdflatex
-2. Cleans up auxiliary files
-3. Makes both formats available via web routes
+### Build Process:
+The committed `resume.pdf` and `resume.html` are authoritative and served as-is; the server never rebuilds them over a newer `resume.tex`. `npm run build:resume` (LaTeX) only matters when `resume.pdf` is missing entirely, and it no longer produces HTML. See [AGENTS.md](AGENTS.md) for the invariant and the regression test that locks it down.
 
 ### LaTeX Alternatives:
 If you don't want to install LaTeX locally, you can:
-- Use [Overleaf](https://www.overleaf.com/) to compile your resume online
+- Use [Overleaf](https://www.overleaf.com/) to compile the `.tex` online
 - Use [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) in VS Code
-- Manually compile and place the PDF in `static/assets/resume.pdf`
+- Manually compile and place the PDF at `static/assets/resume.pdf`
 
 ## Customization
 
@@ -217,8 +219,8 @@ Personal_Portfolio/
 │   └── personal.go          # Your personal information
 ├── static/
 │   ├── assets/
-│   │   ├── resume.tex       # Your LaTeX resume (edit this!)
-│   │   └── resume.pdf       # Generated PDF
+│   │   ├── resume.tex       # LaTeX source, copied from career-ops
+│   │   └── resume.pdf       # Approved PDF, served as-is
 │   ├── css/
 │   │   └── main.css         # Compiled CSS
 │   └── js/
@@ -242,7 +244,8 @@ Personal_Portfolio/
 - `npm run dev` - Development mode with auto-reload
 - `npm run build:ts` - Build TypeScript only
 - `npm run build:css` - Build CSS only
-- `npm run build:resume` - Build resume PDF only
+- `npm run build:resume` - Build resume PDF from LaTeX (only needed if the PDF is missing)
+- `npm run build:resume:web` - Regenerate resume HTML, ATS text and served cv.json from `data/cv.json`
 - `npm run type-check` - TypeScript type checking
 
 ## Contact

@@ -7,6 +7,14 @@
       "value": "New York, NY",
       "public": true
     },
+    "email": {
+      "value": "dxiao3043@gmail.com",
+      "public": false
+    },
+    "phone": {
+      "value": "917-946-7086",
+      "public": false
+    },
     "portfolio": {
       "value": "davidx.link",
       "public": true

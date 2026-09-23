@@ -31,6 +31,12 @@
 - Run Go tests, `npm run type-check`, `npm run test:models`, and `npm run build`. Local Chrome/CDP regression and measurement commands are documented in `README.md`; `docs/intro-ux-review.md` explains baseline evidence and limitations.
 - Personal/career data pointers: `config/personal.go`, `projects.go`, and `docs/adr/0001-career-data-exported-from-career-ops.md`. Do not invent project ownership, outcomes or personal facts while editing presentation.
 
+## Resume surfaces
+
+`data/cv.json` (the career-ops export) is the single input. `npm run build:resume:web` regenerates `static/assets/resume.html`, `static/assets/resume-ats.txt`, and `static/data/cv.json` (the last drops contacts marked `public: false`, since it is served). `resume.pdf`/`resume.tex` come from career-ops and are copied in, never derived here.
+
+Committed resume artifacts are authoritative: the handlers in `main.go` serve them as-is and rebuild only when a file is absent. Do not reintroduce runtime or build-time `resume.tex` → HTML conversion — the removed converter overwrote the committed page with malformed markup. `resume_test.go` locks this down.
+
 ## Maintaining this file
 
 Keep this file for knowledge useful to almost every future agent session in this project.
