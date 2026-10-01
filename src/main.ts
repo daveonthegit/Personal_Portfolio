@@ -79,6 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
   void mountPageDepth();
 
   bindSkipLink();
+
+  // Ordered-dither feed treatment for the opted-in images; tracks windows as they open.
+  void import('./utils/dither')
+    .then((m) => m.initDither())
+    .catch((error) => console.error('dither: failed to load', error));
 });
 
 export type { Project, ContactFormData } from './types';

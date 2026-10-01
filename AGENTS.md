@@ -25,6 +25,10 @@
 - **Overlays:** `body.xw-mobile-nav-lock` / `overflow: hidden` only while the overlay is open. `.xiaoos-loader-container` sets `pointer-events: none` + `touch-action: none` so the boot layer never captures first-touch scroll; empty `#startup-animation` keeps `pointer-events: none` as a belt-and-braces fallback.
 - **Horizontal overflow:** `overflow-x: hidden` lives on `html` only, not `body` — dual-rooted clipping on iOS can ambiguate the native scroller and trigger first-swipe rubber-band.
 
+## Dither feed
+
+`src/utils/dither.ts` is a clean-room ordered-dither treatment; images opt in with `data-xw-dither` (`portrait` | `card` | `decode`) and keep their `<img>`/alt under an aria-hidden canvas. This repo is public: never port, paraphrase or consult code from SavvyBurrow or the CodegridPRO template it derives from (commercial licence).
+
 ## Intro and browser validation
 
 - `src/home/bootOverlay.ts` owns the bounded arrival, cancellation, URL normalization and Dossier handoff. Preserve the quiet reduced-motion narrative and native pre-JS bypass when changing it.

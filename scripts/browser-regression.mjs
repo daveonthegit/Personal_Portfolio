@@ -189,6 +189,26 @@ try {
     assert.equal(await c.eval(`document.querySelector('#project-terminal-overlay').classList.contains('hidden')`),true,'Escape must hide modal');
     assert.equal(await c.eval(`document.activeElement.classList.contains('project-card')`),true,'modal must restore card focus');
   });
+  await check('dither feeds keep the image and alt, resolve on hover, and stay static under reduced motion', async () => {
+    await navigate('/home');
+    await waitFor(isReady,8000);
+    await waitFor(`document.querySelectorAll('.xw-dither-canvas').length >= 2`);
+    assert.equal(await c.eval(`[...document.querySelectorAll('[data-xw-dither]')].every(h => { const img = h.querySelector('img'), cv = h.querySelector('.xw-dither-canvas'); return !!img && !!img.alt && cv?.getAttribute('aria-hidden') === 'true'; })`),true,'images and alt text stay under an aria-hidden canvas');
+    const feed = `!document.querySelector('.xw-work-card--0 .xw-dither-canvas').classList.contains('is-clear')`;
+    await c.eval(`document.querySelector('.xw-work-card--0').scrollIntoView({behavior:'instant',block:'center'}),1`);
+    await waitFor(feed);
+    const point = await c.eval(`(() => { const r = document.querySelector('.xw-work-card--0 .xw-work-media').getBoundingClientRect(); return {x:r.x+r.width/2,y:r.y+r.height/2}; })()`);
+    await c.send('Input.dispatchMouseEvent',{type:'mouseMoved',...point});
+    await waitFor(`!(${feed})`,1500);
+    await c.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:2,y:450});
+    await waitFor(feed,1500);
+    await c.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+    await navigate('/home');
+    await waitFor(`document.body.classList.contains('xw-boot-done') && !!document.querySelector('.xw-portrait .xw-dither-canvas')`);
+    await sleep(600);
+    assert.equal(await c.eval(`document.querySelector('.xw-portrait .xw-dither-canvas').classList.contains('is-clear')`),true,'reduced motion keeps the portrait clean, without a decode');
+    await c.send('Emulation.setEmulatedMedia',{features:[]});
+  });
   await check('project filters expose selection state and hide nonmatching cards', async () => {
     await navigate('/projects');
     await waitFor(`document.querySelector('[data-filter="all"]').hasAttribute('aria-pressed')`);
