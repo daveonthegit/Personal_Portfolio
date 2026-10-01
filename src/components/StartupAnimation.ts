@@ -21,6 +21,12 @@ export interface StartupAnimationOptions {
    * callers should skip any follow-up cinematics too.
    */
   onFinish?: (skipped?: boolean) => void;
+  /**
+   * Boot beats, in order: 0 X-grid, 1 strike bars, 2 diamond, 3 shapes,
+   * 4 System Loading, 5 fast bar, 6 geometric reveal. Zero-duration timeline
+   * callbacks, so they follow timeScale and skip; never called under reduced motion.
+   */
+  onStage?: (stage: number) => void;
 }
 
 export class StartupAnimation {
@@ -226,6 +232,7 @@ export class StartupAnimation {
 
     const tl = gsap.timeline();
     this.tl = tl;
+    const stage = (n: number) => () => this.options.onStage?.(n);
 
     // Timing scale ~0.5× vs original — same beats, faster pass
     // 0. Bottom UI begins loading immediately
@@ -241,6 +248,7 @@ export class StartupAnimation {
             from: "start"
         }
     }, 0.12);
+    tl.add(stage(0), 0.12);
 
     // 2. White Bars Strike Out the X's progressively
     tl.to(".xiaoos-strike-bar", {
@@ -249,10 +257,12 @@ export class StartupAnimation {
         stagger: 0.05,
         ease: "power2.inOut"
     }, "+=0.12");
+    tl.add(stage(1), "<");
 
     // 3. Diamond appears DURING the bars striking through
     tl.set(".xiaoos-x-item", { opacity: 0 }, "-=0.1")
       .to("#xiaoos-transition-diamond", { opacity: 1, duration: 0.06 }, "-=0.1");
+    tl.add(stage(2), "<");
 
     // 4. Diamond X glitches (fewer repeats, snappier)
     tl.to("#xiaoos-diamond-x-lines", { opacity: 0, duration: 0.18 }, "+=0.04");
@@ -275,6 +285,7 @@ export class StartupAnimation {
 
     // 8. Concentric shape sequencing (tighter holds)
     tl.set(".xiaoos-shape-1", { opacity: 1 })
+      .add(stage(3), "<")
       .set(".xiaoos-shape-1", { opacity: 0 }, "+=0.12")
       .set(".xiaoos-shape-2", { opacity: 1 }, "+=0.04")
       .set(".xiaoos-shape-2", { opacity: 0 }, "+=0.12")
@@ -291,7 +302,8 @@ export class StartupAnimation {
     tl.set(".xiaoos-sys-b1", { width: SYS_BAR.b1 })
       .set(".xiaoos-sys-b2", { width: SYS_BAR.b2, opacity: 0 })
       .set(".xiaoos-sys-b3", { width: SYS_BAR.b3, opacity: 0 })
-      .to("#xiaoos-sys-blocks", { opacity: 1, duration: 0.05 });
+      .to("#xiaoos-sys-blocks", { opacity: 1, duration: 0.05 })
+      .add(stage(4), "<");
 
     tl.to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 1, duration: 0.03 }, "+=0.05")
       .to(".xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.03 })
@@ -306,6 +318,7 @@ export class StartupAnimation {
       .set(".xiaoos-sys-text", { visibility: "hidden" });
 
     tl.to("#xiaoos-sys-fast-bar", { width: "100%", duration: 0.38, ease: "power3.inOut" })
+      .add(stage(5), "<")
       .to("#xiaoos-sys-fast-bar-container", { opacity: 0, duration: 0.1 }, "+=0.06");
 
     tl.to(".xiaoos-sys-b1, .xiaoos-sys-b2, .xiaoos-sys-b3", { opacity: 0, duration: 0.1 }, "-=0.1");
@@ -318,6 +331,7 @@ export class StartupAnimation {
 
     // 12. Geometric reveal into home
     tl.to("#xiaoos-reveal-outline", { scale: 1, duration: 0.42, ease: "power3.inOut" })
+      .add(stage(6), "<")
       .to("#xiaoos-reveal-solid", { scale: 1, duration: 0.32, ease: "power3.in" }, "-=0.32")
       .to("#xiaoos-reveal-outline", { opacity: 0, duration: 0 }, "<")
       .to("#xiaoos-reveal-solid", { opacity: 0, duration: 0.42, ease: "power2.out" }, "+=0.04")

@@ -1382,7 +1382,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
     <span class="xw-zi-lockrect" id="xw-zi-lockrect"></span>
     <span class="xw-zi-connector" id="xw-zi-connector"></span>
     <div class="xw-zi-card" id="xw-zi-card">
-      <img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" />
+      <span class="xw-zi-card-media" data-xw-dither="acquire"><img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" /></span>
       <div class="xw-zi-card-body">
         <span class="xw-zi-card-name">XIAO, DAVID</span>
         <span class="xw-zi-card-line">FULL STACK DEVELOPER — SECCO SQUARED</span>
@@ -1434,6 +1434,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
   const flashEl = overlay.querySelector<HTMLElement>('#xw-zi-flash')!;
   const flash = () => {
     gsap.fromTo(flashEl, { opacity: 0 }, { opacity: 0.12, duration: 0.12, yoyo: true, repeat: 1 });
+    overlay.dispatchEvent(new CustomEvent('xw:intro-glitch'));
   };
 
 
@@ -1580,6 +1581,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
   };
   const glitch = () => {
     gsap.fromTo('.xw-city-canvas', { x: gsap.utils.random(-4, 4, 1) }, { x: 0, duration: 0.07 });
+    // Reprojection interference on the intro's dither layer (src/home/introDither.ts).
+    overlay.dispatchEvent(new CustomEvent('xw:intro-glitch'));
   };
 
   // Tiny true-coordinate labels — instrument texture on the geography.
@@ -1680,6 +1683,8 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
           left: Math.max(8, Math.min(pr.right + 30, window.innerWidth - 320)),
           top: Math.max(64, Math.min(pr.top, window.innerHeight - 180)),
         });
+        // The profiler photo acquires through its dither handshake (src/utils/dither.ts).
+        window.dispatchEvent(new CustomEvent('xw:intro-lock'));
       })
       .fromTo(card, { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.22 })
       .add(() => setStatus('Subject located — opening file'))
@@ -1738,7 +1743,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
       return;
     }
     mtl
-      .to('.xw-zi-card-photo, .xw-zi-card-body', { opacity: 0, duration: 0.22 }, '<')
+      .to('.xw-zi-card-media, .xw-zi-card-body', { opacity: 0, duration: 0.22 }, '<')
       .to(card, {
         left: target.left, top: target.top, width: target.width, height: target.height,
         duration: 0.55, ease: 'power3.inOut',

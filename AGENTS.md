@@ -27,7 +27,7 @@
 
 ## Dither feed
 
-`src/utils/dither.ts` is a clean-room ordered-dither treatment; images opt in with `data-xw-dither` (`portrait` | `card` | `decode`) and keep their `<img>`/alt under an aria-hidden canvas. This repo is public: never port, paraphrase or consult code from SavvyBurrow or the CodegridPRO template it derives from (commercial licence).
+`src/utils/dither.ts` is a clean-room ordered-dither treatment; images opt in with `data-xw-dither` (`portrait` | `card` | `decode` | `acquire`) and keep their `<img>`/alt under an aria-hidden canvas. The front-door intro's 2D-canvas moments (boot handshake field, cover decode/interference) live in `src/home/introDither.ts`, driven by `StartupAnimation`'s `onStage` beats and the `xw:intro-glitch` / `xw:intro-lock` events; they must overlap existing beats (never add time), sit beneath boot/HUD text, and are never created under reduced motion. This repo is public: never port, paraphrase or consult code from SavvyBurrow or the CodegridPRO template it derives from (commercial licence).
 
 ## Intro and browser validation
 

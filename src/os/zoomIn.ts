@@ -39,7 +39,7 @@ export function mountZoomInCover(): HTMLElement {
       <span class="xw-zi-lockrect" id="xw-zi-lockrect"></span>
       <span class="xw-zi-connector" id="xw-zi-connector"></span>
       <div class="xw-zi-card" id="xw-zi-card">
-        <img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" />
+        <span class="xw-zi-card-media" data-xw-dither="acquire"><img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" /></span>
         <div class="xw-zi-card-body">
           <span class="xw-zi-card-name">XIAO, DAVID</span>
           <span class="xw-zi-card-line">FULL STACK DEVELOPER — SECCO SQUARED</span>
@@ -365,6 +365,8 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void, signal?: 
           left: anchor.left + anchor.width + 42,
           top: Math.max(16, anchor.top - 24),
         });
+        // The profiler photo acquires through its dither handshake (src/utils/dither.ts).
+        window.dispatchEvent(new CustomEvent('xw:intro-lock'));
       })
       .fromTo(card, { autoAlpha: 0, x: -10 }, { autoAlpha: 1, x: 0, duration: 0.2 })
       .add(() => setStatus('Subject located — opening file'))
@@ -400,7 +402,7 @@ export function playZoomIn(overlay: HTMLElement, onReveal: () => void, signal?: 
     }
 
     mtl
-      .to('.xw-zi-card-photo, .xw-zi-card-body', { opacity: 0, duration: 0.22 }, '<')
+      .to('.xw-zi-card-media, .xw-zi-card-body', { opacity: 0, duration: 0.22 }, '<')
       .to(card, {
         left: target.left,
         top: target.top,
