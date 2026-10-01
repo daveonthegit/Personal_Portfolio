@@ -14,6 +14,7 @@ interface CvExperience {
   role: string;
   start: string; // YYYY-MM
   end: string | null;
+  stack?: string[];
   bullets: string[];
 }
 

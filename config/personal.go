@@ -55,42 +55,42 @@ type Education struct {
 func GetPersonalInfo() PersonalInfo {
 	return PersonalInfo{
 		Name:     "David Xiao",
-		Title:    "Web Developer, Secco Squared",
+		Title:    "Full Stack Developer, Secco Squared",
 		Email:    "dxiao3043@gmail.com",
 		Phone:    "917-946-7086",
 		Location: "New York, NY",
 		LinkedIn: "https://linkedin.com/in/david-on-linked",
 		GitHub:   "https://github.com/daveonthegit",
 		Website:  "https://davidx.link",
-		Tagline:  "Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and data-driven optimization. I ship A/B-tested Next.js pages, client integrations, and in-house tooling.",
-		NowLine:  "Building production web at Secco Squared — A/B testing pages, optimizing lead-generation funnels, and shipping Next.js client integrations.",
-		Bio: `I'm a Web Developer at Secco Squared focused on full-stack web applications, lead-generation flows, and reliable delivery. Fluent across TypeScript, React, Next.js, Node.js, Python, Go, and C, I like hard, load-bearing work: A/B testing and optimizing pages, tightening REST APIs, and making systems cheaper to change.
+		Tagline:  "Full Stack Developer at Secco Squared building internal tools, AI agents, and production web apps in TypeScript, React, PostgreSQL, and Python.",
+		NowLine:  "Building at Secco Squared — partner-offer tooling in Next.js, a Slack AI agent on OpenAI tool calling, and Next.js REST APIs on Supabase.",
+		Bio: `I'm a Full Stack Developer at Secco Squared, working across TypeScript, React, PostgreSQL, and Python. I like hard, load-bearing work: tools that replace manual entry, APIs that don't lose data when a partner goes down, and pipelines that make systems cheaper to change.
 
-At Secco Squared I run A/B tests on production pages, optimize lead-generation flows with data-driven decisions, build client integrations and in-house tooling, and rebuilt a video site's lead funnel — cutting costs by $1,300+ monthly. On the side I build Kyarafit (offline-first TypeScript monorepo for web + mobile), OutfAI (a recommendation engine with explainable rationales), and RandCompile (a GCC plugin hardening Linux kernel binaries).`,
+At Secco Squared I built OfferBridge, a Next.js/TypeScript tool that pulls offers from partner REST APIs, an AI agent in Slack on OpenAI tool calling, and a scheduled job that pauses capped offers before they overspend partner budgets; I also rebuilt a video sales funnel, saving $1,300+ per month. On the side I build Agentflow (a Python CLI that gates AI-written code changes behind schemas and human sign-off), Kyarafit (offline-first web and mobile apps that sync SQLite to Convex), and ForgeArena (a React fitness app gated on CI).`,
 
 		Skills: []Skill{
 			{
 				Category: "Languages",
-				Items:    []string{"TypeScript", "JavaScript", "Python", "Go", "C", "C++", "SQL", "PHP", "Bash"},
+				Items:    []string{"TypeScript", "JavaScript", "Python", "SQL", "HTML/CSS", "PHP", "Bash"},
 			},
 			{
 				Category: "Frameworks",
-				Items:    []string{"React", "React Native", "Next.js", "Node.js", "Express.js", "FastAPI", "Expo"},
+				Items:    []string{"React", "Next.js", "React Native", "Node.js", "Express", "Fastify", "Tailwind CSS", "REST APIs"},
 			},
 			{
-				Category: "Databases",
-				Items:    []string{"PostgreSQL", "MySQL", "SQLite", "Convex", "Firestore"},
+				Category: "Data & DevOps",
+				Items:    []string{"PostgreSQL", "MySQL", "Supabase", "Convex", "SQLite", "Firestore", "Git", "GitHub Actions CI/CD", "Docker", "Vercel"},
 			},
 			{
-				Category: "Testing & DevOps",
-				Items:    []string{"Vitest", "Jest", "Playwright", "Docker", "GitHub Actions", "Jenkins", "GCP", "Vercel", "Heroku", "Linux"},
+				Category: "Testing & AI",
+				Items:    []string{"Vitest", "Jest", "Playwright", "TDD", "Agile Scrum", "OpenAI API", "MCP", "Claude Code", "Codex", "Cursor"},
 			},
 		},
 
 		Experience: []Experience{
 			{
 				Company:   "Secco Squared",
-				Position:  "Web Developer",
+				Position:  "Full Stack Developer",
 				Type:      "Full-time",
 				Media:     "/static/images/portfolio-square-animation.gif",
 				MediaAlt:  "Animated Secco Squared logo",
@@ -98,12 +98,14 @@ At Secco Squared I run A/B tests on production pages, optimize lead-generation f
 				EndDate:   nil,
 				Location:  "New York, NY",
 				Description: []string{
-					"Rebuilt a video site's lead funnel, reducing costs by $1,300+ monthly while improving conversion",
-					"Run A/B tests on production pages and optimize lead-generation flows through data-driven decisions",
-					"Build Next.js features and client integrations across production web projects",
-					"Develop in-house tooling to streamline team workflows",
+					"Cut 20 minutes of manual entry per offer and surfaced 28,560 missed offers by building OfferBridge, a Next.js/TypeScript tool that pulls offers from partner REST APIs and logs imports in PostgreSQL",
+					"Let staff get live offer and sync answers in Slack by building an AI agent on OpenAI tool calling that runs multi-step lookups, checks each user's permissions, and asks before making changes",
+					"Stopped live offers from overspending partner budgets, a revenue leak raised by the business team, with a scheduled Vercel cron job that pauses capped offers via the Everflow API and alerts Slack",
+					"Kept sales leads from being lost when partner systems went down by building a Next.js REST API on Supabase (PostgreSQL) that saves each lead first, then delivers it with automatic retries",
+					"Saved $1,300+ per month by rebuilding a video sales funnel as responsive HTML/CSS pages in Next.js and React, with video streaming and ad-conversion tracking",
+					"Shipped 175+ merged pull requests across 11 company codebases by setting up GitHub Actions CI/CD pipelines, writing tests first (TDD), and using AI agents (Claude Code, Cursor) to write and review code",
 				},
-				Technologies: []string{"Next.js", "React", "TypeScript", "A/B testing", "Lead generation", "Client integrations"},
+				Technologies: []string{"TypeScript", "React", "PostgreSQL", "Python"},
 			},
 			{
 				Company:   "Unadat",
@@ -115,10 +117,9 @@ At Secco Squared I run A/B tests on production pages, optimize lead-generation f
 				EndDate:   &[]time.Time{time.Date(2025, 8, 31, 0, 0, 0, 0, time.UTC)}[0],
 				Location:  "New York, NY",
 				Description: []string{
-					"Decomposed a legacy PHP/JavaScript monolith into modular microservices, cutting feature delivery time by 25% across 6 production releases",
-					"Optimized 10+ REST endpoints with input validation and query batching, reducing average response time by 15%",
-					"Shipped a reusable React component library adopted by 3 product teams, eliminating duplicate modal and form implementations",
-					"Hardened backend endpoints against SQL injection and XSS by introducing parameterized queries and centralized input sanitization",
+					"Shipped service extractions across several production releases by decomposing a PHP/JavaScript monolith alongside senior engineers and testing changes before code review",
+					"Sped up slow REST endpoints by batching repeated MySQL queries and validating inputs in the PHP backend",
+					"Made UI fixes land once instead of in every copy by consolidating duplicate forms and modals into shared React components, delivered in Agile Scrum sprints",
 				},
 				Technologies: []string{"JavaScript", "PHP", "React", "MySQL", "RESTful APIs"},
 			},

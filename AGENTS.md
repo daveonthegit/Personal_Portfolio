@@ -33,7 +33,7 @@
 
 ## Resume surfaces
 
-`data/cv.json` (the career-ops export) is the single input. `npm run build:resume:web` regenerates `static/assets/resume.html`, `static/assets/resume-ats.txt`, and `static/data/cv.json` (the last drops contacts marked `public: false`, since it is served). `resume.pdf`/`resume.tex` come from career-ops and are copied in, never derived here.
+`data/cv.json` (the career-ops export) is the single input; the home page Experience/Skills in `config/personal.go` are a hand-kept mirror of it (README → Resume Management). `npm run build:resume:web` regenerates `static/assets/resume.html`, `static/assets/resume-ats.txt`, and `static/data/cv.json` (the last drops contacts marked `public: false`, since it is served). `resume.pdf`/`resume.tex` come from career-ops and are copied in, never derived here.
 
 Committed resume artifacts are authoritative: the handlers in `main.go` serve them as-is and rebuild only when a file is absent. Do not reintroduce runtime or build-time `resume.tex` → HTML conversion — the removed converter overwrote the committed page with malformed markup. `resume_test.go` locks this down.
 

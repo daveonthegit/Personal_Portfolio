@@ -24,7 +24,7 @@
         </h1>
 
         <p class="xw-role" data-xw-reveal>{{.Personal.Title}}</p>
-        <p class="xw-tagline" data-xw-reveal>Full-stack web applications, lead-generation flows and data-driven optimization.</p>
+        <p class="xw-tagline" data-xw-reveal>Internal tools, AI agents and production web apps in TypeScript, React, PostgreSQL and Python.</p>
 
         {{range $i, $role := .Personal.Experience}}{{if eq $i 0}}{{with $role.Description}}
         <p class="xw-current-work" data-xw-reveal>{{index . 0}}.</p>
