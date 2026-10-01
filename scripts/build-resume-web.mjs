@@ -33,6 +33,9 @@ const month = (ym) => {
 
 const range = (start, end) => `${month(start)} – ${month(end)}`;
 
+/** Optional per-role `stack` list (e.g. the PDF's "TypeScript, React, ..." line); empty when absent. */
+const stackOf = (e) => e.stack ?? [];
+
 const esc = (s) =>
   String(s)
     .replace(/&/g, '&amp;')
@@ -71,7 +74,9 @@ const experienceHTML = cv.experience
     (e) => `      <article class="entry">
         <header class="entry-head">
           <h3>${esc(e.role)} <span class="org">— ${esc(e.company)}</span></h3>
-          <p class="meta">${esc(e.location)} · ${esc(range(e.start, e.end))}</p>
+          <p class="meta">${esc(e.location)} · ${esc(range(e.start, e.end))}</p>${
+            stackOf(e).length ? `\n          <p class="meta">${esc(stackOf(e).join(' · '))}</p>` : ''
+          }
         </header>
         <ul>
 ${e.bullets.map((b) => `          <li>${esc(b)}</li>`).join('\n')}
@@ -198,6 +203,7 @@ for (const ed of cv.education) {
 lines.push('', 'Experience');
 for (const e of cv.experience) {
   lines.push(`${e.role} | ${e.company} | ${e.location} | ${range(e.start, e.end)}`);
+  if (stackOf(e).length) lines.push(`Stack: ${stackOf(e).join(', ')}`);
   for (const b of e.bullets) lines.push(`- ${b}`);
   lines.push('');
 }

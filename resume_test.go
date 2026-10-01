@@ -99,7 +99,7 @@ func TestResumeHTMLIsWellFormed(t *testing.T) {
 		t.Error("served resume HTML does not mention Agentflow (stale resume content?)")
 	}
 
-	for _, stale := range []string{"RandCompile", "davidx.tech"} {
+	for _, stale := range []string{"RandCompile", "davidx.tech", "OutfAI", "Weekly Investor", "Web Developer"} {
 		if strings.Contains(body, stale) {
 			t.Errorf("served resume HTML still contains stale content %q", stale)
 		}

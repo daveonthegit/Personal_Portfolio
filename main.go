@@ -531,7 +531,7 @@ func (s *Server) pageDataFor(templateName string) PageData {
 	switch templateName {
 	case "home":
 		data.Title = personal.Name + " - " + personal.Title
-		data.Description = "David Xiao is a Web Developer at Secco Squared focused on full-stack web applications, Next.js, TypeScript, A/B testing, and lead-generation optimization."
+		data.Description = "David Xiao is a Full Stack Developer at Secco Squared building internal tools, AI agents, and production web apps in TypeScript, React, PostgreSQL, and Python."
 		// Home only surfaces the curated featured short-list; /projects has the rest.
 		featured := make([]Project, 0, 4)
 		for _, p := range s.projects {

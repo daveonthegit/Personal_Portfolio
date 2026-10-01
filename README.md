@@ -144,9 +144,10 @@ Review, measurement settings, limitations and before/after screenshots: [Intro a
 The resume comes from the `career-ops` CV export, not from hand-editing files here.
 
 ### Update Your Resume:
-1. Replace `data/cv.json` (full export), `static/assets/resume.pdf` and `static/assets/resume.tex` with the new career-ops output.
+1. Regenerate `data/cv.json` from the approved `cv.md` with `node <career-ops>/export-cv.mjs --out data/cv.json` (full export, no `--public`), and copy the approved `resume.pdf` and `resume.tex` into `static/assets/`.
 2. Run `npm run build:resume:web` to regenerate `static/assets/resume.html`, `static/assets/resume-ats.txt` and the served `static/data/cv.json` (which drops contacts marked `public: false`).
-3. Commit the regenerated artifacts — they are what the server ships.
+3. Mirror the title, experience bullets and skills in `config/personal.go` — the home page Dossier and Experience sections render from it, not from the export.
+4. Commit the regenerated artifacts — they are what the server ships.
 
 ### Resume URLs:
 - **Resume page**: `/resume` (iframes the PDF)
