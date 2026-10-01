@@ -1385,7 +1385,7 @@ export function playIntro(overlay: HTMLElement, onReveal: () => void, signal?: A
       <img class="xw-zi-card-photo" src="/static/images/profile-840.jpg" alt="" />
       <div class="xw-zi-card-body">
         <span class="xw-zi-card-name">XIAO, DAVID</span>
-        <span class="xw-zi-card-line">WEB DEVELOPER — SECCO SQUARED</span>
+        <span class="xw-zi-card-line">FULL STACK DEVELOPER — SECCO SQUARED</span>
         <span class="xw-zi-card-line">NEW YORK, NY</span>
         <span class="xw-zi-card-foot">ACCESSING FILE…</span>
       </div>
