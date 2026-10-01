@@ -115,6 +115,7 @@ try {
     await c.send('Network.setBlockedURLs',{urls:['*city3d-*.js*']});
     await navigate('/'); await waitFor(`!!document.querySelector('.xw-zoomin:not(.xw-zoomin--clear)')`);
     await c.screenshot(`${evidence}/after-svg-fallback.png`);
+    await waitFor(`!!document.querySelector('.xw-zoomin > .xw-zi-map + .xw-intro-decode')`,1000);
     await waitFor(isReady,8500);
     assert.equal(await c.eval(`!!document.querySelector('.xw-window[data-app="dossier"]')`),true);
     await c.send('Network.setBlockedURLs',{urls:[]});
