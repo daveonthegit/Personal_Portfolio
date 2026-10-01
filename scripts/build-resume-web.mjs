@@ -33,7 +33,7 @@ const month = (ym) => {
 
 const range = (start, end) => `${month(start)} – ${month(end)}`;
 
-/** Optional "Stack: a, b" line on an experience entry; empty when absent. */
+/** Optional per-role `stack` list (e.g. the PDF's "TypeScript, React, ..." line); empty when absent. */
 const stackOf = (e) => e.stack ?? [];
 
 const esc = (s) =>
