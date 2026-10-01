@@ -89,7 +89,7 @@
             {{range $p.Technologies}}<span>{{.}}</span>{{end}}
           </div>
 
-          <figure class="xw-proj-card-media">
+          <figure class="xw-proj-card-media" data-xw-dither="card">
             <img
               src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
               alt="{{$p.Title}} — preview"
@@ -188,7 +188,7 @@
                 {{range $p.Technologies}}<span>{{.}}</span>{{end}}
               </div>
 
-              <figure class="xw-proj-card-media">
+              <figure class="xw-proj-card-media" data-xw-dither="card">
                 <img
                   src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
                   alt="{{$p.Title}} — preview"
@@ -253,7 +253,7 @@
         <aside class="xw-modal-aside">
           <figure class="xw-modal-figure">
             <span class="xw-caps xw-caps--muted">Preview</span>
-            <div id="term-img-container" class="xw-modal-img-wrap">
+            <div id="term-img-container" class="xw-modal-img-wrap" data-xw-dither="decode">
               <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
               <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
               <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>

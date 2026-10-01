@@ -43,7 +43,7 @@
       </div>
 
       <aside class="xw-hero-aside" data-xw-reveal aria-label="Profile">
-        <figure class="xw-portrait">
+        <figure class="xw-portrait" data-xw-dither="portrait">
           <span class="xw-bracket xw-bracket-tl" aria-hidden="true"></span>
           <span class="xw-bracket xw-bracket-tr" aria-hidden="true"></span>
           <span class="xw-bracket xw-bracket-bl" aria-hidden="true"></span>
@@ -123,7 +123,7 @@
     <ul class="xw-work-grid" role="list">
       {{range $i, $p := .Projects}}
       <li class="xw-work-card xw-work-card--{{$i}}" data-xw-reveal>
-        <figure class="xw-work-media">
+        <figure class="xw-work-media" data-xw-dither="card">
           <img
             src="{{if $p.Image}}{{asset $p.Image}}{{else}}{{asset "/static/images/wip-default.svg"}}{{end}}"
             alt="{{$p.Title}} — preview"
