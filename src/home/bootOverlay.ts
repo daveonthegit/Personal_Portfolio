@@ -13,12 +13,21 @@ export function initBootOverlay(): void {
   let ended = false;
   let watchdog: number | undefined;
   let cityModule: typeof import('../os/city3d') | null = null;
+  // Dither moments are an enhancement: they attach when their chunk lands, never gate a beat.
+  let introFx: typeof import('./introDither') | null = null;
+  let handshake: import('./introDither').Handshake | null = null;
+  let decode: import('./introDither').Decode | null = null;
+  let bootStage = -1;
 
   const finish = (skipped = false, reason = skipped ? 'bypass' : 'complete') => {
     if (ended) return;
     ended = true;
     const returnFocus = skipped || document.activeElement === bypass;
     window.clearTimeout(watchdog);
+    handshake?.stop();
+    handshake = null;
+    decode?.cancel();
+    decode = null;
     if (skipped) {
       abort.abort();
       startup?.skip();
@@ -71,6 +80,8 @@ export function initBootOverlay(): void {
   bypass?.addEventListener('click', e => { e.preventDefault(); finish(true); }, { signal: abort.signal });
   // A stalled import, hidden-tab timeline, or failed GPU must never hold the file.
   watchdog = window.setTimeout(() => finish(true, 'deadline'), 8000);
+  // Requested ahead of the city chunk so the small dither layer is evaluated first.
+  const fxP = reduced ? Promise.resolve(null) : import('./introDither').catch(() => null);
   const cityP = reduced ? Promise.resolve(null) : import('../os/city3d')
     .then(async m => {
       cityModule = m;
@@ -81,9 +92,29 @@ export function initBootOverlay(): void {
       return m;
     }).catch(() => null);
 
+  const onStage = (stage: number) => {
+    bootStage = stage;
+    if (stage >= 6) {
+      // The geometric reveal covers the screen: the carrier has done its job, and
+      // the decode layer waits beneath so the boot's fade never exposes the city early.
+      handshake?.stop();
+      handshake = null;
+      if (!ended && !decode) decode = introFx?.mountDecode() ?? null;
+    } else handshake?.step(stage);
+  };
+  void fxP.then(m => {
+    introFx = m;
+    const host = document.getElementById('startup-animation');
+    if (!m || ended || bootStage >= 6 || !host?.isConnected || !startup?.isRunning) return;
+    handshake = m.mountHandshake(host, Math.max(0, bootStage));
+  });
+
   try {
     startup = new StartupAnimation({
+      onStage,
       onFinish: skipped => {
+        handshake?.stop();
+        handshake = null;
         if (ended) return;
         if (skipped) { finish(true); return; }
         // Do not replace a boot graphic with an empty screen while waiting for 3D.
@@ -92,10 +123,12 @@ export function initBootOverlay(): void {
           cityP,
           new Promise<null>(resolve => window.setTimeout(() => resolve(null), 350)),
         ]).then(m => {
-          if (ended) { cover.remove(); return; }
+          if (ended) { cover.remove(); decode?.cancel(); return; }
           if (m?.cityMounted()) {
             cover.classList.add('xw-zoomin--clear');
             if (m.playIntro(cover, () => finish(), abort.signal)) {
+              // Same task as the clear: the city decodes from the held black.
+              decode?.start(cover, abort.signal);
               performance.mark('xw:intro-city', { detail: 'webgl' });
               return;
             }
@@ -104,7 +137,8 @@ export function initBootOverlay(): void {
           void cityP.then(late => late?.settleDesktop());
           performance.mark('xw:intro-city', { detail: reduced ? 'quiet' : 'svg' });
           playZoomIn(cover, () => finish(), abort.signal);
-        }).catch(() => { cover.remove(); finish(true, 'failure'); });
+          decode?.start(cover, abort.signal);
+        }).catch(() => { cover.remove(); decode?.cancel(); finish(true, 'failure'); });
       },
     });
   } catch {

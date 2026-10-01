@@ -115,6 +115,7 @@ try {
     await c.send('Network.setBlockedURLs',{urls:['*city3d-*.js*']});
     await navigate('/'); await waitFor(`!!document.querySelector('.xw-zoomin:not(.xw-zoomin--clear)')`);
     await c.screenshot(`${evidence}/after-svg-fallback.png`);
+    await waitFor(`!!document.querySelector('.xw-zoomin > .xw-zi-map + .xw-intro-decode')`,1000);
     await waitFor(isReady,8500);
     assert.equal(await c.eval(`!!document.querySelector('.xw-window[data-app="dossier"]')`),true);
     await c.send('Network.setBlockedURLs',{urls:[]});
@@ -208,6 +209,35 @@ try {
     await sleep(600);
     assert.equal(await c.eval(`document.querySelector('.xw-portrait .xw-dither-canvas').classList.contains('is-clear')`),true,'reduced motion keeps the portrait clean, without a decode');
     await c.send('Emulation.setEmulatedMedia',{features:[]});
+  });
+  await check('intro dither moments stay beneath the HUD, clean up on arrival and Escape, and skip reduced motion', async () => {
+    const {identifier} = await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__introFx = {}; new MutationObserver(() => { for (const k of ['xw-intro-handshake','xw-intro-decode']) if (document.querySelector('.' + k)) window.__introFx[k] = true; if (document.querySelector('.xw-zi-card-media .xw-dither-canvas')) window.__introFx.acquire = true; if (document.querySelector('.xw-zi-card-media .xw-dither-canvas:not(.is-clear)')) window.__introFx.feed = true; }).observe(document, {childList:true, subtree:true, attributes:true, attributeFilter:['class']});`});
+    try {
+      await navigate('/');
+      await waitFor(`!!document.querySelector('.xiaoos-loader-container > .xw-intro-handshake')`,2000);
+      assert.equal(await c.eval(`(() => { const cv = document.querySelector('.xw-intro-handshake'); return cv.getAttribute('aria-hidden') === 'true' && getComputedStyle(cv).pointerEvents === 'none' && cv.compareDocumentPosition(document.querySelector('.xiaoos-display-area')) === Node.DOCUMENT_POSITION_FOLLOWING; })()`),true,'handshake sits aria-hidden beneath the boot geometry');
+      await waitFor(`!!document.querySelector('.xw-zoomin > .xw-intro-decode')`,5000);
+      assert.equal(await c.eval(`document.querySelector('.xw-intro-decode').compareDocumentPosition(document.querySelector('#xw-zi-status')) === Node.DOCUMENT_POSITION_FOLLOWING`),true,'decode layer stays beneath the HUD text');
+      await waitFor(isReady,8500);
+      assert.equal(await c.eval(`performance.getEntriesByName('xw:intro-ready').at(-1).detail`),'complete');
+      assert.equal(await c.eval(`window.__introFx.acquire === true && window.__introFx.feed === true`),true,'profiler photo acquires through its dither feed');
+      await sleep(300);
+      assert.equal(await c.eval(`document.querySelectorAll('.xw-intro-dither, .xw-zi-card-media').length`),0,'intro layers are gone after arrival');
+      await navigate('/');
+      await waitFor(`!!document.querySelector('.xw-intro-handshake')`,2000);
+      await press('Escape'); await waitFor(isReady,500);
+      assert.equal(await c.eval(`document.querySelectorAll('.xw-intro-dither').length`),0,'Escape removes the handshake at once');
+      await sleep(2500);
+      assert.equal(await c.eval(`document.querySelectorAll('.xw-intro-dither').length`),0,'no decode layer resurrects after Escape');
+      await c.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+      await navigate('/');
+      await waitFor(isReady,5000);
+      const fx = await c.eval(`window.__introFx`);
+      assert.equal(fx['xw-intro-handshake'] || fx['xw-intro-decode'] || fx.feed,undefined,'reduced motion creates no intro dither layers and keeps the profiler photo clean');
+    } finally {
+      await c.send('Emulation.setEmulatedMedia',{features:[]});
+      await c.send('Page.removeScriptToEvaluateOnNewDocument',{identifier});
+    }
   });
   await check('project filters expose selection state and hide nonmatching cards', async () => {
     await navigate('/projects');

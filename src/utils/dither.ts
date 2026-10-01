@@ -13,6 +13,10 @@
  *  - `card`     — project media rest as dithered evidence feeds and resolve to the
  *    real screenshot on hover/focus (touch: while the card crosses mid-screen).
  *  - `decode`   — the project dialog's preview decodes each time it opens.
+ *  - `acquire`  — the intro's profiler-card photo: held as coarse feed, then on
+ *    `xw:intro-lock` the cell size steps down like a connection handshake before
+ *    the clean photo sweeps in (the boot's other dither moments live in
+ *    `src/home/introDither.ts`).
  *
  * Progressive enhancement: the <img> (with its alt) stays in place under an
  * aria-hidden canvas. No JS, no WebGL2 or a lost context leaves the plain image.
@@ -20,7 +24,7 @@
  * a transition or glitch is in flight, and reduced motion gets static frames.
  */
 
-type Mode = 'portrait' | 'card' | 'decode';
+type Mode = 'portrait' | 'card' | 'decode' | 'acquire';
 
 interface ModeSpec {
   /** CSS pixels per dither cell. */
@@ -33,18 +37,24 @@ interface ModeSpec {
   decodeOnEnter: boolean;
   /** Occasional glitch bursts while visible. */
   ambient: boolean;
+  /** Handshake cell sizes (coarse → fine) stepped through before the decode front. */
+  steps?: readonly number[];
 }
 
 const MODES: Record<Mode, ModeSpec> = {
   portrait: { cell: 2, rest: 1, contrast: 1.25, bias: 0, decodeOnEnter: true, ambient: true },
   card: { cell: 2, rest: 0, contrast: 1.15, bias: 0, decodeOnEnter: false, ambient: false },
   decode: { cell: 2, rest: 1, contrast: 1.15, bias: 0, decodeOnEnter: true, ambient: false },
+  acquire: { cell: 2, rest: 1, contrast: 1.2, bias: 0, decodeOnEnter: false, ambient: false, steps: [12, 8, 5, 3, 2] },
 };
 
 const FRAME_MS = 1000 / 30;
 const DECODE_MS = 900;
 const HOVER_MS = 380;
 const GLITCH_MS = 220;
+const ACQUIRE_MS = 560;
+/** Share of an `acquire` transition spent stepping cells before the clean sweep. */
+const STEP_SHARE = 0.62;
 /** Longest texture edge; placements render at ~200 cells, so more is wasted memory. */
 const MAX_TEXTURE = 640;
 
@@ -353,6 +363,10 @@ interface Placement {
   palette: ReturnType<typeof readPalette>;
   cols: number;
   rows: number;
+  /** Host size in CSS px (stepped placements re-derive cols/rows from it). */
+  width: number;
+  height: number;
+  cell: number;
   visible: boolean;
   /** Reveal transition: from → to, starting at `t0` and lasting `dur` ms. */
   from: number;
@@ -369,8 +383,19 @@ interface Placement {
 const ease = (p: number) => 1 - (1 - p) ** 3;
 
 function revealAt(pl: Placement, now: number): number {
-  const p = pl.dur > 0 ? Math.min(1, Math.max(0, (now - pl.t0) / pl.dur)) : 1;
+  let p = pl.dur > 0 ? Math.min(1, Math.max(0, (now - pl.t0) / pl.dur)) : 1;
+  if (pl.spec.steps) p = Math.max(0, (p - STEP_SHARE) / (1 - STEP_SHARE));
   return pl.from + (pl.to - pl.from) * ease(p);
+}
+
+/** Current cell size: stepped placements walk their handshake while in flight. */
+function cellAt(pl: Placement, now: number): number {
+  const steps = pl.spec.steps;
+  if (!steps?.length) return pl.spec.cell;
+  const last = steps.length - 1;
+  if (!(pl.dur > 0 && now - pl.t0 < pl.dur)) return steps[pl.to >= 1 ? last : 0] ?? pl.spec.cell;
+  const p = Math.max(0, (now - pl.t0) / pl.dur / STEP_SHARE);
+  return steps[Math.min(last, Math.floor(p * steps.length))] ?? pl.spec.cell;
 }
 
 function glitchAt(pl: Placement, now: number): number {
@@ -405,8 +430,27 @@ export function initDither(): () => void {
     return renderer;
   };
 
+  /** Re-grids a placement for `cell`; a handshake step also slips a few bands. */
+  const regrid = (pl: Placement, cell: number, now: number) => {
+    if (pl.width <= 0 || pl.height <= 0) return;
+    const stepped = pl.cell !== 0 && pl.cell !== cell;
+    pl.cell = cell;
+    const cols = Math.max(1, Math.round(pl.width / cell));
+    const rows = Math.max(1, Math.round(pl.height / cell));
+    if (cols !== pl.cols || rows !== pl.rows) {
+      pl.cols = pl.canvas.width = cols;
+      pl.rows = pl.canvas.height = rows;
+    }
+    if (stepped && pl.spec.steps && !reduced()) {
+      pl.glitchT0 = now;
+      pl.glitchPeak = 0.5;
+    }
+  };
+
   const draw = (pl: Placement, now: number) => {
     pl.dirty = false;
+    const cell = cellAt(pl, now);
+    if (cell !== pl.cell) regrid(pl, cell, now);
     const reveal = revealAt(pl, now);
     const glitch = glitchAt(pl, now);
     if (reveal >= 1 && glitch === 0) {
@@ -531,12 +575,13 @@ export function initDither(): () => void {
       const pl = placements.get(entry.target as HTMLElement);
       if (!pl) return;
       const { width, height } = entry.contentRect;
-      const cols = Math.max(1, Math.round(width / pl.spec.cell));
-      const rows = Math.max(1, Math.round(height / pl.spec.cell));
-      if (cols === pl.cols && rows === pl.rows) return;
-      pl.cols = pl.canvas.width = cols;
-      pl.rows = pl.canvas.height = rows;
-      pl.dirty = true;
+      pl.width = width;
+      pl.height = height;
+      const cols = pl.cols;
+      const rows = pl.rows;
+      pl.cell = 0;
+      regrid(pl, cellAt(pl, performance.now()), performance.now());
+      if (cols !== pl.cols || rows !== pl.rows) pl.dirty = true;
     });
     schedule();
   });
@@ -554,13 +599,15 @@ export function initDither(): () => void {
     img.after(canvas);
     host.classList.add('xw-dither');
 
-    // The portrait waits under the boot cover as feed, then decodes on hand-off.
-    const startDithered = spec.rest === 0 || (mode === 'portrait' && !bootDone() && !reduced());
+    // The portrait waits under the boot cover as feed, then decodes on hand-off;
+    // the profiler photo is held as feed until the lock acquires it.
+    const startDithered = spec.rest === 0 || (mode === 'portrait' && !bootDone() && !reduced())
+      || (mode === 'acquire' && !reduced());
     const rest = startDithered ? 0 : spec.rest;
     const pl: Placement = {
       host, img, canvas, ctx, spec,
       palette: readPalette(host),
-      cols: 0, rows: 0, visible: false,
+      cols: 0, rows: 0, width: 0, height: 0, cell: 0, visible: false,
       from: rest, to: rest, t0: 0, dur: 0,
       glitchT0: 0, glitchPeak: 0,
       dirty: true,
@@ -650,6 +697,19 @@ export function initDither(): () => void {
   };
   window.addEventListener('xw:intro-ready', onIntroReady);
 
+  // The intro's target lock: the profiler photo walks its handshake into focus.
+  const onIntroLock = () => {
+    placements.forEach((pl) => {
+      if (pl.host.dataset.xwDither !== 'acquire' || !pl.host.isConnected) return;
+      // The card has only just been placed; don't wait for the observer's next report.
+      pl.visible = true;
+      if (reduced()) { pl.from = pl.to = 1; pl.dur = 0; pl.dirty = true; }
+      else transition(pl, 1, ACQUIRE_MS, 0);
+    });
+    schedule();
+  };
+  window.addEventListener('xw:intro-lock', onIntroLock);
+
   const onVisibility = () => { if (!document.hidden) schedule(); };
   document.addEventListener('visibilitychange', onVisibility);
 
@@ -664,6 +724,7 @@ export function initDither(): () => void {
     bandIO?.disconnect();
     resizeIO.disconnect();
     window.removeEventListener('xw:intro-ready', onIntroReady);
+    window.removeEventListener('xw:intro-lock', onIntroLock);
     document.removeEventListener('visibilitychange', onVisibility);
     renderer?.dispose();
     renderer = null;
